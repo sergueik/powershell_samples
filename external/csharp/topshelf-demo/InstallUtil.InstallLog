@@ -1,0 +1,14 @@
+﻿
+Running a transacted installation.
+
+Beginning the Install phase of the installation.
+See the contents of the log file for the C:\developer\sergueik\powershell_ui_samples\external\csharp\topshelf-demo\TopshelfDemoService\bin\Debug\TopshelfDemoService.exe assembly's progress.
+The file is located at C:\developer\sergueik\powershell_ui_samples\external\csharp\topshelf-demo\TopshelfDemoService\bin\Debug\TopshelfDemoService.InstallLog.
+
+The Install phase completed successfully, and the Commit phase is beginning.
+See the contents of the log file for the C:\developer\sergueik\powershell_ui_samples\external\csharp\topshelf-demo\TopshelfDemoService\bin\Debug\TopshelfDemoService.exe assembly's progress.
+The file is located at C:\developer\sergueik\powershell_ui_samples\external\csharp\topshelf-demo\TopshelfDemoService\bin\Debug\TopshelfDemoService.InstallLog.
+
+The Commit phase completed successfully.
+
+The transacted install has completed.

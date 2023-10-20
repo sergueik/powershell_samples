@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="ScheduledTaskInstaller" Language="1033" Version="1.0.0.0" Manufacturer="My Company" UpgradeCode="f32afffd-cb7e-47b6-8fc9-f3b7e33a982f">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    <Feature Id="ProductFeature" Title="ScheduledTaskInstaller" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+    <!--For testing rollback-->
+    <CustomActionRef Id="WixFailWhenDeferred" />
+    <Property Id="PASSWORD" Value="i011155" />
+    <!-- WARNING: When the run-as password is empty, the prompt appears during install: 
+the scheduled task may not run because of the security policy.
+Please enter the run as password for sergueik:
+
+-->
+    <CustomAction Id="RollbackCreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks&quot; /Delete /TN MyTaskName /F" Execute="rollback" Impersonate="no" />
+    <SetProperty Id="CA_ReadProperty" Value="PASSWORD=[PASSWORD]" Sequence="execute" Before="CreateScheduledTask" />
+    <!-- error CNDL0005: The CustomAction element contains an unexpected child element 'WixVariable'. -->
+    <!-- error CNDL0107: Schema validation failed with the following error at line 1, column 1884: 
+The element 'Product' in namespace 'http://schemas.microsoft.com/wix/2006/wi' cannot contain text. 
+ -->
+    <CustomAction Id="CreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks&quot; /Create /v1 /z /rl HIGHEST /TN MyTaskName /SC DAILY /ST 17:00 /RU &quot;sergueik&quot; /RP &quot;[PASSWORD]&quot; /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f '[#ApplicationScript]'&quot;" Execute="deferred" Impersonate="no" />
+    <CustomAction Id="RemoveScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks&quot; /Delete /TN MyTaskName /F" Execute="deferred" Impersonate="no" />
+    <InstallExecuteSequence>
+      <Custom Action="CreateScheduledTask" Before="InstallFinalize">NOT Installed</Custom>
+      <Custom Action="RollbackCreateScheduledTask" Before="CreateScheduledTask">NOT Installed</Custom>
+      <Custom Action="RemoveScheduledTask" Before="InstallFinalize">REMOVE ~= "ALL"</Custom>
+    </InstallExecuteSequence>
+  </Product>
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="ScheduledTaskInstaller" />
+      </Directory>
+      <!--Add this directory-->
+      <Directory Id="SystemFolder" />
+    </Directory>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="Script" Guid="{B63BA28A-0985-472B-828B-B5BD943D0633}">
+        <File Id="ApplicationScript" Source="dialog.ps1" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

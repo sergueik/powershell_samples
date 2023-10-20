@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# SharpDevelop 5.1
+VisualStudioVersion = 12.0.20827.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniHttpd", "Utils\MiniHttpd.csproj", "{B3B936AD-395D-49A7-8E1E-A8051FA40AB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniHttpdConsole", "Tests\MiniHttpdConsole.csproj", "{90B9D8BB-2481-443D-8137-6BDD8B8A5A6A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B3B936AD-395D-49A7-8E1E-A8051FA40AB9}.Debug|x86.ActiveCfg = Debug|x86
+		{B3B936AD-395D-49A7-8E1E-A8051FA40AB9}.Debug|x86.Build.0 = Debug|x86
+		{B3B936AD-395D-49A7-8E1E-A8051FA40AB9}.Release|x86.ActiveCfg = Release|x86
+		{B3B936AD-395D-49A7-8E1E-A8051FA40AB9}.Release|x86.Build.0 = Release|x86
+		{90B9D8BB-2481-443D-8137-6BDD8B8A5A6A}.Debug|x86.ActiveCfg = Debug|x86
+		{90B9D8BB-2481-443D-8137-6BDD8B8A5A6A}.Debug|x86.Build.0 = Debug|x86
+		{90B9D8BB-2481-443D-8137-6BDD8B8A5A6A}.Release|x86.ActiveCfg = Release|x86
+		{90B9D8BB-2481-443D-8137-6BDD8B8A5A6A}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

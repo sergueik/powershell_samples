@@ -1,0 +1,43 @@
+{
+  "ConsoleForm": {
+    "Lines": [],
+    "Labels": [
+      {
+        "Label": {
+          "Name": "lblTitle",
+          "Text": "Refresh Complete",
+          "Length": 16,
+          "ForeColour": "Green",
+          "Location": {
+            "X": 1,
+            "Y": 2
+          }
+        }
+      },
+      {
+        "Label": {
+          "Name": "lblMessage",
+          "Text": "Event log array refreshed.",
+          "Length": 26,
+          "Location": {
+            "X": 1,
+            "Y": 4
+          }
+        }
+      },
+      {
+        "Label": {
+          "Name": "lblEsc",
+          "Text": "Press Esc to return to the main menu",
+          "Length": 34,
+          "ForeColour": "Yellow",
+          "Location": {
+            "X": 1,
+            "Y": 8
+          }
+        }
+      }
+    ],
+    "Textboxes": []
+  }
+}

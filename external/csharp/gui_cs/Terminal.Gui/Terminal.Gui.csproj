@@ -1,0 +1,180 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net472;netstandard2.0;net5.0</TargetFrameworks>
+    <RootNamespace>Terminal.Gui</RootNamespace>
+    <AssemblyName>Terminal.Gui</AssemblyName>
+    <DocumentationFile>bin\Release\Terminal.Gui.xml</DocumentationFile>
+    <GenerateDocumentationFile Condition=" '$(Configuration)' == 'Release' ">true</GenerateDocumentationFile>
+    <!-- moved to ../Directory.Build.props -->
+    <!-- <AssemblyVersion>0.89.0.0</AssemblyVersion> -->
+  </PropertyGroup>
+  <PropertyGroup>
+    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+    <PackageId>Terminal.Gui</PackageId>
+    <!-- moved to ../Directory.Build.props -->
+    <!-- <PackageVersion>0.89</PackageVersion> -->
+    <!-- <Authors>Miguel de Icaza, Charlie Kindel (@tig), @BDisp</Authors> -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/migueldeicaza/gui.cs/</PackageProjectUrl>
+    <PackageTags>csharp, terminal, c#, f#, gui, toolkit, console</PackageTags>
+    <Description>Console user interface toolkit for .NET applications.</Description>
+    <Owners>Miguel de Icaza</Owners>
+    <Summary>Application framework for creating modern console applications using .NET</Summary>
+    <Title>Terminal.Gui is a framework for creating console user interfaces</Title>
+    <PackageReleaseNotes>
+      v1.0.0-pre.6
+      * If StatusBar.Visible is set to false, TopLevel resizes correctly enabling hiding/showing of a StatusBar. UICatalog demonstrates.
+      * New sample/demo app - ReactiveExample - Shows how to use reactive extensions and ReactiveUI with gui.cs. (Thanks @worldbeater)
+      * BREAKING API CHANGE - Removed IEnumerable from View and Window. Use Subviews property instead. See #950.
+      * Fixes #998. Added a cancelable TextChanging event to prevent the TextChanged event being called if the changing is canceled.
+      * Fixes #1002. Added a AutoSize property to the View class.
+      * Fixes #1009. AutoHideScrollBars is causing ScrollView always redrawing.
+      * Update to .NET 5 RTM
+      * Fixes #995. Improving TextField to work properly with Unicode characters
+      * Fixes #999. Toplevel should only redraw the subviews if !NeedDisplay.IsEmpty or layoutNeeded.
+      * Fixes #992. TextFormatter class now respect the view dimensions. Some typo fixing too.
+      * Fixes #990. Pos and Dim only can be properly used when all the views are totally initialized.
+      * Fixes #979. Force call LayoutSubviews to perform layout.
+      * Fixes #988. Update NStack.Core to version 0.15.0
+      * Fixes #41 and #949. Unit test to compare the difference between System.Rune and System.Text.Rune.
+      * Fixes #881, #928. Allowing more key combinations.
+      * Fixes #976. Mouse prints sequence characters on the terminal and the screen is not fully cleared. Only for netcoreapp3.1.
+      * BREAKING API CHANGE - #950 - Remove IEnumerable from View and Window
+      * Fixes #959. CursorPosition with hotkeys.
+      * Fixes #963. Added support for Unicode in TextField.
+      * Fixes #961. Recreates the Frame when necessary.
+      * Fixes #957. Terminal.Gui nuget package in Reactive example version.
+      * Fixes #933. Updated to work with libncurses 6.2
+      * Fixes #225 and maybe #41. Allowing Rune.ColumnWidth greater than one.
+      * Use glyphs for checkmarks and selection.
+
+      v0.90 - "Feature Complete" pre-release of Terminal.Gui (aka gui.cs) 1.0. This release is a signficant upgrade from the previous published release (0.81). Most of the major changes and bug fixes are listed below. NOTE: This release includes breaking changes to the API; we will strive to avoid any more breaking changes before 1.0.
+
+      What's new:
+      * New sample/demo app - UI Catalog - Replaces demo.cs with an easy to use and extend set of demo scenarios. (Thanks @tig!)
+      * The API documentation is completely revamped and updated. Readme upated. Contributors guide added (Thanks @tig!)
+      * MenuBar can now have MenuItems directly (enables top-level menu items with no submenu). (Thanks @tig!)
+      * API semantics are much more consistent across classes. For example, all events are now defined in terms of event Action instead of EventHanlder. BREAKING CHANGE. (Thanks @bdisp, @worldbeater, and @tig!)
+      * The project has been refactored an reorganized to reduce risk of bugs and make it easier to contribute.
+      * Symbols are now included with the nuget package.
+
+      Fixes/Improvements (partial list; see Github issues for complete list):
+      * Fixes #396 - Text alignnment issues.  (Thanks @tig!)
+      * Fixes #423 - Fix putting results of ocgv on command line erases cursor. (Thanks @tig!)
+      * Apps can now get KeyUp/KeyDown events. (Thanks @tig!)
+      * Example/Designer csproj files updated to latest Visual Studio model. (Thanks @tig!)
+      * Adjusted the default colors for Windows to make more readable. (Thanks @tig!)
+      * Toplevel.Ready event - Fired once the Toplevel's MainLoop has started (#445). (Thanks @tig!)
+      * All compile warnings fixed. (Thanks @tig!)
+      * Fixed a crash in EnsureVisibleBounds. (Thanks @tig!)
+      * Application.Init/Shutdown are more robust. (Thanks @tig!)
+      * New "Draw Window Frame" code; consistent across Window, FrameView, and Menu. Fixes many drawing bugs. (Thanks @tig!)
+      * Fixes #522 - Last view of Frameview not drawn. (Thanks @tig!)
+      * Clipping has been fixed/restored - it now works properly. (#586) (Thanks @tig!)
+      * Added a View.LayoutComplete event (#569). (Thanks @tig!)
+      * Fixes #299 - MessageBox now auto sizes. (Thanks @tig!)
+      * Fixes #557 - MessageBoxes on small screens. (Thanks @tig!)
+      * Fixes #432 - MessageBox does not deal with long text; width/height params are goofy. (Thanks @tig!)
+      * Fixes #35 - Dialog should have 1 char padding. (Thanks @tig!)
+      * `MessageBox.Query` called with `width` and `height` == 0 get auto-size behavior. A new constructor is added making this easy to use. (Thanks @tig!)
+      * Multi-line `MessageBox`es are now supported. Just use `\n` to add lines. The height of the MessageBox will adjust automatically. (Thanks @tig!)
+      * The `MessageBoxes` Scenario in UI Catalog provides a full demo/test-case. (Thanks @tig!)
+      * `Dialog` called with `width` and `height` == 0 are sized to 85% container. A new constructor is added making this easy to use. (Thanks @tig!)
+      * Dialog (and MessageBox `Buttons` are now dynamically laid out using Computed layout. (Thanks @tig!)
+      * A `Dialogs` Scenario has been added to UI Catalog making it easy to test the API. (Thanks @tig!)
+      * `Button` now supports BOTH specifying a hotkey with '_' and the old behavior of using the first uppercase char (if '_' is not found). (Thanks @tig!)
+      * All UI Catalog scenarios that use `Dialog` or `MessageBox` now use the simplified API. (Thanks @tig!)
+      * `Terminal.Gui.dll` now has version metadata and UI Catalog's about box displays it as a test case. (Thanks @tig!)
+      * Button, Dialog, and MessageBox API documentation has been updated/revised. (Thanks @tig!)
+      * `View`, `Window`, `FrameView`, and `Dialog` have been upgraded to use the new `ConsoleDriver.DrawFrameWindow` API directly. (Thanks @tig!)
+      * New ComboBox control (Thanks @fergusonr!)
+      * ConsoleDriver now supports improved KeyModifers (shift keys) with an expanded Keys Sceanrio in UI Catalog. (Thanks @bdisp!)
+      * Tons of mouse handling improvements. (Thanks @bdisp!)
+      * Fsharp sample updated. (Thanks @bdisp!)
+      * Fixes #562 - Background drawing issue. (Thanks @bdisp!)
+      * Fixes #517 - Focus and mouse handlers enahced (BREAKING CHANGE). (Thanks @bdisp!)
+      * Fixed resizing update and correct Toplevel colors without colors. (Thanks @bdisp!)
+      * Fixed #515, #518, #536, #540. (Thanks @bdisp!)
+      * Added Threading Scenario to UI catalog. (Thanks @bdisp!)
+      * Added support for F11 and F12 keys. (Thanks @bdisp!)
+      * Multiple improvements to Date/TimeField. (Thanks @bdisp!)
+      * Fixes #409 - Invoke does not cause Wakeup #501. (Thanks @bdisp!)
+      * Fixed Label text alignment. (Thanks @bdisp!)
+      * Added mouse features in the Unix version. Supports xterm-1006. (Thanks @bdisp!)
+      * Several StatusBar fixes. (Thanks @bdisp!)
+      * Tons of mouse improvements including mouse wheel support (e.g. #404, #409). (Thanks @bdisp!)
+      * Added a CloseFile method to the TextView as stated in #452. (Thanks @bdisp)
+      * Added a OpenSelectedItem event to the ListView #429. (Thanks @bdisp!)
+      * Fixes the return value of the position cursor in the TextField. (Thanks @bdisp!)
+      * Updates screen on Unix window resizing. (Thanks @bdisp!)
+      * Fixes the functions of the Edit-Copy-Cut-Paste menu for the TextField that was not working well. (Thanks @bdisp!)
+      * More robust error handing in Pos/Dim. Fixes #355 stack overflow with Pos based on the size of windows at startup. Added a OnResized action to set the Pos after the terminal are resized. (Thanks @bdisp!)
+      * Fixes #389 Window layouting breaks when resizing. (Thanks @bdisp!)
+      * Fixes #557 MessageBox needs to take ustrings (BREAKING CHANGE). (Thanks @tig!)
+      * Fixes ScrollView in several key ways. (Thanks @tig!)
+      *   Now supports Computed layout and has constructors that don't require parameters.
+      *   ScrollBarViews are now positioned using Computed layout versus error prone absolute
+      *   ScrollBarViews now correctly position themselves when one, either, or both are on/off.
+      *   IsVertical is now a public property that does the expected thing when changed
+      *   Mouse handling is better; there's still a bug where the mouse doesn't get grabbed by the ScrollView initially but I think this is a broader problem. I need @BDisp's help on this.
+      *   Supports "infinite scrolling" via the new OnDrawContent/DrawContent event on the View class.
+      *   The Scrolling Scenario was enhanced to demo dynamically adding/removing horizontal/vertical scrollbars (and to prove it was working right).
+      * The Checkbox.Toggled event is now an EventHandler event and passes previous state. (Thanks @tig!)
+      * Fixes #102 All Views now support parameterless constructors. (Thanks @Bdisp and @tig!)
+      * Fixes #583 Button can now be sized. Button now supports TextAlignment. (Thanks @Bdisp!)
+      * Fixes #421 Now builds on Linux with "dotnet build". (Thanks @AArnott!)
+      * MenuItem now supports checked/selected items. (Thanks @tig!)
+      * Label no longer incorreclty displays formfeed char. (Thanks @tig!)
+      * Fixes #645 - RadioGroup now supports unicode. (Thanks @tig!)
+      * Fixes #573 - RadioGroup supports Computed Layout. (Thanks @tig!)
+      * RadioGroup now uses a single, good looking, glyph. (Thanks @tig!)
+      * RadioGroup now supportrs the Action-based event pattern correctly. BREAKING CHANGE. (Thanks @tig!)
+      * ConsoleDriver and Drivers have new standard glyph definitions for things like right arrow. (Thanks @tig!)
+      * ScrollView updated to use pretty glyphs. (Thanks @tig!)
+      * Menubar now uses pretty arrow glyph for sub-menus. (Thanks @tig!)
+      * View now has a Text property, implemented via the new TextFormatting class. (Thanks @tig!)
+      * TextAlignment is implemented once across all Views that support it.
+      * Unicode support is now much more robust and complete; dozens of bugs fixed.
+      * Any view dervied from View now has a Text property with multi-line text formatting, including word-wrap and hotkey support.
+      * Label is now mostly just an alias for View; supports Clicked
+      * Button is now a very thin class derived from View (no API changes).
+      * Dozens of unit tests for TextAlignment are provided reducing the chance of regressions.
+      * Fixes #351. Added a horizontal display for RadioGroup. (Thanks @bidsp!)
+      * Fixes #644. Added a UICatalog Scenario for a dynamic menu bar. (Thanks @bidsp!)
+      * Fixes #838. Added a Visible property to the View. (Thanks @bidsp!)
+    </PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType></DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DefineConstants>TRACE;DEBUG_IDISPOSABLE</DefineConstants>
+  </PropertyGroup>
+
+  <!--<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG_IDISPOSABLE</DefineConstants>
+  </PropertyGroup>-->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="true" />
+    <PackageReference Include="NStack.Core" Version="0.16.0" />
+  </ItemGroup>
+  <!--<ItemGroup>
+    <Reference Include="NStack">
+      <HintPath>..\..\..\Users\miguel\.nuget\packages\nstack.core\0.14.0\lib\netstandard2.0\NStack.dll</HintPath>
+    </Reference>
+  </ItemGroup>-->
+  <ItemGroup>
+    <None Remove="ConsoleDrivers\#ConsoleDriver.cs#" />
+  </ItemGroup>
+</Project>

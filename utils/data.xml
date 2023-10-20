@@ -1,0 +1,10 @@
+<offer id="" available="">
+ <url></url>
+ <picture></picture>
+ <param name="Внешний код"></param>
+ <param name="Наличие"></param>
+ <price name="Цена USD"></price>
+ <price name="Цена RUB"></price>
+ <name></name>
+ <description></description>
+</offer>

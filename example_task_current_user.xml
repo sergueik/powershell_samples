@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="UTF-16"?>
+<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+	<!-- 
+
+	Even though the Task Scheduler exports a task file as UTF-16 encoded, it refuses to read it unless it's UTF-8. Use a text editor like TextPad or Notepad++ to save the XML as a UTF-8 encoded file, and the Task Scheduler will correctly import it (even if the main XML tag shows encoding="UTF-16").
+	-->
+	<!--
+	-->
+<!-- cannot save as UTF-8:
+
+Task Scheduler
+The format of the task is not valid.
+The following error was reported: (1,40)::ERROR: unable to switch the encoding
+
+-->
+<!-- if set the encoding to "UTF8" error becomes
+
+Task Scheduler
+The format of the task is not valid. 
+The following error was reported: (1,39)::ERROR: unrecognized input signature
+
+	-->
+  <RegistrationInfo>
+    <Date>2021-10-22T20:17:30.9658654</Date>
+    <Author>S-1-5-21-3828517485-1467542541-3583938822-1001</Author>
+    <Description>auto generated</Description>
+    <URI>\automation\example_task</URI>
+  </RegistrationInfo>
+  <Triggers>
+    <TimeTrigger>
+      <Repetition>
+        <Interval>PT1M</Interval>
+        <StopAtDurationEnd>false</StopAtDurationEnd>
+      </Repetition>
+      <StartBoundary>2021-10-22T21:24:00</StartBoundary>
+      <ExecutionTimeLimit>PT1M</ExecutionTimeLimit>
+      <Enabled>true</Enabled>
+    </TimeTrigger>
+    <BootTrigger>
+      <Repetition>
+        <Interval>PT1M</Interval>
+        <StopAtDurationEnd>false</StopAtDurationEnd>
+      </Repetition>
+      <Enabled>true</Enabled>
+    </BootTrigger>
+  </Triggers>
+  <Principals>
+    <Principal id="Author">
+      <UserId>Serguei</UserId>
+      <LogonType>Password</LogonType>
+      <RunLevel>LeastPrivilege</RunLevel>
+    </Principal>
+  </Principals>
+  <Settings>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <DisallowStartIfOnBatteries>true</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>true</StopIfGoingOnBatteries>
+    <AllowHardTerminate>true</AllowHardTerminate>
+    <StartWhenAvailable>true</StartWhenAvailable>
+    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>
+    <IdleSettings>
+      <StopOnIdleEnd>true</StopOnIdleEnd>
+      <RestartOnIdle>false</RestartOnIdle>
+    </IdleSettings>
+    <AllowStartOnDemand>true</AllowStartOnDemand>
+    <Enabled>true</Enabled>
+    <Hidden>false</Hidden>
+    <RunOnlyIfIdle>false</RunOnlyIfIdle>
+    <WakeToRun>false</WakeToRun>
+    <ExecutionTimeLimit>PT1M</ExecutionTimeLimit>
+    <Priority>7</Priority>
+  </Settings>
+  <Actions Context="Author">
+    <Exec>
+      <Command>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Command>
+      <Arguments>-executionpolicy bypass -noprofile -file "C:\developer\sergueik\work_script.ps1" -send -noop $false -datafile "C:\developer\sergueik\data.txt"</Arguments>
+    </Exec>
+  </Actions>
+</Task>

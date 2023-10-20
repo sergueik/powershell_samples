@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <ProjectGuid>{41E81318-4181-4912-ACFA-D959AAE3E855}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <Configuration>Release</Configuration>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <OutputPath>..\bin\</OutputPath>
+    <AssemblyName>svc</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.ServiceProcess" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Conf.cs" />
+    <Compile Include="Consts.cs" />
+    <Compile Include="Libs.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="SvcUtils.cs" />
+    <Compile Include="Worker.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

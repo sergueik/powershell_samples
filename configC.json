@@ -1,0 +1,20 @@
+[
+  {
+    "name": "sergueik119",
+    "ports": []
+  },
+  {
+    "name": "sergueik71",
+    "ports": [
+      5432
+    ]
+  },
+  {
+    "name": "sergueik53",
+    "ports": [
+      22,
+      443,
+      3306
+    ]
+  }
+]

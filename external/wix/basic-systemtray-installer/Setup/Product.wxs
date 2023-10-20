@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<?define Description = "Description of System Tray App." ?>
+<?define Name = "System Tray App" ?>
+<?define ApplicationVersion = "1.2.3" ?>
+<?define Manufacturer = "Manufacturer" ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="19f1ef00-48b4-4acf-b07f-e9ebaaa64c18" Name="$(var.Name)" Language="1033" Version="$(var.ApplicationVersion)" Manufacturer="$(var.Manufacturer)">
+    <Package InstallScope="perUser" InstallPrivileges="limited" Id="*" Description="$(var.Description)" Comments="Comments" Manufacturer="$(var.Manufacturer)" InstallerVersion="200" Compressed="yes" />
+    <Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
+    <Feature Id="Complete" Title="Complete Install" Description="The complete package -  all Features" Level="1" TypicalDefault="install" Display="expand" ConfigurableDirectory="INSTALLFOLDER">
+      <Feature Id="MainProgram" Title="Engine" Description="Main Feature" Level="1" TypicalDefault="install">
+        <ComponentRef Id="Engine" />
+        <ComponentRef Id="Config" />
+        <ComponentRef Id="Settings" />
+        <ComponentRef Id="ComponentDesktopShortcut" />
+      </Feature>
+      <Feature Id="Documentation" Level="1">
+        <ComponentRef Id="Manual" />
+      </Feature>
+      <Feature Id="Configuration" Level="1">
+        <ComponentRef Id="Config" />
+      </Feature>
+    </Feature>
+    <Icon Id="SystemTrayApp.exe" SourceFile="..\Program\bin\$(var.Configuration)\MainIcon.ico" />
+  </Product>
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <!-- based on: https://stackoverflow.com/questions/12102771/how-do-i-install-to-localappdata-folder -->
+      <Directory Id="LocalAppDataFolder" Name="AppData">
+        <Directory Id="INSTALLFOLDER" Name="$(var.Name)">
+          <Directory Id="DesktopFolder" Name="DesktopFolder" />
+        </Directory>
+      </Directory>
+      <!--Add this directory-->
+      <Directory Id="SystemFolder" />
+    </Directory>
+  </Fragment>
+  <Fragment>
+    <!--Desktop Shortcut-->
+    <Component Id="ComponentDesktopShortcut" Guid="019e2779-40b0-4db9-820d-60fbce844fe0" Directory="DesktopFolder">
+      <!-- NOTE: 
+error LGHT0230: The Component/@Guid attribute's value '*' is not valid for this component because it does not meet the criteria for having an automatically generated guid. 
+Components using a Directory as a KeyPath or containing ODBCDataSource child elements cannot use an automaticallygenerated guid. -->
+      <Shortcut Id="AppDesktopShortcut" Name="$(var.Name)" Description="$(var.Description)" Directory="DesktopFolder" Target="[#Application]" WorkingDirectory="INSTALLFOLDER" Icon="SystemTrayApp.exe" IconIndex="0" />
+      <!--  NOTE: error LGHT0204: ICE38: Component ComponentDesktopShortcut installs to user profile. 
+It must use a registry key under HKCU as its KeyPath, not a file -->
+      <!--Remove desktop shortcut on uninstall-->
+      <RemoveFolder Id="DesktopFolder" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.Name)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="Engine" Guid="{B63BA28A-0985-472B-828B-B5BD943D0633}">
+        <File Id="Application" Name="SystemTrayApp.exe" DiskId="1" Source="..\Program\bin\$(var.Configuration)\SystemTrayApp.exe" />
+        <RegistryKey Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.Name)">
+          <RegistryValue Name="MainExe" Value="1" KeyPath="yes" Type="integer" />
+        </RegistryKey>
+        <RemoveFile Id="Application" Name="SystemTrayApp.exe" On="uninstall" />
+      </Component>
+      <Component Id="Manual" Guid="016b9844-6254-4a1a-b03d-9722b4bb90d2">
+        <File Id="Manual" Name="Manual.pdf" DiskId="1" Source="..\Program\bin\$(var.Configuration)\Manual.pdf" Vital="no" />
+        <RegistryKey Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.Name)">
+          <RegistryValue Name="Manual" Value="1" KeyPath="yes" Type="integer" />
+        </RegistryKey>
+        <RemoveFile Id="Manual" Name="Manual.pdf" On="uninstall" />
+        <RemoveFolder Id="INSTALLFOLDER" On="uninstall" />
+      </Component>
+      <Component Id="Config" Guid="2d1bea50-1369-4fda-9103-f5052cc7bd8e">
+        <File Id="configuration" Name="SystemTrayApp.exe.config" DiskId="1" Source="..\Program\bin\$(var.Configuration)\SystemTrayApp.exe.config" />
+        <RegistryKey Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.Name)">
+          <RegistryValue Name="Config" Value="1" KeyPath="yes" Type="integer" />
+        </RegistryKey>
+        <RemoveFile Id="configuration" Name="SystemTrayApp.exe.config" On="uninstall" />
+      </Component>
+      <Component Id="Settings" Guid="2ae5d5a4-b506-492d-b003-ca503afb3474">
+        <File Id="Setting" Name="config.ini" DiskId="1" Source="..\Program\bin\$(var.Configuration)\config.ini" />
+        <RegistryKey Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.Name)">
+          <RegistryValue Name="Setting" Value="1" KeyPath="yes" Type="integer" />
+        </RegistryKey>
+        <RemoveFile Id="Setting" Name="config.ini" On="uninstall" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

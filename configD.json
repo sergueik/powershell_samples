@@ -1,0 +1,25 @@
+[
+  {
+    "name": "sergueik53",
+    "ports": [
+      22,
+      443,
+      3306
+    ],
+    "info": [
+      {
+        "name": "key1",
+        "data":"value1"
+      },
+      {
+        "name": "key2",
+        "data":"value2"
+      },
+      {
+        "name": "key3",
+        "data":["value1","value2","value3"]
+      }
+    ]
+  }
+]
+

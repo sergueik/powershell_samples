@@ -1,0 +1,92 @@
+<pre>
+Title:       Simple Windows Service in .NET with Console Mode
+Author:      ron wilson
+Email:       codeproject@thereverend.org
+Member ID:   1835478
+Language:    C#
+Platform:    Windows, .NET 3.5
+Technology:  VS2008, Win32
+Level:       Intermediate
+Description: A framework for implementing simple Windows services with an eye toward usability.
+Section      .NET Framework
+SubSection   Applications
+License:     CPOL
+</pre>
+
+<h2>Introduction</h2>
+<p>Windows services are handy things to have around.  Unfortunately, Microsoft doesn't make it simple to write your own.  What is more, they can be difficult to debug during development.</p>
+<p>This article presents a simple framework for creating your own windows services.  It accepts several command line parameters to make installing, starting, stopping, and uninstalling the service a snap.  Also, it has a console mode to make debugging easy.</p>
+
+<h2>Background</h2>
+<p>I spent a lot of time wading through pages and pages, site after site, of example code for developing Windows services.  None of the samples out there really did everything I wanted.  Some employed considerable hacks and there were none that separated the service bits from the actual worker bits.  This project contains what I consider to be the bare minimum features for a usable Windows service, with a simple interface for adding your worker code.</p>
+
+<h2>Using the Code</h2>
+<h3>ISimpleServiceWorker</h3>
+<p>All you have to do is inherit the ISimpleServiceWorker interface and implement it in your worker class.</p>
+<pre lang="C#">
+using System;
+
+namespace RPW.Simple
+{
+	interface ISimpleServiceWorker
+	{
+		void Init();
+		void Run();
+		void Cleanup();
+	}
+}
+</pre>
+<p>Initialize your resources in the Init() method and clean up your resources in the Cleanup() method.  The Run() method would typically contain a loop that manages the state of your task.  You don't have to create a thread; the SimpleProject class will create the necessary thread.  You should keep in mind that the thread will be terminated by the Thread.Abort() method.  The ThreadAbortException will be caught in the SimpleProject class that created the thread context, so you don't need to catch it, but you could if you had a reason.  In order to keep the shutdown time reasonable, try not to make blocking calls, e.g. sockets.</p>
+
+<h3>Console Mode</h3>
+<p>Services are notoriously difficult to debug.  For this reason, this project provides for a console mode so that you can run your code without all of the service overhead.  Simply pass the -console command line switch to your service executable and Shazaam! you're running in console mode.  In console mode, the static WriteLog method of the SimpleService class directs logging to the console window instead of the application event log.</p>
+
+<h3>Managing Your Service</h3>
+<p>The SimpleService class provides several command line switches.</p>
+<pre>
+PS C:\rev\src\simpleservice\src\bin\release&gt; .\SimpleService.exe -help
+= usage:
+=   SimpleService -install   == install service
+=   SimpleService -uninstall == uninstall service
+=   SimpleService -start     == start service
+=   SimpleService -stop      == stop service
+=   SimpleService -status    == get the current status of the service
+=   SimpleService -console   == run in console mode
+=   SimpleService -help      == show this help message
+PS C:\rev\src\simpleservice\src\bin\release&gt;
+</pre>
+<p>Using these command line switches, you can install and uninstall your service without using InstallUtil.exe.  Also, you can start and stop your service once it is installed.  The -status switch will tell you if your service is installed, started, or stopped.</p>
+
+<h2>Nuances</h2>
+<p>The project uses the process name as the service name.  You could change this in code, but you must make sure that the same name is applied to the ServiceBase and the ServiceInstaller.  For simplicity, use the static ServiceName property of the SimpleServiceInstaller class.</p>
+<p>The project assumes that your service needs LocalSystem privileges and starts automatically.  This will invoke the Windows Vista and Windows 7 UAC dialogs when you use the service.  You can change those defaults in the SimpleServiceInstaller class.</p>
+<pre lang="C#">
+public SimpleServiceInstaller()
+{
+	// setup and add the process installer
+	m_processInstaller = new ServiceProcessInstaller()
+		{
+			Account = ServiceAccount.LocalSystem
+		};
+	Installers.Add(m_processInstaller);
+
+	// setup and add the service installer
+	m_serviceInstaller = new ServiceInstaller()
+		{
+			StartType = ServiceStartMode.Automatic,
+			// ServiceName must equal those on ServiceBase derived classes.
+			ServiceName = ServiceName,
+			DisplayName = ServiceName,
+			Description = ServicePath
+		};
+	Installers.Add(m_serviceInstaller);
+}
+</pre>
+
+<h2>Conclusions</h2>
+<p>I think you will be pleased with this design.  Simply implement a worker class by inheriting the ISimpleServiceWorker interface, change the project assembly name, and build it!  The command line switches make everything else a snap.  Please don't hesitate to notify me of bugs or oversights.  And by all means, enjoy!</p>
+
+<h2>History</h2>
+<li>
+<lu>January 2010 - initial submission</lu>
+</li>

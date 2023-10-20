@@ -1,0 +1,84 @@
+﻿<Window x:Class="WpfEnumListControls.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfEnumListControls"
+		xmlns:ctrls="clr-namespace:EnumListCtrls;assembly=EnumListCtrls"
+        mc:Ignorable="d"
+		FontSize="14"
+        Title="MainWindow" Height="650" Width="640">
+    <Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="0" >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" >
+				For System enums, the bound collection is automaticallly created inside the control, and 
+				the displayed item is accomplished by using the item's ToString() method. If the selected 
+				enum is a "Flags" enum, the listbox automatically allows multiple selection. It's up to 
+				you how the multiple selection is handled. 
+			</TextBlock>
+			<StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" >
+				<TextBlock Text="System enum (!Flags)" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+				<ctrls:EnumListBox x:Name="lbWeekDay" EnumTypeName="System.DayOfWeek" Width="140" Height="120" HorizontalAlignment="Left" Margin="0,3,0,0" />
+			</StackPanel>
+			<StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" >
+				<TextBlock Text=" " VerticalAlignment="Top" HorizontalAlignment="Left"/>
+				<ctrls:EnumComboBox x:Name="cbWeekDay" EnumTypeName="System.DayOfWeek" Width="140" HorizontalAlignment="Left" Margin="0,3,0,0" />
+			</StackPanel>
+		</Grid>
+
+		<Grid Grid.Row="1" Margin="0,10,0,0" >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" >
+				For locally defined enums, you need to create the collection yourself (typical WPF stuff) 
+				in the code-behind, and bind collection in the XAML. Everything else is the same.
+			</TextBlock>
+			<StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" >
+				<TextBlock Text="Local enum (!Flags)  " VerticalAlignment="Top"/>
+				<ctrls:EnumListBox x:Name="lbLocalEnum1" ItemsSource="{Binding Path=Enum1}" Width="140" Height="120" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+			</StackPanel>
+			<StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0">
+				<TextBlock Text="  " VerticalAlignment="Top"/>
+				<ctrls:EnumComboBox x:Name="cbLocalEnum1" ItemsSource="{Binding Path=Enum1}" Width="140" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+			</StackPanel>
+		</Grid>
+
+		<Grid Grid.Row="2" Margin="0,10,0,0" >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" >
+				Here's an example of a local enum that is a Flags enum. The ListBox automatically enables multiple 
+				selection (unless you tell it not to with the AllowSelectionMode property).<LineBreak/><LineBreak/>
+				There is no ComboBox here because combo boxes are only for single selection.
+			</TextBlock>
+			<StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0">
+				<TextBlock Text="Local enum (Flags)  " VerticalAlignment="Top" HorizontalAlignment="Left" />
+				<ctrls:EnumListBox x:Name="lbLocalEnum2" ItemsSource="{Binding Path=Enum2}" Width="140" Height="120" HorizontalAlignment="Left" 
+								   SelectionMode="Multiple" SelectionChanged="lbLocalEnum2_SelectionChanged"/>
+			</StackPanel>
+			<StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0">
+				<TextBlock Text="Selected flags value:  " VerticalAlignment="Top" HorizontalAlignment="Left" />
+				<Border BorderBrush="Red" BorderThickness="1" Background="Black" Width="140" Padding="3,2">
+					<TextBlock Foreground="Yellow" Text="{Binding Path=FlagResult}" />
+				</Border>
+			</StackPanel>
+		</Grid>
+		
+	</Grid>
+</Window>

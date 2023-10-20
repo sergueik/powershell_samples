@@ -1,0 +1,35 @@
+﻿[
+  {
+    "process": "notepad",
+    "arguments": "files.json",
+    "width": 800,
+    "height": 600
+  },
+
+  {
+    "process": "explorer",
+    "arguments": "C:\\Windows\\System32",
+    "desktop": 2,
+    "desktopname" : "Games",
+    "monitor": 2,
+    "waitForClass": "CabinetWClass"
+  },
+
+  {
+    "desktop": 1,
+    "process": "outlook",
+    "monitor": 1,
+    "state": "max",
+    "hassplash": true,
+    "skipIfAlreadyRunning": true
+  },
+
+  {
+    "desktop": 3,
+    "process": "chrome",
+    "arguments": [ "--new-window", "https://bbc.com"],
+    "monitor": 2,
+    "state": "max",
+    "waitForClass": "Chrome_WidgetWin_1"
+  }
+]

@@ -1,0 +1,20 @@
+bin
+obj
+~$*
+*.userprefs
+*~
+packages
+.vs
+# User-specific files
+*.user
+
+docfx/api
+
+#git merge files
+*.orig
+
+.vscode/
+
+demo.txt
+
+*.deb

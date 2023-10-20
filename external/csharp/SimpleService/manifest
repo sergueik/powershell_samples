@@ -1,0 +1,16 @@
+C article\stweaks
+D 2010-01-06T05:56:27
+F SimpleService.html 19e122df65d3d1cac8e1d415b54c658c7f85febd
+F SimpleService.sln 08124a024306ee2c07add85448050e471ab52232
+F src/ISimpleServiceWorker.cs 2c9e4a4b14f0a9395ba8dc2da7e5bcbf1e4e2c3a
+F src/Program.cs 7d98d8022d5729d20d7f8c84dd23fd5e3a2cfc63
+F src/SampleWorker.cs 02eab046c88f3fe2bec67de190c406692945a923
+F src/SimpleService.cs d4b947406f32783d2364250fa4af15018327bd10
+F src/SimpleService.csproj 56f814945f6e01771e857a43e62292876f46e482
+F src/SimpleServiceInstaller.cs f369b730039fa8d6a5b359e1e1de2e6a9d1f551e
+F src/app.config 8304779dea1278afebff6cd411c713868445d246
+F src/app.manifest 6ee0db82f5482c912681c14168ec1e22d3a4832e
+P ef8b5bf0870f96eaec887239f7c04ea2d7fc021d
+R 653faa296562edf1926eb6a6156079d7
+U rev
+Z bc4eca206d8ecd2d2e3089ce83dcec5f

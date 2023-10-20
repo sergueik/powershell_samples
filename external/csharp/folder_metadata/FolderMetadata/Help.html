@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>%%TITLE%%</title>
+	<style>
+		body, th, td, p {
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 12.0pt;
+			font-weight: normal;
+		}
+
+		th {
+			font-weight: bold;
+		}
+
+		.code {
+			font-family: "Courier New", Courier, monospace;
+			font-size: 12.0pt;
+		}
+
+		.oddRow {
+			background-color: #ccc;
+		}
+
+		.evenRow {
+			background-color: #fff;
+		}
+	</style>
+</head>
+<body>
+	<p>%%INTRODUCTION%%</p>
+	<table border="0" width="100%">
+		<tr class="evenRow"><th align="left" valign="top">%%OPTION%%</th><th align="left" valign="top">%%EXAMPLE%%</th><th align="left" valign="top">%%DESCRPTION%%</th></tr>
+		<tr class="oddRow"><td align="left" valign="top">%%OPTION_HELP%%</td><td class="code" align="left" valign="top">%%EXAMPLE_HELP%%</td><td align="left" valign="top">%%DESCRIPTION_HELP%%</td></tr>
+		<tr class="evenRow"><td align="left" valign="top">%%OPTION_REGISTER%%</td><td class="code" align="left" valign="top">%%EXAMPLE_REGISTER%%</td><td align="left" valign="top">%%DESCRIPTION_REGISTER%%</td></tr>
+		<tr class="oddRow"><td align="left" valign="top">%%OPTION_UNREGISTER%%</td><td class="code" align="left" valign="top">%%EXAMPLE_UNREGISTER%%</td><td align="left" valign="top">%%DESCRIPTION_UNREGISTER%%</td></tr>
+		<tr class="evenRow"><td align="left" valign="top">%%OPTION_DIR%%</td><td class="code" align="left" valign="top">%%EXAMPLE_DIR%%</td><td align="left" valign="top">%%DESCRIPTION_DIR%%</td></tr>
+		<tr class="oddRow"><td align="left" valign="top">%%OPTION_CONFIGURE%%</td><td class="code" align="left" valign="top">%%EXAMPLE_CONFIGURE%%</td><td align="left" valign="top">%%DESCRIPTION_CONFIGURE%%</td></tr>
+		<tr class="evenRow"><td align="left" valign="top">%%OPTION_LANG%%</td><td class="code" align="left" valign="top">%%EXAMPLE_LANG%%</td><td align="left" valign="top">%%DESCRIPTION_LANG%%</td></tr>
+	</table>
+</body>
+</html>

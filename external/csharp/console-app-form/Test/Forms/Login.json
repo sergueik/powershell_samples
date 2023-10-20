@@ -1,0 +1,72 @@
+{
+  "ConsoleForm": {
+    "Lines": [
+      {
+        "Line": {
+          "Orientation": "Horizontal",
+          "Length": 40,
+          "Colour": "Blue",
+          "Location": {
+            "X": 5,
+            "Y": 5
+          }
+        }
+      },
+      {
+        "Line": {
+          "Orientation": "Vertical",
+          "Length": 10,
+          "Colour": "Blue",
+          "Location": {
+            "X": 44,
+            "Y": 6
+          }
+        }
+      },
+      {
+        "Line": {
+          "Orientation": "Horizontal",
+          "Length": 40,
+          "Colour": "Blue",
+          "Location": {
+            "X": 5,
+            "Y": 15
+          }
+        }
+      },
+      {
+        "Line": {
+          "Orientation": "Vertical",
+          "Length": 10,
+          "Colour": "Blue",
+          "Location": {
+            "X": 5,
+            "Y": 6
+          }
+        }
+      },
+      {
+        "Line": {
+          "Orientation": "Horizontal",
+          "Length": 40,
+          "Colour": "DarkBlue",
+          "Location": {
+            "X": 6,
+            "Y": 4
+          }
+        }
+      },
+      {
+        "Line": {
+          "Orientation": "Vertical",
+          "Length": 10,
+          "Colour": "DarkBlue",
+          "Location": {
+            "X": 45,
+            "Y": 5
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,486 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+//using System.Text;
+using System.Windows.Forms;
+
+namespace MyApp {
+//--------------------------------------------------------------------------
+// CMsgDlg class
+// A Windows message dialog with the ability for custom named buttons, 
+// textboxes, checkboxes, and a progress bar indicator.
+//--------------------------------------------------------------------------
+public class CMsgDlg : Form {
+    private System.ComponentModel.IContainer components = null;
+    private System.Drawing.Size _btnSize = new System.Drawing.Size(75, 23);
+    private List<Button> _buttons = new List<Button>(); // Buttons list
+    private string _btnResult; // Button clicked
+    private List<string> _lResults = new List<string>(); // Return list
+    private ProgressBar _prgBar;
+    private Label _lbl;   // Default text label
+    private Control _ctl; // For external form calls to members
+
+    private const int _margin = 5;
+
+    private static System.Drawing.Point _location; // Saved form position
+
+    public const char escDef = '\xd'; // Default button
+    public const char escChk = '\xc'; // Default check
+
+    //--------------------------------------------------------------------------
+    // Constructors
+    //--------------------------------------------------------------------------
+    public CMsgDlg(Control form) { // Alt. constructor for member access from ext. class
+        _ctl = form;
+    }
+    public CMsgDlg() {
+        _ctl = this; // For members that can use ext. forms
+
+        this.SuspendLayout();
+        this.Name = "CMsgDlg";
+        this.ClientSize = new System.Drawing.Size(325, 120); // Form starting size
+        this.ControlBox = false;
+        this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+        this.StartPosition = FormStartPosition.CenterParent; // Only works for modal
+        this.TopMost = true;
+        this.ShowInTaskbar = false;
+        this.Cursor = Cursors.Arrow;
+        //this.AutoScaleDimensions = new System.Drawing.SizeF(325, 120);
+        //this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.AutoSize = true;
+
+        // Label - generic label for messages on the form
+        _lbl = new Label();
+        _lbl.AutoSize = true;
+        //_lbl.SetBounds(_margin, _margin, this.ClientSize.Width - _margin * 2,
+        //               this.ClientSize.Height - _btnSize.Height - _margin * 3);
+        _lbl.Location = new System.Drawing.Point(_margin, _margin);
+        //_lbl.AutoEllipsis = true;
+        this.Controls.Add(_lbl);
+        this.ResumeLayout(false);
+    }
+
+    //--------------------------------------------------------------------------
+    // Modifies label text
+    //--------------------------------------------------------------------------
+    public void SetLableText(string text) {
+        _lbl.Text = text;
+    }
+
+    //--------------------------------------------------------------------------
+    // Add buttons - will appear in order left to right - btn 0... btn.Count.
+    //--------------------------------------------------------------------------
+    private void AddButtons(string[] btnText) {
+        if (btnText == null) return;
+
+        for (int i = btnText.Count() - 1; i >= 0; i--) {
+            if (btnText[i] != "") AddButton(btnText[i]); // New btn to left of previous
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // Add a button (positioned left of previous button - 1st button is bottom 
+    // right). btnText preceded with '\xd' makes it the (default) accept button.
+    //--------------------------------------------------------------------------
+    private void AddButton(string btnText) {
+        if (btnText == "") btnText = "OK"; // Default
+
+        int left, top; // Button location
+        Button btn;
+
+        if (_buttons.Count != 0) { // At least 1 prev. - add to left of previous
+            btn = _buttons.Last();
+            left = btn.Left - _btnSize.Width - 2; // Separation = 2
+            top = btn.Top;
+        }
+        else { // Add 1st button (bottom right)
+            left = this.ClientSize.Width - _margin - _btnSize.Width;
+            top = this.ClientSize.Height - _btnSize.Height - _margin; // At bottom
+            if (_prgBar != null) top -= _prgBar.Height;
+
+            // Move _btn and resize form height if needed
+            int t = GetNextTopPos();
+            if (top < t) {
+                top = t;
+                if (top + _btnSize.Height + _margin > this.ClientSize.Height) {
+                    this.Height = top + _btnSize.Height + _margin;
+                }
+            }
+        }
+
+        btn = new Button();
+        _buttons.Add(btn);
+        btn.Size = _btnSize; // Default size
+        btn.AutoSize = true;
+
+        int strwidth = TextRenderer.MeasureText(btnText, btn.Font).Width; // In pixels
+        if (strwidth + 8 > _btnSize.Width) { // Need 8 extra for buttons
+            btn.Width = strwidth + 8; // Expand button for text
+            left = this.ClientSize.Width - _margin - btn.Width;
+        }
+        btn.Location = new System.Drawing.Point(left, top);
+
+        if (btnText[0] == escDef) { // Default button
+            btnText = btnText.Remove(0, 1); // Must be removed or changes button size
+            this.AcceptButton = btn;
+        }
+        btn.Text = btnText;
+        if (btn.Text == "Cancel") this.CancelButton = btn;
+
+        this.Controls.Add(btn);
+        btn.Click += new System.EventHandler(btn_Click);
+    }
+
+    //--------------------------------------------------------------------------
+    // Show non-modal progress dialog
+    //--------------------------------------------------------------------------
+    public CMsgDlg ShowProgress(Form parent, string text, string caption, string btnText = "Cancel") {
+        Form1.TheForm().MsgDlg = this; // For Esc key to cancel (set KeyPreview = true)
+
+        // Add status bar to put progress bar on
+        StatusBar sBar = new StatusBar();
+        sBar.ClientSize = new System.Drawing.Size(this.ClientSize.Width, 17);
+        this.Controls.Add(sBar);
+
+        // Progress bar
+        _prgBar = new System.Windows.Forms.ProgressBar();
+        _prgBar.Dock = DockStyle.Fill;
+        _prgBar.Style = ProgressBarStyle.Continuous;
+        _prgBar.Maximum = 100; // Percent
+        sBar.Controls.Add(_prgBar);
+
+        if (_prgBar.Bottom > this.ClientSize.Height) this.Height = _prgBar.Bottom;
+
+        return Show(parent, text, caption, btnText);
+    }
+
+    //--------------------------------------------------------------------------
+    // KeyDown handler (active for non-modal)
+    //--------------------------------------------------------------------------
+    private void KeyDownHandler(object sender, KeyEventArgs e) {
+        if (e.KeyCode == Keys.Escape) { // Handle Esc key exiting
+            if (!this.Modal)
+                Cancel(true);
+            else Close();
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // Show non-modal dialog (for ShowProgress())
+    //--------------------------------------------------------------------------
+    private CMsgDlg Show(Form parent, string text, string caption, 
+            string btnText = "OK", string btn2Text = "", string btn3Text = "") {
+        this.Text = caption;
+        _lbl.Text = text;
+
+        AddButtons(new string[] { btnText, btn2Text, btn3Text });
+
+        // Non-modal must be centered manually
+        this.StartPosition = FormStartPosition.Manual;
+        if (_location.X != 0) // Saved before
+            this.Location = _location;
+        else if (parent != null) { // Center of parent
+            this.Location = new System.Drawing.Point(
+                parent.Location.X + (parent.Width - this.Width) / 2,
+                parent.Location.Y + (parent.Height - this.Height) / 2);
+        }
+        this.Show(); // Call base class
+
+        // Setup key handler (Needs to be done here)
+        this.CancelButton = null;
+        this.KeyPreview = true;
+        this.KeyDown += KeyDownHandler; // For Esc key to cancel (set KeyPreview = true)
+
+        return this;
+    }
+
+    //--------------------------------------------------------------------------
+    // Show modal dialog; returns button clicked string
+    //--------------------------------------------------------------------------
+    public string ShowDialog(string text, string caption, string[] btnText) {
+        this.Text = caption;
+        if (text != null) _lbl.Text = text; // May be null for AddTextBox()
+
+        AddButtons(btnText);
+
+        if (_location.X != 0) { // Use prev. location
+            this.StartPosition = FormStartPosition.Manual;
+            this.Location = _location;
+        }
+
+        this.ShowDialog(); // Call base class
+        return _btnResult;
+    }
+
+    //--------------------------------------------------------------------------
+    // Show modal dialog (simplified for 1-2 buttons)
+    //--------------------------------------------------------------------------
+    public string ShowDialog(string text, string caption, string btnText = "OK",
+                             string btn2Text = "") {
+        return ShowDialog(text, caption, new string[] { btnText, btn2Text });
+    }
+
+    //--------------------------------------------------------------------------
+    // Show modal dialog with chkbox and txtbox options
+    //--------------------------------------------------------------------------
+    public List<string> ShowDialog(string text, string caption, string[] btnText,
+                        string[] chkBoxText = null, string[] txtboxText = null) {
+        this.Text = caption;
+        _lbl.Text = text;
+
+        if (chkBoxText != null) {
+            foreach (string str in chkBoxText) AddCheckBox(str);
+        }
+
+        if (txtboxText != null) {
+            for (int i = 0; i < txtboxText.Length; i += 2) {
+                AddTextBox(txtboxText[i], txtboxText.Count() > i + 1 ? txtboxText[i + 1] : "");
+            }
+        }
+
+        if (btnText == null) btnText = new string[] { "\xdOK", "Cancel" }; // Use defaults
+        AddButtons(btnText);
+
+        if (_location.X != 0) { // Use prev. location
+            this.StartPosition = FormStartPosition.Manual;
+            this.Location = _location;
+        }
+
+        this.ShowDialog(); // Call base class
+        
+        return _lResults;
+    }
+
+    //--------------------------------------------------------------------------
+    // Text box dialog
+    //--------------------------------------------------------------------------
+    public List<string> ShowDialogTextBox(string caption, string lblText,
+            string txtboxText, string[] btnText = null) {
+        return ShowDialogTextBox(caption, new string[] { lblText, txtboxText }, btnText);
+    }
+
+    //--------------------------------------------------------------------------
+    // Multi-textbox dialog. Pass lbl_txtboxText as string[], where 1st string 
+    // is textbox label, and 2nd string is default textbox text.
+    //--------------------------------------------------------------------------
+    public List<string> ShowDialogTextBox(string caption, string[] lbl_txtboxText, 
+                                          string[] btnText = null) {
+        for (int i = 0; i < lbl_txtboxText.Length; i += 2) {
+            AddTextBox(lbl_txtboxText[i], lbl_txtboxText.Count() > i + 1 ? lbl_txtboxText[i + 1] : "");
+        }
+
+        if (btnText == null) // Use defaults
+            ShowDialog(null, caption, new string[] { "\xdOK", "Cancel" });
+        else ShowDialog(null, caption, btnText);
+
+        return _lResults;
+    }
+
+    //--------------------------------------------------------------------------
+    // Add a labelled text box; width and no. of lines defined by passed tbxText
+    //--------------------------------------------------------------------------
+    public TextBox AddTextBox(string lblText, string tbxText) {
+        Label lbl = new Label();
+        lbl.Top = GetNextTopPos();
+        lbl.Text = lblText;
+        lbl.AutoSize = true;
+        _ctl.Controls.Add(lbl);
+
+        string[] astr = tbxText.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        int nlines = astr.Count();
+
+        TextBox tbx = new TextBox();
+
+        if (nlines > 1) {
+            tbx.Multiline = true;
+            tbx.AcceptsReturn = true;
+            tbx.WordWrap = true;
+
+            // Get longest string
+            string longstr = astr[0];
+            for (int i = 1; i < astr.Length; i++) {
+                if (astr[i].Length > longstr.Length) longstr = astr[i];
+            }
+            tbx.Width = TextRenderer.MeasureText(longstr, tbx.Font).Width;
+            if (tbx.Width + lbl.Width + _margin * 2 < _ctl.Width) // Expand to form width
+                tbx.Width = _ctl.Width - lbl.Width - _margin * 2;
+
+            tbx.Height = TextRenderer.MeasureText("M", tbx.Font).Height * nlines + 6;
+            tbx.Top = lbl.Top;
+        }
+        else {
+            tbx.Width = TextRenderer.MeasureText(tbxText, tbx.Font).Width;
+            tbx.Height = TextRenderer.MeasureText("M", tbx.Font).Height + 6;
+            //tbx.Top = lbl.Top + lbl.Height / 2 - tbx.Height / 2; // Centered on label
+            tbx.Top = lbl.Top;
+            lbl.Top = tbx.Top + tbx.Height / 2 - lbl.Height / 2; // Center on tbx
+        }
+        tbx.Lines = astr; // Set to passed default (maintains \n's)
+
+        // Expand form if needed
+        int w = lbl.Width + tbx.Width + _margin * 2;
+        if (w > _ctl.Width) _ctl.Width = w;
+        int h = tbx.Top + tbx.Height + _margin * 2;
+        if (h > _ctl.Height) _ctl.Height = h;
+
+        lbl.Left = (_margin + _ctl.ClientSize.Width) / 2 - (lbl.Width + tbx.Width + _margin) / 2;
+        tbx.Left = lbl.Left + lbl.Width + 1; // Pos. textbox right of label
+
+        // Assoc. tbx with its label in case ID needed
+        tbx.Name = lbl.Text;
+        tbx.Tag = lbl;
+
+        _ctl.Controls.Add(tbx);
+        //_txtBox.Select(); //.Focus();
+
+        return tbx;
+    }
+
+    //--------------------------------------------------------------------------
+    // Check box dialog
+    //--------------------------------------------------------------------------
+    public List<string> ShowDialogCheckBox(string lblText, string caption,
+            string[] chkBoxText, string[] btnText = null) {
+        _lbl.Text = lblText; // So AddCheckBox() can determine placement
+
+        foreach (string str in chkBoxText) AddCheckBox(str);
+
+        if (btnText == null) // Use defaults
+            ShowDialog(lblText, caption, new string[] { "\xdOK", "Cancel" });
+        else ShowDialog(lblText, caption, btnText);
+
+        return _lResults;
+    }
+
+    //--------------------------------------------------------------------------
+    // Add a check box (pass 1st char. of text as escChk for checked default)
+    //--------------------------------------------------------------------------
+    private void AddCheckBox(string text) {
+        CheckBox chkBox = new CheckBox();
+
+        if (text[0] == escChk) { // Esc seq.
+            text = text.Remove(0, 1);
+            chkBox.Checked = true; // Def. to checked
+        }
+        else chkBox.Checked = false;
+
+        chkBox.Text = text;
+        chkBox.AutoSize = true;
+
+        // Expand form if needed
+        chkBox.Left = _margin;
+        int size = chkBox.Width + _margin * 2;
+        if (size > this.Width) this.Width = size;
+        chkBox.Top = GetNextTopPos();
+        size = chkBox.Bottom + _btnSize.Height + _margin * 2;
+        if (size > this.Height) this.Height = size;
+
+        _ctl.Controls.Add(chkBox);
+    }
+
+    //--------------------------------------------------------------------------
+    // Button click handler, stores _btnResult for return. Extra controls get 
+    // stored in _lResults string list.
+    //--------------------------------------------------------------------------
+    private void btn_Click(object sender, EventArgs e) {
+        _btnResult = (string)((Button)sender).Text;
+        _lResults.Add(_btnResult);
+
+        // Get any extra controls
+        foreach (Control ctl in this.Controls) {
+            if (ctl is TextBox) {
+                _lResults.Add(ctl.Text.Trim(new char[] { ' ', '\n', '\r' })); // Trim off extra \n's...
+            }
+            else if (ctl is CheckBox) {
+                string str = ctl.Text;
+                CheckBox chkbox = (CheckBox)ctl;
+                if (chkbox.Checked)
+                    str = str.Insert(0, escChk.ToString()); // Insert code for checked
+                _lResults.Add(str);
+            }
+        }
+        //Application.DoEvents();
+        if (!this.Modal) // Non-modal
+            Cancel(true); 
+        else Close();
+    }
+
+    //--------------------------------------------------------------------------
+    // Returns button result (for non-modal use) and updates progress by perc %
+    //--------------------------------------------------------------------------
+    public string Result(double perc, string text = "") {
+        try {
+            if (_prgBar != null) {
+                if (perc <= 1.0) perc *= 100; // Convert to percentage
+                _prgBar.Value = (int)(perc + 0.5);
+            }
+            if (text != "") _lbl.Text = text;
+            //Application.DoEvents(); // Force events update
+        }
+        catch (Exception) { // Keep from crashing if passed invalid value
+        }
+
+        return _btnResult;
+    }
+
+    //--------------------------------------------------------------------------
+    // Close handler
+    //--------------------------------------------------------------------------
+    public new void Close() {
+        Form1.TheForm().MsgDlg = null; // Reset for form
+        _location = this.Location; // Save user preference
+        base.Close();
+    }
+
+    //--------------------------------------------------------------------------
+    // Clean up any resources being used
+    //--------------------------------------------------------------------------
+    protected override void Dispose(bool disposing) {
+        if (disposing && (components != null)) {
+            components.Dispose();
+        }
+        base.Dispose(disposing);
+    }
+
+    //--------------------------------------------------------------------------
+    // Cancel handler for non-modal
+    //--------------------------------------------------------------------------
+    public void Cancel(bool bAsk = false) {
+        if (bAsk) { // Ask 1st
+            this.Visible = false;   // Disables non-modal dlg
+            string lbl = _lbl.Text; // Save in case continue
+            _location = this.Location; // Save user preference for ShowDialog()
+
+            if (ShowDialog("Cancel the current operation?", this.Text,
+                    "Continue") == "Continue") { // Already has Cancel btn
+                _lbl.Text = lbl; // Restore
+                _buttons.Last().Dispose(); // Continue btn
+                _buttons.Remove(_buttons.Last());
+                this.Visible = true; // Enable non-modal again
+                Form1.TheForm().MsgDlg = this; // Restore for form - Close() nulls
+                return;
+            }
+        }
+
+        _lbl.Text = "Closing...";
+        _btnResult = "Cancel"; // Set to close on next Result() check
+    }
+
+    //--------------------------------------------------------------------------
+    // Returns next available top pos. for an added control
+    //--------------------------------------------------------------------------
+    private int GetNextTopPos() {
+        int top = _ctl.Height - _ctl.ClientSize.Height;
+        if (top == 0) top = _margin;
+
+        foreach (Control ctl in _ctl.Controls) {
+            if (ctl is TextBox || ctl is CheckBox) {
+                if (top < ctl.Bottom + _margin) top = ctl.Bottom + _margin;
+                if (ctl is TextBox) top += 2; // Allow more space
+            }
+        }
+
+        return top;
+    }
+}
+}

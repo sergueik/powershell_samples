@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?define Name = "CustomAction Installer" ?>
+<?define ApplicationVersion = "1.2.3" ?>
+<?define Manufacturer = "Manufacturer" ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="WixWithCustomAction" Language="1033" Version="$(var.ApplicationVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="60468a7d-6485-4e7e-bf82-503213bc43a8">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" InstallPrivileges="limited" Id="*"/>
+    <Media Id="1" Cabinet="Product.cab" EmbedCab="yes"/>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <!-- based on: https://stackoverflow.com/questions/12102771/how-do-i-install-to-localappdata-folder -->
+      <Directory Id="LocalAppDataFolder" Name="AppData">
+        <Directory Id="INSTALLFOLDER" Name="$(var.Name)">
+          <Directory Id="DesktopFolder" Name="DesktopFolder"/>
+          <Component Id="DummyContent" Guid="ba9028ae-0d3b-4b66-8560-f53330736265">
+            <!-- Add the dummy file as content. -->
+            <File Id="DummyFile" Source="Dummy.txt" Vital="yes"/>
+            <RegistryKey Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.Name)">
+              <RegistryValue Name="DummyFile" Value="1" KeyPath="yes" Type="integer"/>
+            </RegistryKey>
+            <RemoveFolder Id="INSTALLFOLDER" On="uninstall"/>
+          </Component>
+        </Directory>
+      </Directory>
+      <!-- Add this directory -->
+      <Directory Id="SystemFolder"/>
+    </Directory>
+    <!-- permachine-->
+    <!--
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder'>
+        <Directory Id='INSTALLFOLDER' Name="$(var.Name)">
+          <Component Id="DummyContent" Guid="ba9028ae-0d3b-4b66-8560-f53330736265">
+            <File Id="DummyFile" KeyPath="yes" Source="Dummy.txt" Vital="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+-->
+    <Feature Id="Complete" Title="WixWithCustomAction" Level="1">
+      <ComponentRef Id="DummyContent"/>
+    </Feature>
+    <!--The source file should be the MyCustomActionProject.CA.dll file, that's why it's constructed this way-->
+    <Binary Id="CustomActionBinary" SourceFile="$(var.CustomAction.TargetDir)$(var.CustomAction.TargetName).CA.dll"/>
+    <!--The DllEntry must be the name of the static method to be called from the custom action project, in our case - MyCustomActionMethod 
+    http://wix.tramontana.co.hu/tutorial/events-and-actions/at-a-later-stage 
+    The Execute attribute will specify the deferred status of our custom action.
+    And finally, HideTarget will allow us to disable logging the parameteres passed to this custom action if security considerations so dictate.-->
+    <CustomAction Id="CustomActionId" BinaryKey="CustomActionBinary" DllEntry="MyCustomActionMethod" Execute="deferred" HideTarget="yes"/>
+    <InstallExecuteSequence>
+      <!--We want to call the custom action before the install finalizes-->
+      <Custom Action="CustomActionId" Before="InstallFinalize"/>
+    </InstallExecuteSequence>
+  </Product>
+</Wix>

@@ -1,0 +1,15 @@
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\WsAppService]
+"Type"=dword:00000010
+"Start"=dword:00000003
+"ErrorControl"=dword:00000000
+"ImagePath"=hex(2):43,3a,5c,50,72,6f,67,72,61,6d,20,46,69,6c,65,73,20,28,78,38,\
+  36,29,5c,57,6f,6e,64,65,72,73,68,61,72,65,5c,57,41,46,5c,32,2e,34,2e,33,2e,\
+  32,34,32,5c,57,73,41,70,70,53,65,72,76,69,63,65,2e,65,78,65,00
+"DisplayName"="Wondershare Application Framework Service"
+"DependOnService"=hex(7):52,50,43,53,53,00,00
+"WOW64"=dword:00000001
+"ObjectName"="LocalSystem"
+"Description"="Wondershare Application Framework Service"
+

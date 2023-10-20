@@ -1,0 +1,7 @@
+*
+!.gitignore
+!license
+!readme.md
+!*.psd1
+!*.psm1
+!lib/*.ps1

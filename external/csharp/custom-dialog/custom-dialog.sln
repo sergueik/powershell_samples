@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# SharpDevelop 5.1
+VisualStudioVersion = 16.0.29025.244
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "Program\Program.csproj", "{B14C2D35-31E9-42D3-AA22-0FDA30F57062}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B14C2D35-31E9-42D3-AA22-0FDA30F57062}.Debug|x86.ActiveCfg = Debug|x86
+		{B14C2D35-31E9-42D3-AA22-0FDA30F57062}.Debug|x86.Build.0 = Debug|x86
+		{B14C2D35-31E9-42D3-AA22-0FDA30F57062}.Release|x86.ActiveCfg = Release|x86
+		{B14C2D35-31E9-42D3-AA22-0FDA30F57062}.Release|x86.Build.0 = Release|x86
+		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Debug|x86.ActiveCfg = Debug|x86
+		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Debug|x86.Build.0 = Debug|x86
+		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Release|x86.ActiveCfg = Release|x86
+		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {140B5D7C-1AEC-4DE6-B100-09DCC30D06A0}
+	EndGlobalSection
+EndGlobal

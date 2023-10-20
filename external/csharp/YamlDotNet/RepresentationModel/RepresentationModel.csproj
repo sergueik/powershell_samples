@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>YamlDotNet.RepresentationModel</RootNamespace>
+    <AssemblyName>RepresentationModel</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>dec187c4</NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AnchorNotFoundException.cs" />
+    <Compile Include="DocumentLoadingState.cs" />
+    <Compile Include="DuplicateAnchorException.cs" />
+    <Compile Include="EmitterState.cs" />
+    <Compile Include="IYamlVisitor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\AnchorAssigner.cs" />
+    <Compile Include="Serialization\AnchorAssigningObjectGraphVisitor.cs" />
+    <Compile Include="Serialization\ChainedEventEmitter.cs" />
+    <Compile Include="Serialization\ChainedObjectGraphVisitor.cs" />
+    <Compile Include="Serialization\CustomSerializationObjectGraphVisitor.cs" />
+    <Compile Include="Serialization\DefaultExclusiveObjectGraphVisitor.cs" />
+    <Compile Include="Serialization\DefaultObjectFactory.cs" />
+    <Compile Include="Serialization\Deserializer.cs" />
+    <Compile Include="Serialization\EmittingObjectGraphVisitor.cs" />
+    <Compile Include="Serialization\INamingConvention.cs" />
+    <Compile Include="Serialization\IObjectFactory.cs" />
+    <Compile Include="Serialization\ITypeDescriptor.cs" />
+    <Compile Include="Serialization\LambdaObjectFactory.cs" />
+    <Compile Include="Serialization\NamingConventions\CamelCaseNamingConvention.cs" />
+    <Compile Include="Serialization\NamingConventions\HyphenatedNamingConvention.cs" />
+    <Compile Include="Serialization\NamingConventions\NullNamingConvention.cs" />
+    <Compile Include="Serialization\NamingConventions\PascalCaseNamingConvention.cs" />
+    <Compile Include="Serialization\NamingConventions\UnderscoredNamingConvention.cs" />
+    <Compile Include="Serialization\NamingConventionTypeDescriptor.cs" />
+    <Compile Include="Serialization\PropertyDescriptor.cs" />
+    <Compile Include="Serialization\ReadableAndWritablePropertiesTypeDescriptor.cs" />
+    <Compile Include="Serialization\ReadablePropertiesTypeDescriptor.cs" />
+    <Compile Include="Serialization\Serializer.cs" />
+    <Compile Include="Serialization\TypeConverter.cs" />
+    <Compile Include="Serialization\WriterEventEmitter.cs" />
+    <Compile Include="Serialization\EventInfo.cs" />
+    <Compile Include="Serialization\FullObjectGraphTraversalStrategy.cs" />
+    <Compile Include="Serialization\IAliasProvider.cs" />
+    <Compile Include="Serialization\IEventEmitter.cs" />
+    <Compile Include="Serialization\IObjectGraphTraversalStrategy.cs" />
+    <Compile Include="Serialization\IObjectGraphVisitor.cs" />
+    <Compile Include="Serialization\IYamlTypeConverter.cs" />
+    <Compile Include="Serialization\IYamlSerializable.cs" />
+    <Compile Include="Serialization\ReflectionUtility.cs" />
+    <Compile Include="Serialization\RoundtripObjectGraphTraversalStrategy.cs" />
+    <Compile Include="Serialization\StreamFragment.cs" />
+    <Compile Include="Serialization\ObjectAnchorCollection.cs" />
+    <Compile Include="Serialization\TagMappings.cs" />
+    <Compile Include="Serialization\TypeAssigningEventEmitter.cs" />
+    <Compile Include="Serialization\YamlAliasAttribute.cs" />
+    <Compile Include="Serialization\YamlAttributesTypeDescriptor.cs" />
+    <Compile Include="Serialization\YamlIgnoreAttribute.cs" />
+    <Compile Include="Serialization\StringExtensions.cs" />
+    <Compile Include="YamlAliasNode.cs" />
+    <Compile Include="YamlDocument.cs" />
+    <Compile Include="YamlMappingNode.cs" />
+    <Compile Include="YamlNode.cs" />
+    <Compile Include="YamlNodeIdentityEqualityComparer.cs" />
+    <Compile Include="YamlScalarNode.cs" />
+    <Compile Include="YamlSequenceNode.cs" />
+    <Compile Include="YamlStream.cs" />
+    <Compile Include="YamlVisitor.cs" />
+    <Compile Include="Serialization\NodeDeserializers\TypeConverterNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\ArrayNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\EnumerableNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\NonGenericListNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\GenericCollectionNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\NonGenericDictionaryNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\GenericDictionaryNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\ObjectNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\ScalarNodeDeserializer.cs" />
+    <Compile Include="Serialization\NodeDeserializers\NullNodeDeserializer.cs" />
+    <Compile Include="Serialization\INodeDeserializer.cs" />
+    <Compile Include="Serialization\INodeTypeResolver.cs" />
+    <Compile Include="Serialization\NodeTypeResolvers\TagNodeTypeResolver.cs" />
+    <Compile Include="Serialization\NodeTypeResolvers\DefaultContainersNodeTypeResolver.cs" />
+    <Compile Include="Serialization\NodeTypeResolvers\TypeNameInTagNodeTypeResolver.cs" />
+    <Compile Include="Serialization\TypeDescriptorSkeleton.cs" />
+    <Compile Include="Serialization\NodeValueDeserializer.cs" />
+    <Compile Include="Serialization\AliasValueDeserializer.cs" />
+    <Compile Include="Serialization\IValueDeserializer.cs" />
+    <Compile Include="Serialization\SerializerState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{d14f219e-1737-4885-8e99-5206dd112673}</Project>
+      <Name>YamlDotNet.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

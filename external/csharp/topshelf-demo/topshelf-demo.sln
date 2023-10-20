@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopshelfDemoService", "TopshelfDemoService\TopshelfDemoService.csproj", "{9C3F12DC-3192-4E4E-9CF7-15CFD568AB15}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopshelfDemo.Client", "TopshelfDemo.Client\TopshelfDemo.Client.csproj", "{6C8D57BD-1708-433A-BD9C-B4B4830663CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9C3F12DC-3192-4E4E-9CF7-15CFD568AB15}.Debug|x86.ActiveCfg = Debug|x86
+		{9C3F12DC-3192-4E4E-9CF7-15CFD568AB15}.Debug|x86.Build.0 = Debug|x86
+		{9C3F12DC-3192-4E4E-9CF7-15CFD568AB15}.Release|x86.ActiveCfg = Release|x86
+		{9C3F12DC-3192-4E4E-9CF7-15CFD568AB15}.Release|x86.Build.0 = Release|x86
+		{6C8D57BD-1708-433A-BD9C-B4B4830663CB}.Debug|x86.ActiveCfg = Debug|x86
+		{6C8D57BD-1708-433A-BD9C-B4B4830663CB}.Debug|x86.Build.0 = Debug|x86
+		{6C8D57BD-1708-433A-BD9C-B4B4830663CB}.Release|x86.ActiveCfg = Release|x86
+		{6C8D57BD-1708-433A-BD9C-B4B4830663CB}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F9E5331-F9E1-475A-B3C5-0249F22B3FB6}
+	EndGlobalSection
+EndGlobal

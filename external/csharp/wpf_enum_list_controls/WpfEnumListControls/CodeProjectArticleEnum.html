@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+	<link type="text/css" rel="stylesheet" href="Codeprojectstyles.css"/>
+	<!-- These styles modify the CodeProject styles mostly regarding color, along with some 
+		readability enhancements for use when you read the article from within the project, 
+		using the Visual Studio "Open in browser" feature. -->
+	<style>
+		/* not included in the actual cp article ===================== */
+		/* give ourselves a 10 pixel padding to space the body from the edge of the screen (this 
+			style won't be included in the article on CP.*/
+		body { padding:10px; color:black;}
+		pre { border: 1px solid darkorange; border-radius:5px; }
+		/* =========================================================== */
+	</style>
+	<style>
+		/* make the colors for all of the headers the same, and set the spacing so that text is 
+			a little closer together */
+		h1, h2, h3, h4, h5, h6 { color: #f90; margin-bottom:0px !important; padding-bottom: 0px !important;line-height:1.1em;}
+		/* make paragraphs flow vertically closer to the previous element */
+		p { margin-top:5px;}
+		/* make a text pre block have different colors (cp-oriented) to differentiate them from 
+			actual code blocks. */
+		.preText { background-color:#dfd; border-color:green; }
+		h1 code,h2 code,h3 code,h4 code,h5 code,h6 code { color:saddlebrown; font-size:inherit; }
+	</style>
+</head>
+<body style="width:700px;">
+
+    <img src="screenshot.jpg" alt="screen shot" />
+	<h2>Introduction</h2>
+	<p>A few days ago, I posted this article, where I described a method for creating an observable collection of 
+    enumerator values for use in a WPF application. In this article, I will be taking that idea to the next logical 
+    level - the creation of list controls dedicated to allowing the selection of enumerator values.</p>
+
+	<p>Initially, the idea was to provide controls with support for any of tthe <code>System</code> enumerators 
+    in C#. That would certainly have been adequate, but as I see it, would have been a mere "half-step" toward 
+    actually being useful. So, I added support for locally defined enumarators as well.</p>
+
+    <p>In my last few articles, I provided both a .Net Framework and a .Net Core version of the code, but quite 
+    frankly, I don't think you guys are really worth that kind of effort (at least, not on my part). Converting to 
+    .Net Core is beyond trivial, especially if you don't use any of the System.Drawing or ADO stuff in the .Net 
+    framework code, so you guys feel free to convert it if you want/need to.</p>
+
+    <h2>What is Provided</h2>
+
+    <p>Since enumerators are essentially one-trick ponies, where the number of useful properties is exactly one 
+    (the name of the enumerator), it made sense to create a <code>ListBox</code> and a <code>ComboBox</code>, 
+    and ignore the <code>ListView</code>. Unless otherwise noted, the feature set below applies to both controls.</p>
+    <ul>
+        <li>For system enumerators, simply specify the enum type name. The control will create and bind the 
+        resulting enumerator collection to the control without you having to do it in the XAML. The following 
+        snippet is the minimal amount of code you need to write to display a <code>ListBox</code> (or 
+        <code>ComboBox</code>) that contains the days of the week. (I know! Amazing, right!?)
+<pre lang="xml">
+&lt;ctrls:EnumListBox x:Name="lbWeekDay" <span class="highlight">EnumTypeName="System.DayOfWeek"</span> /&gt;
+</pre>
+        </li>
+
+        <li>If an enumerator represents flags (decorated with the [Flags] attribute), the <code>ListBox</code> 
+        will automatically become a multi-select <code> ListBox</code> , unless you specify that it shouldn't 
+        by setting the <code>AutoSelectionMode</code> property to <code>false</code> (default value is 
+        <code>true</code>):
+<pre lang="xml">
+&lt;ctrls:EnumListBox x:Name="lbWeekDay" EnumTypeName="System.DayOfWeek" <span class="highlight">AutoSelectMode="false"</span> /&gt;
+</pre>
+        </li>
+
+        <li>You can optionally display the ordinal value of the enumerator with the name by setting the 
+        <code>ShowOrdinalWithName</code> property to <code>true</code> (default value is <code>false</code>).
+<pre lang="xml">
+&lt;ctrls:EnumListBox x:Name="lbWeekDay" EnumTypeName="System.DayOfWeek" <span class="highlight">ShowOrdinalWithName="true"</span> /&gt;
+</pre>
+        </li>
+
+        <li>All underlying types are suppoprted (but it's still up to the develeper to make sure he does stuff that makes sense).
+        </li>
+    </ul>
+
+    <h2>Locally Defined Enumerators</h2>
+
+    <p>I'm sure most of you have implemented your own enumerators, and knowing this, it would be ludicrous to not 
+    provide some way to use these custom controls with your own enumerators. The primary problem with using your own 
+    enumerators with a globally accessible custom control is that the control can't know about something that is 
+    defined for a specific application.</p>
+
+    <p>Since the actual collection used by these controls is defined in the controls' namespace, all you have to 
+    do is instantiate it in your window/user control, like so:</p>
+
+    <p>Given the following enum declaration:</p>
+<pre lang="xml">
+public enum EnumTest1 { One=1, Two, Three, Four, Fifty=50, FiftyOne, FiftyTwo }
+</pre>
+
+    <p>You would instantiate the collection like so:</p>
+<pre lang="xml">
+public EnumItemList Enum1 { get; set; }
+...
+this.Enum1 = new EnumItemList(typeof(EnumTest1), true);
+</pre>
+
+    <p>And then you would manually bind it to the control:</p>
+
+<pre lang="xml">
+&lt;ctrls:EnumComboBox x:Name="cbLocalEnum1" <span class="highlight">ItemsSource="{Binding Path=Enum1}"</span> /&gt;
+</pre>
+
+    <h2>The Code</h2>
+
+    <p>Generally speaking, the <code>EnumComboBox</code> and <code>EnumListBox</code> are the same under the hood. 
+    If I could have found a way to write the code in just one class, I would have. However, the nature of C# 
+    required me to essentially duplicate all of the code in both classes. The only real difference is that the 
+    combo box doesn't support multiple-selection. Because the code is essentially the same, I'm only going to 
+    discuss the <code>EnumListBox</code> in detail. I'm not going to go into the nuances regarding creating a 
+    custom control in WPF because there are countless other offerings available on the internet that describe the 
+    process MUCH better than I ever could. Instead, I'm simply going to tell you what I did, and maybe even why I 
+    did it, if I think the why is important.</p>
+
+    <h3>The EnumItemList Collection and EnumItem Collection Item</h3>
+
+    <p>To make the actual item as useful as possible to the form that uses the control, the enumerator breaks 
+    out a lot of the most useful info into readily accessible properties. This mitigates the burden on the 
+    developer to post-process the selected item in his window/user control.</p>
+
+<pre lang="c#">
+public class EnumItem
+{
+    // The actual value of the enumerator (i.e., DayOfWeek.Monday)
+    public object Value               { get; set; }
+    // The name of the enumerator value (i.e., "Monday")
+    public string Name                { get; set; }
+    // The enumerator type (i.e., DayOfWeek)
+    public Type   EnumType            { get; set; }
+    // The underlying enumerator type (i.e., Int32)
+    public Type   UnderlyingType      { get; set; }
+    // A helper property that determines how the enumartor value is 
+    // displayed in the control
+    public bool   ShowOrdinalWithName { get; set; }
+
+    public EnumItem()
+    {
+        this.ShowOrdinalWithName = false;
+    }
+
+    public override string ToString()
+    {
+        return (this.ShowOrdinalWithName) ? string.Format("({0}) {1}", 
+                                                          Convert.ChangeType(this.Value, this.UnderlyingType), 
+                                                          Name)
+                                          : this.Name;
+    }
+}
+</pre>
+
+    <p>The <code>EnumItemList ObservableCollection</code> that is actually bound to the control is responsible 
+    for creating its own items. It also self-determines whether or not the control can allow multiple selection. 
+    Remember, if you're going to present a local enumartor in the control, you have to instantiate this 
+    collection yourself (an example of doing so has already been provided).</p>
+
+<pre lang="c#">
+public class EnumItemList : ObservableCollection<EnumItem>
+{
+    public bool CanMultiSelect { get; set; }
+
+    public EnumItemList(Type enumType, bool showOrd)
+    {
+        // if the enumerator is decorated with the "Flags" attribute, 
+        // more than one item can be selected at a time.
+        this.CanMultiSelect = enumType.GetCustomAttributes<FlagsAttribute>().Any();
+        // find all of the enumerator's members
+        this.AsObservableEnum(enumType, showOrd);
+    }
+
+    public void AsObservableEnum(Type enumType, bool showOrd)
+    {
+        // if the specified type is not null AND it is actually an 
+        // enum type, we can create the collection
+        if (enumType != null && enumType.IsEnum)
+        {
+            // discover the underlying type (int, long, byte, etc)
+            Type underlyingType = Enum.GetUnderlyingType(enumType);
+
+            // get each enum item and add it to the list
+            foreach (Enum item in enumType.GetEnumValues())
+            {
+                this.Add(new EnumItem()
+                { 
+                    // the name that will probably be displayed in the 
+                    // UI component
+                    Name           = item.ToString(), 
+                    // the actual enum value (DayofWeek.Monday)
+                    Value          = item, 
+                    // the enum type
+                    EnumType       = enumType,
+                    // the underlying type (int, long, byte, etc)
+                    UnderlyingType = underlyingType,
+                    ShowOrdinalWithName = showOrd,
+                });
+            }
+        }
+    }
+}
+</pre>
+
+    <h3>Attached Properties</h3>
+
+    <p>For pretty much every custom control you'll ever write, you're going to add some properties that are not 
+    available in the base class, fo the sole purpose of enabling your custom functionality, and 
+    <code>EnumListBox</code> is certainly no different.</p>
+
+<pre lang="c#">
+//---------------------------------------------------------
+// This property allows you to specify the type name for system 
+// enumerators (it's pointless to try using local enumerators 
+// here because the control won't be able to discover its 
+// members.)
+public static DependencyProperty EnumTypeNameProperty = 
+	DependencyProperty.Register("EnumTypeName", 
+                                typeof(string), 
+                                typeof(EnumListBox), 
+                                new PropertyMetadata(null));
+public string EnumTypeName
+{
+	get { return (string)GetValue(EnumTypeNameProperty); }
+	set { SetValue(EnumTypeNameProperty, value); }
+}
+
+//---------------------------------------------------------
+// This property allows you to turn off the automatic 
+// determination of whether or not to use multiple selection. 
+// This only affects list boxes because combo boxes do not 
+// support multiple-selection. The default value is true.
+public static DependencyProperty AutoSelectionModeProperty = 
+	DependencyProperty.Register("AutoSelectionMode", 
+                                typeof(bool), 
+                                typeof(EnumListBox), 
+                                new PropertyMetadata(true));
+public bool AutoSelectionMode
+{
+	get { return (bool)GetValue(AutoSelectionModeProperty); }
+	set { SetValue(AutoSelectionModeProperty, value); }
+}
+
+//---------------------------------------------------------
+// This property causes the displayed enumerator name to be 
+// pre-pended with the ordnial value of the enumerator. The 
+// default value is false.
+public static DependencyProperty ShowOrdinalWithNameProperty = 
+	DependencyProperty.Register("ShowOrdinalWithName", 
+                                typeof(bool), 
+                                typeof(EnumListBox), 
+                                new PropertyMetadata(false));
+public bool ShowOrdinalWithName
+{
+	get { return (bool)GetValue(ShowOrdinalWithNameProperty); }
+	set { SetValue(ShowOrdinalWithNameProperty, value); }
+}
+</pre>
+
+    <p>There are a couple of helper properties as well:</p>
+<pre lang="c#">
+// This property represents the auto-created collection (for 
+// system enums only).
+public EnumItemList EnumList { get; set; }
+
+// This property provides the actual Type based on the enum 
+// type name
+public Type EnumType
+{
+    get 
+    { 
+        Type value = (string.IsNullOrEmpty(this.EnumTypeName)) 
+                     ? null : Type.GetType(this.EnumTypeName);  
+        return value;
+    }
+}
+</pre>
+    <p>The only thing left is how the control reacts to being loaded. I use the Loaded event to determine 
+    what to do as far as binding the collection. When I went to add support for in-XAML binding to the 
+    <code>ItemsSource</code>, I felt like it was necessary to verify that the bound collection was of the 
+    type <code>EnumItemList</code>, and  found that I had to get the parent window's <code>DataContext</code> in 
+    order to do that.</p>
+<pre lang="c#">
+private void EnumListBox_Loaded(object sender, RoutedEventArgs e)
+{
+    // avoid errors being displayed in designer
+    if (!DesignerProperties.GetIsInDesignMode(this))
+    {
+        // if the enum type is not null, the enum must be a system enum, so we can 
+        // populate/bind automatically
+        if (this.EnumType != null)
+        {
+            // create the list of enums
+            this.EnumList = new EnumItemList(this.EnumType, this.ShowOrdinalWithName);
+
+            // create and set the binding
+            Binding binding    = new Binding() { Source=this.EnumList };
+            this.SetBinding(ListBox.ItemsSourceProperty, binding);
+        }
+        else
+        {
+            // otherwise, the developer specifically set the binding, so we have 
+            // to get the datacontext from the parent content control (window or 
+            // usercontrol) so we can use the specified collection
+            this.DataContext = EnumGlobal.FindParent<ContentControl>(this).DataContext;
+
+            // before we use it, make sure it's the correct type (it must be a 
+            // EnumItemList object)
+            if (!(this.ItemsSource is EnumItemList))
+            {
+                throw new InvalidCastException("The bound collection must be of type EnumItemList.");
+            }
+        }
+        // no matter what happens, see if we can set the list to mult5iple selection
+        if (this.ItemsSource != null)
+        {
+            if (this.AutoSelectionMode)
+            {
+                this.SelectionMode = (((EnumItemList)(this.ItemsSource)).CanMultiSelect) 
+                                     ? SelectionMode.Multiple : SelectionMode.Single;
+            }
+        }
+    }
+}
+</pre>
+
+    <h2>Using the code</h2>
+
+    <p>Using the controls is pretty easy, especially considering you don't have to implement the collection 
+    they use. The property you create in your window doesn't even have to use <code>INotifyPropertyChanged</code>, 
+    because once instantiated, the collection never changes. In cfact, I'f you're binding to a system enumerator, 
+    you don't even have to instantiate the collection.</p>
+
+<pre lang="c#">
+public partial class MainWindow : Window
+{
+    public EnumItemList Enum1 { get; set; }
+
+    public MainWindow()
+    {
+        this.InitializeComponent();
+        this.DataContext = this;
+
+        // we only have to do this for locally implemented enumerators.
+        this.Enum1 = new EnumItemList(typeof(EnumTest1), true);
+    }
+    ...
+}
+</pre>
+
+    <p>The XAML is equally simple, in that short of styling elements and the desire to handle events from 
+    the control, all you have to do is apply the appropriate binding</p>
+
+<pre lang="c#">
+&lt;!-- presenting a System.enum - note that I included the namespace --&gt;
+&lt;ctrls:EnumListBox x:Name="lbWeekDay" EnumTypeName="System.DayOfWeek" /&gt;
+
+&lt;!-- presenting a  locally defined enum - instead of specifying the enum type 
+name, you bind the collection that you instantiated in the parent window/control --&gt;
+&gt;ctrls:EnumListBox x:Name="lbLocalEnum1" ItemsSource="{Binding Path=Enum1}" /&gt;
+</pre>
+
+    <h2>Closing Statements</h2>
+
+    <p>It's rare that you have an opportunity to create a control as specifically tied to the data as I have 
+    here. Most of the time, you have to write to a larger purpose. I was originally just going to allow System 
+    enumerators, but after thinking about it for a while, I decided to add support for local enumerators. In 
+    doing so, I added just a few lines of code, and I practically doubled the controls' usefulness.</p>
+
+    <p>Many people may claim that "future-proofing" is a waste of time, because there's a good chance you'll 
+    never need the code that supports the paradign. Honestly? That's true. However, I think it's easier to 
+    future-proof than to come back later and add code, because as a rule, you are almost never afforded the 
+    time to go back and improve code. </p>
+
+    <h2>History</h2>
+    <ul>
+        <li><b>2021.02.22</b> - Initial publication.<br/>&nbsp;</li>
+    </ul>
+</body>
+</html>

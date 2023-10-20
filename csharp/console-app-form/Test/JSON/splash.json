@@ -1,0 +1,59 @@
+{
+  "Width": 80,
+  "Height": 40,
+  "Name": "Splash",
+  "Lines": {
+    "Details": [
+      {
+        "Orientation": 1,
+        "Colour": 0,
+        "Location": {
+          "X": 10,
+          "Y": 20
+        },
+        "Length": 0
+      },
+      {
+        "Orientation": 1,
+        "Colour": 1,
+        "Location": {
+          "X": 44,
+          "Y": 55
+        },
+        "Length": 100
+      }
+    ]
+  },
+  "Labels": {
+    "Details": [
+      {
+        "Foreground": 10,
+        "Background": 0,
+        "Location": {
+          "Location": {
+            "X": 14,
+            "Y": 12
+          }
+        },
+        "Name": "lblMessage",
+        "Text": "Back to the future...",
+        "Length": 29
+      }
+    ]
+  },
+  "Textboxes": {
+    "Details": [
+      {
+        "Name": "txtLoginID",
+        "Text": "Login",
+        "Length": 20,
+        "ForeColour": "DarkGreen",
+        "BackColour": "Red	",
+        "Location": {
+          "X": 20,
+          "Y": 8
+        }
+      }
+    ]
+  }
+}

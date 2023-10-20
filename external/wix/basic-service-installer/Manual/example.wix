@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="{2D00166E-A14A-4F24-B94F-3D5E9ED21D65}" Name="MyApp" Language="1033" Version="1.0.0.0" Manufacturer="MyCompany" UpgradeCode="{8F800905-91E8-4234-AD80-A485F156FE1B}">
+	  <!-- based on: example from https://www.advancedinstaller.com/versus/wix-toolset/wix-installer-add-windows-services.html -->
+    <Package InstallerVersion="400" Compressed="yes" InstallScope="perMachine"/>
+    <Media Id="1" Cabinet="MyAppCAB.cab" EmbedCab="yes"/>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="MyCompany" Name="MyCompany">
+          <Directory Id="INSTALLDIR" Name="MyApp">
+            <Component Id="ReadmeComponent" Guid="{2D00166E-AAAA-4F24-B94F-3D5E9ED21D65}">
+              <File Id="Readme" Name="Readme.txt" DiskId="1" Source="Readme.txt"/>
+            </Component>
+            <Component Id="WindowsServicesComponent" Guid="{3D00166E-AAAA-4F24-B94F-3D5E9ED21D66}">
+              <File Id="WindowsServicesSample.exe" Name="WindowsServicesSample.exe" DiskId="1" Source="WindowsServicesSample.exe"/>
+              <ServiceInstall Id="WindowsServicesSample" Name="WindowsServicesSample" DisplayName="WindowsServicesSample" Description="Example Windows Services" Start="auto" Type="ownProcess" ErrorControl="normal" Account="LocalSystem" Arguments="/ARGUMENTS LIST" Vital="yes" Interactive="no"/>
+              <ServiceControl Id="WindowsServicesSample" Name="WindowsServicesSample" Start="install" Stop="both" Remove="uninstall" Wait="yes"/>
+              <ServiceConfig ServiceName="WindowsServicesSample" OnInstall="yes" DelayedAutoStart="yes"/>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+    <Feature Id="MyFeature" Title="My 1st Feature" Level="1">
+      <ComponentRef Id="ReadmeComponent"/>
+      <ComponentRef Id="WindowsServicesComponent"/>
+    </Feature>
+  </Product>
+</Wix>

@@ -1,0 +1,614 @@
+https://blogs.msmvps.com/bsonnino/2016/11/24/alternate-data-streams-in-c/
+https://stackoverflow.com/questions/604960/ntfs-alternate-data-streams-net
+https://github.com/bsonnino/ADSViewer  - uses Trinet.Core.IO.Ntfs assembly 
+https://blogs.msdn.microsoft.com/oldnewthing/20131104-00/?p=2753 - Manipulating the zone identifier
+https://www.softfluent.com/documentation/CodeFluent.Runtime~CodeFluent.Runtime.BinaryServices.NtfsAlternateStream_members.html
+https://www.codeproject.com/Articles/9387/Manipulate-Alternate-Data-Streams
+
+03/14/2018  01:13 PM       189,756,259 jdk-8u161-linux-x64.tar.gz
+                                    26 jdk-8u161-linux-x64.tar.gz:Zone.Identifier:$DATA
+
+Get-Content -Path .\jdk-8u161-linux-x64.tar.gz -Stream Zone.Identifier
+[ZoneTransfer]
+ZoneId=3
+
+# Microsoft is helping to kill mother nature.
+# P.O.C. code fragment:
+
+Add-Type @"
+
+using System.Runtime.InteropServices;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var mainStream = NativeMethods.CreateFileW(
+            "testfile",
+            NativeConstants.GENERIC_WRITE,
+            NativeConstants.FILE_SHARE_WRITE,
+            IntPtr.Zero,
+            NativeConstants.OPEN_ALWAYS,
+            0,
+            IntPtr.Zero);
+
+        var stream = NativeMethods.CreateFileW(
+            "testfile:stream",
+            NativeConstants.GENERIC_WRITE,
+            NativeConstants.FILE_SHARE_WRITE,
+            IntPtr.Zero,
+            NativeConstants.OPEN_ALWAYS,
+            0,
+            IntPtr.Zero);
+    }
+}
+
+public partial class NativeMethods
+{
+
+    /// Return Type: HANDLE->void*
+    ///lpFileName: LPCWSTR->WCHAR*
+    ///dwDesiredAccess: DWORD->unsigned int
+    ///dwShareMode: DWORD->unsigned int
+    ///lpSecurityAttributes: LPSECURITY_ATTRIBUTES->_SECURITY_ATTRIBUTES*
+    ///dwCreationDisposition: DWORD->unsigned int
+    ///dwFlagsAndAttributes: DWORD->unsigned int
+    ///hTemplateFile: HANDLE->void*
+    [DllImportAttribute("kernel32.dll", EntryPoint = "CreateFileW")]
+    public static extern System.IntPtr CreateFileW(
+        [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string lpFileName, 
+        uint dwDesiredAccess, 
+        uint dwShareMode, 
+        [InAttribute()] System.IntPtr lpSecurityAttributes, 
+        uint dwCreationDisposition, 
+        uint dwFlagsAndAttributes, 
+        [InAttribute()] System.IntPtr hTemplateFile
+    );
+
+}
+
+
+public partial class NativeConstants
+{
+
+    /// GENERIC_WRITE -> (0x40000000L)
+    public const int GENERIC_WRITE = 1073741824;
+
+    /// FILE_SHARE_DELETE -> 0x00000004
+    public const int FILE_SHARE_DELETE = 4;
+
+    /// FILE_SHARE_WRITE -> 0x00000002
+    public const int FILE_SHARE_WRITE = 2;
+
+    /// FILE_SHARE_READ -> 0x00000001
+    public const int FILE_SHARE_READ = 1;
+
+    /// OPEN_ALWAYS -> 4
+    public const int OPEN_ALWAYS = 4;
+}
+
+[SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+public sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid {
+
+    private SafeFindHandle() : base(true) { }
+
+    protected override bool ReleaseHandle() {
+        return FindClose(this.handle);
+    }
+
+    [DllImport("kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+    private static extern bool FindClose(IntPtr handle);
+
+}
+
+public class FileStreamSearcher {
+    private const int ERROR_HANDLE_EOF = 38;
+    private enum StreamInfoLevels { FindStreamInfoStandard = 0 }
+
+    [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern SafeFindHandle FindFirstStreamW(string lpFileName, StreamInfoLevels InfoLevel, [In, Out, MarshalAs(UnmanagedType.LPStruct)] WIN32_FIND_STREAM_DATA lpFindStreamData, uint dwFlags);
+
+    [DllImport("kernel32.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool FindNextStreamW(SafeFindHandle hndFindFile, [In, Out, MarshalAs(UnmanagedType.LPStruct)] WIN32_FIND_STREAM_DATA lpFindStreamData);
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    private class WIN32_FIND_STREAM_DATA {
+        public long StreamSize;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 296)]
+        public string cStreamName;
+    }
+
+    public static IEnumerable<string> GetStreams(FileInfo file) {
+        if (file == null) throw new ArgumentNullException("file");
+        WIN32_FIND_STREAM_DATA findStreamData = new WIN32_FIND_STREAM_DATA();
+        SafeFindHandle handle = FindFirstStreamW(file.FullName, StreamInfoLevels.FindStreamInfoStandard, findStreamData, 0);
+        if (handle.IsInvalid) throw new Win32Exception();
+        try {
+            do {
+                yield return findStreamData.cStreamName;
+            } while (FindNextStreamW(handle, findStreamData));
+            int lastError = Marshal.GetLastWin32Error();
+            if (lastError != ERROR_HANDLE_EOF) throw new Win32Exception(lastError);
+        } finally {
+            handle.Dispose();
+        }
+    }
+}
+
+public enum StreamType {
+    Data = 1,
+    ExternalData = 2,
+    SecurityData = 3,
+    AlternateData = 4,
+    Link = 5,
+    PropertyData = 6,
+    ObjectID = 7,
+    ReparseData = 8,
+    SparseDock = 9
+}
+
+public struct StreamInfo {
+    public StreamInfo(string name, StreamType type, long size) {
+        Name = name;
+        Type = type;
+        Size = size;
+    }
+    readonly string Name;
+    public readonly StreamType Type;
+    public readonly long Size;
+}
+
+public class FileStreamSearcher {
+    [DllImport("kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool BackupRead(SafeFileHandle hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, [MarshalAs(UnmanagedType.Bool)] bool bAbort, [MarshalAs(UnmanagedType.Bool)] bool bProcessSecurity, ref IntPtr lpContext);[DllImport("kernel32.dll")]
+
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool BackupSeek(SafeFileHandle hFile, uint dwLowBytesToSeek, uint dwHighBytesToSeek, out uint lpdwLowByteSeeked, out uint lpdwHighByteSeeked, ref IntPtr lpContext); public static IEnumerable<StreamInfo> GetStreams(FileInfo file) {
+        const int bufferSize = 4096;
+        using (FileStream fs = file.OpenRead()) {
+            IntPtr context = IntPtr.Zero;
+            IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+            try {
+                while (true) {
+                    uint numRead;
+                    if (!BackupRead(fs.SafeFileHandle, buffer, (uint)Marshal.SizeOf(typeof(Win32StreamID)), out numRead, false, true, ref context)) throw new Win32Exception();
+                    if (numRead > 0) {
+                        Win32StreamID streamID = (Win32StreamID)Marshal.PtrToStructure(buffer, typeof(Win32StreamID));
+                        string name = null;
+                        if (streamID.dwStreamNameSize > 0) {
+                            if (!BackupRead(fs.SafeFileHandle, buffer, (uint)Math.Min(bufferSize, streamID.dwStreamNameSize), out numRead, false, true, ref context)) throw new Win32Exception(); name = Marshal.PtrToStringUni(buffer, (int)numRead / 2);
+                        }
+                        yield return new StreamInfo(name, streamID.dwStreamId, streamID.Size);
+                        if (streamID.Size > 0) {
+                            uint lo, hi; BackupSeek(fs.SafeFileHandle, uint.MaxValue, int.MaxValue, out lo, out hi, ref context);
+                        }
+                    } else break;
+                }
+            } finally {
+                Marshal.FreeHGlobal(buffer);
+                uint numRead;
+                if (!BackupRead(fs.SafeFileHandle, IntPtr.Zero, 0, out numRead, true, false, ref context)) throw new Win32Exception();
+            }
+        }
+    }
+}
+"@
+
+Add-Type @"
+
+// Further information at:
+// http://support.microsoft.com/default.aspx?scid=kb;en-us;105763
+
+using System;
+using System.IO;
+
+namespace AlternateDataStreams {
+   /// <summary>
+   /// A class with static methods for reading and writing to "hidden" streams in
+   /// a normal file.  We have to drop down to interop here because MS managed code
+   /// will not allow colons in the filename, which specify the stream within the
+   /// file to access.  This only works on NTFS drives, not FAT or FAT32 drives.
+   /// 
+   /// Sean Michael Murphy, 2005.
+   /// </summary>
+	public class ADSFile {
+      #region Win32 Constants
+      private  const    uint     GENERIC_WRITE                 = 0x40000000;
+      private  const    uint     GENERIC_READ                  = 0x80000000;
+
+      private  const    uint     FILE_SHARE_READ               = 0x00000001;
+      private  const    uint     FILE_SHARE_WRITE              = 0x00000002;
+
+      private  const    uint     CREATE_NEW                    = 1;
+      private  const    uint     CREATE_ALWAYS                 = 2;
+      private  const    uint     OPEN_EXISTING                 = 3;
+      private  const    uint     OPEN_ALWAYS                   = 4;
+      #endregion
+
+      #region Win32 API Defines
+      [System.Runtime.InteropServices.DllImport("kernel32", SetLastError=true)]
+      static extern  uint GetFileSize(uint   handle,
+                                      IntPtr size);
+
+      [System.Runtime.InteropServices.DllImport("kernel32", SetLastError=true)]
+      static extern  uint ReadFile(uint   handle,
+                                   byte[] buffer,
+                                   uint   byteToRead,
+                               ref uint   bytesRead,
+                                   IntPtr lpOverlapped);
+
+      [System.Runtime.InteropServices.DllImport("kernel32", SetLastError=true)]
+      static extern  uint CreateFile(string  filename,
+                                     uint    desiredAccess,
+                                     uint    shareMode,
+                                     IntPtr  attributes,
+                                     uint    creationDisposition,
+                                     uint    flagsAndAttributes,
+                                     IntPtr  templateFile);
+
+      [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+      static extern bool WriteFile(uint   hFile,
+                                   byte[] lpBuffer,
+                                   uint   nNumberOfBytesToWrite,
+                               ref uint   lpNumberOfBytesWritten,
+                                   IntPtr lpOverlapped);
+
+      [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+      static extern bool CloseHandle(uint hFile);
+      #endregion
+
+      #region ctors
+      /// <summary>
+      /// Private constructor.  No instances of the class can be created.
+      /// </summary>
+      private ADSFile() {}
+      #endregion
+
+      #region Public Static Methods
+      /// <summary>
+      /// Method called when an alternate data stream must be read from.
+      /// </summary>
+      /// <param name="file">The fully qualified name of the file from which
+      /// the ADS data will be read.</param>
+      /// <param name="stream">The name of the stream within the "normal" file
+      /// from which to read.</param>
+      /// <returns>The contents of the file as a string.  It will always return
+      /// at least a zero-length string, even if the file does not exist.</returns>
+      public static string Read
+                          (string      file,
+                           string      stream) {
+         uint     fHandle  = CreateFile(file + ":" + stream,   // Filename
+                                        GENERIC_READ,          // Desired access
+                                        FILE_SHARE_READ,       // Share more
+                                        IntPtr.Zero,           // Attributes
+                                        OPEN_EXISTING,         // Creation attributes
+                                        0,                     // Flags and attributes
+                                        IntPtr.Zero);          // Template file
+
+         // if the handle returned is uint.MaxValue, the stream doesn't exist.
+         if (fHandle != uint.MaxValue) {
+            // A handle to the stream within the file was created successfully.
+            uint     size           = GetFileSize(fHandle, IntPtr.Zero);
+            byte[]   buffer         = new byte[size];
+            uint     read           = uint.MinValue;
+
+            uint     result        = ReadFile(fHandle,         // Handle
+                                              buffer,          // Data buffer
+                                              size,            // Bytes to read
+                                          ref read,            // Bytes actually read
+                                              IntPtr.Zero);    // Overlapped
+
+            CloseHandle(fHandle);
+
+            // Convert the bytes read into an ASCII string and return it to the caller.
+            return System.Text.Encoding.ASCII.GetString(buffer);
+         } else
+			   throw new AlternateDataStreams.StreamNotFoundException(file, stream);
+      }
+
+      /// <summary>
+      /// The static method to call when data must be written to a stream.
+      /// </summary>
+      /// <param name="data">The string data to embed in the stream in the file</param>
+      /// <param name="file">The fully qualified name of the file with the
+      /// stream into which the data will be written.</param>
+      /// <param name="stream">The name of the stream within the normal file to
+      /// write the data.</param>
+      /// <returns>An unsigned integer of how many bytes were actually written.</returns>
+      public static uint   Write
+                          (string      data, 
+                           string      file,
+                           string      stream) {
+         // Convert the string data to be written to an array of ascii characters.
+         byte[]   barData           = System.Text.Encoding.ASCII.GetBytes(data);
+         uint     nReturn           = 0;
+
+         uint fHandle = CreateFile(file + ":" + stream,        // File name
+                                   GENERIC_WRITE,              // Desired access
+                                   FILE_SHARE_WRITE,           // Share mode
+                                   IntPtr.Zero,                // Attributes
+                                   CREATE_ALWAYS,              // Creation disposition
+                                   0,                          // Flags and attributes
+                                   IntPtr.Zero);               // Template file
+
+         bool  bOK = WriteFile(fHandle,                        // Handle
+                               barData,                        // Data buffer
+                         (uint)barData.Length,                 // Buffer size
+                           ref nReturn,                        // Bytes written
+                               IntPtr.Zero);                   // Overlapped
+
+         CloseHandle(fHandle);
+
+         // Throw an exception if the data wasn't written successfully.
+         if (!bOK)
+            throw new System.ComponentModel.Win32Exception(System.Runtime.InteropServices.Marshal.GetLastWin32Error());
+
+         return nReturn;
+      }
+      #endregion
+	}
+	
+   /// <summary>
+   /// Class to allow stream read operations to raise specific errors if the stream
+   /// is not found in the file.
+   /// </summary>
+	public	class	StreamNotFoundException		:	System.IO.FileNotFoundException {
+      #region Private Members
+		private		string		_stream		= string.Empty;
+      #endregion
+
+      #region ctors
+      /// <summary>
+      /// Constructor called with the name of the file and stream which was
+      /// unsuccessfully opened.
+      /// </summary>
+      /// <param name="file">Fully qualified name of the file in which the stream
+      /// was supposed to reside.</param>
+      /// <param name="stream">Stream within the file to open.</param>
+		public	StreamNotFoundException
+			     (string		file,
+			      string		stream) : base(string.Empty, file) {
+			_stream = stream;
+		}
+      #endregion
+
+      #region Public Properties
+      /// <summary>
+      /// Read-only property to allow the user to query the exception to determine
+      /// the name of the stream that couldn't be found.
+      /// </summary>
+      public	string	Stream {
+         get {
+            return _stream;
+         }
+      }
+      #endregion
+
+      #region Overridden Properties
+      /// <summary>
+      /// Overridden Message property to return a concise string describing the
+      /// exception.
+      /// </summary>
+		public override string Message {
+			get {
+				return "Stream \"" + _stream + "\" not found in \"" + base.FileName + "\"";
+			}
+		}
+      #endregion
+	}
+}
+"@
+
+# http://www.dreamincode.net/forums/topic/90666-reading-and-writing-alternate-streams-in-c%23/
+Add-Type @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
+
+
+
+namespace AlternateStreamsTutorial
+{
+	class PInvokeWin32Api
+	{
+		#region constants
+		//
+		// these are constants used by the Win32 api functions.  They can be found in the documentation and header files.
+		//
+
+		public const UInt32 GENERIC_READ = 0x80000000;
+		public const UInt32 GENERIC_WRITE = 0x40000000;
+		public const UInt32 FILE_SHARE_READ = 0x00000001;
+		public const UInt32 FILE_SHARE_WRITE = 0x00000002;
+		public const UInt32 FILE_ATTRIBUTE_DIRECTORY = 0x00000010;
+		public const UInt32 CREATE_NEW = 1;
+		public const UInt32 CREATE_ALWAYS = 2;
+		public const UInt32 OPEN_EXISTING = 3;
+		public const UInt32 OPEN_ALWAYS = 4;
+		public const UInt32 TRUNCATE_EXISTING = 5;
+		#endregion
+		#region dll imports
+
+		//
+		// DllImport statements identify specific functions and declare their C# function signature
+		//
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern IntPtr CreateFile(
+			string lpFileName,
+			uint dwDesiredAccess,
+			uint dwShareMode,
+			IntPtr lpSecurityAttributes,
+			uint dwCreationDisposition,
+			uint dwFlagsAndAttributes,
+			IntPtr hTemplateFile);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool CloseHandle(
+			IntPtr hObject);
+		[DllImport("kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool GetFileInformationByHandle(
+			IntPtr hFile,
+			out BY_HANDLE_FILE_INFORMATION lpFileInformation);
+		[DllImport("kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool DeleteFile(
+			string fileName);
+		[DllImport("kernel32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool ReadFile(
+			IntPtr hFile,
+			IntPtr lpBuffer,
+			uint nNumberOfBytesToRead,
+			out uint lpNumberOfBytesRead,
+			IntPtr lpOverlapped);
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool WriteFile(
+			IntPtr hFile,
+			IntPtr bytes,
+			uint nNumberOfBytesToWrite,
+			out uint lpNumberOfBytesWritten,
+			int overlapped);
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool WriteFile(
+			IntPtr hFile,
+			byte[] lpBuffer,
+			uint nNumberOfBytesToWrite,
+			out uint lpNumberOfBytesWritten,
+			int overlapped);
+		[DllImport("kernel32.dll")]
+		public static extern void ZeroMemory(IntPtr ptr, int size);
+		#endregion
+		#region structures
+		//
+		// This section declares the structures used by the Win32 functions so that the information can be accessed by C# code
+		//
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public struct BY_HANDLE_FILE_INFORMATION
+		{
+			public uint FileAttributes;
+			public FILETIME CreationTime;
+			public FILETIME LastAccessTime;
+			public FILETIME LastWriteTime;
+			public uint VolumeSerialNumber;
+			public uint FileSizeHigh;
+			public uint FileSizeLow;
+			public uint NumberOfLinks;
+			public uint FileIndexHigh;
+			public uint FileIndexLow;
+		}
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public struct FILETIME
+		{
+			public uint DateTimeLow;
+			public uint DateTimeHigh;
+		}
+		#endregion
+
+		#region functions
+		//
+		// These are the functions in C# that wrap the Win32 functions
+		//
+
+		//
+		// this functions writes the string text to the alternate stream named altStreamName of the file whose path is currentfile
+		//
+		public static void WriteAlternateStream(string currentfile, string altStreamName, string text)
+		{
+			string altStream = currentfile + ":" + altStreamName;
+			IntPtr txtBuffer = IntPtr.Zero;
+			IntPtr hFile = IntPtr.Zero;
+			DeleteFile(altStream);
+			try {
+				//
+				// call CreateFile
+				//
+				hFile = CreateFile(altStream, GENERIC_WRITE, 0, IntPtr.Zero,
+					CREATE_ALWAYS, 0, IntPtr.Zero);
+				if (-1 != hFile.ToInt32()) {  // check the return code for success
+					txtBuffer = Marshal.StringToHGlobalUni(text);
+					uint nBytes, count;
+					nBytes = (uint)text.Length;
+					bool bRtn = WriteFile(hFile, txtBuffer, sizeof(char) * nBytes, out count, 0);
+					if (!bRtn) {
+						if ((sizeof(char) * nBytes) != count) {
+							throw new Exception(string.Format("Bytes written {0} should be {1} for file {2}.",
+								count, sizeof(char) * nBytes, altStream));
+						} else {
+							throw new Exception("WriteFile() returned false");
+						}
+					}
+				} else {
+					throw new Win32Exception(Marshal.GetLastWin32Error());
+				}
+			} catch (Exception exception) {
+				string msg = string.Format("Exception caught in WriteAlternateStream()\n  '{0}'\n  for file '{1}'.",
+					             exception.Message, altStream);
+			} finally {
+				CloseHandle(hFile);
+				hFile = IntPtr.Zero;
+				Marshal.FreeHGlobal(txtBuffer);
+				GC.Collect();
+			}
+		}
+
+		//
+		// this function reads the alternate stream named altStreamName of the file whose path is currentfile and returns the contents as a string
+		//
+		public static string ReadAlternateStream(string currentfile, string altStreamName)
+		{
+			IntPtr hFile = IntPtr.Zero;
+			string returnstring = string.Empty;
+			string altStream = currentfile + ":" + altStreamName;
+			IntPtr buffer = IntPtr.Zero;
+			try {
+				hFile = CreateFile(altStream, GENERIC_READ, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+				if (-1 != hFile.ToInt32()) {
+					buffer = Marshal.AllocHGlobal(1000 * sizeof(char));
+					ZeroMemory(buffer, 1000 * sizeof(char));
+					uint nBytes;
+					bool bRtn = ReadFile(hFile, buffer, 1000 * sizeof(char), out nBytes, IntPtr.Zero);
+					if (bRtn) {
+						if (nBytes > 0) {
+							returnstring = Marshal.PtrToStringAuto(buffer);
+						} else {
+							throw new Exception("ReadFile() returned true but read zero bytes");
+						}
+					} else {
+						if (nBytes <= 0) {
+							throw new Exception("ReadFile() read zero bytes.");
+						} else {
+							throw new Exception("ReadFile() returned false");
+						}
+					}
+				} else {
+					Exception excptn = new Win32Exception(Marshal.GetLastWin32Error());
+					if (!excptn.Message.Contains("cannot find the file")) {
+						throw excptn;
+					}
+				}
+
+			} catch (Exception exception) {
+				string msg = string.Format("Exception caught in ReadAlternateStream(), '{0}'\n  for file '{1}'.",
+					             exception.Message, currentfile);
+			} finally {
+				CloseHandle(hFile);
+				hFile = IntPtr.Zero;
+				if (buffer != IntPtr.Zero) {
+					Marshal.FreeHGlobal(buffer);
+				}
+				GC.Collect();
+			}
+			return returnstring;
+		}
+		#endregion
+	}
+}
+"@

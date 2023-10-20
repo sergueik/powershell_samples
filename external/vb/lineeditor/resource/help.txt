@@ -1,0 +1,7 @@
+Delete                      [startline][,endline]D
+End (save file)             E
+Insert                      [line]I
+List                        [startline][,endline]L
+Quit (throw away changes)   Q
+Write                       W
+Edit line                   line#

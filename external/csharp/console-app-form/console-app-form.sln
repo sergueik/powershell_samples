@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# SharpDevelop 5.1
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "Program\Program.csproj", "{1F54D52F-0838-4DA9-B248-6597C8F98E04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{1C9AC6F8-469D-4725-BAF1-9BD4332ED648}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{144AB4E3-58AC-46D2-B6F8-68BADC1E890F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F54D52F-0838-4DA9-B248-6597C8F98E04}.Debug|x86.ActiveCfg = Debug|x86
+		{1F54D52F-0838-4DA9-B248-6597C8F98E04}.Debug|x86.Build.0 = Debug|x86
+		{1F54D52F-0838-4DA9-B248-6597C8F98E04}.Release|x86.ActiveCfg = Release|x86
+		{1F54D52F-0838-4DA9-B248-6597C8F98E04}.Release|x86.Build.0 = Release|x86
+		{1C9AC6F8-469D-4725-BAF1-9BD4332ED648}.Debug|x86.ActiveCfg = Debug|x86
+		{1C9AC6F8-469D-4725-BAF1-9BD4332ED648}.Debug|x86.Build.0 = Debug|x86
+		{1C9AC6F8-469D-4725-BAF1-9BD4332ED648}.Release|x86.ActiveCfg = Release|x86
+		{1C9AC6F8-469D-4725-BAF1-9BD4332ED648}.Release|x86.Build.0 = Release|x86
+		{144AB4E3-58AC-46D2-B6F8-68BADC1E890F}.Debug|x86.ActiveCfg = Debug|x86
+		{144AB4E3-58AC-46D2-B6F8-68BADC1E890F}.Debug|x86.Build.0 = Debug|x86
+		{144AB4E3-58AC-46D2-B6F8-68BADC1E890F}.Release|x86.ActiveCfg = Release|x86
+		{144AB4E3-58AC-46D2-B6F8-68BADC1E890F}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BCBD6E9E-6744-43FD-A4BF-79CE55767E31}
+	EndGlobalSection
+EndGlobal

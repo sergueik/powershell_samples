@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="System.Windows.Window" Title="WPF" Height="100" Width="300">
+  <StackPanel Orientation="Horizontal">
+    <TextBlock Margin="5" VerticalAlignment="Center">
+            Enter Password:
+        </TextBlock>
+    <PasswordBox Name="passwordBox" PasswordChar="!" VerticalAlignment="Center" Width="150"/>
+    <Button Content="OK" IsDefault="True" Margin="5" Name="button1" VerticalAlignment="Center"/>
+  </StackPanel>
+  <!--   
+
+creating the Click="button1_Click" attribute on Button element leads to the following:
+           Exception calling "Load" with "1" argument(s): 
+           
+          "Failed to create a 'Click' from the text 'Button1_Click'."
+http://social.msdn.microsoft.com/Forums/vstudio/en-US/753be353-a2f9-4b29-ba75-cd962a7260a4/dynamic-xaml-and-attaching-event-handlers-problem-wpf-4?forum=wpf
+
+        <x:Code>
+        private void button1_Click(object sender, RoutedEventArgs e){
+            MessageBox.Show("Password entered: " + passwordBox.Password,Title);
+        }
+        </x:Code>
+   -->
+</Window>
