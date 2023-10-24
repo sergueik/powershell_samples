@@ -72,20 +72,56 @@ private void AverageData() {
 ```
 
 * rebuild the complex project in the IDE or commandline
+
+```powershell
+remove-item -recurse -force Utils/obj,Utils/bin/,Program/bin/,Program/obj/,Test/bin/,Test/obj/ -erroraction SilentlyContinue
+```
 ```powershell
 $buildfile = 'loadaverage-service.sln'
 $framework_path = 'c:\Windows\Microsoft.NET\Framework\v4.0.30319'
 $env:path="${env:path};${framework_path}"
-msbuild.exe -p:FrameworkPathOverride="${framework_path}" $buldfile
+msbuild.exe -p:FrameworkPathOverride="${framework_path}" $buildfile /p:Configuration=Release /p:Platform=x86 /t:"Clean,Build"
 ```
+See [stackoverflow](https://stackoverflow.com/questions/3155492/how-do-i-specify-the-platform-for-msbuild) discussion
 alternatively
 ```powershell
 $buildfile = 'loadaverage-service.sln'
 $framework_path = 'c:\Windows\Microsoft.NET\Framework\v4.0.30319'
 $msbuild = "${framework_path}\MSBuild.exe"
-invoke-expression -command "$msbuild -p:FrameworkPathOverride=""${framework_path}"" /t:Clean,Build $buildfile"
+invoke-expression -command "$msbuild -p:FrameworkPathOverride=""${framework_path}"" $buildfile  /p:Configuration=Release /p:Platform=x86 /t:Clean,Build"
+```
+```powershell
+cmd %%-/c tree.com
+```
+```text
+C:.
+├───Installer
+├───Program
+│   ├───bin
+│   │   └───Release
+│   ├───obj
+│   │   └───x86
+│   │       └───Release
+│   └───Properties
+├───screenshots
+├───Setup
+│   └───images
+├───Test
+│   ├───bin
+│   │   └───Release
+│   ├───obj
+│   │   └───Release
+│   └───Properties
+└───Utils
+    ├───bin
+    │   └───Release
+    └───obj
+        └───x86
+            └───Release
 ```
 - the exact  path to `msbuild.exe` may vary with Windows release. To find, inspect the output of
+
+
 ```powershell
 get-childitem -path 'C:\Windows\Microsoft.NET' -name 'msbuild.exe' -recurse
 ```
@@ -107,7 +143,19 @@ Framework64\v4.0.30319\MSBuild.exe
 ```powershell
 .\reinstall.ps1
 ```
+#### NOTE
 
+the `Test` project seems to sometimes fail in console possibly because of the relative path in the nunit.framework.dll reference:
+
+```xml
+
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+```
 ### More Information
 
 * The "utility" dlls and app config will be placed in the same folder with the main program executable
