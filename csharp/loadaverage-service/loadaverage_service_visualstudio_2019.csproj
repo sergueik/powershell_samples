@@ -21,7 +21,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationVersion>1.0.0</ApplicationVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -72,43 +72,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".gitignore" />
-    <Content Include="Program\bin\Debug\TransactionService.exe" />
-    <Content Include="Program\bin\Debug\TransactionService.pdb" />
-    <Content Include="Program\bin\Debug\Utils.dll" />
-    <Content Include="Program\bin\Debug\Utils.pdb" />
-    <Content Include="Program\obj\x86\Debug\Program.csproj.FileListAbsolute.txt" />
-    <Content Include="Program\obj\x86\Debug\TransactionService.exe" />
-    <Content Include="Program\obj\x86\Debug\TransactionService.pdb" />
     <Content Include="Program\Program.sln" />
-    <Content Include="screenshots\capture-perlbug_bat.jpg" />
-    <Content Include="screenshots\capture-ppm_bat.jpg" />
-    <Content Include="screenshots\capture_commandline.png" />
-    <Content Include="screenshots\capture_eventlog.png" />
-    <Content Include="screenshots\capture_perfmon.png" />
-    <Content Include="Utils\bin\Debug\Utils.dll" />
-    <Content Include="Utils\bin\Debug\Utils.pdb" />
-    <Content Include="Utils\obj\Debug\Utils.csproj.FileListAbsolute.txt" />
-    <Content Include="Utils\obj\Debug\Utils.dll" />
-    <Content Include="Utils\obj\Debug\Utils.pdb" />
+    <Content Include="Utils\Utils.sln" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="application.odp" />
-    <None Include="application.pdf" />
-    <None Include="control.ps1" />
-    <None Include="counter_fix.cmd" />
-    <None Include="nuget_tls_fix.reg" />
     <None Include="Program\app.config" />
-    <None Include="Program\bin\Debug\app.config" />
-    <None Include="Program\bin\Debug\TransactionService.exe.config" />
-    <None Include="Program\obj\x86\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
-    <None Include="Program\obj\x86\Debug\Program.csproj.GenerateResource.Cache" />
-    <None Include="Program\obj\x86\Debug\Program.csprojAssemblyReference.cache" />
-    <None Include="Program\obj\x86\Debug\Program.csprojResolveAssemblyReference.cache" />
-    <None Include="README.md" />
-    <None Include="reinstall.ps1" />
-    <None Include="tail_eventlog.ps1" />
-    <None Include="Utils\obj\Debug\Utils.csprojResolveAssemblyReference.cache" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program\DBWriter.cs">
@@ -125,14 +93,11 @@
     <EmbeddedResource Include="Program\DBWriter.resx">
       <DependentUpon>DBWriter.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Program\obj\x86\Debug\TransactionService.DBWriter.resources" />
-    <EmbeddedResource Include="Program\obj\x86\Debug\TransactionService.ProjectInstaller.resources" />
     <EmbeddedResource Include="Program\ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Program\obj\x86\Debug\TempPE\" />
     <Folder Include="Program\Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -140,11 +105,6 @@
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
       <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
