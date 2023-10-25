@@ -22,8 +22,8 @@ param(
   [string]$SERVICENAME = 'LoadAverageService',
   [string]$APPNAME = 'LoadAverageService.exe',
   # for Visual Studio artifact use 'WindowsApplication.exe'
-  [string]$APPDIR = 'Program\bin\Debug',
-  # for Visual Studio artifact use 'bin\Debug'
+  [string]$APPDIR = 'Program\bin\Release',
+  # for Visual Studio artifact use 'bin\Release'
   [switch]$configure,
   [switch]$info,
   [switch]$uninstall,

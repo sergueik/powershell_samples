@@ -30,7 +30,7 @@
 # https://www.netwrix.com/how_to_get_acl_for_a_folder.html
 
 param(
-  [string]$filepath = (resolve-path -path 'Program\bin\Debug\LoadAverageService.exe').path
+  [string]$filepath = (resolve-path -path 'Program\bin\Release\LoadAverageService.exe').path
 )
 
 

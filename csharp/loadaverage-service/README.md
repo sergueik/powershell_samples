@@ -160,7 +160,7 @@ the `Test` project seems to sometimes fail in console possibly because of the re
 
 * The "utility" dlls and app config will be placed in the same folder with the main program executable
 ```cmd
-Directory of Program\bin\Debug
+Directory of Program\bin\Release
 03/04/2022  09:50 PM    <DIR>          .
 03/04/2022  09:50 PM    <DIR>          ..
 03/04/2022  09:18 PM               631 app.config
@@ -180,9 +180,9 @@ explaining steps to install a managed app Windows Service silently without promp
 ```cmd
 set PASSWORD=....
 set PATH=%PATH%;c:\Windows\Microsoft.NET\Framework\v4.0.30319
-InstallUtil.exe  -uninstall Program\bin\Debug\WindowsService.NET.exe
-InstallUtil.exe /username=%USERDOMAIN%\%USERNAME% /password=%PASSWORD% -install Program\bin\Debug\WindowsService.NET.exe
-InstallUtil.exe /username=%USERDOMAIN%\%USERNAME% /password=%PASSWORD% /unattend Program\bin\Debug\WindowsService.NET.exe
+InstallUtil.exe  -uninstall Program\bin\Release\WindowsService.NET.exe
+InstallUtil.exe /username=%USERDOMAIN%\%USERNAME% /password=%PASSWORD% -install Program\bin\Release\WindowsService.NET.exe
+InstallUtil.exe /username=%USERDOMAIN%\%USERNAME% /password=%PASSWORD% /unattend Program\bin\Release\WindowsService.NET.exe
 ```
 this does not appear to work. When credentials are incorrect the process is aborted however when the password is valid, it is logged as if it was successful:
 
@@ -330,13 +330,13 @@ InstanceId    : 3
 Creating EventLog source WindowsService.NET in log Application...
 
 The Install phase completed successfully, and the Commit phase is beginning.
-See the contents of the log file for the c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe assembly's progress.
-The file is located at c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.InstallLog.
-Committing assembly 'c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe'.
+See the contents of the log file for the c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.exe assembly's progress.
+The file is located at c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.InstallLog.
+Committing assembly 'c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.exe'.
 Affected parameters are:
-   logfile = c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.InstallLog
+   logfile = c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.InstallLog
    username = sergueik42\sergueik
-   assemblypath = c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe
+   assemblypath = c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.exe
    install =
    logtoconsole =
    password = ********
@@ -525,7 +525,7 @@ restart the service and retry (currently no better troubleshooting steps availab
 
 To change the service configuration
 ```cmd
-cd C:\developer\sergueik\powershell_ui_samples\external\csharp\loadaverage-service\Program\bin\Debug>
+cd C:\developer\sergueik\powershell_ui_samples\external\csharp\loadaverage-service\Program\bin\Release>
 ```
 modify the `LoadAverageService.exe.config`
 ### Signing the Script
@@ -654,7 +654,7 @@ when task is executed under `Local System` account but the script is authenticod
 Check the home-brewed plaintext log written by service e.g.
 
 ```text
-Program\bin\Debug\WindowsService.NET_20220122.txt
+Program\bin\Release\WindowsService.NET_20220122.txt
 ```
 You may have to close `services.msc` which is displaying the service if reports failure to uninstall or install. Such errors are observed occasionally
 
@@ -761,7 +761,7 @@ CookedValue  : 4.31170831153138
 cd Setup
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe .\Setup.wixproj
 ```
-the `Setup.msi` will be in `Setup\bin\Debug`.
+the `Setup.msi` will be in `Setup\bin\Release`.
 
 
 ### Install
@@ -770,7 +770,7 @@ in elevated prompt
 
 * install
 ```cmd
-msiexec.exe /quiet /i bin\Debug\Setup.msi
+msiexec.exe /quiet /i bin\Release\Setup.msi
 ```
 * confirm
 ```cmd
@@ -799,7 +799,7 @@ Running  LoadAverageService Time Service
 * uninstall
 
 ```cmd
-msiexec /quiet /x bin\Debug\Setup.msi
+msiexec /quiet /x bin\Release\Setup.msi
 ```
 
 *  confirm service is removed
@@ -816,7 +816,7 @@ The specified service does not exist as an installed service.
 * run with logs 
 
 ```cmd
-cd Setup\bin\Debug
+cd Setup\bin\Release
 msiexec /l*v a.log /quiet /i Setup.msi
 ```
 the log shows an issue

@@ -22,7 +22,7 @@
 # for more low-level modifications 
 #
 param(
-  [string]$filepath = (resolve-path -path 'Program\bin\Debug\LoadAverageService.exe').path
+  [string]$filepath = (resolve-path -path 'Program\bin\Release\LoadAverageService.exe').path
 )
 
 # note System.Security.AccessControl.FileSecurity is different and cannot be casted to
@@ -116,7 +116,7 @@ $sids |  foreach-object {
   }
 }
 <#
-c:\Windows\System32\icacls.exe C:\developer\sergueik\powershell_ui_samples\csharp\loadaverage-service\Program\bin\Debug\LoadAverageService.exe /grant S-1-5-18:F
+c:\Windows\System32\icacls.exe C:\developer\sergueik\powershell_ui_samples\csharp\loadaverage-service\Program\bin\Release\LoadAverageService.exe /grant S-1-5-18:F
 Недопустимый параметр: "/grant"
 #>
 # https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/icacls
