@@ -22,6 +22,7 @@
 # http://blogs.msdn.com/b/virtual_pc_guy/archive/2010/09/23/a-self-elevating-powershell-script.aspx
 param (
   [string]$message = 'sensitive operation',
+  [switch] $elevated,
   [switch] $debug
   # NOTE: to unset need to pass as -debug:$false
 )
@@ -42,6 +43,9 @@ param(
   }
 
   # Check to see if we are currently NOT running "as Administrator"
+  # Alternative(?) is (https://www.cyberforum.ru/powershell/thread3136876.html#post17094408)
+  #  'S-1-5-32-544' = 'BUILTIN\Administrators'
+  # if (-not $myWindowsPrincipal.Groups -contains 'S-1-5-32-544')) {
   if ( -not $myWindowsPrincipal.IsInRole($adminRole) ) {
     write-host -foreground 'Red' ('The {0} needs to run in elevated prompt' -f $message) 
     exit
@@ -72,11 +76,25 @@ if ($myWindowsPrincipal.IsInRole($adminRole)) {
   # Create a new process object that starts PowerShell
   $newProcess = New-Object System.Diagnostics.ProcessStartInfo 'PowerShell';
   # Specify the current script path and name as a parameter
-  $newProcess.Arguments = $myInvocation.MyCommand.Definition;
+  $newProcess.Arguments = $myInvocation.MyCommand.Definition
   # Indicate that the process should be elevated
-  $newProcess.Verb = 'runas';
+  $newProcess.Verb = 'runas'
   # Start the new process
-  [System.Diagnostics.Process]::Start($newProcess);
+  [System.Diagnostics.Process]::Start($newProcess)
+  # alternatively simply run a long commandline:
+  # start-process powershell.exe -verb RunAs -argumentlist ('-noprofile -noexit -file "{0}" -elevated' -f ( $myinvocation.MyCommand.Definition ))
+  # may also format the arguments array for compact notation:
+  $arguments = @(
+    '-NoLogo'
+    '-NoExit'
+    '-NoProfile'
+    '-ExecutionPolicy bypass'
+    '-File'
+     $MyInvocation.MyCommand.Definition
+  )
+ 
+  # start-process -filepath PowerShell.exe -argumentlist $arguments -verb RunAs
   # Exit from the current, unelevated, process
+  #
   exit
 }

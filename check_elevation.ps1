@@ -1,4 +1,4 @@
-#Copyright (c) 2022 Serguei Kouzmine
+#Copyright (c) 2022,2023 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,10 @@ param(
   }
 
   # Check to see if we are currently NOT running "as Administrator"
+  # Alternative(?) is (https://www.cyberforum.ru/powershell/thread3136876.html#post17094408)
+  #  'S-1-5-32-544' = 'BUILTIN\Administrators'
+  # if (-not $myWindowsPrincipal.Groups -contains 'S-1-5-32-544')) {
+
   if ( -not $myWindowsPrincipal.IsInRole($adminRole) ) {
     write-host -foreground 'Red' ('The {0} needs to run in elevated prompt' -f $message) 
     exit
