@@ -113,7 +113,35 @@ function private:ConvertTo-RegularString([Security.SecureString]$securestring) {
 <#
 NOTE: 
 Windows 7
-get-scheduledtask : The term 'get-scheduledtask' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of
+get-scheduledtask : The term 'get-scheduledtask' is not recognized as the name of a cmdlet, function, script file, or operable program
+
+NOTE:
+one can install TaskScheduler package as part of Windows 7 Resource Kit PowerShell Pack 
+https://devblogs.microsoft.com/powershell/introducing-the-windows-7-resource-kit-powershell-pack
+http://powershellpack.com/Download.html
+the module operates through COM server {9C86F320-DEE3-4DD1-B972-A303F26B061E} C:\Windows\system32\TaskSchdPS.dll
+
+and offer 
+./Add-TaskAction.ps1
+./Add-TaskTrigger.ps1
+./Connect-ToTaskScheduler.ps1
+./Get-RunningTask.ps1
+./Get-ScheduledTask.ps1
+./New-Task.ps1
+./Register-ScheduledTask.ps1
+./Remove-Task.ps1
+./Start-Task.ps1
+./Stop-Task.ps1
+internally define
+./TaskScheduler.Format.ps1xml
+./TaskScheduler.pipeworks.psd1
+./TaskScheduler.psd1
+./TaskScheduler.psm1
+./TaskScheduler.Types.ps1xml
+
+See also:
+
+http://forum.oszone.net/thread-354499.html (in Russian)
 #>
 
 function check_release {
