@@ -219,7 +219,7 @@ $cert.enhancedkeyUsagelist
 ```
 will show nothing
 
-NOTE: these cmdlets are Windows-verson specific.
+NOTE: these cmdlets are Windows-version specific.
 
 
 * Authenticode sign the script (does not need an elevated powershell prompt):
@@ -434,15 +434,19 @@ No attempt to create a full instrumentation manifest and utilize `wevtutil.exe`
 
 ### Vintage Screenshots
 
-![Win98 Example 1](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win98_scheduled_task1.png)
+Technically,Microsoft introduced __Task Scheduler__ (formerly named __Windows 95 System Agent__  and __Scheduled Tasks__) component in the [Microsoft Plus!](https://en.wikipedia.org/wiki/Microsoft_Plus!) for __Windows 95__
 
-![Win98 Example 2](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win98_scheduled_task2.png)
+![Windows 95 Example](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win95_scheduled_task.png)
 
-![Win2k Example 1](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win2k_scheduled_task1.png)
+![Windows 98 Example 1](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win98_scheduled_task1.png)
+
+![Windows 98 Example 2](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win98_scheduled_task2.png)
+
+![Windows 2k Example 1](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win2k_scheduled_task1.png)
 
 ### See Also
 
-  * https://copy.sh/v86/?profile=windows98
+  * [x86 PC emulator and x86-to-wasm JIT, running in the browser](https://copy.sh/v86/) running [windows 98 retail](https://copy.sh/v86/?profile=windows98) and [github project](https://github.com/copy/v86)
   * https://www.sysprobs.com/pre-installed-windows-98-se-virtualbox-image
   * http://virtualdiskimages.weebly.com/vmware.html
   * https://social.msdn.microsoft.com/Forums/en-US/217f4163-45a8-4352-aed8-d6581ff13ce8/set-recovery-options-in-properties-of-windows-service?forum=Vsexpressvcs
@@ -461,7 +465,7 @@ No attempt to create a full instrumentation manifest and utilize `wevtutil.exe`
   * [requesting Admin Approval at Application Start](https://www.codeproject.com/Articles/66259/Requesting-Admin-Approval-at-Application-Start)
   * `LocalSystem` predefined local account [documentation](https://learn.microsoft.com/en-us/windows/win32/services/localsystem-account). NOTE: the `LocalSystem` user data is stored in `%SYSTEMROOT%\System32\config\systemprofile`. The `takeown.exe` has option to make files and directories owner by the administrators group, and not any user
   * `LocalService` predefined local account [documentation](https://learn.microsoft.com/en-us/windows/win32/services/localservice-account). The files owned by this account [are](https://serverfault.com/questions/9325/where-can-i-find-data-stored-by-a-windows-service-running-as-local-system-accou) under `%SYSTEMROOT%\ServiceProfiles\LocalService`
-
+  * https://medium.com/@tyler_48883/dreaming-about-the-windows-task-scheduler-for-mac-software-3ea76020aac1
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

@@ -1,8 +1,0 @@
-C:\developer\sergueik\powershell_samples\external\csharp\task-scheduler\TestApp\bin\Debug\TestApp.exe
-C:\developer\sergueik\powershell_samples\external\csharp\task-scheduler\TestApp\bin\Debug\TestApp.pdb
-C:\developer\sergueik\powershell_samples\external\csharp\task-scheduler\TestApp\bin\Debug\TaskScheduler.dll
-C:\developer\sergueik\powershell_samples\external\csharp\task-scheduler\TestApp\bin\Debug\TaskScheduler.pdb
-C:\developer\sergueik\powershell_samples\external\csharp\task-scheduler\TestApp\bin\Debug\TaskScheduler.xml
-C:\developer\sergueik\powershell_samples\external\csharp\task-scheduler\TestApp\obj\Debug\ResolveAssemblyReference.cache
-C:\developer\sergueik\powershell_samples\external\csharp\task-scheduler\TestApp\obj\Debug\TestApp.exe
-C:\developer\sergueik\powershell_samples\external\csharp\task-scheduler\TestApp\obj\Debug\TestApp.pdb
