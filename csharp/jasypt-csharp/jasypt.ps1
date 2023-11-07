@@ -31,7 +31,7 @@ param(
 $debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
 if ([bool]$PSBoundParameters['help'].IsPresent) {
 write-host @'
-Usage: jasypt.ps1 [-operation decode] -value [PAYLOAD] -password [PASSWORD] [-debug]
+Usage: jasypt.ps1 [-operation decrypt] -value [PAYLOAD] -password [PASSWORD] [-debug]
 
 PBE encryption helper using PKCSKeyGenerator derived helper class, compatible with Jasypt
 Param:

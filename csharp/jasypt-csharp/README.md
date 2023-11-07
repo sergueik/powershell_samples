@@ -138,6 +138,18 @@ salt: 49510e62d3c69393
 DK: 384382eed3795f3e5f5e6797a7dd91fd
 decrypted: password
 ```
+### Powershell Script
+
+```powershell
+.\jasypt.ps1 -value 'test' -operation encrypt  -password password
+```
+```text
+WDLEyCp2uSS9Byptb3C+aw==
+```
+```powershell
+ .\jasypt.ps1 -value 'VIYeyCyD9/55Hhd1IajXmA==' -operation decrypt  -password password
+```
+
 ### Note 
 
 Currently we cover `PBEWithMD5AndDES` algorithm. This is the same encryption used by last __1.x__ release  of the jasypt available on author's [guthub](https://github.com/jasypt/jasypt/releases). The __3.x__ releases default to `PBEWithHmacSHA512AndAES_256` algorithm. The easies way to tweak the algorythm to different binary block sizes is to compare the two versions of `Crypt:PBE` Perl module in the [CPAN](https://metacpan.org/pod/Crypt::PBE)
