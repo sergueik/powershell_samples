@@ -21,7 +21,7 @@ c:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe -install Program\b
 
 You may  need to start service and then restart it to see it write log entries to custom  event log `TestLog`.
 
-![creation of Event Log](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/capture_creation_eventlog.png)
+![creation of Event Log](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-service/screenshots/capture_creation_eventlog.png)
 
 ```cmd
 type Program\bin\Debug\WindowsService.NET_*.txt
@@ -42,13 +42,13 @@ this does not appear to work. When credentials are incorrect the process is abor
 Creating EventLog source WindowsService.NET in log Application...
 
 The Install phase completed successfully, and the Commit phase is beginning.
-See the contents of the log file for the c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe assembly's progress.
-The file is located at c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.InstallLog.
-Committing assembly 'c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe'.
+See the contents of the log file for the c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe assembly's progress.
+The file is located at c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.InstallLog.
+Committing assembly 'c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe'.
 Affected parameters are:
-   logfile = c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.InstallLog
+   logfile = c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.InstallLog
    username = sergueik42\sergueik
-   assemblypath = c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe
+   assemblypath = c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe
    install =
    logtoconsole =
    password = ********
@@ -408,7 +408,7 @@ Exception code: 0xe0434352
 Fault offset: 0x0000845d
 Faulting process id: 0xa60
 Faulting application start time: 0x01d84a9ed3b19ae5
-Faulting application path: C:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe
+Faulting application path: C:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Debug\WindowsService.NET.exe
 Faulting module path: C:\Windows\system32\KERNELBASE.dll
 Report Id: 1175fe43-b692-11ec-a583-08002783cd0a
 ```
@@ -434,15 +434,15 @@ No attempt to create a full instrumentation manifest and utilize `wevtutil.exe`
 
 ### Vintage Screenshots
 
-Technically,Microsoft introduced __Task Scheduler__ (formerly named __Windows 95 System Agent__  and __Scheduled Tasks__) component in the [Microsoft Plus!](https://en.wikipedia.org/wiki/Microsoft_Plus!) for __Windows 95__
+Technically,Microsoft introduced __Task Scheduler__ (formerly named __Windows 95 System Agent__ and __Scheduled Tasks__) component in the [Microsoft Plus!](https://en.wikipedia.org/wiki/Microsoft_Plus!) for __Windows 95__
 
-![Windows 95 Example](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win95_scheduled_task.png)
+![Windows 95 Example](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-service/screenshots/win95_scheduled_task.png)
 
-![Windows 98 Example 1](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win98_scheduled_task1.png)
+![Windows 98 Example 1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-service/screenshots/win98_scheduled_task1.png)
 
-![Windows 98 Example 2](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win98_scheduled_task2.png)
+![Windows 98 Example 2](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-service/screenshots/win98_scheduled_task2.png)
 
-![Windows 2k Example 1](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-service/screenshots/win2k_scheduled_task1.png)
+![Windows 2k Example 1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-service/screenshots/win2k_scheduled_task1.png)
 
 ### See Also
 

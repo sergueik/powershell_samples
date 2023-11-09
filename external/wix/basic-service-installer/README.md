@@ -12,14 +12,14 @@ To load ithe projects in Visual Studion 2019, one has first install [Visual Stud
 
 It is an "VSIX installer" installer package of itself and being processed by Visual Studio itself
 
-![wix extension installer](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-service-installer/screenshots/capture-wix-extension-installer.png)
+![wix extension installer](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-service-installer/screenshots/capture-wix-extension-installer.png)
 
 After the Wix Toolset Extension is installed into Visual Studio, one of two project still fails to load with the verdict:
 *application is not installed -  incompatible* 
 
 In addition the WiX Toolset v3.11 build tools needs be installed  from [Wix Toolset 3.11 release directory](https://github.com/wixtoolset/wix3/releases/tag/wix3112rtm)to build this project
  
-![wix toolset installer](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-service-installer/screenshots/capture-wix-toolset-installer.png)
+![wix toolset installer](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-service-installer/screenshots/capture-wix-toolset-installer.png)
 If this is not done, the Visual Studio Error is:
 ```text
 Could not find wix.targets at 'C:\Program Files\MSBuild\Microsoft\WiX\v3.x\'. 
@@ -27,7 +27,7 @@ Could not find wix.targets at 'C:\Program Files\MSBuild\Microsoft\WiX\v3.x\'.
 After the package is built the basic 
 MSI prompts for privileged user password when operated by non privileged:
 
-![perfmon](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-service-installer/screenshots/capture-elevation-dialog.png)
+![perfmon](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-service-installer/screenshots/capture-elevation-dialog.png)
 
 The uninstall prompts for a reboot which it claims will be scheduled
 

@@ -41,7 +41,7 @@ $args = @( "Pid: ${pid}" , $message )
 ```
 the interaction between the two becomes possible:
  
-![Example](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/wpf_io/screenshots/capture.png)
+![Example](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/wpf_io/screenshots/capture.png)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

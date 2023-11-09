@@ -35,7 +35,7 @@ Mode                LastWriteTime     Length Name
 -a---        11/18/2015   7:48 AM       2769 launch_timing_system_tray_app.ps1
 
 ```
-![Running system tray application via Windows Scheduled Task from Puppet](https://raw.githubusercontent.com/sergueik/powershell_ui_samples/master/screenshots/555.png)
+![Running system tray application via Windows Scheduled Task from Puppet](https://raw.githubusercontent.com/sergueik/powershell_samples/master/screenshots/555.png)
 
 ### Note
 

@@ -168,7 +168,7 @@ RUNTIME ERROR: function has no parameter datasource
         During evaluation
 ```
 
-![grafana dashboard](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/grafana-export-jsonnet/screenshots/capture-imported-dashboard.png)
+![grafana dashboard](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/grafana-export-jsonnet/screenshots/capture-imported-dashboard.png)
 
 ### Patching the Process
 

@@ -14,7 +14,7 @@ replacing ghe C# `Arguments` class with Powershell `param` for `Grep` class prop
 ```text
 Grep results:
 
-C:\developer\sergueik\powershell_ui_samples\external\csharp\basic-grep\pom.xml:
+C:\developer\sergueik\powershell_samples\external\csharp\basic-grep\pom.xml:
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-parent</artifactId>
         <groupId>org.springframework.boot</groupId>
@@ -30,7 +30,7 @@ C:\developer\sergueik\powershell_ui_samples\external\csharp\basic-grep\pom.xml:
 ```text
 Grep results:
 
-C:\developer\sergueik\powershell_ui_samples\external\csharp\basic-grep\pom.xml:
+C:\developer\sergueik\powershell_samples\external\csharp\basic-grep\pom.xml:
   12:     <artifactId>spring-boot-starter-parent</artifactId>
   38:       <artifactId>spring-boot-starter-web</artifactId>
   42:       <artifactId>spring-boot-starter-test</artifactId>

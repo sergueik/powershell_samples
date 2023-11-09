@@ -5,7 +5,7 @@
 ```text
 DomainUsage: Single
 Selected test(s): Test
-Using Webroot path: C:\developer\sergueik\powershell_ui_samples\external\csharp\basic-configserver\Test\bin\Debug
+Using Webroot path: C:\developer\sergueik\powershell_samples\external\csharp\basic-configserver\Test\bin\Debug
 Using Port 61920
 ```
 * use that TCP port to get the file
@@ -202,8 +202,8 @@ server will print to console
 ```text
 Processing name: data.json
 no hash
-About to inspect file C:\developer\sergueik\powershell_ui_samples\external\csharp\basic-configserver\./test\data.json
-Sending C:\developer\sergueik\powershell_ui_samples\external\csharp\basic-configserver\./test\data.json
+About to inspect file C:\developer\sergueik\powershell_samples\external\csharp\basic-configserver\./test\data.json
+Sending C:\developer\sergueik\powershell_samples\external\csharp\basic-configserver\./test\data.json
 About to send 148 bytes
 ```
 the client will print
@@ -236,7 +236,7 @@ server console logs:
 ```text
 Processing name: data.json
 Processing hash: 0DFA1329F15FEFA8648856794EB33244
-About to inspect file C:\developer\sergueik\powershell_ui_samples\external\csharp\basic-configserver\./test\data.json
+About to inspect file C:\developer\sergueik\powershell_samples\external\csharp\basic-configserver\./test\data.json
 Unmodified: data.json
 ```
  client will print
@@ -264,8 +264,8 @@ curl -v "http://localhost:$PORT/xx?name=data.json&hash=0D00000000000000000000000
 ```
 the server will log
 ```text
-About to inspect file C:\developer\sergueik\powershell_ui_samples\external\csharp\basic-configserver\./test\data.json
-Sending C:\developer\sergueik\powershell_ui_samples\external\csharp\basic-configserver\./test\data.json
+About to inspect file C:\developer\sergueik\powershell_samples\external\csharp\basic-configserver\./test\data.json
+Sending C:\developer\sergueik\powershell_samples\external\csharp\basic-configserver\./test\data.json
 About to send 148 bytes
 ```
 the client will print

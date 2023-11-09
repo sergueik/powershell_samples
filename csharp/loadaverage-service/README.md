@@ -6,11 +6,11 @@ https://www.codeproject.com/Articles/13655/Mastering-Windows-Services
 this directory contains application collecting the `\\System\Processor Queue Length` performance counter to generate load average - like metrics.
 windows Service applications are long-running applications that do not have a user interface it is a good container to run low level metrics
 
-![perfmon](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/loadaverage-service/screenshots/capture_perfmon.png)
+![perfmon](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture_perfmon.png)
 
-![event log](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/loadaverage-service/screenshots/capture_eventlog.png)
+![event log](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture_eventlog.png)
 
-![command line](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/loadaverage-service/screenshots/capture_commandline.png)
+![command line](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture_commandline.png)
 
 ```text
 LOAD15MIN: 5,43 from 465 samples
@@ -330,13 +330,13 @@ InstanceId    : 3
 Creating EventLog source WindowsService.NET in log Application...
 
 The Install phase completed successfully, and the Commit phase is beginning.
-See the contents of the log file for the c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.exe assembly's progress.
-The file is located at c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.InstallLog.
-Committing assembly 'c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.exe'.
+See the contents of the log file for the c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.exe assembly's progress.
+The file is located at c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.InstallLog.
+Committing assembly 'c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.exe'.
 Affected parameters are:
-   logfile = c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.InstallLog
+   logfile = c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.InstallLog
    username = sergueik42\sergueik
-   assemblypath = c:\developer\sergueik\powershell_ui_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.exe
+   assemblypath = c:\developer\sergueik\powershell_samples\external\csharp\simple-service\Program\bin\Release\WindowsService.NET.exe
    install =
    logtoconsole =
    password = ********
@@ -525,7 +525,7 @@ restart the service and retry (currently no better troubleshooting steps availab
 
 To change the service configuration
 ```cmd
-cd C:\developer\sergueik\powershell_ui_samples\external\csharp\loadaverage-service\Program\bin\Release>
+cd C:\developer\sergueik\powershell_samples\external\csharp\loadaverage-service\Program\bin\Release>
 ```
 modify the `LoadAverageService.exe.config`
 ### Signing the Script
@@ -665,7 +665,7 @@ As covered in __about deprecating TLS 1.0 and 1.1 on NuGet.org__ [article](https
 reg.exe add HKLM\SOFTWARE\Microsoft\.NETFramework\v4.0.30319 /v SystemDefaultTlsVersions /t REG_DWORD /d 1 /f /reg:64
 reg.exe add HKLM\SOFTWARE\Microsoft\.NETFramework\v4.0.30319 /v SystemDefaultTlsVersions /t REG_DWORD /d 1 /f /reg:32
 ```
-a similar workaround `reg` file is saved in [this project](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/loadaverage-service/nuget_tls_fix.reg)
+a similar workaround `reg` file is saved in [this project](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/nuget_tls_fix.reg)
 
 ### Performace Counters
 
@@ -905,15 +905,15 @@ and is fixed by running the install in elevated prompt
    * MsiExec.exe and InstMsi.exe Error Messages (for Developers) [document](https://learn.microsoft.com/en-us/windows/win32/msi/error-codes)	
 ### Vintage Screenshots
 
-![ActiveState Perl PPM chimera script Example](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/loadaverage-service/screenshots/capture-ppm_bat.jpg)
+![ActiveState Perl PPM chimera script Example](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture-ppm_bat.jpg)
 
 ### Visual Studio Note
 
 The projects and solutions are not compatible with Visual Studio 2019 or later:
 
-![Visual Studio 2019 refusing to open solution file](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/loadaverage-service/screenshots/capture_visualstudio_2019_solution_failure.png)
+![Visual Studio 2019 refusing to open solution file](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture_visualstudio_2019_solution_failure.png)
 
-![Visual Studio 2019 reporting crash when loading project file](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/loadaverage-service/screenshots/capture_visualstudio_project_failure.png)
+![Visual Studio 2019 reporting crash when loading project file](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture_visualstudio_project_failure.png)
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 

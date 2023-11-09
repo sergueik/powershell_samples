@@ -48,7 +48,7 @@ msiexec.exe /l*v a.log /quiet /i Setup.msi
 popd
 ```
 ### confirm
-![Applications and Services Event Logs](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-eventlog-applications-and-services.png)
+![Applications and Services Event Logs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-eventlog-applications-and-services.png)
 
   * observe the custom log file:
 
@@ -226,7 +226,7 @@ UserName           :
 ```
 Also there was an error observed during uninstall:
 
-![Errror in Uninstall](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-error-uninstall.png)
+![Errror in Uninstall](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-error-uninstall.png)
 ### Note
 
 if instead of git clone, a zip of the project sources was downloaded, start with unlocking the files

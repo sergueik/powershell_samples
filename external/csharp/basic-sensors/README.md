@@ -4,7 +4,7 @@ this project contains code from [CPU Temperature & System Information](https://w
 [repository](https://www.nuget.org/packages/OpenHardwareMonitor)
 
 
-![temperature window](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/basic-cpu-temperature/screenshots/capture-cpu-temp.png)
+![temperature window](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/basic-cpu-temperature/screenshots/capture-cpu-temp.png)
 
 
 ### See Also:

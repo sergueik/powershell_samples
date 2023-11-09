@@ -25,7 +25,7 @@ mvn -Dmaven.test.skip=true spring-boot:run
 ```
 the minimal Selenium 3 Grid Console page stub will be shown on `http://localhost:8080/resources/static/page.html`
 
-![selenium 3 grid console stub](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-grid-console-stub.png)
+![selenium 3 grid console stub](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-grid-console-stub.png)
 
 To configure the tray app to pick this location need to direct to  one will need to uncomment the `key="ServiceUrl"` entry in `app.config`:
 ```xml 
@@ -36,7 +36,7 @@ The `ServiceUrl` setting overrides the `ServiceUrlTemplate` and skips hub proces
 
 The stub will be shown as:
 
-![selenium 3 grid status indicator stub](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-grid-status-indicator-stub.png)
+![selenium 3 grid status indicator stub](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-grid-status-indicator-stub.png)
 
 
 ### Selenium 4
@@ -149,13 +149,13 @@ or
 in case of a failure
 or read the UI on `http://192.168.0.125:4444/ui/index.html` or `http://192.168.0.125:4444/ui/index.html#/`
 
-![new console](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-selenium4-ui.png)
+![new console](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-selenium4-ui.png)
 
 using Css Selector `div.MuiContainer-root div.MuiCardContent-root div.MuiGrid-item`
 
 The UI layout is considerably more complex than with __3.x__ earlier releases
 
-![old console](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-selenium3-grid-console.png)
+![old console](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-selenium3-grid-console.png)
 
 
 
@@ -372,7 +372,7 @@ if run by older JDK than __11__
 
 one can modify the application configuration file `config.ini` deployed to application directory, by using the "Config" menu. The tray application will wait for the editor to be closed:
 
-![modify the application configuration file](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-edit-config.png)
+![modify the application configuration file](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-edit-config.png)
 
 ### TODO
   * Compare `System.Windows.Forms.WebBrowser.WebBrowser` and `Microsoft.Web.WebView2.WinForms.WebView2`.
@@ -421,7 +421,7 @@ processIcon.DisplayBallonMessage(null, 10000);
 ```
 does not work when there are many system tray applications and may need more work
 
-![selenium 3 grid startup Baloon](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-baloon.png)
+![selenium 3 grid startup Baloon](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-baloon.png)
 ### See Also
 
   * https://www.codeproject.com/Tips/627796/Doing-a-NotifyIcon-Program-the-Right-Wayhttps://www.codeproject.com/Articles/7827/Customizing-WinForm-s-System-Menu

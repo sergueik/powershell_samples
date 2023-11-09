@@ -4,9 +4,9 @@
 __Selenum 4 Grid Status Checker___
 
 Processing grid status JSON via [LightCaseClient](https://www.codeproject.com/Articles/331350/A-Generic-REST-Client-Library) - custom `System.Net.WebRequest`-based REST client .
-Most of the code is unchanged from [System Tray Selenum 3.x Grid Status Checker](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/selenium-grid-status-checker)
+Most of the code is unchanged from [System Tray Selenum 3.x Grid Status Checker](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium-grid-status-checker)
 
-![new console](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/selenium4-grid-status-checker/screenshots/capture-app.png)
+![new console](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium4-grid-status-checker/screenshots/capture-app.png)
 
 ### Usage
 
@@ -410,7 +410,7 @@ To configure the tray app to pick one of these stub hubs one needs to uncomment 
 The `ServiceUrl` setting overrides the `ServiceUrlTemplate` and skips hub processing.	to suppress this behavior, comment the setting or clear the value.
 Only one stub hub is possible to use - because the hub selection is suppressed in this mode.
 
-![selenium 3 grid console stub](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-grid-console-stub.png)
+![selenium 3 grid console stub](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-grid-console-stub.png)
 
 
 ### Older Release Detection

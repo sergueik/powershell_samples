@@ -21,7 +21,7 @@ For  installing message compiler and linker it is sufficient to
 download the GRMSDK_EN_DVD.iso and run `Setup.exe` from there.
 only select __Tools__. This installs `mc.exe` and `rc.exe` into `c:\Program Files\Microsoft SDKs\Windows\v7.1\Bin` but will not install `link.exe`.
 
-![Windows SDK Installer](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-win7-sdk-installer.png)
+![Windows SDK Installer](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-win7-sdk-installer.png)
 
 It prompts for missing __.Net 4.0 RTM__ as grounds for not installing the linker.
 it may be necessary to remove the later __.Net 4.x__ before installing the legacy out of support [.Net Framework 4.0](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net40)

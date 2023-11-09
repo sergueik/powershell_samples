@@ -12,7 +12,7 @@ vdesk create:1
 ```
 fails with
 
-![runtime error](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/vdesktop-manager/screenshots/capture-runtime-error.png)
+![runtime error](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/vdesktop-manager/screenshots/capture-runtime-error.png)
 
 installing the __VDesk__ msi from the release direcory at latest available versioh [1.2.0](https://github.com/eksime/VDesk/releases/tag/v1.2.0) installs it to
 32 bit 
@@ -36,11 +36,11 @@ does not start the application as described
 
 when run the commands individually through new start menu
 
-![windows 11 launch](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/vdesktop-manager/screenshots/capture-run-windows11.png)
+![windows 11 launch](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/vdesktop-manager/screenshots/capture-run-windows11.png)
 
 a help message is shown 
 
-![help message](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/vdesktop-manager/screenshots/capture-help.png)
+![help message](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/vdesktop-manager/screenshots/capture-help.png)
 
 ### Note
 

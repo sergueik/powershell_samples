@@ -21,7 +21,7 @@ Send done.
 ```
   * observe the text entered in console be sent, received, optionally echoed back in the sender console and logged into Event Log named `PipeServerLog`, and to filesyste log file (`c:\temp\service.log` or as configured   )
 
-![eventlog](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/basic-named-pipe/screenshots/capture-pipeserver-eventlog.png)
+![eventlog](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/basic-named-pipe/screenshots/capture-pipeserver-eventlog.png)
 
 ### See Also
 

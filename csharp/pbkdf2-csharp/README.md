@@ -109,7 +109,7 @@ Program\bin\Debug\Program.exe -operation=decrypt -password=secret -value=Q7cRD4P
 example message
 ```
 
-![tests](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/pbkdf2-csharp/screenshots/capture-tests.png)
+![tests](https://github.com/sergueik/powershell_samples/blob/master/csharp/pbkdf2-csharp/screenshots/capture-tests.png)
 
 ### Embedded In Powershell
 
@@ -249,8 +249,8 @@ decrypted:
 ```
 ### Critical fix
 
- * [original](https://github.com/sergueik/powershell_ui_samples/blob/cfde0a91a503e15d000363535fab594c995d52a3/external/csharp/pbkdf2-csharp/Program/AES.cs#L82)
- * [fixed](https://github.com/sergueik/powershell_ui_samples/blob/master/csharp/pbkdf2-csharp/Utils/AES.cs#L55)
+ * [original](https://github.com/sergueik/powershell_samples/blob/cfde0a91a503e15d000363535fab594c995d52a3/external/csharp/pbkdf2-csharp/Program/AES.cs#L82)
+ * [fixed](https://github.com/sergueik/powershell_samples/blob/master/csharp/pbkdf2-csharp/Utils/AES.cs#L55)
 
 ### Changing the Hashing Algorithm
 

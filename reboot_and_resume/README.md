@@ -14,7 +14,7 @@ The `executionPolicy` is expected to be set to `RemoteSigned` or lower
 The script will prompt for UAC access if system is configured to enforce one
 and display the message indicating the step is about to run at the moment:
 
-![Script run Example](https://github.com/sergueik/powershell_ui_samples/blob/master/reboot_and_resume/screenshots/capture.png)
+![Script run Example](https://github.com/sergueik/powershell_samples/blob/master/reboot_and_resume/screenshots/capture.png)
 
 
 ### See also

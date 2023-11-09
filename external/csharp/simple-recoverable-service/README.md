@@ -22,7 +22,7 @@ InstallUtil.exe /username=%USERDOMAIN%\%USERNAME% /password=%PASSWORD% -install 
 InstallUtil.exe /username=%USERDOMAIN%\%USERNAME% /password=%PASSWORD% /unattend Program\bin\Debug\WindowsService.NET.exe
 ```
 
-![Recovery Property Screen](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-recoverable-service/screenshots/capture_recovery_options.png)
+![Recovery Property Screen](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-recoverable-service/screenshots/capture_recovery_options.png)
 
 ### See Also
   * VB.net app to "install a Windows service the way one's likes" [article](https://www.codeproject.com/Articles/5338/Install-a-Windows-service-the-way-YOU-want-to) -  probably similar, but with a VB.Net p/invoke syntax

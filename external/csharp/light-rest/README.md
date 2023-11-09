@@ -161,20 +161,20 @@ Configure the app via `app.config` or `Client.exe.config`:
 ```
 * start the Selenium 4 hub on the specified node, monitor it bootstrap message to begin the Application tests:
 
-![hub bootstrap](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/light-rest/screenshots/capture-hub-bootstrap-healthcheck.png)
+![hub bootstrap](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/light-rest/screenshots/capture-hub-bootstrap-healthcheck.png)
 
 * observe the RAW JSON through the browser
 
-![browser status JSON](https://github.com/sergueik/powershell_ui_samples/blob/master/externl/csharp/light-rest/screenshots/capture-browser-status.png)
+![browser status JSON](https://github.com/sergueik/powershell_samples/blob/master/externl/csharp/light-rest/screenshots/capture-browser-status.png)
 
 * run the `Synchronous Call` and see the datagrid render the `Node` objects with default settings:
 
-![datagrid](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/light-rest/screenshots/capture-application-grid-status.png)
+![datagrid](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/light-rest/screenshots/capture-application-grid-status.png)
 
 ### Building
 
 * rebuild the complex project in the IDE or commandline
- + open console, navigate to the project directory (`C:\developer\sergueik\powershell_ui_samples\external\csharp\light-rest`) open Poweshell console:
+ + open console, navigate to the project directory (`C:\developer\sergueik\powershell_samples\external\csharp\light-rest`) open Poweshell console:
 
 ```sh
 start powershell.exe -noprofile
@@ -199,7 +199,7 @@ invoke-expression -command "$msbuild -p:FrameworkPathOverride=""${framework_path
 .\Client\bin\Debug\Client.exe
 ```
 
-![console run](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/light-rest/screenshots/capture-console-test-run.png)
+![console run](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/light-rest/screenshots/capture-console-test-run.png)
 
 ### Mocking the Grid
 * run basic Springboot app returning the prepared JSON, passed back and forth through gson to ensure it is valid:
@@ -236,7 +236,7 @@ invoke-expression -command "$msbuild -p:FrameworkPathOverride=""${framework_path
 <startup><supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5"/></startup></configuration>
 
 ```
-![datagrid-mock](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/light-rest/screenshots/capture-application-grid-status-mockserver.png)
+![datagrid-mock](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/light-rest/screenshots/capture-application-grid-status-mockserver.png)
 
 ### See Also
 

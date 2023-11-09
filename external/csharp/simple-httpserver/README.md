@@ -40,19 +40,19 @@ Ok.
 
 ```
 
-![Firewall Rule Dialog](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-httpserver/screenshots/firewall-capture.jpg)
+![Firewall Rule Dialog](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-httpserver/screenshots/firewall-capture.jpg)
 
 one can use Control Panel app for [the same](https://www.tenforums.com/tutorials/70903-add-remove-allowed-apps-through-windows-firewall-windows-10-a.html)
 ```cmd
 control firewall.cpl
 ```
 
-![Control Panel Rule Information](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-httpserver/screenshots/control_panel_capture.png)
+![Control Panel Rule Information](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-httpserver/screenshots/control_panel_capture.png)
 
 Open web url `http://localhost:9091/src/examples/` and navigate to page `http://localhost:9091/src/examples/rrdJFlot.html` where enter imported file URL
 `/data/example_rrds/example4.rrd`
 
-![Web Page](https://github.com/sergueik/powershell_ui_samples/blob/master/external/csharp/simple-httpserver/screenshots/page_capture.png)
+![Web Page](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-httpserver/screenshots/page_capture.png)
 
 ### See Also
   * [Simple HTTP Server in C#](https://www.codeproject.com/Articles/137979/Simple-HTTP-Server-in-C) - somewhat too ptimitive - and the [original project](https://github.com/jeske/SimpleHttpServer)

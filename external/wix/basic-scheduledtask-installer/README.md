@@ -60,7 +60,7 @@ msiexec.exe /l*v a.log /i Setup.msi
 
 check the log
 ```text
-MSI (s) (18:2C) [06:24:49:068]: Note: 1: 2203 2: C:\developer\sergueik\powershell_ui_samples\external\wix\basic-scheduledtask-installer\Setup.msi 3: -2147287038 
+MSI (s) (18:2C) [06:24:49:068]: Note: 1: 2203 2: C:\developer\sergueik\powershell_samples\external\wix\basic-scheduledtask-installer\Setup.msi 3: -2147287038 
 ```
 
 if seeing that error code `-2147287038 `, it is likely to be indicating
@@ -121,7 +121,7 @@ Repeat: Stop If Still Running:        Disabled
 
 * NOTE: multiple settings will need some tuning
 
-![task](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture_added_task.png)
+![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture_added_task.png)
 
 The second execution of msi performs uninstall. If it does not, use
 ```cmd
@@ -140,32 +140,32 @@ ExeCommand="&quot;[SystemFolder]schtasks&quot; /Create /v1 /z  /rl HIGHEST /TN M
 ```
 but it was not taken into account: installer stops and 
 
-![task](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-installer-progress.png)
+![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-installer-progress.png)
 
 prompts to enter the blank value
 
-![task](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-blank-password.png)
+![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-blank-password.png)
 
 * the test
 
-![task](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-test.png)
+![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-test.png)
 
 ### TODO
 
 The failing runs lead to mutliple entries with the same name:
 
-![task](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-installer-defect.png)
+![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-installer-defect.png)
 
 under the hood the installer msi are cached under
 
 ```text
 c:\Windows\Installer
 ```
-![task](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-installer-defect2.png)
+![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-installer-defect2.png)
 
 and failing installers will continue to fail no matter how many retries attempted
 
-![task](https://github.com/sergueik/powershell_ui_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-installer-defect3.png)
+![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-installer-defect3.png)
 
 ### See Also
 
