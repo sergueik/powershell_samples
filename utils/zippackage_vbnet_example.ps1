@@ -26,12 +26,22 @@ Imports System.IO.Packaging
 Imports System.IO
 Imports System
 Public Class Example
-Dim zipPath As String = "C:\TEMP\Compression\myzip.zip"
 Dim fileToAdd As String = "C:\TEMP\Compression\Compress Me.txt"
     Public Sub New(ByVal argZipPath As System.String,ByVal argfileToAdd As System.String)
-      zipPath = argZipPath
+      mZipPath = argZipPath
       fileToAdd = argfileToAdd
     End Sub
+
+    Dim mZipPath As String = String.Empty
+    Public Property ZipPath() As String
+        Get
+            Return mZipPath
+        End Get
+        Set(ByVal value As String)
+            mZipPath = value
+        End Set
+    End Property
+
     Public Sub RenderData
 
 Dim zip As Package = ZipPackage.Open(zipPath, _
@@ -43,7 +53,7 @@ Dim zipUri As String = String.Concat("/", _
           System.IO.Path.GetFileName(uriFileName))
 
 Dim partUri As New Uri(zipUri, UriKind.Relative)
-Dim contentType As String = _
+	Dim contentType As String = _
           System.Net.Mime.MediaTypeNames.Application.Zip
 Dim pkgPart As PackagePart = _
           zip.CreatePart(partUri, contentType, _
@@ -63,9 +73,11 @@ End Class
 "@ -ReferencedAssemblies 'System.IO.dll', 'System.dll','System.Net.dll','C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\WindowsBase.dll'
 # can open the "WindowsBase.dll" assembly in c:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\ildasm.exe
 
+# See Also: https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.ziparchive?view=netframework-4.5.1
 # TODO: handle
 # Exception calling "RenderData" with "0" argument(s): "Cannot add part for the specified URI because it is already in the package."
 $caller = New-Object -TypeName 'Example' -ArgumentList ($archive, $filepath)
+$caller.ZipPath = $archive
 $caller.RenderData()
 
 # Class InterleavedZipPartStream
@@ -95,3 +107,4 @@ $caller.RenderData()
 # Class ZipIOExtraFieldZip64Element
 # Class ZipIOExtraFieldPaddingElement
 # Class ZipIOExtraFieldElement
+
