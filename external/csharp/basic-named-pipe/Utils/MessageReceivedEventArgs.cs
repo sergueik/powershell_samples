@@ -6,9 +6,9 @@ namespace Utils {
 		public MessageReceivedEventArgs(string message) {
 			if (string.IsNullOrEmpty(message)) {
 				if (message == null) {
-					throw new ArgumentNullException("message");
+					throw new ArgumentNullException( "message");
 				}
-				throw new ArgumentException("Empty string.", "message");
+			     throw new ArgumentException("Empty string.", "message");
 			}
 			this.Message = message;
 		}

@@ -71,6 +71,8 @@ namespace Utils {
 		private void SendCallback(IAsyncResult asyncResult) {
 			var pipeStream = (NamedPipeServerStream)asyncResult.AsyncState;
 			pipeStream.EndWrite(asyncResult);
+			// pipeStream.Close();
+
 		}
 
 		private void ReadCallback(IAsyncResult asyncResult) {
@@ -104,7 +106,6 @@ namespace Utils {
 			if (!this.disposed) {
 				this.cancellationTokenSource.Dispose();
 				this.ServerStream.Dispose();
-
 				this.disposed = true;
 			}
 		}

@@ -21,6 +21,59 @@ Send done.
 ```
   * observe the text entered in console be sent, received, optionally echoed back in the sender console and logged into Event Log named `PipeServerLog`, and to filesyste log file (`c:\temp\service.log` or as configured   )
 
+### NOTE:
+
+the bug -  the subsequent send attempt hang. The pipe appears to still be present after the execution of the `client.ps1`:
+```poweshell
+[System.IO.Directory]::GetFiles("\\.\\pipe\\") | where-object { $_ -match '.*demo' }
+```
+```text
+\\.\\pipe\\demo
+```
+and the service is still running:
+```cmd
+sc.exe query  PipeServer
+```
+```text
+SERVICE_NAME: PipeServer
+        TYPE               : 10  WIN32_OWN_PROCESS
+        STATE              : 4  RUNNING
+                                (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0
+```
+but the invocation of 
+```powershell
+.\pipe_send.ps1 -message "this is a powershell call 2"
+``` 
+is hanging with
+```text
+Attempting to connect to pipe demo ...
+``` 
+require restart of PipeServer Service. Similar problem observed with Java client.
+
+aftet which operation the  client completes the wait
+
+```powershell
+$client = new-object System.IO.Pipes.NamedPipeClientStream('.', 'demo', [System.IO.Pipes.PipeDirection]::InOut, [System.IO.Pipes.PipeOptions]::None,  [System.Security.Principal.TokenImpersonationLevel]::Impersonation)
+$client.Connect()
+$client.isConnected
+```
+```text
+True
+```
+```powershell
+
+$writer = new-object System.IO.StreamWriter($client)
+$writer.AutoFlush = $true
+$writer.WriteLine('this is a test')
+$client.Dispose()
+```
+
+subsequent `Connect()` calls hang
+
 ![eventlog](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/basic-named-pipe/screenshots/capture-pipeserver-eventlog.png)
 
 ### See Also

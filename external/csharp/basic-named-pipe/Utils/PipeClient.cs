@@ -16,6 +16,12 @@ namespace Utils {
 
 		private NamedPipeClientStream ClientStream { get; set; }
 
+		// https://learn.microsoft.com/en-us/dotnet/api/system.io.pipes.namedpipeclientstream?view=netframework-4.5		
+		public void DisConnect(int timeout = 1000) {
+			// call Finalize (~NamedPipeClientStream)
+			this.ClientStream = null;
+		}
+		
 		public void Connect(int timeout = 1000) {
 			if (this.disposed) {
 				throw new ObjectDisposedException(typeof(PipeClient).Name);
@@ -28,8 +34,8 @@ namespace Utils {
 			this.ClientStream.BeginRead(
 				clientState.Buffer,
 				0,
-				clientState.Buffer.Length, 
-				this.ReadCallback, 
+				clientState.Buffer.Length,
+				this.ReadCallback,
 				clientState);
 		}
 
@@ -41,7 +47,7 @@ namespace Utils {
 			byte[] buffer = Encoding.UTF8.GetBytes(value);
 			this.ClientStream.BeginWrite(buffer, 0, buffer.Length, this.SendCallback, this.ClientStream);
 		}
-        
+
 		private void SendCallback(IAsyncResult asyncResult) {
 			var pipeStream = (NamedPipeClientStream)asyncResult.AsyncState;
 			pipeStream.EndWrite(asyncResult);
