@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# SharpDevelop 5.0
+VisualStudioVersion = 12.0.20827.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{8C07F84D-8BBD-414B-9E89-B7E97D81AE2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{2846704F-2EB1-4789-A20A-B23C3BA98858}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppModule.NamedPipes", "AppModule.NamedPipes\AppModule.NamedPipes.csproj", "{077B53BB-404A-4B2F-BA17-AAE98C5E9C66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppModule.InterProcessComm", "AppModule.InterProcessComm\AppModule.InterProcessComm.csproj", "{E98F1F7E-40B6-44C8-AC66-EC867B141FA1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C07F84D-8BBD-414B-9E89-B7E97D81AE2F}.Debug|x86.ActiveCfg = Debug|x86
+		{8C07F84D-8BBD-414B-9E89-B7E97D81AE2F}.Debug|x86.Build.0 = Debug|x86
+		{8C07F84D-8BBD-414B-9E89-B7E97D81AE2F}.Release|x86.ActiveCfg = Release|x86
+		{8C07F84D-8BBD-414B-9E89-B7E97D81AE2F}.Release|x86.Build.0 = Release|x86
+		{2846704F-2EB1-4789-A20A-B23C3BA98858}.Debug|x86.ActiveCfg = Debug|x86
+		{2846704F-2EB1-4789-A20A-B23C3BA98858}.Debug|x86.Build.0 = Debug|x86
+		{2846704F-2EB1-4789-A20A-B23C3BA98858}.Release|x86.ActiveCfg = Release|x86
+		{2846704F-2EB1-4789-A20A-B23C3BA98858}.Release|x86.Build.0 = Release|x86
+		{077B53BB-404A-4B2F-BA17-AAE98C5E9C66}.Debug|x86.ActiveCfg = Debug|x86
+		{077B53BB-404A-4B2F-BA17-AAE98C5E9C66}.Debug|x86.Build.0 = Debug|x86
+		{077B53BB-404A-4B2F-BA17-AAE98C5E9C66}.Release|x86.ActiveCfg = Release|x86
+		{077B53BB-404A-4B2F-BA17-AAE98C5E9C66}.Release|x86.Build.0 = Release|x86
+		{E98F1F7E-40B6-44C8-AC66-EC867B141FA1}.Debug|x86.ActiveCfg = Debug|x86
+		{E98F1F7E-40B6-44C8-AC66-EC867B141FA1}.Debug|x86.Build.0 = Debug|x86
+		{E98F1F7E-40B6-44C8-AC66-EC867B141FA1}.Release|x86.ActiveCfg = Release|x86
+		{E98F1F7E-40B6-44C8-AC66-EC867B141FA1}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal
