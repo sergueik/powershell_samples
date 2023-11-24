@@ -125,6 +125,26 @@ subsequent `Connect()` calls hang
 
 ![eventlog](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/basic-named-pipe/screenshots/capture-pipeserver-eventlog.png)
 
+
+### NOTE
+
+to create an event log entry on the command line, run the sample command in elevated prompt:
+```cmd
+EVENTCREATE.exe /T WARNING /ID 491   /L APPLICATION /D "My custom error event for the application log" /SO "Custom Task"
+```
+this will create it:
+```text
+SUCCESS: An event of type 'WARNING' was created in the 'APPLICATION' log with 'Custom Task' as the source.
+```
+works  with custom logs too:
+```cmd
+EVENTCREATE.exe /T WARNING /ID 10   /L PipeServerLog /D "My custom error event for the application log" /SO "Custom Task"
+```
+```text
+SUCCESS: An event of type 'WARNING' was created in the 'PipeServerLog' log with 'Custom Task' as the source.
+```
+
+
 ### See Also
 
   * __Anonymous Pipes Made Easy__ [codeproject article](https://www.codeproject.com/Articles/1087779/Anonymous-Pipes-Made-Easy)
@@ -141,5 +161,9 @@ subsequent `Connect()` calls hang
   * https://www.codeproject.com/Articles/810030/IPC-with-Named-Pipes 
   * [interprocess communication using Publisher-Subscriber pattern and Named Pipes as a transport](https://www.codeproject.com/Articles/5282791/Interprocess-Communication-using-Publisher-Subscri)
   * [Full Duplex Asynchronous Read/Write with Named Pipes](https://www.codeproject.com/Articles/1179195/Full-Duplex-Asynchronous-Read-Write-with-Named-Pip)
+  * [how to create Windows EventLog source from command line](https://stackoverflow.com/questions/446691/how-to-create-windows-eventlog-source-from-command-line)
+
+
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
