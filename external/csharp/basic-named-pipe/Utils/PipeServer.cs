@@ -66,13 +66,12 @@ namespace Utils {
 
 			byte[] buffer = Encoding.UTF8.GetBytes(value);
 			this.ServerStream.BeginWrite(buffer, 0, buffer.Length, this.SendCallback, this.ServerStream);
+			// this.ServerStream.WaitForConnection();
 		}
 
 		private void SendCallback(IAsyncResult asyncResult) {
 			var pipeStream = (NamedPipeServerStream)asyncResult.AsyncState;
 			pipeStream.EndWrite(asyncResult);
-			// pipeStream.Close();
-
 		}
 
 		private void ReadCallback(IAsyncResult asyncResult) {
@@ -84,6 +83,7 @@ namespace Utils {
 			if (pipeState.PipeServer.IsMessageComplete) {
 				this.OnMessageReceived(new MessageReceivedEventArgs(stringData));
 				pipeState.Message.Clear();
+				
 			}
 
 			if (!(this.cancellationToken.IsCancellationRequested || pipeState.ExternalCancellationToken.IsCancellationRequested)) {

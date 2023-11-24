@@ -94,6 +94,7 @@ namespace Service {
 
 		private void OnMessageReceived(Object s, MessageReceivedEventArgs o) {			 
 			myLog.WriteEntry(String.Format("Message received: {0}", o.Message), EventLogEntryType.Information, (int)Message.Chat, 0);
+			// NOTE:  brute force restart cannot be performed from a callback
 		}
 
 		protected override void OnStop() {

@@ -44,15 +44,64 @@ SERVICE_NAME: PipeServer
         CHECKPOINT         : 0x0
         WAIT_HINT          : 0x0
 ```
-but the invocation of 
+but only the first try of exchanging messages works:
+```powershell
+.\pipe_send.ps1 -message "this is a powershell call 1"
+``` 
+		
+```text
+Sending this is a powershell call 1 to pipe.
+Send done.
+```
+
+the second and subsequent invocation of 
 ```powershell
 .\pipe_send.ps1 -message "this is a powershell call 2"
 ``` 
-is hanging with
+are hanging with
 ```text
 Attempting to connect to pipe demo ...
 ``` 
-require restart of PipeServer Service. Similar problem observed with Java client.
+presumably because the server does not continue listening to the pipe after processing single connection;
+```c#
+this.pipeServerState = new PipeServerState(this.ServerStream, this.cancellationTokenSource.Token);
+this.ServerStream.BeginWaitForConnection(this.ConnectionCallback, this.pipeServerState);
+```
+or
+```c#
+this.ServerStream.WaitForConnection();
+```
+is leading to exception(logged in `Application` log:
+```text
+Exception Info: System.InvalidOperationException
+   at System.IO.Pipes.NamedPipeServerStream.BeginWaitForConnection(System.AsyncCallback, System.Object)
+   at Utils.PipeServer.SendCallback(System.IAsyncResult)
+
+```
+or 
+```text
+Exception Info: System.InvalidOperationException
+ at System.IO.Pipes.NamedPipeServerStream.BeginWaitForConnection(System.AsyncCallback, System.Object)
+   at System.IO.Pipes.NamedPipeServerStream.WaitForConnection()
+   at Utils.PipeServer.Send(System.String)
+   at Service.PipeServerService.<OnStart>b__0(System.Object, Utils.MessageReceivedEventArgs)
+
+```
+and the service is stopped:
+```cmd
+sc.exe query PipeServer
+
+```
+```text
+SERVICE_NAME: PipeServer
+        TYPE               : 10  WIN32_OWN_PROCESS
+        STATE              : 1  STOPPED
+        WIN32_EXIT_CODE    : 1067  (0x42b)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0
+```
+to continue processing messages, currently requires restart of PipeServer Service. Similar problem observed with Java client.
 
 aftet which operation the  client completes the wait
 
