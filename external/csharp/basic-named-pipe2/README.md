@@ -1,7 +1,7 @@
 ### Info
 
 This directory contains code from the __Inter-Process Communication in .NET Using Named Pipes__
-[codeproject article](https://www.codeproject.com/Articles/7176/Inter-Process-Communication-in-NET-Using-Named-Pip).
+[codeproject article](https://www.codeproject.com/Articles/7176/Inter-Process-Communication-in-NET-Using-Named-Pip) and [codeproject article](https://www.codeproject.com/Articles/7177/Inter-Process-Communication-in-NET-Using-Named-P-2).
 The project is updated to .Net Framework __4.5__
 
 ![eventlog](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/basic-named-pipe2/screenshots/capture-test.png)
