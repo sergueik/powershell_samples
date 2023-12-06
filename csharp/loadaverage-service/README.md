@@ -914,6 +914,9 @@ The projects and solutions are not compatible with Visual Studio 2019 or later:
 ![Visual Studio 2019 refusing to open solution file](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture_visualstudio_2019_solution_failure.png)
 
 ![Visual Studio 2019 reporting crash when loading project file](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture_visualstudio_project_failure.png)
+```powershell
+new-eventlog -source LoadAverageCounterService -logname LoadAverageCounterServiceLog
+```
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 

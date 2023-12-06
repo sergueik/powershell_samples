@@ -1,23 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="LoadAverageService" Language="1033" Version="1.0.0.0" Manufacturer="Tempus Fugit" UpgradeCode="48dc066c-97cc-4512-8fa3-52bbe195e075">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated"/>
+  <Product Id="b1a03242-568b-441e-968c-eac11e328101" Name="LoadAverageService" Language="1033" Version="1.0.0.0" Manufacturer="Tempus Fugit" UpgradeCode="48dc066c-97cc-4512-8fa3-52bbe195e075">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" />
     <!--<UIRef Id="WixUI_Minimal" />-->
-    <UIRef Id="WixUI_Advanced"/>
+    <UIRef Id="WixUI_Advanced" />
     <!-- Uncomment the line below to specify a custom EULA file. It should be a simple RTF file. -->
     <!--<WixVariable Id="WixUILicenseRtf" Value="License.rtf" />-->
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
-    <MediaTemplate/>
-    <PropertyRef Id="NETFRAMEWORK40FULL"/>
-    <Condition Message="You must install .NET Framework 4.0 or higher."><![CDATA[Installed OR NETFRAMEWORK40FULL]]></Condition>
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate />
+    <!-- https://stackoverflow.com/questions/13941531/what-is-the-property-reference-for-checking-for-net-framework-4-5-in-wix 
+    -->
+    <PropertyRef Id="NETFRAMEWORK45" />
+    <Condition Message="You must install .NET Framework 4.5 or higher."><![CDATA[Installed OR NETFRAMEWORK45]]></Condition>
     <Condition Message="This service requires Windows Server 2008 or higher."><![CDATA[Installed OR VersionNT >= 600]]></Condition>
-    <Feature Id="ProductFeature" Title="LoadAverageService" Level="1">
-      <ComponentGroupRef Id="ProductComponents"/>
+    <Feature Id="ProductFeature" Title="TimeService" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
     </Feature>
-    <WixVariable Id="WixUIBannerBmp" Value=".\images\clock.jpg"/>
-    <WixVariable Id="WixUIDialogBmp" Value=".\images\grandfatherclock.jpg"/>
-    <Property Id="ApplicationFolderName" Value="LoadAverageService"/>
-    <Property Id="WixAppFolder" Value="WixPerMachineFolder"/>
+    <WixVariable Id="WixUIBannerBmp" Value=".\images\clock.jpg" />
+    <WixVariable Id="WixUIDialogBmp" Value=".\images\grandfatherclock.jpg" />
+    <Property Id="ApplicationFolderName" Value="TimeService" />
+    <Property Id="WixAppFolder" Value="WixPerMachineFolder" />
     <!-- Custom action to set WCF namespace reservation
     Thanks to Geoff Webber for posting this solution. 
     http://geoffwebbercross.blogspot.com/2011/08/wix-3-netsh-customaction.html
@@ -26,7 +28,7 @@
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
-        <Directory Id="APPLICATIONFOLDER" Name="LoadAverageService"/>
+        <Directory Id="APPLICATIONFOLDER" Name="LoadAverageService" />
       </Directory>
     </Directory>
   </Fragment>
@@ -34,18 +36,22 @@
     <ComponentGroup Id="ProductComponents" Directory="APPLICATIONFOLDER">
       <Component Id="ProductComponent">
         <!--<File Id="Insert dll name" Name="Insert dll name again" Source="Insert path to dll" Vital="yes" KeyPath="no" DiskId="1"/>-->
-        <File Id="LoadAverageService.exe" Name="LoadAverageService.exe" Source="..\Program\bin\$(var.Configuration)\LoadAverageService.exe" Vital="yes" KeyPath="yes" DiskId="1"/>
-        <ServiceInstall Id="ServiceInstaller" Type="ownProcess" Vital="yes" Name="LoadAverageService" DisplayName="Load Average Counter Service" Description="A simple windows service that evaluates and returns the &quot;Load Average&quot; Counter" Start="auto" Account="LocalSystem" ErrorControl="ignore" Interactive="no">
+        <File Id="LoadAverageService.exe" Name="LoadAverageService.exe" Source="..\Program\bin\$(var.Configuration)\LoadAverageService.exe" Vital="yes" KeyPath="yes" DiskId="1" />
+        <ServiceInstall Id="ServiceInstaller" Type="ownProcess" Vital="yes" Name="LoadAverageService" DisplayName="Load Average Service" Description="A simple windows service that returns the current Load Average." Start="auto" Account="LocalSystem" ErrorControl="ignore" Interactive="no">
         </ServiceInstall>
-        <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="LoadAverageService" Wait="yes"/>
+        <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="LoadAverageService" Wait="yes" />
       </Component>
-      <!-- Referenced Dependency DLLs not in the GAC-->
+      <!-- Referenced DLLs not in the GAC-->
       <Component Id="Utils.dll">
-        <File Id="Utils.dll" Name="Utils.dll" Source="..\Program\bin\$(var.Configuration)\Utils.dll" Vital="yes" KeyPath="yes" DiskId="1"/>
+        <File Id="Utils.dll" Name="Utils.dll" Source="..\Program\bin\$(var.Configuration)\Utils.dll" Vital="yes" KeyPath="yes" DiskId="1" />
       </Component>
       <!-- Config files -->
       <Component Id="LoadAverageService.exe.config">
-        <File Id="LoadAverageService.exe.config" Name="LoadAverageService.exe.config" Source="..\Program\bin\$(var.Configuration)\LoadAverageService.exe.config" Vital="yes" KeyPath="yes" DiskId="1"/>
+        <File Id="LoadAverageService.exe.config" Name="LoadAverageService.exe.config" Source="..\Program\bin\$(var.Configuration)\LoadAverageService.exe.config" Vital="yes" KeyPath="yes" DiskId="1" />
+      </Component>
+      <!-- PDB files, if needed -->
+      <Component Id="LoadAverageService.Pdb">
+        <File Id="LoadAverageService.pdb" Name="LoadAverageService.pdb" Source="..\Program\bin\$(var.Configuration)\LoadAverageService.pdb" Vital="yes" KeyPath="yes" DiskId="1" />
       </Component>
     </ComponentGroup>
   </Fragment>
