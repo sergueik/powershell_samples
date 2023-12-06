@@ -210,7 +210,7 @@ if ($execute_ok) {
     # WindowsService.NET was not found on computer '.'
     # Cannot control WindowsService.NET service on computer '.'
     $message = $_.Exception.Message
-    write-host -foregroundcolor 'red' ('Exception: ' +  $message)
+    write-host -foregroundcolor 'red' ('Exception: ' + $message)
   }
 }
 
