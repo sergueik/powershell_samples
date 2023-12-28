@@ -5,12 +5,9 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PowershellStarter
-{
-	static class Program
-	{
-		static void Main()
-		{
+namespace PowershellStarter {
+	static class Program {
+		static void Main() {
 			ServiceBase[] ServicesToRun;
 			ServicesToRun = new ServiceBase[] {
 				new PowershellStarterService()

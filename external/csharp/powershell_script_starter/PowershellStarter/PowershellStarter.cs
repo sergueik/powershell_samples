@@ -3,23 +3,26 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Configuration;
+using System.ComponentModel;
 
 namespace PowershellStarter {
 
-	public partial class PowershellStarterService : ServiceBase {
+	public class PowershellStarterService : ServiceBase {
 
 		public string ScriptPath { get; set; }
 		public string ScriptParameters { get; set; }
 		public string output;
 		public string errorOutput;
 		public ProcessStartInfo process = new ProcessStartInfo();
-		public Process PSProcess = new System.Diagnostics.Process();
-
+		public Process PSProcess = new Process();
+		private EventLog eventLog;
+		private IContainer components = null;
+		
 		public PowershellStarterService() {
 			InitializeComponent();
 			// Set eventlog
-			if (!System.Diagnostics.EventLog.SourceExists(ConfigurationManager.AppSettings["EventLogSource"])) {
-				System.Diagnostics.EventLog.CreateEventSource(ConfigurationManager.AppSettings["EventLogSource"], ConfigurationManager.AppSettings["EventLog"]);
+			if (!EventLog.SourceExists(ConfigurationManager.AppSettings["EventLogSource"])) {
+				EventLog.CreateEventSource(ConfigurationManager.AppSettings["EventLogSource"], ConfigurationManager.AppSettings["EventLog"]);
 			}
 
 			eventLog.Source = ConfigurationManager.AppSettings["EventLogSource"];
@@ -80,5 +83,22 @@ namespace PowershellStarter {
 		private void eventLog_EntryWritten(object sender, EntryWrittenEventArgs e) {
 
 		}
+		
+
+		protected override void Dispose(bool disposing) {
+			if (disposing && (components != null)) {
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+
+		private void InitializeComponent() {
+			this.eventLog = new EventLog();
+			((ISupportInitialize)(this.eventLog)).BeginInit();
+			this.eventLog.EntryWritten += new EntryWrittenEventHandler(this.eventLog_EntryWritten);
+			this.ServiceName = "PSSvc";
+			((ISupportInitialize)(this.eventLog)).EndInit();
+		}
+		
 	}
 }

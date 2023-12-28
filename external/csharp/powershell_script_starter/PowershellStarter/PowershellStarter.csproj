@@ -75,19 +75,11 @@
     <Compile Include="PowershellStarter.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="PowershellStarter.Designer.cs">
-      <DependentUpon>PowershellStarter.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PowershellStarter.resx">
-      <DependentUpon>PowershellStarter.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

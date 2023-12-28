@@ -67,6 +67,9 @@ the error code `0x80131623` means simply
 ```text
 Runtime operation halted by call to System.Environment.FailFast()
 ```
+
+there will be Windows Error Reporting event logs created because of the way the service termiates itself.
+
 NOTE: the example Powershell `c:\temp\pstest.ps1` has to be a console appplication
 e.g.
 
@@ -79,9 +82,18 @@ the error says
 box or form when the application is not running in UserInteractive mode is not 
 
 ```
+### Cleanup
+```cmd
+sc.exe delete PowershellStarter
+```
+* NOTE: the `Remove-Service` cmdlet was introduced in PowerShell 6.0.
+
 ### See Also
 
   * [discussion](https://stackoverflow.com/questions/20561990/how-to-solve-the-specified-service-has-been-marked-for-deletion-error) of harmless but confusing side effect of removing the Windows service
   * https://learn.microsoft.com/en-us/dotnet/api/system.environment.failfast?view=netframework-4.5 
   * [creating a Basic Windows Service in C#](https://www.codeproject.com/Articles/14353/Creating-a-Basic-Windows-Service-in-C)
+
+### Author
+[Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 
