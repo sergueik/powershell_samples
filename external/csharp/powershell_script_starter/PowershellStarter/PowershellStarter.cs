@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 using System.Configuration;
 
 namespace PowershellStarter {
@@ -14,7 +9,7 @@ namespace PowershellStarter {
 	public partial class PowershellStarterService : ServiceBase {
 
 		public string ScriptPath { get; set; }
-		public string ScriptArguments { get; set; }
+		public string ScriptParameters { get; set; }
 		public string output;
 		public string errorOutput;
 		public ProcessStartInfo process = new ProcessStartInfo();
@@ -40,8 +35,8 @@ namespace PowershellStarter {
 
 		protected override void OnStart(string[] args){
 
-			string ScriptPath = ConfigurationManager.AppSettings["ScriptPath"];
-			string ScriptParameters = ConfigurationManager.AppSettings["ScriptParameters"];
+			ScriptPath = ConfigurationManager.AppSettings["ScriptPath"];
+			ScriptParameters = ConfigurationManager.AppSettings["ScriptParameters"];
 
 			// Define process startinfo
 
@@ -50,7 +45,7 @@ namespace PowershellStarter {
 			process.WorkingDirectory = ConfigurationManager.AppSettings["WorkingDirectory"];
 			process.RedirectStandardOutput = true;
 			process.RedirectStandardError = true;
-			process.FileName = "C:\\windows\\system32\\windowspowershell\\v1.0\\powershell.exe";
+			process.FileName = @"C:\windows\system32\windowspowershell\v1.0\powershell.exe";
 			process.Arguments = "-ExecutionPolicy Unrestricted -File " + ScriptPath + " " + ScriptParameters;
 
 			// Define process error/output event handling and start it.
