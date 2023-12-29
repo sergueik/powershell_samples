@@ -1,22 +1,17 @@
 ﻿using System.Diagnostics;
 
-namespace ScriptServices.powershell
-{
-    public class PowerShellScriptExecutor
-    {
+namespace ScriptServices.powershell {
+    public class PowerShellScriptExecutor {
         const string PowerShellExe = @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe";
 
-        public PowerShellScriptExecutor(string arguments)
-        {
+        public PowerShellScriptExecutor(string arguments) {
             this.Arguments = arguments;
         }
 
         public string Arguments { get; set; }
 
-        public ScriptResult Execute()
-        {
-            var startInfo = new ProcessStartInfo
-            {
+        public ScriptResult Execute() {
+            var startInfo = new ProcessStartInfo {
                 FileName = PowerShellExe,
                 Arguments = this.Arguments,
                 RedirectStandardOutput = true,
@@ -35,8 +30,7 @@ namespace ScriptServices.powershell
             string results = process.StandardOutput.ReadToEnd();
             string errors = process.StandardError.ReadToEnd();
 
-            if (!string.IsNullOrEmpty(errors) || process.ExitCode != 0)
-            {
+            if (!string.IsNullOrEmpty(errors) || process.ExitCode != 0) {
                 return new ScriptResult { Success = false, Output = errors };
             }
             
