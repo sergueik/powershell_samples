@@ -8,12 +8,13 @@ namespace ScriptServices.powershell {
 	               
 	public class PowerShellRunner {
 
-	        private bool debug;
+		private bool debug;
 
-               public bool Debug {
-                     get { return debug; }
-                     set {debug = value; }
-               }
+		public bool Debug {
+			get { return debug; }
+			set {debug = value; }
+		}
+
 		public ScriptResult Execute(string method, string scriptPath, IDictionary<string,string> scriptArguments) {
 			string workingDirectory = Path.GetTempPath();
 

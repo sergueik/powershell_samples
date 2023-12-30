@@ -85,7 +85,6 @@ PermissionDenied: (C:\developer\se...iptServices.exe:String)
 dir : Cannot find path 'Program\bin\Debug\ScriptServices.exe' because it does not exist.
 ```
 
-```
 ```powershell
 dir .\Program\bin\Debug
 ```
@@ -109,3 +108,13 @@ Mode                LastWriteTime         Length Name
 -a----       12/29/2023   7:22 AM         282112 Topshelf.dll
 
 ```
+
+### See Also:
+
+  * [how to: Create a Windows Service that schedules jobs, logs and is configurable by means of dependency injection](https://medium.com/@milojevicmarko92/how-to-create-windows-service-that-schedules-jobs-logs-and-is-configurable-by-means-of-779e8cbd0680)
+  * [service hosting framework for building Windows services using .NET](https://github.com/Topshelf/Topshelf)
+  * [creating Windows Service In .NET with Topshelf](https://www.c-sharpcorner.com/article/creating-windows-service-in-net-with-topshelf/)
+
+### Author
+[Serguei Kouzmine](kouzmine_serguei@yahoo.com)
+

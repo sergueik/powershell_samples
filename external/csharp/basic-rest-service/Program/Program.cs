@@ -1,30 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Topshelf;
+using Topshelf.HostConfigurators;
+using Topshelf.ServiceConfigurators;
 
-namespace ScriptServices
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            HostFactory.Run(x =>
-            {
-                x.Service<hosting.WindowsService>(s =>
-                {
-                    s.ConstructUsing(name => new hosting.WindowsService());
-                    s.WhenStarted(tc => tc.Start());
-                    s.WhenStopped(tc => tc.Stop());
-                });
-                x.RunAsLocalSystem();
+namespace ScriptServices {
+	class Program {
+		
+		static void Main(string[] args) {
+			// 
+			HostFactory.Run((HostConfigurator hostConfigurator) => {
 
-                x.SetDescription("Exposes powershell scripts as REST-based micro services");
-                x.SetDisplayName("ScriptServices");
-                x.SetServiceName("ScriptServices");
-            });
-        }
-    }
+				hostConfigurator.Service<hosting.WindowsService>((ServiceConfigurator<hosting.WindowsService> serviceConfigurator) => {
+			        serviceConfigurator.ConstructUsing((string name) => new hosting.WindowsService());
+					serviceConfigurator.WhenStarted((hosting.WindowsService callback) => callback.Start());
+					serviceConfigurator.WhenStopped((hosting.WindowsService callback) => callback.Stop());
+				});
+				hostConfigurator.RunAsLocalSystem();
+
+				hostConfigurator.SetDescription("Exposes powershell scripts as REST-based micro services");
+				hostConfigurator.SetDisplayName("ScriptServices");
+				hostConfigurator.SetServiceName("ScriptServices");
+			});
+		}
+	}
 }
