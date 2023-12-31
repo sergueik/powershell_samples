@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 
 namespace ScriptServices.powershell {
-	               
+
 	public class PowerShellRunner {
 
 		private bool debug;
@@ -22,22 +22,17 @@ namespace ScriptServices.powershell {
 
 			// generate a script that will invoke our script with all the required parameters
 			using (var writer = new StreamWriter(launcherScript)) {
-				// provide a fingerprint so scripts know when they are running inside of ScriptServices, should they need to
+
 				writer.WriteLine("$env:SCRIPTSERVICES_VERSION = '{0}'", Assembly.GetExecutingAssembly().GetName().Version);
 				writer.WriteLine(String.Format(@"$env:PSModulePath = '{0}';", Environment.GetEnvironmentVariable("PSModulePath"), EnvironmentVariableTarget.User));
-				// mock-out logging functions that could pollute the response stream, this still
-				// allows them to be used in scripts to help with interactive debugging etc.
 				writer.WriteLine("function Write-Host {}");
 				writer.WriteLine("function Write-Verbose {}");
 				writer.WriteLine("function Write-Debug {}");
 
-				// dot source the script so it is execute in the same scope as this launcher script
 				writer.Write(string.Format(@". '{0}' ", scriptPath));
 
-				// scripts should have a parameter to accept the HTTP request method, even if they do nothing with it
 				writer.Write(string.Format("-httpVerb \"{0}\"", method));
 
-				// construct the script parameters
 				foreach (var key in scriptArguments.Keys) {
 					writer.Write(string.Format(" -{0} \"{1}\"", key, scriptArguments[key].Replace("\"", "`\"")));
 				}
