@@ -30,11 +30,17 @@ namespace ScriptServices {
 
 		private Response ProcessRequest(dynamic scriptParameters) {
 			// Resolve the script being reference by the request
-			var scriptBaseName = scriptParameters["scriptBaseName"] as string;
+
+
+			var scriptBaseName = ((string)scriptParameters["scriptBaseName"]);
 			var script = string.Format("{0}.ps1", Path.Combine(this.settings.ScriptRepoRoot, scriptBaseName));
 			if (!File.Exists(script)) {
 				return HttpStatusCode.MethodNotAllowed;
 			}
+
+			// NOTE: cannot use "as" syntax:
+			// var scriptBaseName = scriptParameters["scriptBaseName"] as string;
+			// Something went horribly, horribly wrong while servicing your request
 
 			var args = new Dictionary<string, string>();
 
