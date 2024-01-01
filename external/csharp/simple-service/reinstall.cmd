@@ -21,6 +21,11 @@ REM "install" to skip the following two lines
 InstallUtil.exe -uninstall Program\bin\Debug\%APPNAME%
 REM goto :EOF
 InstallUtil.exe /username=%USERDOMAIN%\%USERNAME% /password=%PASSWORD% -install Program\bin\Debug\%APPNAME%
+REM NOTE: alternatively
+REM sc.exe create %APPNAME% binpath= "Program\bin\Debug\%APPNAME%" start= auto Displayname= "%APPNAME%"
+REM set Description=C# Demo Service
+REM sc.exe description %APPNAME% "%Description%"
+REM see also: https://github.com/MScholtes/Windows-Service/blob/master/NamedPipesService/Install.bat#L13
 sc.exe start %SERVICENAME%
 timeout 3
 goto :EOF

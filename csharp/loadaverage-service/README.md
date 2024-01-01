@@ -903,6 +903,7 @@ and is fixed by running the install in elevated prompt
    * `Perfon.Net` -  alternative metric collection helper class [article](https://www.codeproject.com/Articles/1170712/Asp-Net-Monitor-performance-without-using-windows)
    * simple custom performance counter app in c# [article](https://www.codeproject.com/Articles/1170712/Asp-Net-Monitor-performance-without-using-windows)
    * MsiExec.exe and InstMsi.exe Error Messages (for Developers) [document](https://learn.microsoft.com/en-us/windows/win32/msi/error-codes)	
+  * [collection of projects demonstrating Windows services for powershell scirpt, named pipes event logs etc.](https://github.com/MScholtes/Windows-Service)
 ### Vintage Screenshots
 
 ![ActiveState Perl PPM chimera script Example](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture-ppm_bat.jpg)

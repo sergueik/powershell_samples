@@ -29,6 +29,7 @@ $writer.WriteLine('this is a test')
     + if the "server" started in Debuger, the excepion received in the "client" is: `NamedPipeIOException: Pipe \\.\pipe\MyPipe is too busy. Internal error: 231` and `NamedPipeIOException: Error reading from pipe. Internal error: 109` 
     + the exception received in Powershell client is: `Pipe is broken.`
   * needs moderate modifications to be used as Windows Service
-
+### See Also:
+   * https://github.com/IfatChitin/Named-Pipes
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

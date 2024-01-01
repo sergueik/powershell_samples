@@ -10,6 +10,13 @@ InstallUtil.exe  -uninstall .\Program\bin\Debug\WindowsService.NET.exe
 InstallUtil.exe  -install .\Program\bin\Debug\WindowsService.NET.exe
 sc.exe query WindowsService.NET
 
+# NOTE: alternatively
+# $SERVICENAME = 'WindowsService.NET.exe'
+# & sc.exe create ${SERVICENAME} binpath= "Program\bin\Debug\${SERVICENAME}" start= auto Displayname= "${SERVICENAME}"
+# $Description = 'C# demo Windows Service.' 
+# & sc.exe description ${SERVICENAME} "${Description}"
+# see also: https://github.com/MScholtes/Windows-Service/blob/master/NamedPipesService/Install.bat#L13
+
 sc.exe start  WindowsService.NET
 
 

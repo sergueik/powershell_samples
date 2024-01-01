@@ -470,6 +470,7 @@ Technically,Microsoft introduced __Task Scheduler__ (formerly named __Windows 95
   * __SandboxEscaper__/`PoC-LPE` [exploit mechanism explanation](https://habr.com/ru/articles/421593)(in Rusian)
   * [another explanation of the exploit video](https://hunter2.gitbook.io/darthsidious/privilege-escalation/alpc-bug-0day)
   * software Engineering Institute CERT Microsoft Windows task scheduler contains a local privilege escalation vulnerability in the ALPC interface [summary](https://kb.cert.org/vuls/id/906424) and a workaround explanation
+  * [collection of projects demonstrating Windows services for powershell scirpt, named pipes event logs etc.](https://github.com/MScholtes/Windows-Service)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
