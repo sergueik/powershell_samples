@@ -1,4 +1,4 @@
-#Copyright (c) 2022,2023 Serguei Kouzmine
+#Copyright (c) 2022,2023,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,13 @@
 # [CmdletBinding()]
 param(
  # [parameter(Mandatory=$true,Position=1)] [ValidateScript({ Test-Path -PathType Leaf $_ })] [String] $datafile,
+ [string] $line = 'somekey: somevalue',
+ [switch] $passthru,
  [string] $datafile,
  [string] $key = 'test',
  [string] $value = 'data',
  [switch]$delete,
-# NOTE: 
+# NOTE:
 # A parameter with the name 'Debug' was defined multiple times for the command (??)
 # see also: https://stackoverflow.com/questions/65700615/powershell-a-parameter-with-the-name-was-defined-multiple-times-for-the-command# ,
 [switch]$debug
@@ -207,20 +209,14 @@ if (-not ($data_class -as [type])) {
     if ($debug) {
       write-host ('Data (raw):' + [char]10 + '"' + $data + '"' + [char]10)
     }
-    # alternatively reuse the code from
     $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
 
-    [Microsoft.PowerShell.Commands.MatchInfo]$matchInfo = $null
-    # NOTE does not work..
-    # convert from regular to Powershell notation
-    # $separaror = '\r?\n' -replace '\\', '`'
-    # $data -split $separaror |
     $data -split "`r?`n" |
     where-object {
       $line = $_
-      if ($debug){ 
+      if ($debug){
         write-host ('examine line {0}' -f $line )
-      } 
+      }
       $line -match $pattern
     } |
     foreach-object {
@@ -239,7 +235,7 @@ if (-not ($data_class -as [type])) {
     return
   }
   # NOTE: cannot use addition
-  if ($delete){ 
+  if ($delete){
     $y.Keys | foreach-object {
       $k = $_
       if ($debug ){
@@ -282,8 +278,33 @@ if (-not ($data_class -as [type])) {
 
 $debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
 $delete_flag = [bool]$PSBoundParameters['delete'].IsPresent -bor $delete.ToBool()
+$passthru_flag = [bool]$PSBoundParameters['passthru'].IsPresent -bor $passthru.ToBool()
 
 updateData -datafile $datafile -y @{$key = $value} -debug $debug_flag -delete $delete_flag
 <#
 . .\updatedata.ps1 -datafile ((resolve-path '.' ).path + '\' + 'data.txt') -key 'foo' -value 'bar42' -debug -delete
 #>
+
+if ($passthru_flag){
+  [System.Collections.Hashtable]$y = @{}
+  # alternatively reuse the code from updateData itself
+  $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
+
+  if ($debug_flag){
+    write-host ('examine passhhru line {0}' -f $line )
+  }
+  if ( $line -match $pattern ) {
+
+    $m = select-string -pattern $pattern -InputObject $line
+    $g = $m.Matches.Groups
+    $k = $g.Item(1).Value
+    $v = $g.Item(2).Value
+    write-host('key: {0}; value: {1}' -f $k,$v)
+    $y[$k] = $v
+    updateData -datafile $datafile -y $y -debug $debug_flag -delete $delete_flag
+<#
+. .\updatedata.ps1 -datafile ((resolve-path '.' ).path + '\' + 'data.txt') -line 'foo: bar2' -debug -passthru
+#>
+
+  }
+}
