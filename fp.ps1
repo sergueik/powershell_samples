@@ -1,10 +1,15 @@
 $funcs = @{
-  'x' = { $data = $args[0] ; $data};
+  'x' = { $value = $args[0] ; $value};
   'y' = { ("'{0}'" -f $args[0]) };
-  'z' = { param($data) ('"{0}"' -f $data )};
+  'z' = { param($value) ('"{0}"' -f $value )};
 }
-		
-$data = @{ 'x' = 10; 'y' = 20; 'z' = 30; };
+function default_convertor {
+  param (
+    $value
+  )
+  return ( 'default_convertor: {0}' -f $value )
+}
+$data = @{ 'x' = 10; 'y' = 20; 'z' = 30; 't' = 101; };
 
 $data.keys |
 foreach-object {
@@ -15,7 +20,7 @@ foreach-object {
     $func = $funcs[$k]
     $res = $func.invoke($value)
   } else  { 
-    $res = ''
+    $res = default_convertor -value $value
   }
   # NOTE: print will produce something useless when composed this way
   # write-output ('{0}: {1}' -f $k, $res) 
