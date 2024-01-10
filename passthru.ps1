@@ -23,14 +23,19 @@ param (
  [switch] $passthru,
  [switch] $debug
 )
-$debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
-$passthru_flag = [bool]$PSBoundParameters['passthru'].IsPresent -bor $passthru.ToBool()
-if ($passthru_flag){
+
+function passthru {
+  param (
+    [string] $line = 'somekey: somevalue',
+    [string] $datafile,
+    [bool]$debug
+  )
+
   [System.Collections.Hashtable]$y = @{}
   # alternatively reuse the code from updateData itself
   $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
 
-  if ($debug_flag){
+  if ($debug){
     write-host ('examine passhhru line {0}' -f $line )
   }
   if ( $line -match $pattern ) {
@@ -39,7 +44,20 @@ if ($passthru_flag){
     $g = $m.Matches.Groups
     $k = $g.Item(1).Value
     $v = $g.Item(2).Value
-    write-host('key: {0}; value: {1}' -f $k,$v)
+    # 	if ($debug){
+      write-host('key: {0}; value: {1}' -f $k, $v)
+    # }
     $y[$k] = $v
   }
+}
+
+
+### Main
+$debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
+$passthru_flag = [bool]$PSBoundParameters['passthru'].IsPresent -bor $passthru.ToBool()
+if ($passthru_flag){
+  <#
+  . .\pasthru.ps1 -line 'foo: bar2' -debug -passthru
+  #>
+  passthru -line $line -debug $debug_flag
 }
