@@ -32,24 +32,6 @@ param(
 [switch]$debug
 )
 
-
-function updateData {
-  param(
-    [String]$datafile,
-    [System.Collections.Hashtable]$y = @{},
-    [int]$retries = 3,
-    [bool]$delete = $false,
-    [bool]$debug
-  )
-  if ($debug) {
-    write-host ('Check if data is provided')
-  }
-  if ($y -eq $null -or $y.Keys.Count -eq 0 ){
-    if ($debug) {
-      write-host ('No data was provided')
-    }
-    return
-  }
 # safe read and write with retry for the "File in use by another process"
 # based on: https://stackoverflow.com/questions/876473/is-there-a-way-to-check-if-a-file-is-in-use
 $data_class = 'FileHelper'
@@ -170,6 +152,24 @@ if (-not ($data_class -as [type])) {
 "@
   # NOTE: the previous line with "@" marker should not be indented
 }
+
+function updateData {
+  param(
+    [String]$datafile,
+    [System.Collections.Hashtable]$y = @{},
+    [int]$retries = 3,
+    [bool]$delete = $false,
+    [bool]$debug
+  )
+  if ($debug) {
+    write-host ('Check if data is provided')
+  }
+  if ($y -eq $null -or $y.Keys.Count -eq 0 ){
+    if ($debug) {
+      write-host ('No data was provided')
+    }
+    return
+  }
   [System.Collections.Hashtable]$x = @{}
   [String]$data = $null
   if ($debug) {
@@ -194,7 +194,6 @@ if (-not ($data_class -as [type])) {
     }
 
     $interval = 250
-    $retries = 3
     $o = new-object -typeName $data_class
     $o.Debug = $debug
     $o.Retries = $retries
@@ -211,6 +210,7 @@ if (-not ($data_class -as [type])) {
     }
     $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
 
+    [Microsoft.PowerShell.Commands.MatchInfo]$m = $null
     $data -split "`r?`n" |
     where-object {
       $line = $_
@@ -271,6 +271,69 @@ if (-not ($data_class -as [type])) {
   return
 }
 
+function csvFields {
+  param (
+    [String]$datafile,
+    [string]$fields = 'key1,key2,key3',
+    [int]$retries = 3,
+    [bool]$debug
+  )
+  if ($debug) {
+    write-host ('Check if data is provided')
+  }
+    [System.Collections.Hashtable]$x = @{}
+    $interval = 250
+    $o = new-object -typeName $data_class
+    $o.Debug = $debug
+    $o.Retries = $retries
+    $o.Interval = $interval
+    $o.FilePath = $datafile
+    if ($debug) {
+      write-host ('Read {0} safely' -f $o.FilePath )
+    }
+    $o.ReadContents()
+    $data = $o.Text
+    if ($debug) {
+      write-host ('Data (raw):' + [char]10 + '"' + $data + '"' + [char]10)
+    }
+    $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
+
+    [Microsoft.PowerShell.Commands.MatchInfo]$m = $null
+    $data -split "`r?`n" |
+    where-object {
+      $line = $_
+      if ($debug){ 
+        write-host ('examine line {0}' -f $line )
+      } 
+      $line -match $pattern
+    } |
+    foreach-object {
+      $line = $_
+      $m = select-string -pattern $pattern -InputObject $line
+      $g = $m.Matches.Groups
+      $k = $g.Item(1).Value
+      $v = $g.Item(2).Value
+      $x[$k] = $v
+    }
+    if ($debug){
+      write-host ('Loaded entries:' + [char]10 + ( $x | convertto-json ) -join '')
+    }
+
+  $values = @()
+  ($fields -split ',') | 
+  foreach-object {
+    $k = $_
+    if ($x.ContainsKey($k)) {
+      $v = $x[$k]
+    } else {
+      $v = ''
+    }
+    $values += $v
+  }
+  return ( $values -join ',')
+}
+
+
 function passthru {
   param (
     [string] $line = 'somekey: somevalue',
@@ -319,3 +382,5 @@ if ($passthru_flag){
   . .\updatedata.ps1 -datafile ((resolve-path '.' ).path + '\' + 'data.txt') -line 'foo: bar2' -debug -passthru
   #>
 }
+
+csvFields -debug $true -datafile $datafile
