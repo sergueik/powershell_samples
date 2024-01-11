@@ -153,13 +153,14 @@ if (-not ($data_class -as [type])) {
   # NOTE: the previous line with "@" marker should not be indented
 }
 
-function readData {
+# do not use: when called loses line ending in multiline text file content
+function readRawData {
   param(
     [String]$filepath,
     [int]$retries = 3,
     [bool]$debug
   )
-  [String]$local:data = $null
+  [String]$data = $null
   if ($debug) {
     write-host ('Check if file is present: {0}' -f $filepath )
   }
@@ -191,42 +192,66 @@ function readData {
       write-host ('Read file {0} safely' -f $o.FilePath )
     }
     $o.ReadContents()
-    $local:data = $o.Text
+    $data = $o.Text
 
     if ($debug) {
-      write-host ('readData Data (raw):' + [char]10 + '"' + $local:data + '"' + [char]10)
+      write-host ('readData Data (raw):' + [char]10 + '"' + $data + '"' + [char]10)
     }
     $o = $null
   }
-  return $local:data
+  return $data
 }
 
-function updateData {
+function readData {
   param(
     [String]$filepath,
-    [System.Collections.Hashtable]$y = @{},
     [int]$retries = 3,
-    [bool]$delete = $false,
     [bool]$debug
   )
-  if ($y -eq $null -or $y.Keys.Count -eq 0 ){
-    if ($debug) {
-      write-host ('No data was provided')
-    }
-    return
+  [System.Collections.Hashtable]$x = @{}  
+  if ($debug) {
+    write-host ('Check if file is present: {0}' -f $filepath )
   }
-  if (test-path -path $filepath) {
 
-    [System.Collections.Hashtable]$x = @{}
-    [String]$local:data = readData -filepath  $filepath -debug $debug -retries $retries
+  if (test-path -path $filepath) {
+    # NOTE: frequent error:
+    # 32   The process cannot access the file because it is being used by another process.
+    # when using "get-content" cmdlet
+    if ($debug) {
+      write-host ('File is present: {0}' -f $filepath )
+    }
+    try {
+      if ($debug) {
+        write-host ('Reading File: {0}' -f $filepath )
+      }
+      if ($debug) {
+        get-content -path $filepath
+      }
+    } catch [exception]{
+      Write-Output ("Exception: {0}" -f $_.Exception.Message)
+    }
+
+    $interval = 250
+    $o = new-object -typeName $data_class
+    $o.Debug = $debug
+    $o.Retries = $retries
+    $o.Interval = $interval
+    $o.FilePath = $filepath
+    if ($debug) {
+      write-host ('Read file {0} safely' -f $o.FilePath )
+    }
+    $o.ReadContents()
+    $data = $o.Text
 
     if ($debug) {
-      write-host ('updateData Data (raw):' + [char]10 + '"' + $local:data + '"' + [char]10)
+      write-host ('readData Data (raw):' + [char]10 + '"' + $data + '"' + [char]10)
     }
+    $o = $null
+
     $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
 
     [Microsoft.PowerShell.Commands.MatchInfo]$m = $null
-    $local:data -split "`r?`n" |
+    $data -split "`r?`n" |
     where-object {
       $line = $_
       if ($debug){ 
@@ -246,58 +271,15 @@ function updateData {
     if ($debug){
       write-host ('Loaded entries:' + [char]10 + ( $x | convertto-json ) -join '')
     }
-  } else{
-    write-host -foreground 'Red' ('file not found: {0}' -f $datafile)
-    return
-  }
-  # NOTE: cannot use addition
-  if ($delete){ 
-    $y.Keys | foreach-object {
-      $k = $_
-      if ($debug ){
-        write-host ('deleting {0}' -f $k)
-      }
-      if ($x.ContainsKey($k)){
-        $x.Remove($k)
-      }
-    }
-  } else {
-    $y.Keys | foreach-object {
-      $k = $_
-      $v = $y[$k]
-      if ($debug ){
-        write-host ('adding {0} = {1}' -f $k, $v)
-      }
-      $x[$k] = $v
-    }
-  }
 
-  [String[]]$result = @()
-  $x.Keys | foreach-object {
-    $k = $_
-    $v = $x[$k]
-    $result += ('{0}: {1}' -f $k,$v)
   }
-  [String]$text = (($result -join "`r`n" ) + "`r`n")
-  if ($debug){
-    write-host ('Write data:' + [char]10 + $text)
-  }
-  $interval = 250
-  $o = new-object -typeName $data_class
-  $o.Debug = $debug
-  $o.Retries = $retries
-  $o.Interval = $interval
-  $o.FilePath = $filepath
-  $o.Text = $text
-  $o.WriteContents()
-  $o = $null
-  return
+  return $x
 }
 
 
-function updateData.OLD {
+function updateData {
   param(
-    [String]$datafile,
+    [String]$filepath,
     [System.Collections.Hashtable]$y = @{},
     [int]$retries = 3,
     [bool]$delete = $false,
@@ -317,19 +299,19 @@ function updateData.OLD {
   if ($debug) {
     write-host ('Check if file is present: {0}' -f $datafile )
   }
-  if (test-path -path $datafile) {
+  if (test-path -path $filepath) {
     # NOTE: frequent error:
     # 32   The process cannot access the file because it is being used by another process.
     # when using "get-content" cmdlet
     if ($debug) {
-      write-host ('File is present: {0}' -f $datafile )
+      write-host ('File is present: {0}' -f $filepath )
     }
     try {
       if ($debug) {
-        write-host ('Reading File: {0}' -f $datafile )
+        write-host ('Reading File: {0}' -f $filepath )
       }
       if ($debug) {
-        get-content -path $datafile
+        get-content -path $filepath
       }
     } catch [exception]{
       Write-Output ("Exception: {0}" -f $_.Exception.Message)
@@ -340,7 +322,7 @@ function updateData.OLD {
     $o.Debug = $debug
     $o.Retries = $retries
     $o.Interval = $interval
-    $o.FilePath = $datafile
+    $o.FilePath = $filepath
     if ($debug) {
       write-host ('Read {0} safely' -f $o.FilePath )
     }
@@ -421,30 +403,7 @@ function csvFields {
     [bool]$debug
   )
 
-    [String]$local:data = readData -filepath  $filepath -debug $debug -retries $retries
-    [System.Collections.Hashtable]$x = @{}
-    if ($debug) {
-      write-host ('Data (raw):' + [char]10 + '"' + $local:data + '"' + [char]10)
-    }
-    $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
-
-    [Microsoft.PowerShell.Commands.MatchInfo]$m = $null
-    $data -split "`r?`n" |
-    where-object {
-      $line = $_
-      if ($debug){ 
-        write-host ('examine line {0}' -f $line )
-      } 
-      $line -match $pattern
-    } |
-    foreach-object {
-      $line = $_
-      $m = select-string -pattern $pattern -InputObject $line
-      $g = $m.Matches.Groups
-      $k = $g.Item(1).Value
-      $v = $g.Item(2).Value
-      $x[$k] = $v
-    }
+    [System.Collections.Hashtable]$x = readData -filepath  $filepath -debug $debug -retries $retries
     if ($debug){
       write-host ('Loaded entries:' + [char]10 + ( $x | convertto-json ) -join '')
     }
