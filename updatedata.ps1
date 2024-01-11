@@ -153,7 +153,149 @@ if (-not ($data_class -as [type])) {
   # NOTE: the previous line with "@" marker should not be indented
 }
 
+function readData {
+  param(
+    [String]$filepath,
+    [int]$retries = 3,
+    [bool]$debug
+  )
+  [String]$local:data = $null
+  if ($debug) {
+    write-host ('Check if file is present: {0}' -f $filepath )
+  }
+  if (test-path -path $filepath) {
+    # NOTE: frequent error:
+    # 32   The process cannot access the file because it is being used by another process.
+    # when using "get-content" cmdlet
+    if ($debug) {
+      write-host ('File is present: {0}' -f $filepath )
+    }
+    try {
+      if ($debug) {
+        write-host ('Reading File: {0}' -f $filepath )
+      }
+      if ($debug) {
+        get-content -path $filepath
+      }
+    } catch [exception]{
+      Write-Output ("Exception: {0}" -f $_.Exception.Message)
+    }
+
+    $interval = 250
+    $o = new-object -typeName $data_class
+    $o.Debug = $debug
+    $o.Retries = $retries
+    $o.Interval = $interval
+    $o.FilePath = $filepath
+    if ($debug) {
+      write-host ('Read file {0} safely' -f $o.FilePath )
+    }
+    $o.ReadContents()
+    $local:data = $o.Text
+
+    if ($debug) {
+      write-host ('readData Data (raw):' + [char]10 + '"' + $local:data + '"' + [char]10)
+    }
+    $o = $null
+  }
+  return $local:data
+}
+
 function updateData {
+  param(
+    [String]$filepath,
+    [System.Collections.Hashtable]$y = @{},
+    [int]$retries = 3,
+    [bool]$delete = $false,
+    [bool]$debug
+  )
+  if ($y -eq $null -or $y.Keys.Count -eq 0 ){
+    if ($debug) {
+      write-host ('No data was provided')
+    }
+    return
+  }
+  if (test-path -path $filepath) {
+
+    [System.Collections.Hashtable]$x = @{}
+    [String]$local:data = readData -filepath  $filepath -debug $debug -retries $retries
+
+    if ($debug) {
+      write-host ('updateData Data (raw):' + [char]10 + '"' + $local:data + '"' + [char]10)
+    }
+    $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
+
+    [Microsoft.PowerShell.Commands.MatchInfo]$m = $null
+    $local:data -split "`r?`n" |
+    where-object {
+      $line = $_
+      if ($debug){ 
+        write-host ('examine line {0}' -f $line )
+      } 
+      $line -match $pattern
+    } |
+    foreach-object {
+      $line = $_
+      $m = select-string -pattern $pattern -InputObject $line
+      $g = $m.Matches.Groups
+      $k = $g.Item(1).Value
+      $v = $g.Item(2).Value
+      $x[$k] = $v
+    }
+  
+    if ($debug){
+      write-host ('Loaded entries:' + [char]10 + ( $x | convertto-json ) -join '')
+    }
+  } else{
+    write-host -foreground 'Red' ('file not found: {0}' -f $datafile)
+    return
+  }
+  # NOTE: cannot use addition
+  if ($delete){ 
+    $y.Keys | foreach-object {
+      $k = $_
+      if ($debug ){
+        write-host ('deleting {0}' -f $k)
+      }
+      if ($x.ContainsKey($k)){
+        $x.Remove($k)
+      }
+    }
+  } else {
+    $y.Keys | foreach-object {
+      $k = $_
+      $v = $y[$k]
+      if ($debug ){
+        write-host ('adding {0} = {1}' -f $k, $v)
+      }
+      $x[$k] = $v
+    }
+  }
+
+  [String[]]$result = @()
+  $x.Keys | foreach-object {
+    $k = $_
+    $v = $x[$k]
+    $result += ('{0}: {1}' -f $k,$v)
+  }
+  [String]$text = (($result -join "`r`n" ) + "`r`n")
+  if ($debug){
+    write-host ('Write data:' + [char]10 + $text)
+  }
+  $interval = 250
+  $o = new-object -typeName $data_class
+  $o.Debug = $debug
+  $o.Retries = $retries
+  $o.Interval = $interval
+  $o.FilePath = $filepath
+  $o.Text = $text
+  $o.WriteContents()
+  $o = $null
+  return
+}
+
+
+function updateData.OLD {
   param(
     [String]$datafile,
     [System.Collections.Hashtable]$y = @{},
@@ -273,28 +415,16 @@ function updateData {
 
 function csvFields {
   param (
-    [String]$datafile,
+    [String]$filepath,
     [string]$fields = 'key1,key2,key3',
     [int]$retries = 3,
     [bool]$debug
   )
-  if ($debug) {
-    write-host ('Check if data is provided')
-  }
+
+    [String]$local:data = readData -filepath  $filepath -debug $debug -retries $retries
     [System.Collections.Hashtable]$x = @{}
-    $interval = 250
-    $o = new-object -typeName $data_class
-    $o.Debug = $debug
-    $o.Retries = $retries
-    $o.Interval = $interval
-    $o.FilePath = $datafile
     if ($debug) {
-      write-host ('Read {0} safely' -f $o.FilePath )
-    }
-    $o.ReadContents()
-    $data = $o.Text
-    if ($debug) {
-      write-host ('Data (raw):' + [char]10 + '"' + $data + '"' + [char]10)
+      write-host ('Data (raw):' + [char]10 + '"' + $local:data + '"' + [char]10)
     }
     $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
 
@@ -333,16 +463,15 @@ function csvFields {
   return ( $values -join ',')
 }
 
-
 function passthru {
   param (
     [string] $line = 'somekey: somevalue',
-    [string] $datafile,
+    [string] $filepath,
     [bool]$debug
   )
 
   [System.Collections.Hashtable]$y = @{}
-  # alternatively reuse the code from updateData itself
+  # alternatively reuse the code from update_data itself
   $pattern =  '^ *([^ ]*): *([^ ]*.*)$'
 
   if ($debug){
@@ -358,9 +487,8 @@ function passthru {
       write-host('key: {0}; value: {1}' -f $k, $v)
     }
     $y[$k] = $v
-    updateData -datafile $datafile -y $y -debug $debug_flag -delete $delete_flag
+    updateData -filepath $filepath -y $y -debug $debug_flag -delete $delete_flag
   }
-
 }
 ### Main
 # You cannot call a method on a null-valued expression.
@@ -371,16 +499,18 @@ $debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
 $delete_flag = [bool]$PSBoundParameters['delete'].IsPresent -bor $delete.ToBool()
 $passthru_flag = [bool]$PSBoundParameters['passthru'].IsPresent -bor $passthru.ToBool()
 
-updateData -datafile $datafile -y @{$key = $value} -debug $debug_flag -delete $delete_flag
+write-host ('updateData -filepath {0} -y @{{{1} = {2}}} -debug {3} -delete {4}' -f $datafile,$key,$value,$debug_flag,$delete_flag )
+
+updateData -filepath $datafile -y @{$key = $value} -debug $debug_flag -delete $delete_flag
 <#
 . .\updatedata.ps1 -datafile ((resolve-path '.' ).path + '\' + 'data.txt') -key 'foo' -value 'bar42' -debug -delete
 #>
 
 if ($passthru_flag){
-  passthru -line $line -debug $debug_flag -datafile $datafile
+  passthru -line $line -debug $debug_flag -filepath $datafile
  <#
   . .\updatedata.ps1 -datafile ((resolve-path '.' ).path + '\' + 'data.txt') -line 'foo: bar2' -debug -passthru
   #>
 }
 
-csvFields -debug $true -datafile $datafile
+# csvFields -debug $true -filepath $datafile
