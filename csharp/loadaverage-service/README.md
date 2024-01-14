@@ -904,6 +904,9 @@ and is fixed by running the install in elevated prompt
    * simple custom performance counter app in c# [article](https://www.codeproject.com/Articles/1170712/Asp-Net-Monitor-performance-without-using-windows)
    * MsiExec.exe and InstMsi.exe Error Messages (for Developers) [document](https://learn.microsoft.com/en-us/windows/win32/msi/error-codes)	
   * [collection of projects demonstrating Windows services for powershell scirpt, named pipes event logs etc.](https://github.com/MScholtes/Windows-Service)
+
+  * Daniel Doubrovkine's [dblock/log4jna](https://github.com/dblock/log4jna) using [JNA](https://github.com/java-native-access/jna) to call `advapi32.dll` `ReportEvent` [method](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-reporteventw) for creating event log messsages, no native Windows dll needs to be installed. The project using mingw and Visual Studio to and [antun](https://www.google.com/search?q=maven+anrtun+plugin) to compile message resource dll `Win32EventLogAppender.dll` from `mc` files.
+
 ### Vintage Screenshots
 
 ![ActiveState Perl PPM chimera script Example](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture-ppm_bat.jpg)
