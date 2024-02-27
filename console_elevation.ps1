@@ -33,8 +33,8 @@ param(
   [bool]$debug
 )
 
-  $myWindowsID = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-  $myWindowsPrincipal = new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
+  $windowsidentity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+  $windowsprincipal = new-object System.Security.Principal.WindowsPrincipal($windowsidentity)
 
   $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator 
   if ($debug ){
@@ -45,8 +45,8 @@ param(
   # Check to see if we are currently NOT running "as Administrator"
   # Alternative(?) is (https://www.cyberforum.ru/powershell/thread3136876.html#post17094408)
   #  'S-1-5-32-544' = 'BUILTIN\Administrators'
-  # if (-not $myWindowsPrincipal.Groups -contains 'S-1-5-32-544')) {
-  if ( -not $myWindowsPrincipal.IsInRole($adminRole) ) {
+  # if (-not $windowsprincipal.Groups -contains 'S-1-5-32-544')) {
+  if ( -not $windowsprincipal.IsInRole($adminRole) ) {
     write-host -foreground 'Red' ('The {0} needs to run in elevated prompt' -f $message) 
     exit
   }
@@ -59,13 +59,17 @@ $debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
 check_elevation -debug $debug_flag -message $message
 # pass certs to session
 # https://stackoverflow.com/questions/22764288/windows-powershell-give-password-in-command-enter-pssession
+
 <#
-   $password = ConvertTo-SecureString '12345' -AsPlainText -Force
-   $credential = New-Object System.Management.Automation.PSCredential ('test1',    $password)
-   Enter-PSSession -ComputerName User1 -Credential $credential
+   $username = 'user1'
+   $comoutername = 'computer1'
+   $plaintext_password = '...'
+   [System.Security.SecureString]$securestring = convertto-securestring $plaintext_password -asplaintext -force
+   [System.Management.Automation.PSCredential]$credential = new-object System.Management.Automation.PSCredential($username, $securestring)
+   enter-pssession -computerName $comutername -credential $credential
 #>
 # Check to see if we are currently running "as Administrator"
-if ($myWindowsPrincipal.IsInRole($adminRole)) {
+if ($windowsprincipal.IsInRole($adminRole)) {
   # We are running "as Administrator" - so change the title and background color to indicate this
   $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + '(Elevated)'
   $Host.UI.RawUI.BackgroundColor = 'DarkBlue'

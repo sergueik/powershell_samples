@@ -374,9 +374,10 @@ Typically, to create a PSCredential object, you'd use the Get-Credential cmdlet.
 #>
 # https://adamtheautomator.com/powershell-get-credential/#:~:text=Typically,%20to%20create%20a%20PSCredential,like%20the%20username%20and%20password.&text=The%20Get-Credential%20cmdlet%20works%20fine%20and%20all%20but%20it's%20interactive.
 <#
+$username = 'root'
 $plaintext_password = '...'
-$secure_password = convertto-securestring $plaintext_password -AsPlainText -Force
-$credential = new-object System.Management.Automation.PSCredential ('root', $secure_password)
+[System.Security.SecureString]$securestring = convertto-securestring $plaintext_password -asplaintext -force
+[System.Management.Automation.PSCredential]$credential = new-object System.Management.Automation.PSCredential($username, $securestring)
 
 $credential.GetNetworkCredential()
 
@@ -384,7 +385,7 @@ UserName Domain
 -------- ------
 root
 $credential.GetNetworkCredential().Password
-$plaintext_password will be shown
+$plaintext_password will be printed
 
 #>
 $clipboard_flag = [bool]$PSBoundParameters['clipboard'].IsPresent

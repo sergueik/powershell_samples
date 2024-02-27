@@ -30,10 +30,11 @@ param(
   [switch]$debug
 )
 
-function private:ConvertTo-RegularString([Security.SecureString]$securestring) {
-  return [Runtime.InteropServices.Marshal]::PtrToStringAuto(
-    [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securestring)
-  )
+function private:ConvertTo-RegularString {
+  param(
+    [Security.SecureString]$securestring
+  ) 
+  return [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($securestring))
 }
 if ( [bool]$psboundparameters['ssh'].ispresent ) {
   $env_check = $true
@@ -54,7 +55,7 @@ $message = (' Enter password for user {0}' -f $user)
 if ($env_check -eq $true ) {
   $securestring_password = read-host $message -assecurestring
   $plaintext_password = convertTo-RegularString $securestring_password
-  $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $User,  $securestring_password
+  $credential = new-object -TypeName System.Management.Automation.PSCredential -ArgumentList $User,  $securestring_password
   $plaintext_password2 = $credential.GetNetworkCredential().Password
 } else {
   $credential = get-credential -username $user -message $message
