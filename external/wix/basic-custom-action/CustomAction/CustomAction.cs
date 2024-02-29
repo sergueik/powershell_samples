@@ -8,10 +8,10 @@ namespace MyCustomActionProject {
 		private const string logPath = @"c:\temp";
 		// private static string logPath = @"c:\Program Files";
 		// the file is created if the directory is writable tothe executing user
-		// if the path is not writbale, the install will roll back in the first run
+		// if the 	path is not writbale, the install will roll back in the first run
 		// net.exe user app  /add
 		// use existing enent source 
-		private const string  eventSource = "EventSystem";
+		private const string  eventSource = "MyCustomEventSource1";
 		[CustomAction]
 		public static ActionResult MyCustomActionMethod(Session session) {
 			var logFile = logPath + @"\" + "installed.txt";

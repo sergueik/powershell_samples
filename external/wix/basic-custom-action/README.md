@@ -9,6 +9,26 @@ In addition to writing to log file,for which the user running the isntaller may 
 
 #### Build the Test App
 
+*  make sure the prerequisite MSBuild projects are present:
+
+```txt
+ Directory of c:\Program Files\MSBuild\Microsoft\WiX\v3.x
+
+02/26/2023  05:24 PM    <DIR>          .
+02/26/2023  05:24 PM    <DIR>          ..
+09/15/2019  07:13 AM             4,233 lux.targets
+09/16/2019  02:23 PM             9,067 wix.ca.targets
+09/15/2019  07:13 AM             1,731 wix.nativeca.targets
+09/16/2019  02:23 PM             1,097 wix.targets
+09/16/2019  02:23 PM           145,601 wix200x.targets
+09/16/2019  02:23 PM           146,067 wix2010.targets
+```
+on a 64 bit Windows machine this will be in `Program Files (x86)`
+```cmd
+mkdir "c:\Program Files (x86)\MSBuild\Microsoft\\WiX\v3.x"
+
+```
+
 ```powershell
 
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
@@ -77,7 +97,20 @@ Volumes = 1
 ```cmd
 msiexec.exe /l*v a.log /i bin\Debug\Setup.msi
 ```
+observe the text file created
 
+```cmd
+dir C:\temp\installed.txt
+
+```
+```text
+    Directory: C:\temp
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----        2/29/2024   1:18 PM              0 installed.txt
+```
 * To write to Event Log, will need to create the source first. This requires the following command being call with elevated user rights:
 ```powershell
 new-eventlog -source MyCustomEventSource1 -LogName Application
@@ -93,7 +126,7 @@ remove-eventlog -source MyCustomEventSource1
 * To see the entries run
 
 ```powershell
-get-eventlog -logname Application -source MyCustomEventSource -newest 2| format-list
+get-eventlog -logname Application -source MyCustomEventSource1 -newest 2| format-list
 ```
 this will print
 
@@ -118,7 +151,16 @@ UserName           :
 ```
 
 Alternatively use an existing event source e.g. `MsiInstaller` or `EventSystem`
+
+### Uninstall
+```powershell
+msiexec.exe /l*v a.log /x bin\Debug\Setup.msi
+```
+confirm the prompt to uninstall the product
+
 ### See Also 
+
+  * Creating and referencing a C# custom action __Wix Cookbook__ [book extract](https://resources.oreilly.com/examples/9781784393212/-/tree/master/chapter_6/code/recipe_1/customactioninstaller/CustomActionInstaller)
   * [WIX custom action to prompt user to close applications during install / unintall](https://www.codeproject.com/Articles/584105/Prompt-user-to-close-applications-on-install-unins)
   * long discussion about ask to [use WiX Toolset on Linux](https://github.com/wixtoolset/issues/issues/4381) 
   * [linux equivalent of WIX Installer](https://stackoverflow.com/questions/13290035/linux-equivalent-of-wix-installer-needed) - links to some answers are dead
