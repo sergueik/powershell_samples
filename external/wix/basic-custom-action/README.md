@@ -4,7 +4,10 @@
 this directory contains code from [codeproject article](https://www.codeproject.com/Articles/511653/Using-WIX-With-Managed-Custom-Action)
 updated to run per-user install
 
-In addition to writing to log file,for which the user running the isntaller may not have sufficient access permissions, the custom action creates an event log entry.
+In addition to writing to log file,for which the user running the installer may not have sufficient access permissions, the custom action creates an event log entry. The message indicates the success in creating the log file
+
+The second custom action generates value for WIX MSbuild property
+
 ### Usage
 
 #### Build the Test App
@@ -26,8 +29,8 @@ In addition to writing to log file,for which the user running the isntaller may 
 on a 64 bit Windows machine this will be in `Program Files (x86)`
 ```cmd
 mkdir "c:\Program Files (x86)\MSBuild\Microsoft\\WiX\v3.x"
-
 ```
+NOTE the directories help loading the project files referencing them but not allow compiling the project
 
 ```powershell
 
@@ -97,6 +100,11 @@ Volumes = 1
 ```cmd
 msiexec.exe /l*v a.log /i bin\Debug\Setup.msi
 ```
+observe in the MSI log (`a.log`):
+
+```text
+MSI (s) (C4!94) [13:48:01:410]: PROPERTY CHANGE: Adding TIME_ZONE property. Its value is 'Pacific Standard Time'.
+```
 observe the text file created
 
 ```cmd
@@ -154,7 +162,7 @@ Alternatively use an existing event source e.g. `MsiInstaller` or `EventSystem`
 
 ### Uninstall
 ```powershell
-msiexec.exe /l*v a.log /x bin\Debug\Setup.msi
+msiexec.exe /l*v a.log /qn /x bin\Debug\Setup.msi
 ```
 confirm the prompt to uninstall the product
 
