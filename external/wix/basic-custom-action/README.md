@@ -4,10 +4,7 @@
 this directory contains code from [codeproject article](https://www.codeproject.com/Articles/511653/Using-WIX-With-Managed-Custom-Action)
 updated to run per-user install
 
-In addition to writing to log file,for which the user running the installer may not have sufficient access permissions, the custom action creates an event log entry. The message indicates the success in creating the log file
-
-The second custom action generates value for WIX MSbuild property
-
+In addition to writing to log file,for which the user running the isntaller may not have sufficient access permissions, the custom action creates an event log entry.
 ### Usage
 
 #### Build the Test App
@@ -29,8 +26,8 @@ The second custom action generates value for WIX MSbuild property
 on a 64 bit Windows machine this will be in `Program Files (x86)`
 ```cmd
 mkdir "c:\Program Files (x86)\MSBuild\Microsoft\\WiX\v3.x"
+
 ```
-NOTE the directories help loading the project files referencing them but not allow compiling the project
 
 ```powershell
 
