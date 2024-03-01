@@ -2,9 +2,13 @@
 
 
 this directory contains code from [codeproject article](https://www.codeproject.com/Articles/511653/Using-WIX-With-Managed-Custom-Action)
-updated to run per-user install
+updated to run per-user install. The custom action `MyCustomActionMethod` was originally used to create log file
 
-In addition to writing to log file,for which the user running the isntaller may not have sufficient access permissions, the custom action creates an event log entry.
+In addition to writing to log file, for which the user running the installer may not have sufficient access permissions, the custom action creates an event log entry.
+
+
+The second custom action `GetTimeZone` generates a value for WIX MSbuild "session" property `TIME_ZONE` with the data that is accurate on the target machine. This session property can be used in later custom actions, e.g. in command arguments, and in the log messages
+
 ### Usage
 
 #### Build the Test App
@@ -172,6 +176,18 @@ confirm the prompt to uninstall the product
   * [use Wine to build MSI](https://stackoverflow.com/questions/10240484/build-msi-in-wine)
   * [list of available WIX alternatives for Linux](https://alternativeto.net/software/wix/?platform=linux)(NOTE: none of the applications actually tried)
   * about [run the WiX tools on Linux using Wine and Mono](https://wiki.gnome.org/Projects/GTK/Win32/WiX)
+  * [Windows Installer Error Messages (for Developers)](https://bit.ly/msi-error-codes)
+  * [Debug system error codes](https://bit.ly/windows-error-codes)
+  * [COM Error Codes](https://bit.ly/com-error-codes)
+  * [Enable Windows Installer logging](https://support.microsoft.com/kb/223300) - explains the flags in the value `KEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Installer\Logging`
+  * [Windows Installer Microsoft Documentation](https://bit.ly/msidocs)
+  * [wine](https://github.com/wine-mirror/wine/tree/master/dlls/msi)
+  * [Wix Toolset Sample project with skeleton custom actions](https://github.com/Chanyong-Park/wixtoolsetsample)
+  * [Docker Image hosting Wix Toolset on Wine and Debian slim i386](https://github.com/utilitywarehouse/docker-wixtoolset)
+   * [powershell commands](https://github.com/icuxika/WiXToolset3Builder) to generate MSI from `.wixobj` using basic Wix build console tools without invoking `msbuild.exe`
+   * [kenhys/wixtoolset-examples](https://github.com/kenhys/wixtoolset-examples)
+   * [use Group Policy to remotely install software](https://learn.microsoft.com/en-us/troubleshoot/windows-server/group-policy/use-group-policy-to-install-software)
+   * [deploy Software using Group Policy](https://activedirectorypro.com/deploy-software-using-group-policy)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

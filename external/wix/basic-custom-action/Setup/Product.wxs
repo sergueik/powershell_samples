@@ -47,10 +47,12 @@
     And finally, HideTarget will allow us to disable logging the parameteres passed to this custom action if security considerations so dictate.-->
     <CustomAction Id="CustomActionId" BinaryKey="CustomActionBinary" DllEntry="MyCustomActionMethod" Execute="deferred" HideTarget="yes"/>
     <CustomAction Id="CA_GetTimeZone" BinaryKey="CustomActionBinary" DllEntry="GetTimeZone" Execute="immediate" Return="check"/>
+    <CustomAction Id="DisplaySessionVariable" Directory="SystemFolder" ExeCommand="cmd /k echo &quot;[TIME_ZONE]&quot;" Execute="deferred" Impersonate="no"/>
     <InstallExecuteSequence>
-      <!--We want to call the custom action before the install finalizes-->
-      <Custom Action="CustomActionId" Before="InstallFinalize"/>
-      <Custom Action="CA_GetTimeZone" Before="InstallInitialize"/>
+      <!--We want to call several custom action before the install finalizes-->
+      <Custom Action="CA_GetTimeZone" Before="DisplaySessionVariable">NOT Installed</Custom>
+      <Custom Action="CustomActionId" Before="DisplaySessionVariable">NOT Installed</Custom>
+      <Custom Action="DisplaySessionVariable" Before="InstallFinalize">NOT Installed</Custom>
     </InstallExecuteSequence>
   </Product>
 </Wix>
