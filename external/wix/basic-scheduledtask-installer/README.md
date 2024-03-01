@@ -55,9 +55,30 @@ in elevated prompt
 
 ```cmd
 cd bin\Debug
-msiexec.exe /l*v a.log /i Setup.msi
+msiexec.exe /l*v a.log /i bin\Debug\Setup.msi
 ```
 
+To debug replace 
+```XML
+    <CustomAction Id="CreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Create /v1 /z /rl HIGHEST /TN [TASKNAME] /SC ONCE /ST 03:55 /RU &quot;NT AUTHORITY\SYSTEM&quot; /RI 1 /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f '[#ApplicationScript]'&quot;" Execute="deferred" Impersonate="no" />
+```
+with
+```XML
+    <CustomAction Id="CreateScheduledTask" Directory="SystemFolder" ExeCommand="cmd.exe /k echo  &quot;[SystemFolder]schtasks.exe&quot; /Create /v1 /z /rl HIGHEST /TN [TASKNAME] /SC ONCE /ST 03:55 /RU &quot;NT AUTHORITY\SYSTEM&quot; /RI 1 /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f '[#ApplicationScript]'&quot;" Execute="deferred" Impersonate="no" />
+```
+
+and observe if theres is no synatax error in the command
+```text
+ "C:\Windows\system32\schtasks.exe" /Create /v1 /z /rl HIGHEST /TN ATASK /SC ONCE /ST 16:55 /RU "NT AUTHORITY\SYSTEM" /RI 1 /TR "c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f 'C:\Program Files\ScheduledTaskInstaller\dialog.ps1'"
+```
+
+check the task
+```text
+ Directory of c:\Windows\system32\tasks
+
+02/29/2024  04:33 PM             3,488 ATASK
+               1 File(s)          3,488 bytes
+```
 check the log
 ```text
 MSI (s) (18:2C) [06:24:49:068]: Note: 1: 2203 2: C:\developer\sergueik\powershell_samples\external\wix\basic-scheduledtask-installer\Setup.msi 3: -2147287038 
@@ -80,16 +101,27 @@ After the successfull run  the Application directory `ScheduledTaskInstaller` is
 ```
 the Application script `dialog.ps1` is deployed to Appication directory
 
-and a Scheduled Task with the name `MyTaskName` is created
+and a Scheduled Task with the name `ATASK` is created
 
 ```cmd
-schtasks.exe /query /tn "\MyTaskName" /v /fo list
+schtasks /query /tn Atask
+```
+```text
+Folder: \
+TaskName                                 Next Run Time          Status
+======================================== ====================== ===============
+Atask                                    N/A                    Ready
+```
+
+
+```cmd
+schtasks.exe /query /tn "\ATASK" /v /fo list
 ```
 this will output
 ```text
 Folder: \
 HostName:                             SERGUEIK42
-TaskName:                             \MyTaskName
+TaskName:                             \ATASK
 Next Run Time:                        4/8/2023 5:00:00 PM
 Status:                               Ready
 Logon Mode:                           Interactive/Background
@@ -103,7 +135,7 @@ Comment:                              N/A
 Scheduled Task State:                 Enabled
 Idle Time:                            Disabled
 Power Management:                     Stop On Battery Mode, No Start On Batteries
-Run As User:                          sergueik
+Run As User:                          SYSTEM
 Delete Task If Not Rescheduled:       PT0S
 Stop Task If Runs X Hours and X Mins: 72:00:00
 Schedule:                             Scheduling data is not available in this format.
@@ -125,7 +157,7 @@ Repeat: Stop If Still Running:        Disabled
 
 The second execution of msi performs uninstall. If it does not, use
 ```cmd
-msiexec.exe -x Setup.msi
+msiexec.exe -x bin\Debug\Setup.msi
 ```
 command
 ### TODO
@@ -136,7 +168,7 @@ command
  <WixVariable Id="PASSWORD" Value="does not get passwed"/>
 ```
 ```XML
-ExeCommand="&quot;[SystemFolder]schtasks&quot; /Create /v1 /z  /rl HIGHEST /TN MyTaskName /SC DAILY /ST 17:00 /RU &quot;sergueik&quot; /RP  &quot;[PASSWORD]&quot; /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f 'c:\temp\dialog.ps1'&quot;" 
+ExeCommand="&quot;[SystemFolder]schtasks&quot; /Create /v1 /z  /rl HIGHEST /TN ATASK /SC DAILY /ST 17:00 /RU &quot;sergueik&quot; /RP  &quot;[PASSWORD]&quot; /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f 'c:\temp\dialog.ps1'&quot;" 
 ```
 but it was not taken into account: installer stops and 
 
@@ -171,8 +203,14 @@ and failing installers will continue to fail no matter how many retries attempte
 
   * https://wixtoolset.org/docs/v3/xsd/wix/customaction/
   * creating a Scheduled Task __Wix Cookbook__ [book extract](https://subscription.packtpub.com/book/web-development/9781784393212/13/ch13lvl1sec82/creating-a-scheduled-task)
+  * create Scheduled task to run action in future [script](https://garytown.com/create-scheduled-task-to-run-action-in-future-nowxx-time)
+  * create task to run every N minutes and start within N minute from the moment the command is run [documentation](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/schtiasks-create#to-schedule-a-task-to-run-every-n-minutes)
   * [source code](https://resources.oreilly.com/examples/9781784393212) of __Wix Cookbook__ book
   * [stealth Scheduled Tasks](https://habr.com/ru/company/rvision/blog/723050/) (in Russian)
+  * Misc
+    + https://forums.ironmansoftware.com/t/passing-command-line-parameters-during-msi-installation/2082
+    + https://stackoverflow.com/questions/49012022/wix-installer-execute-a-cmd-with-parameters
+    + https://davton.com/blog/how-to-pass-custom-actions-to-a-wix-installer-using-command-line-arguments/
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

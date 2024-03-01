@@ -10,19 +10,29 @@
     <!--For testing rollback-->
     <CustomActionRef Id="WixFailWhenDeferred" />
     <Property Id="PASSWORD" Value="i011155" />
+    <Property Id="TASKNAME" Value="ATASK" />
+    <Property Id="STARTTIME" Value="17:45" />
     <!-- WARNING: When the run-as password is empty, the prompt appears during install: 
 the scheduled task may not run because of the security policy.
 Please enter the run as password for sergueik:
 
 -->
-    <CustomAction Id="RollbackCreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks&quot; /Delete /TN MyTaskName /F" Execute="rollback" Impersonate="no" />
+    <CustomAction Id="RollbackCreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Delete /TN [TASKNAME] /F" Execute="rollback" Impersonate="no" />
+<!-- Product.wxs(21): error LGHT0091: Duplicate symbol 'CustomAction:SetCA_ReadProperty' found. This typically means that an Id is duplicated. Check to make sure all your identifiers of a given type (File, Component, Feature) are unique -->
+
     <SetProperty Id="CA_ReadProperty" Value="PASSWORD=[PASSWORD]" Sequence="execute" Before="CreateScheduledTask" />
+<!--
+    <SetProperty Id="CA_ReadProperty" Value="TASKNAME=[TASKNAME]" Sequence="execute" Before="CreateScheduledTask" />
+    <SetProperty Id="CA_ReadProperty" Value="STARTTIME=[STARTTIME]" Sequence="execute" Before="CreateScheduledTask" />
+-->
     <!-- error CNDL0005: The CustomAction element contains an unexpected child element 'WixVariable'. -->
     <!-- error CNDL0107: Schema validation failed with the following error at line 1, column 1884: 
 The element 'Product' in namespace 'http://schemas.microsoft.com/wix/2006/wi' cannot contain text. 
  -->
-    <CustomAction Id="CreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks&quot; /Create /v1 /z /rl HIGHEST /TN MyTaskName /SC DAILY /ST 17:00 /RU &quot;sergueik&quot; /RP &quot;[PASSWORD]&quot; /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f '[#ApplicationScript]'&quot;" Execute="deferred" Impersonate="no" />
-    <CustomAction Id="RemoveScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks&quot; /Delete /TN MyTaskName /F" Execute="deferred" Impersonate="no" />
+   <!-- NOTE: use the command prefix for quick debugging cmd.exe /k echo  -->
+   <!-- NOTE: does not wotk when property is used  -->
+    <CustomAction Id="CreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Create /v1 /z /rl HIGHEST /TN [TASKNAME] /SC ONCE /ST [STARTTIME] /RU &quot;NT AUTHORITY\SYSTEM&quot; /RI 1 /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f '[#ApplicationScript]'&quot;" Execute="deferred" Impersonate="no" />
+    <CustomAction Id="RemoveScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Delete /TN [TASKNAME] /F" Execute="deferred" Impersonate="no" />
     <InstallExecuteSequence>
       <Custom Action="CreateScheduledTask" Before="InstallFinalize">NOT Installed</Custom>
       <Custom Action="RollbackCreateScheduledTask" Before="CreateScheduledTask">NOT Installed</Custom>
