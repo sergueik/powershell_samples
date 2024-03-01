@@ -46,8 +46,8 @@
     The Execute attribute will specify the deferred status of our custom action.
     And finally, HideTarget will allow us to disable logging the parameteres passed to this custom action if security considerations so dictate.-->
     <CustomAction Id="CustomActionId" BinaryKey="CustomActionBinary" DllEntry="MyCustomActionMethod" Execute="deferred" HideTarget="yes"/>
-    <CustomAction Id="CA_GetTimeZone" BinaryKey="CustomActionBinary" DllEntry="GetTimeZone" Execute="immediate" Return="check"/>
-    <CustomAction Id="DisplaySessionVariable" Directory="SystemFolder" ExeCommand="cmd /k echo &quot;[TIME_ZONE]&quot;" Execute="deferred" Impersonate="no"/>
+    <CustomAction Id="CA_GetTimeZone" BinaryKey="CustomActionBinary" DllEntry="GetDateTime" Execute="immediate" Return="check"/>
+    <CustomAction Id="DisplaySessionVariable" Directory="SystemFolder" ExeCommand="cmd /k echo START_TIME = &quot;[START_TIME]&quot;" Execute="deferred" Impersonate="no"/>
     <InstallExecuteSequence>
       <!--We want to call several custom action before the install finalizes-->
       <Custom Action="CA_GetTimeZone" Before="DisplaySessionVariable">NOT Installed</Custom>

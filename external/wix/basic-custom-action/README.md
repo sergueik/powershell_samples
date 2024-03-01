@@ -36,8 +36,7 @@ mkdir "c:\Program Files (x86)\MSBuild\Microsoft\\WiX\v3.x"
 ```powershell
 
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
-MSBuild.exe .\CustomAction\CustomAction.csproj /t:clean
-MSBuild.exe .\CustomAction\CustomAction.csproj
+MSBuild.exe .\CustomAction\CustomAction.csproj /t:clean,compile
 ```
 in the bin directory will observe additional artifacts:
 ```text

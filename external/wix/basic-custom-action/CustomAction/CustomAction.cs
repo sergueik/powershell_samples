@@ -42,5 +42,18 @@ namespace Utils {
 			session["TIME_ZONE"] = timeZoneName;
 			return ActionResult.Success;
 		}
+		
+		[CustomAction]
+		public static ActionResult GetDateTime(Session session) {
+			var myTimeSpan = new TimeSpan(0, 0, 2, 10);
+    			var dateTime = DateTime.Now.Add(myTimeSpan);
+    			// NOTE:  need 24 hour time
+			// "schtasks.exe" /Create /v1 /z /rl HIGHEST /TN ATASK /SC ONCE /ST "3:25 PM" /RU "NT AUTHORITY\SYSTEM" /RI 1 /TR "..."
+    			// ERROR: Invalid starttime value
+    			const String format = "{0:HH:mm}" ; // "{0:hh:mm tt}";			
+			session["START_TIME"] = String.Format(format, dateTime);
+			return ActionResult.Success;
+		}
+		
 	}
 }
