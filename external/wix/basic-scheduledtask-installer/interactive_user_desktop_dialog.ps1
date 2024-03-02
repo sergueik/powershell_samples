@@ -1,3 +1,4 @@
+# NORE: this "interactive_user_desktop_dialog.ps1" script is usefil when scheduled as task run by interacive user
 @( 'System.Drawing','System.Windows.Forms') | ForEach-Object { [void][System.Reflection.Assembly]::LoadWithPartialName($_) }
 $f = new-object -TypeName 'System.Windows.Forms.Form'
 $f.SuspendLayout()

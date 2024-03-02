@@ -11,7 +11,7 @@
     <CustomActionRef Id="WixFailWhenDeferred" />
     <Property Id="PASSWORD" Value="i011155" />
     <Property Id="TASKNAME" Value="ATASK" />
-    <Property Id="STARTTIME" Value="17:45" />
+    <Property Id="STARTTIME" Value="14:30" />
     <!-- WARNING: When the run-as password is empty, the prompt appears during install: 
 the scheduled task may not run because of the security policy.
 Please enter the run as password for sergueik:
@@ -51,7 +51,9 @@ The element 'Product' in namespace 'http://schemas.microsoft.com/wix/2006/wi' ca
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="Script" Guid="{B63BA28A-0985-472B-828B-B5BD943D0633}">
-        <File Id="ApplicationScript" Source="dialog.ps1" />
+        <!-- <File Id="ApplicationScript" Source="interactive_user_desktop_dialog.ps1" /> -->
+        <File Id="ApplicationScript" Source="system_log_eventlog.ps1" />
+
       </Component>
     </ComponentGroup>
   </Fragment>

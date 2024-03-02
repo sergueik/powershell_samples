@@ -199,6 +199,56 @@ and failing installers will continue to fail no matter how many retries attempte
 
 ![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture-installer-defect3.png)
 
+
+### NOTE
+
+the `schtasks.exe` does not appear to support configuring the following features of Windows Task:
+
+  * Start Task only if the computer is on AC power
+  * Stop if the computer switches to battery power
+
+which leads to the following subtle errors in Task Scheduler log indicating failure to run the said task:
+```text
+Task Scheduler did not launch task "\ATASK"  because computer is running on batteries. User Action: If launching the task on batteries is required, change the respective flag in the task configuration.
+```
+and
+```text
+Task Scheduler failed to start "\ATASK" task for user "NT AUTHORITY\System". Additional Data: Error Value: 2147750692.
+```
+The error code `2147750692` meaning (Exception from HRESULT: 0x80041324) is
+
+```text
+The Task Scheduler service attempted to run the task, but the task did not run due to one of the constraints in the task definition.
+```
+There is also an obscure setting which one may like to set:
+ * if the task is not scheduled to run again delete it after: "immediately"
+
+When active (it is active in the configuration produced by `schtasks.exe`) it is preventing from saving the changes interactively
+
+### After the task runs the following custom event log messages start to appear every minute:
+```text
+The description for Event ID 1001 from source Microsoft-Windows-EventSystem cannot be found. Either the component that raises this event is not installed on your local computer or the installation is corrupted. You can install or repair the component on the local computer.
+
+
+If the event originated on another computer, the display information had to be saved with the event.
+
+The following information was included with the event: 
+
+{     "username":  "SERGUEIK42$",     "parent":  "taskeng.exe",     "pid":  3848,     "message":  "test",     "invoked":  "2024-03-02 14:30" }
+
+```
+```text
+
+The description for Event ID 1001 from source Microsoft-Windows-EventSystem cannot be found. Either the component that raises this event is not installed on your local computer or the installation is corrupted. You can install or repair the component on the local computer.
+
+
+If the event originated on another computer, the display information had to be saved with the event.
+
+The following information was included with the event: 
+
+{     "username":  "SERGUEIK42$",     "parent":  "taskeng.exe",     "pid":  3124,     "message":  "test",     "invoked":  "2024-03-02 14:31" }
+
+```
 ### See Also
 
   * https://wixtoolset.org/docs/v3/xsd/wix/customaction/
@@ -211,6 +261,8 @@ and failing installers will continue to fail no matter how many retries attempte
     + https://forums.ironmansoftware.com/t/passing-command-line-parameters-during-msi-installation/2082
     + https://stackoverflow.com/questions/49012022/wix-installer-execute-a-cmd-with-parameters
     + https://davton.com/blog/how-to-pass-custom-actions-to-a-wix-installer-using-command-line-arguments/
+
+  * https://stackoverflow.com/questions/9075564/change-settings-for-power-for-windows-scheduled-task
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
