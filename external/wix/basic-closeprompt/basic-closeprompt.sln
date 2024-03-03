@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# SharpDevelop 5.1
+VisualStudioVersion = 12.0.20827.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{CFEE4113-1246-4D54-95CB-156813CB8593}") = "Setup", "Setup\Setup.wixproj", "{B71EA14F-E64C-465F-A6B9-08A0E853D283}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "Program\Program.csproj", "{E6A19A3B-810E-49BB-9D9F-CFCFE6D3679F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B71EA14F-E64C-465F-A6B9-08A0E853D283}.Debug|x86.ActiveCfg = Debug|x86
+		{B71EA14F-E64C-465F-A6B9-08A0E853D283}.Debug|x86.Build.0 = Debug|x86
+		{B71EA14F-E64C-465F-A6B9-08A0E853D283}.Release|x86.ActiveCfg = Release|x86
+		{B71EA14F-E64C-465F-A6B9-08A0E853D283}.Release|x86.Build.0 = Release|x86
+		{E6A19A3B-810E-49BB-9D9F-CFCFE6D3679F}.Debug|x86.ActiveCfg = Debug|x86
+		{E6A19A3B-810E-49BB-9D9F-CFCFE6D3679F}.Debug|x86.Build.0 = Debug|x86
+		{E6A19A3B-810E-49BB-9D9F-CFCFE6D3679F}.Release|x86.ActiveCfg = Release|x86
+		{E6A19A3B-810E-49BB-9D9F-CFCFE6D3679F}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
