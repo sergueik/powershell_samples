@@ -25,7 +25,9 @@ once all notepad windows are closed the installer continues
 
 ### Cleanup
 
-
+```powershell
+msiexec.exe /l*v a.log /x Setup\bin\Debug\Setup.msi
+```
 ### See Also
 
    * Misc

@@ -3,69 +3,60 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace ClosePromptCA
-{
-    public class PromptCloseApplication : IDisposable
-    {
-        private readonly string _productName;
-        private readonly string _processName;
-        private readonly string _displayName;
-        private System.Threading.Timer _timer;
-        private Form _form;
-        private IntPtr _mainWindowHanle;
+namespace Program {
+    public class PromptCloseApplication : IDisposable {
+        private readonly string productName;
+        private readonly string processName;
+        private readonly string  displayName;
+        private System.Threading.Timer timer;
+        private Form form;
+        private IntPtr mainWindowHanle;
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        public PromptCloseApplication(string productName, string processName, string displayName)
-        {
-            _productName = productName;
-            _processName = processName;
-            _displayName = displayName;
+        public PromptCloseApplication(string productName, string processName, string displayName) {
+           this.productName = productName;
+            this.processName = processName;
+            this.displayName = displayName;
         }
 
-        public bool Prompt()
-        {
-            if (IsRunning(_processName))
-            {
-                _form = new ClosePromptForm(String.Format("Please close running instances of {0} before running {1} setup.", _displayName, _productName));
-                _mainWindowHanle = FindWindow(null, _productName + " Setup");
-                if (_mainWindowHanle == IntPtr.Zero)
-                    _mainWindowHanle = FindWindow("#32770", _productName);
+        public bool Prompt() {
+            if (IsRunning(processName)) {
+                form = new ClosePromptForm(String.Format(@"Please close running instances of ""{0}"" before running ""{1}"" setup.",  displayName,  productName));
+                mainWindowHanle = FindWindow(null,  productName + " Setup");
+                if (mainWindowHanle == IntPtr.Zero)
+                    mainWindowHanle = FindWindow("#32770",  productName);
 
-                _timer = new System.Threading.Timer(TimerElapsed, _form, 200, 200);
+                timer = new System.Threading.Timer(TimerElapsed, form, 200, 200);
 
                 return ShowDialog();
             }
             return true;
         }
 
-        bool ShowDialog()
-        {
-            if (_form.ShowDialog(new WindowWrapper(_mainWindowHanle)) == DialogResult.OK)
-                return !IsRunning(_processName) || ShowDialog();
+        bool ShowDialog() {
+            if (form.ShowDialog(new WindowWrapper(mainWindowHanle)) == DialogResult.OK)
+                return !IsRunning(processName) || ShowDialog();
             return false;
         }
 
-        private void TimerElapsed(object sender)
-        {
-            if (_form == null || IsRunning(_processName) || !_form.Visible)
+        private void TimerElapsed(object sender) {
+            if (form == null || IsRunning(processName) || !form.Visible)
                 return;
-            _form.DialogResult = DialogResult.OK;
-            _form.Close();
+            form.DialogResult = DialogResult.OK;
+            form.Close();
         }
 
-        static bool IsRunning(string processName)
-        {
+        static bool IsRunning(string processName) {
             return Process.GetProcessesByName(processName).Length > 0;
         }
 
-        public void Dispose()
-        {
-            if (_timer != null)
-                _timer.Dispose();
-            if (_form != null && _form.Visible)
-                _form.Close();
+        public void Dispose() {
+            if (timer != null)
+                timer.Dispose();
+            if (form != null && form.Visible)
+                form.Close();
         }
     }
 }

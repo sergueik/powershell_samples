@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?define Name = "CustomAction Installer" ?>
-<?define ApplicationVersion = "1.2.3" ?>
+<?define Name = "Process Check Custom Action Installer" ?>
+<?define Name2 = "WixProcessCheckCustomActionInstaller" ?>
+<?define ApplicationVersion = "0.2.0" ?>
 <?define Manufacturer = "Manufacturer" ?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="WixWithCustomAction" Language="1033" Version="$(var.ApplicationVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="60468a7d-6485-4e7e-bf82-503213bc43a8">
+  <Product Id="*" Name="$(var.Name2)" Language="1033" Version="$(var.ApplicationVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="60468a7d-6485-4e7e-bf82-503213bc43a8">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" InstallPrivileges="limited" Id="*"/>
     <Media Id="1" Cabinet="Product.cab" EmbedCab="yes"/>
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -36,19 +37,19 @@
       </Directory>
     </Directory>
 -->
-    <Feature Id="Complete" Title="WixWithCustomAction" Level="1">
+    <Feature Id="Complete" Title="$(var.Name2)" Level="1">
       <ComponentRef Id="DummyContent"/>
     </Feature>
 
     <Binary Id="CustomActionBinary" SourceFile="$(var.Program.TargetDir)$(var.Program.TargetName).CA.dll"/>
-<CustomAction Id="CloseAppsPrompt" BinaryKey="CustomActionBinary" 
+<CustomAction Id="ClosePrompt" BinaryKey="CustomActionBinary" 
          DllEntry="ClosePrompt" Return="check" />
 <Property Id="PromptToCloseProcesses" Value="notepad" />
 <Property Id="PromptToCloseDisplayNames" Value="Application name" /> 
 
 
     <InstallExecuteSequence>
-  <Custom Action="CloseAppsPrompt" After="CostFinalize"></Custom>
+  <Custom Action="ClosePrompt" After="CostFinalize"></Custom>
     </InstallExecuteSequence>
   </Product>
 </Wix>
