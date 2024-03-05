@@ -30,7 +30,7 @@ param(
   [switch]$force,
   [switch]$xml,
   [switch]$noop,
-  [int]$delay = 7,
+  [int]$delay = 120,
   [string]$datafile = 'c:\temp\loadaverage.txt',
   [string]$new_config_file = 'app.config',
   [switch]$debug
