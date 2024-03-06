@@ -165,6 +165,18 @@ Alternatively use an existing event source e.g. `MsiInstaller` or `EventSystem`
 msiexec.exe /l*v a.log /qn /x bin\Debug\Setup.msi
 ```
 confirm the prompt to uninstall the product
+### Note
+
+`sc.exe` has a new option:
+```cmd
+sc showsid TrustedInstaller
+``` 
+```text
+NAME: TrustedInstaller. 
+SERVICE SID: S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464. 
+STATUS: Inactive
+```
+ the actual `sid` will be unique to the machine
 
 ### See Also 
 
@@ -187,6 +199,8 @@ confirm the prompt to uninstall the product
    * [kenhys/wixtoolset-examples](https://github.com/kenhys/wixtoolset-examples)
    * [use Group Policy to remotely install software](https://learn.microsoft.com/en-us/troubleshoot/windows-server/group-policy/use-group-policy-to-install-software)
    * [deploy Software using Group Policy](https://activedirectorypro.com/deploy-software-using-group-policy)
+   * __lessmsi__ [project page](https://lessmsi.activescott.com/) and [source repository](https://github.com/activescott/lessmsi)
+
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
