@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<product>
+  <Binary Id="CustomActionBinary" SourceFile="$(var.CustomAction.TargetDir)$(var.CustomAction.TargetName).CA.dll"/>
+  <CustomAction Id="GetDateTime" BinaryKey="CustomActionBinary" DllEntry="GetDateTime" Execute="immediate" Return="check"/>
+  <CustomAction Id="DisplaySessionVariable" Directory="SystemFolder" ExeCommand="cmd /k echo START_TIME = &quot;[START_TIME]&quot;" Execute="deferred" Impersonate="no"/>
+  <InstallExecuteSequence>
+    <Custom Action="GetDateTime" Before="DisplaySessionVariable">NOT Installed</Custom>
+    <Custom Action="DisplaySessionVariable" Before="InstallFinalize">NOT Installed</Custom>
+  </InstallExecuteSequence>
+</product>
