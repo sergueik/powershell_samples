@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?define Name = "Powershell Script Runner Installer" ?>
-<?define ApplicationVersion = "0.1.0" ?>
+<?define ApplicationVersion = "0.2.0" ?>
 <?define Manufacturer = "Manufacturer" ?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*" Name="WixWithCustomAction" Language="1033" Version="$(var.ApplicationVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="60468a7d-6485-4e7e-bf82-503213bc43a8">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" InstallPrivileges="limited" Id="*"/>
     <Media Id="1" Cabinet="Product.cab" EmbedCab="yes"/>
-
     <Directory Id="TARGETDIR" Name="SourceDir">
       <!-- based on: https://stackoverflow.com/questions/12102771/how-do-i-install-to-localappdata-folder -->
       <Directory Id="LocalAppDataFolder" Name="AppData">
         <Directory Id="INSTALLFOLDER" Name="$(var.Name)">
           <Directory Id="DesktopFolder" Name="DesktopFolder"/>
-          <Component Id="DummyContent" Guid="daffbbf0-471c-4b2d-a1ca-cd7652b3bed6">
-            <!-- Add the dummy file as content. -->
-            <File Id="TestPS1File" Source="test.ps1"/>
-            <RegistryKey Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.Name)">
-              <RegistryValue Name="TestPS1" Value="1" KeyPath="yes" Type="integer"/>
-            </RegistryKey>
-            <RemoveFolder Id="INSTALLFOLDER" On="uninstall"/>
-          </Component>
         </Directory>
       </Directory>
       <!-- Add this directory -->
       <Directory Id="SystemFolder"/>
     </Directory>
-
-
     <Property Id="POWERSHELLEXE">
       <RegistrySearch Id="POWERSHELLEXE" Type="raw" Root="HKLM" Key="SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" Name="Path"/>
     </Property>
     <Condition Message="This application requires Windows PowerShell."><![CDATA[Installed OR POWERSHELLEXE]]></Condition>
     <!-- permachine-->
-   
-    <Feature Id="Complete" Title="WixWithCustomAction" Level="1">
-      <ComponentRef Id="DummyContent"/>
+    <Feature Id="MainProgram" Title="Engine" Description="Main Feature" Level="1" TypicalDefault="install">
+      <ComponentRef Id="Script"/>
     </Feature>
-<!-- silent does not work yet -->
+    <!-- silent does not work yet -->
     <SetProperty Id="InvokeTestPS1" Before="InvokeTestPS1" Sequence="execute" Value="[POWERSHELLEXE] -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot;"/>
     <!-- <CustomAction Id="InvokeTestPS1" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/> -->
-     <Property Id="InvokeTestPS1" Value="[POWERSHELLEXE] -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot;"/>
-     <CustomAction Id="InvokeTestPS1" Directory="SystemFolder" ExeCommand="cmd /k echo [POWERSHELLEXE] -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot;" Execute="deferred" Impersonate="no"/>
+    <Property Id="InvokeTestPS1" Value="[POWERSHELLEXE] -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot;"/>
+    <CustomAction Id="InvokeTestPS1" Directory="SystemFolder" ExeCommand="[POWERSHELLEXE] -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot;" Execute="deferred" Impersonate="no"/>
     <InstallExecuteSequence>
       <Custom Action="InvokeTestPS1" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
     </InstallExecuteSequence>
   </Product>
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="Script" Guid="a7ebfaf9-9039-458d-bcc5-34578e9f362c">
+        <File Id="TestPS1File" Name="test.ps1" DiskId="1" Source="test.ps1"/>
+        <RegistryKey Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.Name)">
+          <RegistryValue Name="InvokeTestPS1" Value="1" KeyPath="yes" Type="integer"/>
+        </RegistryKey>
+        <RemoveFolder Id="INSTALLFOLDER" On="uninstall"/>
+        <RemoveFile Id="TestPS1File" Name="test.ps1" On="uninstall"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
 </Wix>
