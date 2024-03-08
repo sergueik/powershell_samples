@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="Dummy Application Installer" Language="1033" Version="1.0.0.0" Manufacturer="My Company" UpgradeCode="0105d0b1-94a7-456f-8d01-c8767596625b">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
+    <MediaTemplate EmbedCab="yes"/>
+    <Feature Id="ProductFeature" Title="Dummy Application Installer" Level="1">
+      <ComponentGroupRef Id="ProductComponents"/>
+    </Feature>
+  </Product>
+  <Fragment>
+    <SetDirectory Id="DDrive" Value="f:\AppName" Sequence="both"/>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="DDrive" Name="AppName">
+        <Directory Id="INSTALLFOLDER" Name="Dummy Application Installer"/>
+      </Directory>
+    </Directory>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="dummy" Guid="{0f4f25e3-8f46-4068-86dd-29935e5b57dd}">
+        <File Source="dummy.txt"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
