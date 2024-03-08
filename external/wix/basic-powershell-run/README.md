@@ -69,6 +69,62 @@ WixQuietExec:  Error 0xfffd0000: Failed in ExecCommon method
 CustomAction InvokeTestPS1 returned actual error code 1603 (note this may not be 100% accurate if translation happened inside sandbox)
 
 ```
+```text
+MSI (s) (B8:A0) [08:29:03:201]: Hello, I'm your 32bit Impersonated custom action server.
+MSI (s) (B8!3C) [08:29:03:201]: PROPERTY CHANGE: Deleting WixQuietExecCmdLine property. Its current value is '"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -noprofile -noninteractive -file "C:\Program Files\Powershell Script Runner\launcher.ps1" "testlog" "message text"'.
+WixQuietExec:  . : The term '.\dependency.ps1' is not recognized as the name of a cmdlet, 
+WixQuietExec:  function, script file, or operable program. Check the spelling of the name, or 
+WixQuietExec:  if a path was included, verify that the path is correct and try again.
+WixQuietExec:  At C:\Program Files\Powershell Script Runner\launcher.ps1:8 char:3
+WixQuietExec:  + . .\dependency.ps1 -message $message -logname $logname
+WixQuietExec:  +   ~~~~~~~~~~~~~~~~
+WixQuietExec:      + CategoryInfo          : ObjectNotFound: (.\dependency.ps1:String) , Co 
+WixQuietExec:     mmandNotFoundException
+WixQuietExec:      + FullyQualifiedErrorId : CommandNotFoundException
+WixQuietExec:   
+Action ended 8:29:03: InvokeTestPS1. Return value 1.
+Action ended 8:29:03: INSTALL. Return value 1.
+Property(S): UpgradeCode = {0105D0B1-94A7-456F-8D01-C8767596625B}
+Property(S): POWERSHELLEXE = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Property(S): INSTALLFOLDER = C:\Program Files\Powershell Script Runner\
+Property(S): ProgramFilesFolder = C:\Program Files\
+Property(S): TARGETDIR = C:\
+
+```
+
+```text
+MSI (s) (B8:08) [08:35:41:604]: Hello, I'm your 32bit Impersonated custom action server.
+MSI (s) (B8!74) [08:35:41:604]: PROPERTY CHANGE: Deleting WixQuietExecCmdLine property. Its current value is '"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -noprofile -noninteractive -file "C:\Program Files\Powershell Script Runner\launcher.ps1" "testlog" "message text"'.
+WixQuietExec:  . : The term 'C:\Windows\system32\dependency.ps1' is not recognized as the 
+WixQuietExec:  name of a cmdlet, function, script file, or operable program. Check the 
+WixQuietExec:  spelling of the name, or if a path was included, verify that the path is 
+WixQuietExec:  correct and try again.
+WixQuietExec:  At C:\Program Files\Powershell Script Runner\launcher.ps1:9 char:3
+WixQuietExec:  + . ((resolve-path -path '.').path + '\' + 'dependency.ps1') -message $ ...
+WixQuietExec:  +   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+WixQuietExec:      + CategoryInfo          : ObjectNotFound: (C:\Windows\system32\dependency. 
+WixQuietExec:     ps1:String) , CommandNotFoundException
+WixQuietExec:      + FullyQualifiedErrorId : CommandNotFoundException
+WixQuietExec:   
+Action ended 8:35:41: InvokeTestPS1. Return value 1.
+Action ended 8:35:41: INSTALL. Return value 1.
+Property(S): UpgradeCode = {0105D0B1-94A7-456F-8D01-C8767596625B}
+
+```
+
+```text
+WixQuietExec:  . : The term 'C:\Program Files\Powershell Script 
+WixQuietExec:  Runner\launcher.ps1\dependency.ps1' is not recognized as the name of a cmdlet, 
+WixQuietExec:  function, script file, or operable program. Check the spelling of the name, or 
+WixQuietExec:  if a path was included, verify that the path is correct and try again.
+WixQuietExec:  At C:\Program Files\Powershell Script Runner\launcher.ps1:10 char:3
+WixQuietExec:  + . ($script_path + '\' + 'dependency.ps1') -message $message -logname  ...
+WixQuietExec:  +   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+WixQuietExec:      + CategoryInfo          : ObjectNotFound: (C:\Program File...\dependency.p 
+WixQuietExec:     s1:String) , CommandNotFoundException
+WixQuietExec:      + FullyQualifiedErrorId : CommandNotFoundException
+
+```
 After the succesful install, check the messages added to the eventlog:
 ```poweshell
 get-eventlog -logname testlog
@@ -89,7 +145,6 @@ eventually calling system cmdlet
 write-eventlog -logname testlog -source testlog -eventid 1 -entrytype  information -message 'message from the script'
 ```
 
-![add remove programs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-powershell-run/screenshots/capture-add-remove-programs.png)
 
 The scripts will be installed to 
 ```text
@@ -111,6 +166,9 @@ msiexec.exe /l*v a.log /qn /x bin\Debug\Setup.msi
 
   * https://wixtoolset.org/docs/tools/wixext/quietexec/
   * https://stackoverflow.com/questions/6044069/how-to-execute-wix-custom-action-after-installation
-   
+  * https://github.com/wixtoolset/issues/issues/1265
+  * https://wixtoolset.org/docs/tools/wixexe/   
+  * https://stackoverflow.com/questions/27499072/split-a-folder-path-and-file-name
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
