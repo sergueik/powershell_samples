@@ -1,6 +1,11 @@
 ### Info
 
-https://resources.oreilly.com/examples/9781784393212/-/blob/master/chapter_1/code/recipe_2/consoleapplicationinstaller/ConsoleApplicationInstaller/Product.wxs
+this directory contains installer of a set of connected Powershell scripts which are invoked during the product install in one or two ways offered by Wix Toolset
+for the side effect (e.g. information logged to Windows Event Log or custom Scheduled Task is created
+
+based on [chapter_1 Wix Code example]( from
+https://resources.oreilly.com/examples/9781784393212/-/blob/master/chapter_1/code/recipe_2/consoleapplicationinstaller/ConsoleApplicationInstaller/Product.wxs)
+and misc. stackoverflow posts listed at the end.
 ### Usage
 
 ```powershell
@@ -14,9 +19,43 @@ MSBuild.exe Setup.wixproj
 ```cmd
 msiexec.exe /l*v a.log /qn /i bin\Debug\Setup.msi
 ```
+#### Successful Install
+After the succesful install, check the messages added to the eventlog:
+```poweshell
+get-eventlog -logname testlog
+```
+```text
 
+   Index Time          EntryType   Source                 InstanceID Message
+   ----- ----          ---------   ------                 ---------- -------
+   13555 Mar 07 20:18  Information testlog                         1 message...
 
-* exampine `a.log` against errors like below and troubleshoot:
+```
+this eventlog entry is produced by running the powershell script `launcher.ps1` during the install:
+```powershell
+"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -noprofile -noninteractive -file "C:\Program Files\Powershell Script Runner\launcher.ps1" "testlog" "message text"
+```
+eventually calling system cmdlet
+```powershell
+write-eventlog -logname testlog -source testlog -eventid 1 -entrytype  information -message 'message from the script'
+```
+
+![add remove programs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-ddrive/screenshots/capture-add-remove-programs.png)
+
+The scripts will be installed to 
+```text
+ Directory of c:\Program Files\Powershell Script Runner
+
+03/08/2024  07:20 AM    <DIR>          .
+03/08/2024  07:20 AM    <DIR>          ..
+03/08/2024  04:32 AM               196 dependency.ps1
+03/08/2024  06:47 AM               215 launcher.ps1
+               2 File(s)            411 bytes
+```
+and removed during uninstall
+#### Error Troubleshooting
+
+* examine `a.log` against errors like below and troubleshoot:
 
 ```text
 MSI (s) (50:5C) [15:05:06:362]: Hello, I'm your 32bit Impersonated custom action server.
@@ -125,38 +164,6 @@ WixQuietExec:     s1:String) , CommandNotFoundException
 WixQuietExec:      + FullyQualifiedErrorId : CommandNotFoundException
 
 ```
-After the succesful install, check the messages added to the eventlog:
-```poweshell
-get-eventlog -logname testlog
-```
-```text
-
-   Index Time          EntryType   Source                 InstanceID Message
-   ----- ----          ---------   ------                 ---------- -------
-   13555 Mar 07 20:18  Information testlog                         1 message...
-
-```
-this eventlog entry is produced by running the powershell script `launcher.ps1` during the install:
-```powershell
-"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -noprofile -noninteractive -file "C:\Program Files\Powershell Script Runner\launcher.ps1" "testlog" "message text"
-```
-eventually calling system cmdlet
-```powershell
-write-eventlog -logname testlog -source testlog -eventid 1 -entrytype  information -message 'message from the script'
-```
-
-
-The scripts will be installed to 
-```text
- Directory of c:\Program Files\Powershell Script Runner
-
-03/08/2024  07:20 AM    <DIR>          .
-03/08/2024  07:20 AM    <DIR>          ..
-03/08/2024  04:32 AM               196 dependency.ps1
-03/08/2024  06:47 AM               215 launcher.ps1
-               2 File(s)            411 bytes
-```
-and removed during uninstall
 ### Cleanup
 
 ```powershell
