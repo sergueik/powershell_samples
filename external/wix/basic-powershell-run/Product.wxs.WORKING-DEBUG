@@ -18,7 +18,7 @@
     <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot;"/>
  <!--   <CustomAction Id="InvokeTestPS1" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/> -->
 
-<CustomAction Id="InvokeTestPS1" Directory="INSTALLFOLDER" ExeCommand="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot;"
+<CustomAction Id="InvokeTestPS1" Directory="INSTALLFOLDER" ExeCommand="cmd /k echo &quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot;"
 Execute="deferred" Impersonate="no"/>
     <InstallExecuteSequence>
      <Custom Action="InvokeTestPS1" After="InstallFiles"><![CDATA[NOT Installed]]></Custom> 

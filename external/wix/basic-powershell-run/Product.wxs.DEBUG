@@ -11,17 +11,11 @@
       <RegistrySearch Id="POWERSHELLEXE" Type="raw" Root="HKLM" Key="SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" Name="Path"/>
     </Property>
     <Condition Message="This application requires Windows PowerShell."><![CDATA[Installed OR POWERSHELLEXE]]></Condition>
-    <!-- NOTE: cmd /k will hang -->
-<!-- 
- <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;C:\Windows\System32\cmd.exe&quot; /k echo &quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot;"/>
--->
-    <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot;"/>
- <!--   <CustomAction Id="InvokeTestPS1" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/> -->
 
-<CustomAction Id="InvokeTestPS1" Directory="INSTALLFOLDER" ExeCommand="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot;"
-Execute="deferred" Impersonate="no"/>
+    <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;C:\Windows\System32\cmd.exe&quot; /k echo &quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot;"/>
+    <CustomAction Id="InvokeTestPS1" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/>
     <InstallExecuteSequence>
-     <Custom Action="InvokeTestPS1" After="InstallFiles"><![CDATA[NOT Installed]]></Custom> 
+     <Custom Action="InvokeTestPS1" Before="InstallFinalize"><![CDATA[NOT Installed]]></Custom> 
     </InstallExecuteSequence>
 
   </Product>
