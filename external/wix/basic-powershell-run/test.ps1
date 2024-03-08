@@ -1,0 +1,1 @@
+write-eventlog -logname testlog -source testlog -eventid 1 -entrytype  information -message 'message from the script'
