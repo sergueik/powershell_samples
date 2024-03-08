@@ -24,13 +24,10 @@
     <Feature Id="MainProgram" Title="Engine" Description="Main Feature" Level="1" TypicalDefault="install">
       <ComponentRef Id="Script"/>
     </Feature>
-    <!-- silent does not work yet -->
-    <SetProperty Id="InvokeTestPS1" Before="InvokeTestPS1" Sequence="execute" Value="[POWERSHELLEXE] -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot;"/>
-    <!-- <CustomAction Id="InvokeTestPS1" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/> -->
-    <Property Id="InvokeTestPS1" Value="[POWERSHELLEXE] -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot;"/>
-    <CustomAction Id="InvokeTestPS1" Directory="SystemFolder" ExeCommand="[POWERSHELLEXE] -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot;" Execute="deferred" Impersonate="no"/>
+    <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot;"/>
+    <CustomAction Id="InvokeTestPS1" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/>
     <InstallExecuteSequence>
-      <Custom Action="InvokeTestPS1" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
+      <Custom Action="InvokeTestPS1" Before="InstallFinalize"><![CDATA[NOT Installed]]></Custom>
     </InstallExecuteSequence>
   </Product>
   <Fragment>

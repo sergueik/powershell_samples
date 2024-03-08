@@ -42,6 +42,9 @@ this eventlog entry is produced by running the powershell script `test.ps1` duri
 ```powershell
 write-eventlog -logname testlog -source testlog -eventid 1 -entrytype  information -message 'message from the script'
 ```
+### See Also
+
+  * https://wixtoolset.org/docs/tools/wixext/quietexec/
 
 
 ### Author
