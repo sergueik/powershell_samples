@@ -5,16 +5,23 @@ example based on [recommendation](https://stackoverflow.com/questions/42838287/w
 ### Usage
 
 ```powershell
-msbuild .\Setup.wixproj
+msbuild .\Setup.wixprojo
+
 msiexec.exe /l*v a.log /qn /i bin\Debug\Setup.msi
 
 ```
 ### NOTE:
 
+Appliction successfully installs but
 fails to uninstall from `f:` drive when `f:` drive itself is a logical disk substituted, not a real drive:
 
 ```powershell
+cd $env:USERPROFILE
+subst F: $env:USERPROFILE
+```
+```powershell
 msiexec.exe /l*v a.log /qn /x bin\Debug\Setup.msi
+
 ```
 ```text
 MSI (s) (84:34) [12:12:03:391]: Executing op: ProgressTotal(Total=1,Type=1,ByteEquivalent=175000)
@@ -62,7 +69,8 @@ interactie uninstall leads to  the following dialog:
 ![uninstall failure](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-ddrive/screenshots/capture-failure-uninstall.png)
 
 and the product directory remains on the machine until the reboot of subst removal of the vierual drive letter is performed:
-``text
+
+```text
 
  Directory of f:\AppName\Dummy Application Installer
 
@@ -71,9 +79,12 @@ and the product directory remains on the machine until the reboot of subst remov
                0 Dir(s)     504,037,376 bytes free
 ```
 
-when the drive letter used to install the application is a real volume, no error is observed
+when the drive letter used to install the application is a real volume
+
 
 ![volume](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-ddrive/screenshots/capture-volume.png)
+
+no error is observed with (un)installing the application to alternate drive letter
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

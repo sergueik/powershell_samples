@@ -1,11 +1,9 @@
 ### Info
 
-this directory contains installer of a set of connected Powershell scripts which are invoked during the product install in one or two ways offered by Wix Toolset
-for the side effect (e.g. information logged to Windows Event Log or custom Scheduled Task is created
+this directory contains installer of a set of cross invoking Powershell scripts which are invoked during the product install in one or two ways offered by Wix Toolset
+for the side effect (e.g. in this exxamle some information logged to Windows Event Log or custom Scheduled Task is created
 
-based on [chapter_1 Wix Code example]( from
-https://resources.oreilly.com/examples/9781784393212/-/blob/master/chapter_1/code/recipe_2/consoleapplicationinstaller/ConsoleApplicationInstaller/Product.wxs)
-and misc. stackoverflow posts listed at the end.
+based on [chapter_1 Wix Code example](https://resources.oreilly.com/examples/9781784393212/-/blob/master/chapter_1/code/recipe_2/consoleapplicationinstaller/ConsoleApplicationInstaller/Product.wxs) from the book __WiX 3.6: A Developer's Guide to Windows Installer XML__ published by Packt and misc. stackoverflow posts listed at the end.
 ### Usage
 
 ```powershell
@@ -40,7 +38,7 @@ eventually calling system cmdlet
 write-eventlog -logname testlog -source testlog -eventid 1 -entrytype  information -message 'message from the script'
 ```
 
-![add remove programs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-ddrive/screenshots/capture-add-remove-programs.png)
+![add remove programs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-powershell-run/screenshots/capture-add-remove-programs.png)
 
 The scripts will be installed to 
 ```text
