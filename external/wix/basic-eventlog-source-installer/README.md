@@ -10,7 +10,7 @@ from [source code](https://resources.oreilly.com/examples/9781784393212) of __Wi
 
 ```powershell
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
-MSBuild.exe .\Program\Program.csproj
+msbuild.exe .\Program\Program.csproj
 ```
 
 #### Package
@@ -33,7 +33,7 @@ $xml.Save($name)
 
 ```powershell
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
-MSBuild.exe .\Setup\Setup.wixproj
+msbuild.exe .\Setup\Setup.wixproj
 ```
 the `Setup.msi` will be in `Setup\bin\Debug`.
 
@@ -232,9 +232,47 @@ Also there was an error observed during uninstall:
 if instead of git clone, a zip of the project sources was downloaded, start with unlocking the files
 
 ```powershell
-get-childitem . - file -recurse | foreach-objecg { unlock-file -path. $_.fullname 
+get-childitem . - file -recurse | foreach-objecg { 
+  unlock-file -path. $_.fullname 
 } 
 ```
+
+### TestLog
+
+in another project the custom log named `TestLog` was successfully cresaed and messages with Event ID  1,2,3   have been logged
+
+
+```powershell
+wevtutil.exe enum-publishers | findstr -i testlog
+```
+```powershell
+wevtutil.exe get-publisher TestLog
+```
+NOTE: `wevtutil.exe` supports abbreviated immemorable aliases like `gp` `ep` etc.
+```text
+name: TestLog
+guid: 00000000-0000-0000-0000-000000000000
+helpLink: http://go.microsoft.com/fwlink/events.asp?CoName=Microsoft%20Corporation&ProdName=Microsoft%c2%ae%20.NET%20Framework&ProdVer=4.0.30319.0&FileName=EventLogMessages.dll&FileVer=4.8.3761.0
+messageFileName: C:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll
+message:
+channels:
+  channel:
+    name: TestLog
+    id: 16
+    flags: 1
+    message:
+levels:
+opcodes:
+tasks:
+keywords:
+
+```
+
+The message dll  `C:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll` is actually owned by Microsoft and is part of __Microsoft.NET Framework__ but it accepts message Event ID 1 and 2.
+The file size of version __4.0.30319.33440__ is 786KB and of version __4.8.3761.0__ is 785 KB. There is no .Net Assembly Manifest in this dll - it is resource-only
+
+
+
 ### See Also
 
    * `EventSource` element (Wix Toolset 3.x Util Extension) [documentation](https://wixtoolset.org/docs/v3/xsd/util/eventsource/)
@@ -242,6 +280,20 @@ get-childitem . - file -recurse | foreach-objecg { unlock-file -path. $_.fullnam
    * [create a Custom Event Log in the Event Viewer through Wix Toolset](https://bzzzt.io/post/2013-06/2013-06-05-wix-wednesday-1-4-create-a-custom-event-log-in-the-event-viewer/)
    * [discussion on compiling a small app to produce an event log source using WiX](https://itecnote.com/tecnote/r-how-to-create-an-event-log-source-using-wix/)
    * [how to create a .NET event log source using WiX](https://itecnote.com/tecnote/how-to-create-a-net-event-log-source-using-wix/) 
+   * [creating a resource-only DLL](https://learn.microsoft.com/en-us/cpp/build/creating-a-resource-only-dll)
+   * [build Resource-only DLL in Visual Studio 2015](https://www.originlab.com/doc/OriginC/odk/Build-Resource-only-DLL-in-Visual-Studio-2015)
+   * [creating a Resource-Only DLL](https://www.codeproject.com/Tips/5349617/Creating-a-Resource-Only-DLL)
+   * [EventLog and resource-only DLL orchestration using](https://www.codeproject.com/Articles/9889/EventLog-and-resource-only-DLL-orchestration) coveging cresating custom resource-only dll using message text file (.mc), resouece compiler, message compiler and linker and referencing the `EventLogMessages.dll` ( which existed in __Microsoft.NET Framework__  __1.1.4322__ too)
+   * [Message compiler](http://msdn.microsoft.com/library/default.asp?url=/library/en-us/tools/tools/message_compiler.asp)
+   * [Resource Compiler](http://msdn.microsoft.com/library/default.asp?url=/library/en-us/tools/tools/resource_compiler.asp)
+   * __Resource Hacker__  a freeware resource compiler & decompiler for Windows applications [download](https://www.angusj.com/resourcehacker/) 
+   * MinGW has [windmc.exe](https://manpages.debian.org/testing/binutils-mingw-w64-x86-64/x86_64-w64-mingw32-windmc.1.en.html) and [windres.exe](https://manpages.debian.org/testing/binutils-mingw-w64-x86-64/x86_64-w64-mingw32-windres.1.en.html) for same purposes
+   * https://stackoverflow.com/questions/74273900/is-there-a-way-to-create-a-resource-only-dll-using-mingw-compiler-tools
+
+   * https://stackoverflow.com/questions/49508242/how-to-compile-resource-file-with-mingw-windres
+
+
+
 
 
 ### Author
