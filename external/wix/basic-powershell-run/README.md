@@ -8,16 +8,55 @@ based on [chapter_1 Wix Code example](https://resources.oreilly.com/examples/978
 
 ```powershell
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
-MSBuild.exe Setup.wixproj
+msbuild.exe Setup.wixproj
 ```
+
+* Check that the log is present:
+```powershell
+wevtutil.exe enum-logs | findstr.exe -i TestLog
+```
+
+* Get Log information
+
+
+```powershell
+wevtutil.exe get-log TestLog
+```
+```text
+name: TestLog
+enabled: true
+type: Admin
+owningPublisher:
+isolation: Application
+channelAccess: O:BAG:SYD:(A;;0xf0007;;;SY)(A;;0x7;;;BA)(A;;0x7;;;SO)(A;;0x3;;;IU)(A;;0x3;;;SU)(A;;0x3;;;S-1-5-3)(A;;0x3;;;S-1-5-33)(A;;0x1;;;S-1-5-32-573)
+logging:
+  logFileName: %SystemRoot%\System32\Winevt\Logs\TestLog.evtx
+  retention: false
+  autoBackup: false
+  maxSize: 1052672
+publishing:
+  fileMax: 1
+
+
+```
+
+* Clear log entries
+
+```powersshell
+wevtutil.exe clear-log  TestLog
+```
+
+NOTE: `wevtutil.exe` supports abbreviated immemorable aliases like `el`, `gl`, `cl` etc.
+
 #### Install
 
-* in regular prompt
+* in elevated prompt
 
 ```cmd
 msiexec.exe /l*v a.log /qn /i bin\Debug\Setup.msi
 ```
 #### Successful Install
+
 After the succesful install, check the messages added to the eventlog:
 ```poweshell
 get-eventlog -logname testlog
@@ -160,6 +199,23 @@ WixQuietExec:  +   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 WixQuietExec:      + CategoryInfo          : ObjectNotFound: (C:\Program File...\dependency.p 
 WixQuietExec:     s1:String) , CommandNotFoundException
 WixQuietExec:      + FullyQualifiedErrorId : CommandNotFoundException
+
+```
+```text
+
+MSI (s) (E0:AC) [13:06:52:271]: Hello, I'm your 32bit Impersonated custom action server.
+MSI (s) (E0!54) [13:06:52:271]: PROPERTY CHANGE: Deleting WixQuietExecCmdLine property. Its current value is '"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -noprofile -noninteractive -file "C:\Program Files\Powershell Script Runner\launcher.ps1" "testlog" "message text"'.
+Action start 13:06:52: InvokeTestPS1.
+WixQuietExec:  C:\Program Files\Powershell Script Runner\launcher.ps1 : Cannot bind 
+WixQuietExec:  positional parameters because no names were given.
+WixQuietExec:      + CategoryInfo          : InvalidArgument: (:) , ParentConta 
+WixQuietExec:     insErrorRecordException
+WixQuietExec:      + FullyQualifiedErrorId : AmbiguousPositionalParameterNoName,launcher.ps1
+WixQuietExec:   
+WixQuietExec:  Error 0x80070001: Command line returned an error.
+WixQuietExec:  Error 0x80070001: QuietExec Failed
+WixQuietExec:  Error 0x80070001: Failed in ExecCommon method
+CustomAction InvokeTestPS1 returned actual error code 1603 (note this may not be 100% accurate if translation happened inside sandbox)
 
 ```
 ### Cleanup

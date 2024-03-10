@@ -24,15 +24,16 @@
     <Compile Include="Product.wxs"/>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="test.ps1"/>
+    <Content Include="launcher.ps1"/>
+    <Content Include="dependency.ps1"/>
   </ItemGroup>
-<ItemGroup>
+  <ItemGroup>
     <WixExtension Include="WixUtilExtension">
+      <!-- NOTE: Wix Toolset is 32 bit appication suite -->
       <HintPath>C:\Program Files\WiX Toolset v3.7\bin\WixUtilExtension.dll</HintPath>
       <Name>WixUtilExtension</Name>
     </WixExtension>
   </ItemGroup>
-
   <Import Project="$(WixTargetsPath)"/>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.

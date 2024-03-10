@@ -11,7 +11,7 @@
       <RegistrySearch Id="POWERSHELLEXE" Type="raw" Root="HKLM" Key="SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" Name="Path"/>
     </Property>
     <Condition Message="This application requires Windows PowerShell."><![CDATA[Installed OR POWERSHELLEXE]]></Condition>
-    <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot;"/>
+    <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot; 2"/>
     <CustomAction Id="InvokeTestPS1" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/>
 
     <InstallExecuteSequence>
