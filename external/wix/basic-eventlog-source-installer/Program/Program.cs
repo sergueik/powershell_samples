@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics;
 
-namespace EventSourceTestApp {
+namespace EventSourceTestApp  {
 	class Program {
 		static void Main(string[] args) {
-			EventLog.WriteEvent("MyCustomEventSource", new EventInstance(100, 1, EventLogEntryType.Error));
-			EventLog.WriteEvent("MyCustomEventSource", new EventInstance(101, 1, EventLogEntryType.Information), "75 percent");
+			EventLog.WriteEvent("MyCustomEventSource", new EventInstance(2, 1, EventLogEntryType.Error), "there was an error logged" );
+			EventLog.WriteEvent("MyCustomEventSource", new EventInstance(1, 1, EventLogEntryType.Information), "some information was logged");
 		}
 	}
 

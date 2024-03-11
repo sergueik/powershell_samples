@@ -18,7 +18,7 @@
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="cmpMessagesDLL" Guid="{F868FE8E-8F1E-4AEC-82AE-B5AB012E152F}">
-        <File Id="fileMessagesDLL" Source="messages.dll"/>
+        <File Id="fileMessagesDLL" Source="$(env.WINDIR)\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll"/>
       </Component>
       <Component Id="cmpEventSource" Guid="{2E5A07EC-914B-454F-98C8-77A5F6073C52}">
         <util:EventSource KeyPath="yes" EventMessageFile="[#fileMessagesDLL]" CategoryMessageFile="[#fileMessagesDLL]" CategoryCount="1" Name="MyCustomEventSource" Log="mycustomlog2"/>

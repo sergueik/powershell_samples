@@ -43,9 +43,7 @@ in elevated prompt
 
 * install
 ```cmd
-pushd Setup\bin\Debug\
-msiexec.exe /l*v a.log /quiet /i Setup.msi
-popd
+msiexec.exe /l*v a.log /quiet /i Setup\bin\Debug\Setup.msi
 ```
 ### confirm
 
@@ -84,10 +82,45 @@ logging:
 publishing:
   fileMax: 1
 ```
-  * generate new log events
+
+after the project uninstalled will see
+```text
+Failed to read configuration for log mycustomlog2. The specified channel could not be found. Check channel configuration.
+```
+the file `c:\Windows\System32\winevt\Logs\mycustomlog2.evtx` may remain if there were logs added
+
 ```cmd
-cd ..\..\..\Program
-.\bin\Debug\EventSourceTestApp.exe
+wevtutil.exe get-publisher MyCustomEventSource
+```
+```text
+name: MyCustomEventSource
+guid: 00000000-0000-0000-0000-000000000000
+helpLink: http://go.microsoft.com/fwlink/events.asp?CoName=Microsoft%20Corporation&ProdName=Microsoft%c2%ae%20.NET%20Framework&ProdVer=4.0.30319.0&FileName=EventLogMessages.dll&FileVer=4.8.3761.0
+messageFileName: C:\Program Files\EventSourceInstaller\EventLogMessages.dll
+message:
+channels:
+  channel:
+    name: mycustomlog2
+    id: 16
+    flags: 1
+    message:
+levels:
+opcodes:
+tasks:
+  task:
+    name: %1
+
+    value: 1
+    eventGUID: 00000000-0000-0000-0000-000000000000
+    message: 1
+keywords:
+```
+
+
+  * generate new log events
+
+```cmd
+Program\bin\Debug\EventSourceTestApp.exe
 ```
   * repeat a few times	```
   * check the logs have been added
@@ -106,32 +139,37 @@ get-eventlog -logname mycustomlog2 -source MyCustomEventSource -newest 2| format
 
 
 ```text
-Index              : 88276
+Index              : 14
 EntryType          : Information
-InstanceId         : 101
-Message            : Service utilization: 75 percent
-Category           : Web service
+InstanceId         : 1
+Message            : some information was logged
+Category           : %1
 CategoryNumber     : 1
-ReplacementStrings : {75 percent}
+ReplacementStrings : {some information was logged}
 Source             : MyCustomEventSource
-TimeGenerated      : 3/12/2023 7:36:18 AM
-TimeWritten        : 3/12/2023 7:36:18 AM
+TimeGenerated      : 3/11/2024 7:19:49 AM
+TimeWritten        : 3/11/2024 7:19:49 AM
 UserName           :
 
-Index              : 88275
+Index              : 13
 EntryType          : Error
-InstanceId         : 100
-Message            : Max connections was exceeded.
-Category           : Web service
+InstanceId         : 2
+Message            : there was an error logged
+Category           : %1
 CategoryNumber     : 1
-ReplacementStrings : {}
+ReplacementStrings : {there was an error logged}
 Source             : MyCustomEventSource
-TimeGenerated      : 3/12/2023 7:36:18 AM
-TimeWritten        : 3/12/2023 7:36:18 AM
+TimeGenerated      : 3/11/2024 7:19:49 AM
+TimeWritten        : 3/11/2024 7:19:49 AM
 UserName           :
 ```
-#### Stub Message Resource Dll
-To build resource dll one  needs to author a `mc` file:
+(the `Index` will be different)
+
+![Custom Event Log](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-custom-eventlog.png)
+
+#### Build Stub Message Resource Dll from Source (Optional)
+
+To build resource dll one needs to author a `mc` file:
 
 ```c
 ;// HEADER SECTION
@@ -240,7 +278,7 @@ get-childitem . - file -recurse | foreach-objecg {
 
 ### TestLog
 
-in another project the custom log named `TestLog` was successfully cresaed and messages with Event ID  1,2,3   have been logged
+in another project the custom log named `TestLog` was successfully created and messages with Event ID  1,2,3 have been logged
 
 
 ```powershell
