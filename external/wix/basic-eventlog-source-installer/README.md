@@ -48,6 +48,7 @@ msiexec.exe /l*v a.log /quiet /i Setup.msi
 popd
 ```
 ### confirm
+
 ![Applications and Services Event Logs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-eventlog-applications-and-services.png)
 
   * observe the custom log file:
@@ -271,7 +272,11 @@ keywords:
 The message dll  `C:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll` is actually owned by Microsoft and is part of __Microsoft.NET Framework__ but it accepts message Event ID 1 and 2.
 The file size of version __4.0.30319.33440__ is 786KB and of version __4.8.3761.0__ is 785 KB. There is no .Net Assembly Manifest in this dll - it is resource-only
 
+when open in `reshacker` the `EventLogMessages` shows a message table with trivial templates for every Event ID:
 
+![EventLogMessages.dll in reshacker](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-reshacker.png)
+
+indicating it is safe to use with custom logging without explicitly copying a replica when installing event log message file. It is not entirely clear from the Wix Util Extension EventSource Element [documentation](https://wixtoolset.org/docs/v3/xsd/util/eventsource) how to use the %ENVIRONMENT_VARIABLE% syntax to refer to a file already present on the user's machine -  this is a work in progress.
 
 ### See Also
 
