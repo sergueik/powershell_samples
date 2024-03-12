@@ -326,6 +326,18 @@ MachinePolicy       Undefined
  LocalMachine    Unrestricted
 ```
 
+```cmd
+schtasks.exe /create /TN AUTOMATION\ATASK /tr "c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f '%1'" /rl HIGHEST /ru "NT AUTHORITY\SYSTEM" /sc once /st 23:30
+```
+NOTE:  willneed dto remove the /v1 /Z options otherwise will be getting the error
+```text
+ERROR: The creation of the scheduled task failed. Reason: The Task Name may not contain the characters: < > : / \ |
+```
+the command below is just for reference
+```powershell
+"C:\Windows\system32\schtasks.exe" /v1 /Z /Create /RL HIGHEST /TN "\Automation\ATASK" /SC ONCE /ST 22:55 /RU "NT AUTHORITY\SYSTEM" /RI 1 /TR "c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f 'C:\Program Files\ScheduledTaskInstaller\dialog.ps1'"
+
+```
 ### See Also
 
   * https://wixtoolset.org/docs/v3/xsd/wix/customaction/
