@@ -1,40 +1,31 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="ScheduledTaskInstaller" Language="1033" Version="1.0.0.0" Manufacturer="My Company" UpgradeCode="f32afffd-cb7e-47b6-8fc9-f3b7e33a982f">
+  <Product Id="*" Name="Scheduled Task Installer" Language="1033" Version="1.1.0.0" Manufacturer="My Company" UpgradeCode="f32afffd-cb7e-47b6-8fc9-f3b7e33a982f">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" />
-    <Feature Id="ProductFeature" Title="ScheduledTaskInstaller" Level="1">
+    <Feature Id="ProductFeature" Title="Scheduled Task Installer" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
     <!--For testing rollback-->
     <CustomActionRef Id="WixFailWhenDeferred" />
     <Property Id="TASKNAME" Value="ATASK" />
-    <Property Id="STARTTIME" Value="19:25" />
+    <Property Id="STARTTIME" Value="22:10" />
 
     <Property Id="POWERSHELLEXE">
       <RegistrySearch Id="POWERSHELLEXE" Type="raw" Root="HKLM" Key="SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" Name="Path"/>
     </Property>
     <Condition Message="This application requires Windows PowerShell."><![CDATA[Installed OR POWERSHELLEXE]]></Condition>
-<!--
-    <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot; 2"/>
-    <CustomAction Id="InvokeTestPS1WixCA" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/>
--->
-    <CustomAction Id="InvokeTestPS1" Directory="INSTALLFOLDER" ExeCommand="&quot;[POWERSHELLEXE]&quot; -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot;  &quot;message text&quot; 2"
-Execute="deferred" Impersonate="no"/>
+    <CustomAction Id="InvokeTestPS1" Directory="INSTALLFOLDER" ExeCommand="&quot;[POWERSHELLEXE]&quot; -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot;  &quot;message text&quot; 2" Execute="deferred" Impersonate="no"/>
 
-    <CustomAction Id="RollbackCreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Delete /TN [TASKNAME] /F" Execute="rollback" Impersonate="no" />
    <!-- NOTE: insert the shell echo command for quick debugging: "cmd.exe /k echo " -->
    <!-- NOTE: does not work when property is used  -->
     <CustomAction Id="CreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Create /v1 /z /rl HIGHEST /TN [TASKNAME] /SC ONCE /ST [STARTTIME] /RU &quot;NT AUTHORITY\SYSTEM&quot; /RI 1 /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f '[#ApplicationScript]'&quot;" Execute="deferred" Impersonate="no" />
     <CustomAction Id="RemoveScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Delete /TN [TASKNAME] /F" Execute="deferred" Impersonate="no" /> 
    <!-- https://stackoverflow.com/questions/43386704/program-files-folder-instead-of-program-files-x86-installation-path-in-wix -->
     <InstallExecuteSequence>
-      <Custom Action="RollbackCreateScheduledTask" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
-      <Custom Action="CreateScheduledTask" After="RollbackCreateScheduledTask"><![CDATA[NOT Installed]]></Custom>
-<!--
+      <Custom Action="CreateScheduledTask"  After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
       <Custom Action="InvokeTestPS1" After="CreateScheduledTask"><![CDATA[NOT Installed]]></Custom> 
--->
       <Custom Action="RemoveScheduledTask" Before="InstallFinalize">REMOVE ~= "ALL"</Custom>
     </InstallExecuteSequence>
   </Product>
@@ -50,16 +41,16 @@ Execute="deferred" Impersonate="no"/>
   <Fragment>
 
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="launcherScript" Guid="{33b93b79-a971-406f-ac6d-fe5fa2f602cd}">
+      <Component Id="launcherScript" Guid="{af48de75-b797-4e34-b256-02c05f549abd}">
         <File Id="TestPS1File" Name="launcher.ps1" DiskId="1" Source="launcher.ps1"/>
         <RemoveFolder Id="INSTALLFOLDER" On="uninstall"/>
         <RemoveFile Id="TestPS1File" Name="launcher.ps1" On="uninstall"/>
       </Component>
-      <Component Id="dependencyScript" Guid="{dc7c67a9-65aa-4b7f-9052-bc949ee3495d}">
+      <Component Id="dependencyScript" Guid="{3a17ca97-057e-45af-bde6-fc7d44c2703d}">
         <File Id="DependencyPS1File" Name="dependency.ps1" DiskId="1" Source="dependency.ps1"/>
         <RemoveFile Id="DependencyPS1File" Name="dependency.ps1" On="uninstall"/>
       </Component>
-      <Component Id="Script" Guid="{B63BA28A-0985-472B-828B-B5BD943D0633}">
+      <Component Id="TaskScript" Guid="{0ea401c6-f7ce-4205-9d49-14cdc1858441}">
         <File Id="ApplicationScript" Source="system_log_eventlog.ps1" />
       </Component>
     </ComponentGroup>

@@ -51,18 +51,32 @@ C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe .\Setup.wixproj
 ```
 ignore the warning
 ```text
-  C:\developer\sergueik\powershell_samples\external\wix\basic-scheduledtask-installer\Product.wxs(20): warning LGHT1076: ICE68: Even though custom action 'InvokeTestPS1WixCA' is marked to be elevated (with attribute msidbCustomActionTypeNoImpersonate), it will not be run with elevated privileges because it's not deferred (with attribute msidbCustomActionTypeInScript). [C:\developer\sergueik\powershell_samples\external\wix\basic-scheduledtask-installer\Setup.wixproj]
+Product.wxs(20): warning LGHT1076: ICE68: Even though custom action 'InvokeTestPS1WixCA' is marked to be elevated (with attribute msidbCustomActionTypeNoImpersonate), it will not be run with elevated privileges because it's not deferred (with attribute msidbCustomActionTypeInScript). [C:\developer\sergueik\powershell_samples\external\wix\basic-scheduledtask-installer\Setup.wixproj]
 
 ```
-the `Setup.msi` will be in `Setup\bin\Debug`.
+and
+```
+```text
+(target AddSolutionDefineConstants) ->
+  C:\Program Files (x86)\MSBuild\Microsoft\WiX\v3.x\wix2010.targets(1199,5): warning : 
+Solution properties are only available during IDE builds or when building the solution file from the command line. 
+To turn off this warning set <DefineSolutionProperties>false</DefineSolutionProperties> 
+in your .wixproj file.
+```
+the `Setup.msi` will be in `Setup\bin\Debug`
+
 * install
 in elevated prompt
 
 ```cmd
-cd bin\Debug
-msiexec.exe /l*v a.log /i bin\Debug\Setup.msi
+msiexec.exe /l*v a.log /qn /i bin\Debug\Setup.msi
 ```
+it will still flash few console windows while installing, presumably this still qualifies as no ui.
 
+At the end of `a.log` will see the success message
+```text
+MSI (c) (70:C0) [21:43:02:610]: MainEngineThread is returning 0
+```
 To debug replace 
 ```XML
     <CustomAction Id="CreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Create /v1 /z /rl HIGHEST /TN [TASKNAME] /SC ONCE /ST 03:55 /RU &quot;NT AUTHORITY\SYSTEM&quot; /RI 1 /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f '[#ApplicationScript]'&quot;" Execute="deferred" Impersonate="no" />
@@ -84,6 +98,13 @@ check the task
 02/29/2024  04:33 PM             3,488 ATASK
                1 File(s)          3,488 bytes
 ```
+If there is no task, the scheduled time must be in the past (work in progress)
+```powershell
+cmd %% - /c time /t
+```
+```text
+21:49
+```
 check the log
 ```text
 MSI (s) (18:2C) [06:24:49:068]: Note: 1: 2203 2: C:\developer\sergueik\powershell_samples\external\wix\basic-scheduledtask-installer\Setup.msi 3: -2147287038 
@@ -94,22 +115,23 @@ if seeing that error code `-2147287038 `, it is likely to be indicating
 Exception from HRESULT: 0x80030002 (STG_E_FILENOTFOUND) - could not be found.
 ```
 
-After the successfull run  the Application directory `ScheduledTaskInstaller` is created under `Program Files`:
+After the successfull run  the Application directory `ScheduledTaskInstaller` is created under `Program Files` on 32 bit Windows and under `c:\Program Files (x86)` on a 64 bit system:
 
 ```text
- Directory of c:\Program Files\ScheduledTaskInstaller
+ Directory of c:\Program Files (x86)\ScheduledTaskInstaller
 
-03/08/2023  05:51 AM                 0 Sample.txt
-03/18/2023  02:58 PM               716 dialog.ps1
-03/08/2023  06:33 AM    <DIR>          ..
-03/08/2023  06:33 AM    <DIR>          .
+12.03.2024  20:18    <DIR>          .
+12.03.2024  20:18    <DIR>          ..
+12.03.2024  18:00               626 dependency.ps1
+12.03.2024  18:00               809 launcher.ps1
+12.03.2024  18:00             3 224 system_log_eventlog.ps1
 ```
 the Application script `dialog.ps1` is deployed to Appication directory
 
 and a Scheduled Task with the name `ATASK` is created
 
 ```cmd
-schtasks /query /tn Atask
+schtasks /query /tn ATASK
 ```
 ```text
 Folder: \
@@ -156,6 +178,36 @@ Repeat: Until: Duration:              Disabled
 Repeat: Stop If Still Running:        Disabled
 ```
 
+The event log `testlog` will have the listing of the same task:
+
+```powerhsell
+get-eventlog -logname testlog -newest 1 | select-object -property *
+```
+```text
+
+EventID            : 2
+MachineName        : DESKTOP-82V9KDO
+Data               : {}
+Index              : 6
+Category           : (1)
+CategoryNumber     : 1
+EntryType          : Information
+Message            : task:  Папка: \ Имя задачи                               В
+                     ремя следующего запус Состояние       ======================================== ====================== ==============
+                     = ATASK                                    12.03.2024 20:35:00    Готово
+Source             : testlog
+ReplacementStrings : {task:  Папка: \ Имя задачи
+                     Время следующего запус Состояние       ======================================== ====================== =============
+                     == ATASK                                    12.03.2024 20:
+                     35:00    Готово         }
+InstanceId         : 2
+TimeGenerated      : 12.03.2024 20:18:08
+TimeWritten        : 12.03.2024 20:18:08
+UserName           :
+Site               :
+Container          :
+
+```
 * NOTE: multiple settings will need some tuning
 
 ![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-scheduledtask-installer/screenshots/capture_added_task.png)
@@ -257,11 +309,7 @@ The following information was included with the event:
 
 ### NOTE
 
-* on a vanilla Windows machine the `lestlog` Event Log can be missing. It can be easily created in elevated Powershell prompt.
-```poswershell
 new-eventlog -source testlog -logname testlog
-```
-* some install may fail with the error listed in the `Application` event log
 
 NOTE:
 the Powershell fails to run with the default executionpolicy settings 
@@ -277,7 +325,6 @@ MachinePolicy       Undefined
   CurrentUser       Undefined
  LocalMachine    Unrestricted
 ```
-the workaround is to use the extra `executionpolicy` flag in `Product.wxs`
 
 ### See Also
 
