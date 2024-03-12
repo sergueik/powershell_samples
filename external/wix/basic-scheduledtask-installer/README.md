@@ -49,6 +49,11 @@ or
 
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe .\Setup.wixproj
 ```
+ignore the warning
+```text
+  C:\developer\sergueik\powershell_samples\external\wix\basic-scheduledtask-installer\Product.wxs(20): warning LGHT1076: ICE68: Even though custom action 'InvokeTestPS1WixCA' is marked to be elevated (with attribute msidbCustomActionTypeNoImpersonate), it will not be run with elevated privileges because it's not deferred (with attribute msidbCustomActionTypeInScript). [C:\developer\sergueik\powershell_samples\external\wix\basic-scheduledtask-installer\Setup.wixproj]
+
+```
 the `Setup.msi` will be in `Setup\bin\Debug`.
 * install
 in elevated prompt
@@ -249,6 +254,31 @@ The following information was included with the event:
 {     "username":  "SERGUEIK42$",     "parent":  "taskeng.exe",     "pid":  3124,     "message":  "test",     "invoked":  "2024-03-02 14:31" }
 
 ```
+
+### NOTE
+
+* on a vanilla Windows machine the `lestlog` Event Log can be missing. It can be easily created in elevated Powershell prompt.
+```poswershell
+new-eventlog -source testlog -logname testlog
+```
+* some install may fail with the error listed in the `Application` event log
+
+NOTE:
+the Powershell fails to run with the default executionpolicy settings 
+```powershell
+get-executionpolicy  -list
+```
+```
+        Scope ExecutionPolicy
+        ----- ---------------
+MachinePolicy       Undefined
+   UserPolicy       Undefined
+      Process       Undefined
+  CurrentUser       Undefined
+ LocalMachine    Unrestricted
+```
+the workaround is to use the extra `executionpolicy` flag in `Product.wxs`
+
 ### See Also
 
   * https://wixtoolset.org/docs/v3/xsd/wix/customaction/

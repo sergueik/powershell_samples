@@ -9,33 +9,32 @@
     </Feature>
     <!--For testing rollback-->
     <CustomActionRef Id="WixFailWhenDeferred" />
-    <Property Id="PASSWORD" Value="i011155" />
     <Property Id="TASKNAME" Value="ATASK" />
-    <Property Id="STARTTIME" Value="14:30" />
-    <!-- WARNING: When the run-as password is empty, the prompt appears during install: 
-the scheduled task may not run because of the security policy.
-Please enter the run as password for sergueik:
+    <Property Id="STARTTIME" Value="19:25" />
 
--->
-    <CustomAction Id="RollbackCreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Delete /TN [TASKNAME] /F" Execute="rollback" Impersonate="no" />
-<!-- Product.wxs(21): error LGHT0091: Duplicate symbol 'CustomAction:SetCA_ReadProperty' found. This typically means that an Id is duplicated. Check to make sure all your identifiers of a given type (File, Component, Feature) are unique -->
-
-    <SetProperty Id="CA_ReadProperty" Value="PASSWORD=[PASSWORD]" Sequence="execute" Before="CreateScheduledTask" />
+    <Property Id="POWERSHELLEXE">
+      <RegistrySearch Id="POWERSHELLEXE" Type="raw" Root="HKLM" Key="SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" Name="Path"/>
+    </Property>
+    <Condition Message="This application requires Windows PowerShell."><![CDATA[Installed OR POWERSHELLEXE]]></Condition>
 <!--
-    <SetProperty Id="CA_ReadProperty" Value="TASKNAME=[TASKNAME]" Sequence="execute" Before="CreateScheduledTask" />
-    <SetProperty Id="CA_ReadProperty" Value="STARTTIME=[STARTTIME]" Sequence="execute" Before="CreateScheduledTask" />
+    <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot; 2"/>
+    <CustomAction Id="InvokeTestPS1WixCA" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/>
 -->
-    <!-- error CNDL0005: The CustomAction element contains an unexpected child element 'WixVariable'. -->
-    <!-- error CNDL0107: Schema validation failed with the following error at line 1, column 1884: 
-The element 'Product' in namespace 'http://schemas.microsoft.com/wix/2006/wi' cannot contain text. 
- -->
-   <!-- NOTE: use the command prefix for quick debugging cmd.exe /k echo  -->
-   <!-- NOTE: does not wotk when property is used  -->
+    <CustomAction Id="InvokeTestPS1" Directory="INSTALLFOLDER" ExeCommand="&quot;[POWERSHELLEXE]&quot; -executionpolicy bypass -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot;  &quot;message text&quot; 2"
+Execute="deferred" Impersonate="no"/>
+
+    <CustomAction Id="RollbackCreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Delete /TN [TASKNAME] /F" Execute="rollback" Impersonate="no" />
+   <!-- NOTE: insert the shell echo command for quick debugging: "cmd.exe /k echo " -->
+   <!-- NOTE: does not work when property is used  -->
     <CustomAction Id="CreateScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Create /v1 /z /rl HIGHEST /TN [TASKNAME] /SC ONCE /ST [STARTTIME] /RU &quot;NT AUTHORITY\SYSTEM&quot; /RI 1 /TR &quot;c:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -noprofile -f '[#ApplicationScript]'&quot;" Execute="deferred" Impersonate="no" />
-    <CustomAction Id="RemoveScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Delete /TN [TASKNAME] /F" Execute="deferred" Impersonate="no" />
+    <CustomAction Id="RemoveScheduledTask" Directory="SystemFolder" ExeCommand="&quot;[SystemFolder]schtasks.exe&quot; /Delete /TN [TASKNAME] /F" Execute="deferred" Impersonate="no" /> 
+   <!-- https://stackoverflow.com/questions/43386704/program-files-folder-instead-of-program-files-x86-installation-path-in-wix -->
     <InstallExecuteSequence>
-      <Custom Action="CreateScheduledTask" Before="InstallFinalize">NOT Installed</Custom>
-      <Custom Action="RollbackCreateScheduledTask" Before="CreateScheduledTask">NOT Installed</Custom>
+      <Custom Action="RollbackCreateScheduledTask" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
+      <Custom Action="CreateScheduledTask" After="RollbackCreateScheduledTask"><![CDATA[NOT Installed]]></Custom>
+<!--
+      <Custom Action="InvokeTestPS1" After="CreateScheduledTask"><![CDATA[NOT Installed]]></Custom> 
+-->
       <Custom Action="RemoveScheduledTask" Before="InstallFinalize">REMOVE ~= "ALL"</Custom>
     </InstallExecuteSequence>
   </Product>
@@ -49,11 +48,19 @@ The element 'Product' in namespace 'http://schemas.microsoft.com/wix/2006/wi' ca
     </Directory>
   </Fragment>
   <Fragment>
-    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="Script" Guid="{B63BA28A-0985-472B-828B-B5BD943D0633}">
-        <!-- <File Id="ApplicationScript" Source="interactive_user_desktop_dialog.ps1" /> -->
-        <File Id="ApplicationScript" Source="system_log_eventlog.ps1" />
 
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="launcherScript" Guid="{33b93b79-a971-406f-ac6d-fe5fa2f602cd}">
+        <File Id="TestPS1File" Name="launcher.ps1" DiskId="1" Source="launcher.ps1"/>
+        <RemoveFolder Id="INSTALLFOLDER" On="uninstall"/>
+        <RemoveFile Id="TestPS1File" Name="launcher.ps1" On="uninstall"/>
+      </Component>
+      <Component Id="dependencyScript" Guid="{dc7c67a9-65aa-4b7f-9052-bc949ee3495d}">
+        <File Id="DependencyPS1File" Name="dependency.ps1" DiskId="1" Source="dependency.ps1"/>
+        <RemoveFile Id="DependencyPS1File" Name="dependency.ps1" On="uninstall"/>
+      </Component>
+      <Component Id="Script" Guid="{B63BA28A-0985-472B-828B-B5BD943D0633}">
+        <File Id="ApplicationScript" Source="system_log_eventlog.ps1" />
       </Component>
     </ComponentGroup>
   </Fragment>
