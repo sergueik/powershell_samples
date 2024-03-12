@@ -10,7 +10,7 @@ from [source code](https://resources.oreilly.com/examples/9781784393212) of __Wi
 
 ```powershell
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
-msbuild.exe .\Program\Program.csproj
+msbuild.exe basic-eventlog-tool.sln
 ```
 
 #### Package
@@ -26,7 +26,7 @@ $guid = [guid]::NewGuid()
 $xml.Wix.Product.Id = $guid.ToString()
 $xml.Save($name)
 ```
-* NOTE: will switch to Windows line endings
+* NOTE: this operation will switch the XML resource to Windows line endings
 
 
 * compile the package
@@ -34,6 +34,11 @@ $xml.Save($name)
 ```powershell
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
 msbuild.exe .\Setup\Setup.wixproj
+```
+ignore the warning
+```text
+(Link target) ->
+  C:\developer\sergueik\powershell_samples\external\wix\basic-eventlog-source-installer\Setup\Product.wxs(24): warning LGHT1076: ICE69: Mismatched component reference. Entry 'regA097EB236FF6790846B37AC63E0BD38F' of the Registry table belongs to component 'cmpEventSource'. However, the formatted string in column 'Value' references file 'fileMessagesDLL' which belongs to component 'cmpMessagesDLL'. Components are in the same feature. [C:\developer\sergueik\powershell_samples\external\wix\basic-eventlog-source-installer\Setup\Setup.wixproj]
 ```
 the `Setup.msi` will be in `Setup\bin\Debug`.
 
@@ -49,7 +54,7 @@ msiexec.exe /l*v a.log /quiet /i Setup\bin\Debug\Setup.msi
 
 ![Applications and Services Event Logs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-eventlog-applications-and-services.png)
 
-  * observe the custom log file:
+  * observe the freshly updated custom log file:
 
 ```text
 c:\Windows\System32\winevt\Logs\mycustomlog2.evtx
@@ -169,7 +174,9 @@ UserName           :
 
 #### Build Stub Message Resource Dll from Source (Optional)
 
-To build resource dll one needs to author a `mc` file:
+To restore the Resource directory one will need to sync to [0ee13bb](https://github.com/sergueik/powershell_samples/commit/0ee13bb01eae7f366025e0d0fea5e432fa141463) or earlier commit and do the following:
+
+To build resource dll one needs to author or modify the `mc` file:
 
 ```c
 ;// HEADER SECTION
@@ -183,7 +190,7 @@ Service utilization: %1
 
 ```
 
-The compilers needed to generaete the resource-only dlls:
+The following Visual Studio compilers needed to generate the resource-only dlls:
 
 ```cmd
 mc.exe -u %RESOURCE_FILENAME%.mc
@@ -211,7 +218,9 @@ c:\Program Files (x86)\Windows Kits\8.0\bin\x86\rc.exe
 c:\Program Files (x86)\Windows Kits\8.1\bin\x64\rc.exe
 ```
 
-The `EventMessageFile` attribute is required - removing the attribute leads to build error:
+There exist equivalent `windmc.exe` and `windres.exe` tools in MinGW environment but those were not tested.
+
+The `EventMessageFile` attribute is required in the `Product.wsx` - removing the attribute leads to build error:
 ```text
 CNDL0010: The util:EventSource/@EventMessageFile attribute was not found; it is required.` ) and can not be assigned a blank value (doing that leads to build error: `CNDL0006: The util:EventSource/@EventMessageFile attribute's value cannot be an empty string.  
 If a value is not required, simply remove the entire attribute
@@ -266,6 +275,7 @@ UserName           :
 Also there was an error observed during uninstall:
 
 ![Errror in Uninstall](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-error-uninstall.png)
+
 ### Note
 
 if instead of git clone, a zip of the project sources was downloaded, start with unlocking the files
@@ -279,7 +289,6 @@ get-childitem . - file -recurse | foreach-objecg {
 ### TestLog
 
 in another project the custom log named `TestLog` was successfully created and messages with Event ID  1,2,3 have been logged
-
 
 ```powershell
 wevtutil.exe enum-publishers | findstr -i testlog
