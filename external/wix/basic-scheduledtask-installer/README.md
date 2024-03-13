@@ -1,4 +1,4 @@
-### Info
+﻿### Info
 
 this project contains
 example from [Using wix to schedule a task as the local system](https://kamivaniea.com/?p=632)
@@ -10,7 +10,7 @@ from [source code](https://resources.oreilly.com/examples/9781784393212) of __Wi
 * set sensitive vars
 
 ```powershell
-$filename = '.\Product.wxs'
+$filename = '.\Setup\Product.wxs'
 [xml]$product = [XML](get-content -path $filename)
 $product
 
@@ -43,11 +43,14 @@ or
 ```powershell
 . .\extract_compose_command.ps1 -asuser
 ```
-
+* build custom action
+```powershell
+C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe .\CustomAction\CustomAction.csproj
+```
 * package
 ```powershell
 
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe .\Setup.wixproj
+C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe .\Setup\Setup.wixproj
 ```
 ignore the warning
 ```text
@@ -69,7 +72,7 @@ the `Setup.msi` will be in `Setup\bin\Debug`
 in elevated prompt
 
 ```cmd
-msiexec.exe /l*v a.log /qn /i bin\Debug\Setup.msi
+msiexec.exe /l*v a.log /qn /i Setup\bin\Debug\Setup.msi
 ```
 it will still flash few console windows while installing, presumably this still qualifies as no ui.
 
@@ -214,7 +217,7 @@ Container          :
 
 The second execution of msi performs uninstall. If it does not, use
 ```cmd
-msiexec.exe -x bin\Debug\Setup.msi
+msiexec.exe -x Setup\bin\Debug\Setup.msi
 ```
 command
 ### TODO
