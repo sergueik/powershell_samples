@@ -1,3 +1,23 @@
+#Copyright (c) 2024 Serguei Kouzmine
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
+
 param (
   [string]$properties = '',
   [string]$name = '',
@@ -43,18 +63,20 @@ if ($file_args) {
     write-error 'invalid args'
     exit 
   }
-  $e  = ('{0} *[:=] * (.*$)' -f $name)
-  $x = select-string $e $p.Path
-  $p = $x.Matches[0].Captures[0].Groups[1].Value
-  $k = (get-content -path $k.path)[0]
-  $key = $k -replace ' *$', ''
-  write-output ('key: {0}' -f $key)
-  write-output ('p: {0}' -f $p)
-  $v = select-string -Pattern 'ENC\(([^)]*)\)' -inputobject $p
-  $value = $v.Matches[0].Captures[0].Groups[1].Value
-  write-output ('value: {0}' -f $value)
+  $key_content = (get-content -path $k.path)[0]
+  $password = $key_content -replace ' *$', ''
+  write-host ('password: {0}' -f $password)
+
+  $config_line_regexp  = ('{0} *[:=] * (.*$)' -f $name)
+  $matched_line_object = select-string $config_line_regexp $p.Path
+  $value_data = $matched_line_object.Matches[0].Captures[0].Groups[1].Value
+  write-host ('value_data: {0}' -f $value_data)
+  $matched_value_object = select-string -Pattern 'ENC\(([^)]*)\)' -inputobject $value_data
+  $value = $matched_value_object.Matches[0].Captures[0].Groups[1].Value
+  write-host ('value: {0}' -f $value)
 }
 # Usage:
 <#
 . .\file_arguments.ps1 -key 'x\key.txt' -properties 'application.properties' -name 'name'
 #>
+

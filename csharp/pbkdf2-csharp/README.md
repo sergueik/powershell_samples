@@ -143,6 +143,25 @@ GD2UA8MKCvCkL+qr/QTvGl76V1G5S5A2oXPUDVdD0qF70esUEuAi17/sGn8N5aHrUIWwSZbToe2p/IXS
 ```text
 hello, world of AES
 ```
+Suppose one has an "application.properties" file in a typical java project with the value
+```java
+name=ENC(paGsbiPV3aspdDtM1XKSw12yqOPv02ngdJV3aNRTEOMaTD544tIv7N99s0y5wRLGwv7Y7nShCMwGuIqGOLIhzw==)
+```
+one can read plain value by running the  `pbkdf2.ps1` and providing the paths to properties file and secret key file like this:
+
+
+```powershell
+. .\pbkdf2.ps1 -key 'x\key.txt' -properties 'application.properties' -name 'name' -operation decrypt
+```
+this will print
+```text
+password: secret
+value_data: ENC(paGsbiPV3aspdDtM1XKSw12yqOPv02ngdJV3aNRTEOMaTD544tIv7N99s0y5wRLGwv7Y7nShCMwGuIqGOLIhzw==)
+value: paGsbiPV3aspdDtM1XKSw12yqOPv02ngdJV3aNRTEOMaTD544tIv7N99s0y5wRLGwv7Y7nShCMwGuIqGOLIhzw==
+```
+```text
+hello, world of AES
+```
 ### Java compatible Encryption / Decryption
 
 

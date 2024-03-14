@@ -22,7 +22,6 @@ param (
   [string]$properties = '',
   [string]$name = '',
   [string]$keyfile = '',
-  [switch]$strong = $true,
   [string]$value = 'test',
   [string]$password = 'password',
   [string]$operation = 'encrypt',
@@ -31,23 +30,20 @@ param (
   [switch]$debug
 )
 $debug_flag = [bool]$psboundparameters['debug'].ispresent
-
 $strong_flag = [bool]$PSBoundParameters['all'].IsPresent -bor $strong.ToBool()
-# NOTE: may seem counterintuitive but it works:
-if ($debug_flag) {
+if ($debug) {
   write-host ('Strong : {0}' -f $strong_flag) 
-  exit
+  # exit
+  # NOTE: may seem counterintuitive but it works:
+  <#
+  . .\file_arguments.ps1 -debug
+  Strong : 1
+   . .\file_arguments.ps1 -strong -debug
+  Strong : 1
+   . .\file_arguments.ps1 -strong:$false -debug
+  Strong : 0
+  #>
 }
-
-<#
-. .\pbkdf2.ps1 -debug
-Strong : 1
- . .\check_strong.ps1 -strong -debug
-Strong : 1
- . .\check_strong.ps1 -strong:$false -debug
-Strong : 0
-#>
-
 [boolean] $file_args = $false
 [boolean] $file_args_valid = $false
 if ($name -ne '') {
@@ -69,23 +65,21 @@ if ($file_args) {
     write-error 'invalid args'
     exit 
   }
-  $e  = ('{0} *[:=] * (.*$)' -f $name)
-  $x = select-string $e $p.Path
-  $p = $x.Matches[0].Captures[0].Groups[1].Value
-  $k = (get-content -path $k.path)[0]
-  $password = $k -replace ' *$', ''
+  # NOTE: do not get-content from the specicied text file "raw"
+  # but split and trim all trailing whitespace from the first line
+  $key_content = (get-content -path $k.path)[0]
+  $password = $key_content -replace ' *$', ''
   write-host ('password: {0}' -f $password)
-  if ($debug_flag) {
-    write-output ('p: {0}' -f $p)
-  }
-  $v = select-string -Pattern 'ENC\(([^)]*)\)' -inputobject $p
-  if ($debug_flag) {
-    write-output ('v: {0}' -f $v)
-  }
 
-  $value = $v.Matches[0].Captures[0].Groups[1].Value
+  $config_line_regexp  = ('{0} *[:=] * (.*$)' -f $name)
+  $matched_line_object = select-string $config_line_regexp $p.Path
+  $valuef_data = $matched_line_object.Matches[0].Captures[0].Groups[1].Value
+  write-host ('value_data: {0}' -f $value_data)
+  $matched_value_object = select-string -Pattern 'ENC\(([^)]*)\)' -inputobject $value_data
+  $value = $matched_value_object.Matches[0].Captures[0].Groups[1].Value
   write-host ('value: {0}' -f $value)
 } else {
+  # use provided value and password
   write-host ('value: {0}' -f $value)
   write-host ('password: {0}' -f $password)
 
@@ -93,7 +87,14 @@ if ($file_args) {
 # To read password and encrypted data from the files:
 # Usage:
 <#
-. .\file_arguments.ps1 -key 'x\key.txt' -properties 'application.properties' -name 'name'
+
+. .\pbkdf2.ps1 -key 'x\key.txt' -properties 'application.properties' -name 'name' -operation decrypt
+
+password: secret
+value_data: ENC(paGsbiPV3aspdDtM1XKSw12yqOPv02ngdJV3aNRTEOMaTD544tIv7N99s0y5wRLGwv7Y7nShCMwGuIqGOLIhzw==)
+value: paGsbiPV3aspdDtM1XKSw12yqOPv02ngdJV3aNRTEOMaTD544tIv7N99s0y5wRLGwv7Y7nShCMwGuIqGOLIhzw==
+hello, world of AES
+
 #>
 
 $utility_class = 'WinAPI_AES'
