@@ -1,4 +1,4 @@
-#Copyright (c) 2023 Serguei Kouzmine
+#Copyright (c) 2023,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -19,13 +19,82 @@
 #THE SOFTWARE.
 
 param (
+  [string]$properties = '',
+  [string]$name = '',
+  [string]$keyfile = '',
+  [switch]$strong = $true,
   [string]$value = 'test',
   [string]$password = 'password',
   [string]$operation = 'encrypt',
   [string]$salt = $null,
-  [switch]$strong,
+  [switch]$strong = $true,
   [switch]$debug
 )
+$debug_flag = [bool]$psboundparameters['debug'].ispresent
+
+$strong_flag = [bool]$PSBoundParameters['all'].IsPresent -bor $strong.ToBool()
+# NOTE: may seem counterintuitive but it works:
+if ($debug_flag) {
+  write-host ('Strong : {0}' -f $strong_flag) 
+  exit
+}
+
+<#
+. .\pbkdf2.ps1 -debug
+Strong : 1
+ . .\check_strong.ps1 -strong -debug
+Strong : 1
+ . .\check_strong.ps1 -strong:$false -debug
+Strong : 0
+#>
+
+[boolean] $file_args = $false
+[boolean] $file_args_valid = $false
+if ($name -ne '') {
+  $file_args = $true
+  if ($keyfile -ne '') { 
+    $k = resolve-path $keyfile -erroraction silentlycontinue
+    if ( -not ($k -eq $null)){
+      if ($properties -ne '') { 
+        $p = resolve-path $properties -erroraction silentlycontinue
+        if ( -not ($p -eq $null)){
+          $file_args_valid = $true
+        }
+      }
+    }
+  }
+}
+if ($file_args) {
+  if (-not ($file_args_valid)) {
+    write-error 'invalid args'
+    exit 
+  }
+  $e  = ('{0} *[:=] * (.*$)' -f $name)
+  $x = select-string $e $p.Path
+  $p = $x.Matches[0].Captures[0].Groups[1].Value
+  $k = (get-content -path $k.path)[0]
+  $password = $k -replace ' *$', ''
+  write-host ('password: {0}' -f $password)
+  if ($debug_flag) {
+    write-output ('p: {0}' -f $p)
+  }
+  $v = select-string -Pattern 'ENC\(([^)]*)\)' -inputobject $p
+  if ($debug_flag) {
+    write-output ('v: {0}' -f $v)
+  }
+
+  $value = $v.Matches[0].Captures[0].Groups[1].Value
+  write-host ('value: {0}' -f $value)
+} else {
+  write-host ('value: {0}' -f $value)
+  write-host ('password: {0}' -f $password)
+
+}
+# To read password and encrypted data from the files:
+# Usage:
+<#
+. .\file_arguments.ps1 -key 'x\key.txt' -properties 'application.properties' -name 'name'
+#>
 
 $utility_class = 'WinAPI_AES'
 
@@ -219,8 +288,8 @@ $o = new-object $utility_class
 # TODO: refactor
 $o.Payload = $value
 $o.Password = $password
-$o.Strong = [bool]$psboundparameters['strong'].ispresent
-$o.Debug = [bool]$psboundparameters['debug'].ispresent
+$o.Strong = $strong_flag
+$o.Debug = $debug_flag
 if ($operation -eq 'encrypt'){
   [string]$result = $o.Encrypt($value,$password,$null)
 } else {
@@ -263,3 +332,4 @@ data: 1A4C3E78E2D22FECDF7DB34CB9C112C6C2FED8EE74A108CC06B88A8638B221CF
 hello, world of AES
 
 #>
+
