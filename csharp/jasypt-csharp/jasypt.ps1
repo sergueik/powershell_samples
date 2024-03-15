@@ -1,4 +1,4 @@
-#Copyright (c) 2023 Serguei Kouzmine
+#Copyright (c) 2023,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,9 @@
 
 
 param(
+  [string]$properties = '',
+  [string]$name = '',
+  [string]$keyfile = '',
   [String]$value ='information',
   [string]$password = 'secred',
   [string]$operation = 'encrypt',
@@ -31,12 +34,12 @@ param(
 $debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
 if ([bool]$PSBoundParameters['help'].IsPresent) {
 write-host @'
-Usage: jasypt.ps1 [-operation decrypt] -value [PAYLOAD] -password [PASSWORD] [-debug]
+Usage: jasypt.ps1 [-operation decrypt] -value [PAYLOAD] -password [PASSWORD] [-debug]  [-name NAME] [-keyfile KEYFILE] [-properties PROPERTIESFILE]
 
 PBE encryption helper using PKCSKeyGenerator derived helper class, compatible with Jasypt
 Param:
    operation - whether to encrypt (default) or decrypt the value
-   value - payload. NOTE: for descypt needs to be base64 encoded
+   value - payload. NOTE: for decrypt needs to be base64 encoded
    password - symmetric password
    debug - print additional information during processing
 
@@ -44,11 +47,75 @@ Example:
 
   .\jasypt.ps1 -value information -password secret
   LH4ONhWdAwWUbUb7wJdSHo3/Xv+LrfFl
-
+  
   .\jasypt.ps1 -value 'LH4ONhWdAwWUbUb7wJdSHo3/Xv+LrfFl' -password secret -operation decrypt
   information
 
+  .\jasypt.ps1 -key 'x\key.txt' -properties 'application.properties' -name 'name' -operation decrypt
+
+
 '@
+}
+[boolean] $file_args = $false
+[boolean] $file_args_valid = $false
+if ($name -ne '') {
+  $file_args = $true
+  if ($keyfile -ne '') {
+    $k = resolve-path $keyfile -erroraction silentlycontinue
+    if ( -not ($k -eq $null)){
+      if ($properties -ne '') {
+        $p = resolve-path $properties -erroraction silentlycontinue
+        if ($debug_flag) {
+           write-host ('properties file: {0}' -f $p.path)
+        }
+        if ( -not ($p -eq $null)){
+          $file_args_valid = $true
+        }
+      }
+    }
+  }
+}
+if ($file_args) {
+  if (-not ($file_args_valid)) {
+    write-error 'invalid args'
+    exit
+  }
+  # NOTE: do not get-content from the specicied text file "raw"
+  # but split and trim all trailing whitespace from the first line
+  $key_content = (get-content -path $k.path)[0]
+  $password = $key_content -replace ' *$', ''
+  write-host ('password: {0}' -f $password)
+
+  $config_line_regexp  = ('{0} *[:=] *(.*$)' -f $name)
+  if ($debug_flag) {
+    write-host('application.properties content: "{0}"' -f ((get-content -path $p.path) -join ''))
+  }
+  if ($debug_flag) {
+    write-host('capturing regexp: "{0}"' -f $config_line_regexp )
+    write-host('select-string -pattern "{0}" -path {1}' -f $config_line_regexp, $p.Path)
+  }
+  $matched_line_object = select-string -pattern $config_line_regexp -path $p.Path
+  if (-not ($matched_line_object)) {
+    write-error 'invalid args'
+    exit
+  }
+  if ($debug_flag) {
+    write-host $matched_line_object
+    write-host $matched_line_object.Matches[0]
+    write-host $matched_line_object.Matches[0].Captures[0]
+
+  }
+  # NOTE: fragile
+  $value_data = $matched_line_object.Matches[0].Captures[0].Groups[1].Value
+  $value_data = $matched_line_object.Matches[0].Groups[1].Captures[0].Value
+  write-host ('value_data: {0}' -f $value_data)
+  $matched_value_object = select-string -Pattern 'ENC\(([^)]*)\)' -inputobject $value_data
+  $value = $matched_value_object.Matches[0].Captures[0].Groups[1].Value
+  write-host ('value: {0}' -f $value)
+} else {
+  # use provided value and password
+  write-host ('value: {0}' -f $value)
+  write-host ('password: {0}' -f $password)  
 }
 $helperclass = 'Example.Program'
 add-type -language CSharp -typedefinition @'

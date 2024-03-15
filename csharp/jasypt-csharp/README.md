@@ -149,7 +149,23 @@ WDLEyCp2uSS9Byptb3C+aw==
 ```powershell
  .\jasypt.ps1 -value 'VIYeyCyD9/55Hhd1IajXmA==' -operation decrypt  -password password
 ```
+```text
+test
+```
+Suppose one has an "application.properties" file in a typical java project with the value
 
+```java
+name: ENC(LH4ONhWdAwWUbUb7wJdSHo3/Xv+LrfFl)
+```
+and the secret password written in the file `x\key.txt`. Then run as
+
+```powershell
+.\jasypt.ps1 -key 'x\key.txt' -properties 'application.properties' -name 'name' -operation decrypt -debug
+```
+gives the plain value decrypted
+```text
+decrypted: information
+```
 ### Note 
 
 Currently we cover `PBEWithMD5AndDES` algorithm. This is the same encryption used by last __1.x__ release  of the jasypt available on author's [guthub](https://github.com/jasypt/jasypt/releases). The __3.x__ releases default to `PBEWithHmacSHA512AndAES_256` algorithm. The easies way to tweak the algorythm to different binary block sizes is to compare the two versions of `Crypt:PBE` Perl module in the [CPAN](https://metacpan.org/pod/Crypt::PBE)
