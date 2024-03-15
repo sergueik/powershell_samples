@@ -65,9 +65,6 @@ if ($name -ne '') {
     if ( -not ($k -eq $null)){
       if ($properties -ne '') {
         $p = resolve-path $properties -erroraction silentlycontinue
-        if ($debug_flag) {
-           write-host ('properties file: {0}' -f $p.path)
-        }
         if ( -not ($p -eq $null)){
           $file_args_valid = $true
         }
@@ -87,29 +84,16 @@ if ($file_args) {
   write-host ('password: {0}' -f $password)
 
   $config_line_regexp  = ('{0} *[:=] *(.*$)' -f $name)
-  if ($debug_flag) {
-    write-host('application.properties content: "{0}"' -f ((get-content -path $p.path) -join ''))
-  }
-  if ($debug_flag) {
-    write-host('capturing regexp: "{0}"' -f $config_line_regexp )
-    write-host('select-string -pattern "{0}" -path {1}' -f $config_line_regexp, $p.Path)
-  }
   $matched_line_object = select-string -pattern $config_line_regexp -path $p.Path
   if (-not ($matched_line_object)) {
     write-error 'invalid args'
     exit
   }
-  if ($debug_flag) {
-    write-host $matched_line_object
-    write-host $matched_line_object.Matches[0]
-    write-host $matched_line_object.Matches[0].Captures[0]
-
-  }
   # NOTE: fragile
   $value_data = $matched_line_object.Matches[0].Captures[0].Groups[1].Value
   $value_data = $matched_line_object.Matches[0].Groups[1].Captures[0].Value
-  write-host ('value_data: {0}' -f $value_data)
-  $matched_value_object = select-string -Pattern 'ENC\(([^)]*)\)' -inputobject $value_data
+  # write-host ('value_data: {0}' -f $value_data)
+  $matched_value_object = select-string -pattern 'ENC\(([^)]*)\)' -inputobject $value_data
   $value = $matched_value_object.Matches[0].Captures[0].Groups[1].Value
   write-host ('value: {0}' -f $value)
 } else {
@@ -417,5 +401,3 @@ if ($operation -eq 'decrypt') {
 } else {
    $o.encrypt($value, $password, '', $obtentionIterations, $segments)
 }
-<#
-#>

@@ -80,9 +80,6 @@ if ($name -ne '') {
     if ( -not ($k -eq $null)){
       if ($properties -ne '') {
         $p = resolve-path $properties -erroraction silentlycontinue
-        if ($debug_flag) {
-           write-host ('properties file: {0}' -f $p.path)
-        }
         if ( -not ($p -eq $null)){
           $file_args_valid = $true
         }
@@ -102,29 +99,16 @@ if ($file_args) {
   write-host ('password: {0}' -f $password)
 
   $config_line_regexp  = ('{0} *[:=] *(.*$)' -f $name)
-  if ($debug_flag) {
-    write-host('application.properties content: "{0}"' -f ((get-content -path $p.path) -join ''))
-  }
-  if ($debug_flag) {
-    write-host('capturing regexp: "{0}"' -f $config_line_regexp )
-    write-host('select-string -pattern "{0}" -path {1}' -f $config_line_regexp, $p.Path)
-  }
   $matched_line_object = select-string -pattern $config_line_regexp -path $p.Path
   if (-not ($matched_line_object)) {
     write-error 'invalid args'
     exit
   }
-  if ($debug_flag) {
-    write-host $matched_line_object
-    write-host $matched_line_object.Matches[0]
-    write-host $matched_line_object.Matches[0].Captures[0]
-
-  }
   # NOTE: fragile
   $value_data = $matched_line_object.Matches[0].Captures[0].Groups[1].Value
   $value_data = $matched_line_object.Matches[0].Groups[1].Captures[0].Value
-  write-host ('value_data: {0}' -f $value_data)
-  $matched_value_object = select-string -Pattern 'ENC\(([^)]*)\)' -inputobject $value_data
+  # write-host ('value_data: {0}' -f $value_data)
+  $matched_value_object = select-string -pattern 'ENC\(([^)]*)\)' -inputobject $value_data
   $value = $matched_value_object.Matches[0].Captures[0].Groups[1].Value
   write-host ('value: {0}' -f $value)
 } else {
@@ -348,38 +332,3 @@ if ($operation -eq 'encrypt'){
 
 
 write-output $result
-<#
-. .\pbkdf2.ps1 -value 'hello,world' -password secret -operation encrypt -debug
-salt: AEA1E8F59EEF08149E665AA77A6AF564
-key: 13CE7AF3964CBE18069380FA7E6715DC5C50F64FAF0D9EECC2429D2C7CB8AD34
-iv: 601A5A3472C5D59F28190C796A89CBD2
-data: 14CFEE457B13275A68BBA43A90C5B936
-encrypted: rqHo9Z7vCBSeZlqnemr1ZGAaWjRyxdWfKBkMeWqJy9IUz+5FexMnWmi7pDqQxbk2
-rqHo9Z7vCBSeZlqnemr1ZGAaWjRyxdWfKBkMeWqJy9IUz+5FexMnWmi7pDqQxbk2
-
-
-
-. .\pbkdf2.ps1 -value 'rqHo9Z7vCBSeZlqnemr1ZGAaWjRyxdWfKBkMeWqJy9IUz+5FexMnWmi7pDqQxbk2' -password secret -operation decrypt -debug
-salt: 0DF1E2394A8646D3BDFEB36D2C0E1CA5
-iv: E76ABC681494B5BB10300DAC6FD993D4
-data: B8541C1AB9B2D4407E371D4C2A32BEC1
-hello,world
-
-
-. .\pbkdf2.ps1 -value 'hello, world of AES' -password secret -operation encrypt -strong -debug
-
-salt: A5A1AC6E23D5DDAB29743B4CD57292C3
-key: F981D05072DB283C0BF3288CA5502E4BF6F5388798D537EFA581212B96B6D5ED
-iv: 5DB2A8E3EFD369E074957768D45310E3
-data: 1A4C3E78E2D22FECDF7DB34CB9C112C6C2FED8EE74A108CC06B88A8638B221CF
-encrypted: paGsbiPV3aspdDtM1XKSw12yqOPv02ngdJV3aNRTEOMaTD544tIv7N99s0y5wRLGwv7Y7nShCMwGuIqGOLIhzw==
-paGsbiPV3aspdDtM1XKSw12yqOPv02ngdJV3aNRTEOMaTD544tIv7N99s0y5wRLGwv7Y7nShCMwGuIqGOLIhzw==
-
-. .\pbkdf2.ps1 -value 'paGsbiPV3aspdDtM1XKSw12yqOPv02ngdJV3aNRTEOMaTD544tIv7N99s0y5wRLGwv7Y7nShCMwGuIqGOLIhzw==' -password secret -operation decrypt -strong -debug
-salt: A5A1AC6E23D5DDAB29743B4CD57292C3
-iv: 5DB2A8E3EFD369E074957768D45310E3
-data: 1A4C3E78E2D22FECDF7DB34CB9C112C6C2FED8EE74A108CC06B88A8638B221CF
-hello, world of AES
-
-#>
-
