@@ -30,9 +30,36 @@ param (
   [switch]$debug
 )
 $debug_flag = [bool]$psboundparameters['debug'].ispresent
+if ([bool]$PSBoundParameters['help'].IsPresent) {
+write-host @'
+Usage: pbkdf2.ps1 [-operation decrypt] -value [PAYLOAD] -password [PASSWORD] [-debug] [-name NAME] [-keyfile KEYFILE] [-properties PROPERTIESFILE] [-strong:$false]
+Param:
+   operation - whether to encrypt (default) or decrypt the value
+   value - payload. NOTE: for decrypt needs to be base64 encoded
+   password - symmetric password
+   debug - print additional information during processing
+   strong - use SHA512 instead of HMACSHA1 (default) in calling Rfc2898DeriveBytes
+Examples:
+
+  .\pbkdf2.ps1 -value information -password secret
+  hBDRSdE87evrw3pd9I0dJgiicjubDKyIpPl7h+6nzrcxRM1+FoZ42VMYm/Bzf+Qu
+
+  .\pbkdf2.ps1 -value 'hBDRSdE87evrw3pd9I0dJgiicjubDKyIpPl7h+6nzrcxRM1+FoZ42VMYm/Bzf+Qu' -password secret -operation decrypt
+   information
+
+  .\pbkdf2.ps1 -value information -password secret -strong:$false
+  ZKD2lLpK+WB5J1mnY0G2+p972XWSdTGi6G/p1ostvSkk7RkyJsyty0cKLEMPsSlq
+
+  .\pbkdf2.ps1 -value 'ZKD2lLpK+WB5J1mnY0G2+p972XWSdTGi6G/p1ostvSkk7RkyJsyty0cKLEMPsSlq' -password secret -operation decrypt  -strong:$false
+   information
+
+  .\pbkdf2.ps1 -key 'x\key.txt' -properties 'application.properties' -name 'name' -operation decrypt
+
+'@
+}
 $strong_flag = [bool]$PSBoundParameters['all'].IsPresent -bor $strong.ToBool()
 if ($debug) {
-  write-host ('Strong : {0}' -f $strong_flag) 
+  write-host ('Strong : {0}' -f $strong_flag)
   # exit
   # NOTE: may seem counterintuitive but it works:
   <#
@@ -48,11 +75,14 @@ if ($debug) {
 [boolean] $file_args_valid = $false
 if ($name -ne '') {
   $file_args = $true
-  if ($keyfile -ne '') { 
+  if ($keyfile -ne '') {
     $k = resolve-path $keyfile -erroraction silentlycontinue
     if ( -not ($k -eq $null)){
-      if ($properties -ne '') { 
+      if ($properties -ne '') {
         $p = resolve-path $properties -erroraction silentlycontinue
+        if ($debug_flag) {
+           write-host ('properties file: {0}' -f $p.path)
+        }
         if ( -not ($p -eq $null)){
           $file_args_valid = $true
         }
@@ -63,7 +93,7 @@ if ($name -ne '') {
 if ($file_args) {
   if (-not ($file_args_valid)) {
     write-error 'invalid args'
-    exit 
+    exit
   }
   # NOTE: do not get-content from the specicied text file "raw"
   # but split and trim all trailing whitespace from the first line
@@ -71,9 +101,28 @@ if ($file_args) {
   $password = $key_content -replace ' *$', ''
   write-host ('password: {0}' -f $password)
 
-  $config_line_regexp  = ('{0} *[:=] * (.*$)' -f $name)
-  $matched_line_object = select-string $config_line_regexp $p.Path
-  $valuef_data = $matched_line_object.Matches[0].Captures[0].Groups[1].Value
+  $config_line_regexp  = ('{0} *[:=] *(.*$)' -f $name)
+  if ($debug_flag) {
+    write-host('application.properties content: "{0}"' -f ((get-content -path $p.path) -join ''))
+  }
+  if ($debug_flag) {
+    write-host('capturing regexp: "{0}"' -f $config_line_regexp )
+    write-host('select-string -pattern "{0}" -path {1}' -f $config_line_regexp, $p.Path)
+  }
+  $matched_line_object = select-string -pattern $config_line_regexp -path $p.Path
+  if (-not ($matched_line_object)) {
+    write-error 'invalid args'
+    exit
+  }
+  if ($debug_flag) {
+    write-host $matched_line_object
+    write-host $matched_line_object.Matches[0]
+    write-host $matched_line_object.Matches[0].Captures[0]
+
+  }
+  # NOTE: fragile
+  $value_data = $matched_line_object.Matches[0].Captures[0].Groups[1].Value
+  $value_data = $matched_line_object.Matches[0].Groups[1].Captures[0].Value
   write-host ('value_data: {0}' -f $value_data)
   $matched_value_object = select-string -Pattern 'ENC\(([^)]*)\)' -inputobject $value_data
   $value = $matched_value_object.Matches[0].Captures[0].Groups[1].Value
@@ -145,7 +194,7 @@ public class ${utility_class} {
 				// https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.rfc2898derivebytes?view=netframework-4.5
 				// https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.hmacsha1?view=netframework-4.5
 				// the Rfc2898DeriveBytes default uses HMACSHA1
-				// but with .Net 4.6 one can override constructor 
+				// but with .Net 4.6 one can override constructor
 				deriveBytes = (strong) ? new Rfc2898DeriveBytes(password, salt, 1000,  HashAlgorithmName.SHA512 ): new Rfc2898DeriveBytes(password, salt, 1000);
 				AES.Key = deriveBytes.GetBytes(AES.KeySize / 8);
 				if (debug)
@@ -200,7 +249,7 @@ public class ${utility_class} {
 				return null;
 			}
 			Array.Copy(payload, salt, salt.Length);
-			if (debug) 
+			if (debug)
 				Console.Error.WriteLine("salt: " + ByteArrayToHexString(salt));
 			// NOTE: read IV bytes prepended to encrypted data
 			// see also: https://github.com/giterlizzi/perl-Crypt-PBE/blob/master/lib/Crypt/PBE/PBES2.pm#L93
