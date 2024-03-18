@@ -323,6 +323,11 @@ always has elevated privileges while doing installs. locked  heavily into Window
   * [source code](https://github.com/PacktPublishing/WiX-3.6-A-Developer-s-Guide-to-Windows-Installer-XML) of the  __WiX: A Developer's Guide to Windows Installer XML__ book
   * `ServiceConfig` element (Wix Toolset 3.x Util Extension) [documentation](https://wixtoolset.org/docs/v3/xsd/util/serviceconfig/)
   * [WIX Builder for Jenkins](https://github.com/jenkinsci/wix-plugin)
+  * [WiX 3 Tutorial: Solution/Project structure and Dev resources](https://weblogs.sqlteam.com/mladenp/2010/02/11/wix-3-tutorial-solutionproject-structure-and-dev-resources/)
+  * [Wix recognized project References and Variables](https://wixtoolset.org/docs/v3/votive/votive_project_references/)
+  * https://serverfault.com/questions/561246/environment-variable-for-net-framework-location
+  * https://manfredlange.blogspot.com/2010/02/using-environment-variables-in-wix.html
+  * https://blog.bartdemeyer.be/2013/10/create-an-installer-for-website-with-wix-part-1/
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
