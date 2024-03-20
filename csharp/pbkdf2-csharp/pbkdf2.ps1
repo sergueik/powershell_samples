@@ -27,6 +27,7 @@ param (
   [string]$operation = 'encrypt',
   [string]$salt = $null,
   [switch]$strong = $true,
+  [switch]$help,
   [switch]$debug
 )
 $debug_flag = [bool]$psboundparameters['debug'].ispresent
@@ -56,6 +57,7 @@ Examples:
   .\pbkdf2.ps1 -key 'x\key.txt' -properties 'application.properties' -name 'name' -operation decrypt
 
 '@
+exit
 }
 $strong_flag = [bool]$PSBoundParameters['all'].IsPresent -bor $strong.ToBool()
 if ($debug) {
