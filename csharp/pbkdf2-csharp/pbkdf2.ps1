@@ -94,7 +94,15 @@ if ($file_args) {
   }
   # NOTE: do not get-content from the specicied text file "raw"
   # but split and trim all trailing whitespace from the first line
-  $key_content = (get-content -path $k.path)[0]
+  # NOTE: workaround for Array/String typemutation:
+  # Without the Raw dynamic parameter, content is returned as an array of newline-delimited strings
+  # see also: https://stackoverflow.com/questions/70979309/get-content-returns-array-or-string
+  # Workaround: Comma operator , As a binary operator, the comma creates an array or appends to the array being created
+  # The comma operator is the array construction operator in PowerShell (similar to the cons function in LISP.)
+  # based on https://qna.habr.com/q/1341894 (not quoting the origin)
+  # NOTE:  cryptic - relies on
+  #
+  $key_content = (,(get-content -path $k.path))[0]
   $password = $key_content -replace ' *$', ''
   write-host ('password: {0}' -f $password)
 

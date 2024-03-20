@@ -470,6 +470,68 @@ and runs after
   * [AES Encrypted Data Transmission between Arduino (ESP32) and C# (ASP.NET)](https://www.codeproject.com/Articles/5365769/AES-Encrypted-Data-Transmission-between-Arduino-ES)
   * [comment](https://www.appsloveworld.com/csharp/100/101/how-do-i-use-sha-512-with-rfc2898derivebytes-in-my-salt-hash-code)
 
+### Powershell-Specific Challenge ad workaround
+
+```text
+a.txt: *single line of text*
+b.txt *two lines of text*
+$x = get-content -path ( resolve-path 'a.txt').path
+
+$y = get-content -path ( resolve-path 'b.txt').path
+
+$x.geTType()
+
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     String                                   System.Object
+
+
+$y.geTType()
+
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     Object[]                                 System.Array
+
+
+```
+#### Workarounds
+```powershell
+$x = @(get-content -path ( resolve-path 'a.txt').path)
+$x.getType()
+```
+
+```text
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     Object[]                                 System.Array
+
+```
+```powershell
+$y = @(get-content -path ( resolve-path 'b.txt').path)
+$y.getType()
+```
+
+```text
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     Object[]                                 System.Array
+```
+
+* NOTE: cryptic
+```powershell
+$x = (,(get-content -path ( resolve-path 'a.txt').path))
+$x.getType()
+```
+
+```text
+
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     Object[]                                 System.Array
+```
+
+# see also:
+```
 ### Resources
 
   * https://cdn3.iconfinder.com/data/icons/cryptocurrency-10/64/hash-function-power-cryptocurrency-256.png
