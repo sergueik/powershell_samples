@@ -79,7 +79,9 @@ if ($file_args) {
   }
   # NOTE: do not get-content from the specicied text file "raw"
   # but split and trim all trailing whitespace from the first line
-  $key_content = (get-content -path $k.path)[0]
+  $key_content = (,(get-content -path $k.path))[0]
+  # alternative:
+  # $key_content = @(get-content -path $k.path.path))[0]
   $password = $key_content -replace ' *$', ''
   write-host ('password: {0}' -f $password)
 
