@@ -65,12 +65,32 @@ get-eventlog -logname testlog
 
    Index Time          EntryType   Source                 InstanceID Message
    ----- ----          ---------   ------                 ---------- -------
-   13555 Mar 07 20:18  Information testlog                         1 message...
+   13586 Mar 23 10:10  Information testlog                         2 MESSAGE...
+```
+```poweshell
+get-eventlog -logname testlog|format-list
+```
+
+```text
+
+Index              : 13586
+EntryType          : Information
+InstanceId         : 2
+Message            : MESSAGE {287FA6AC-42BA-47B9-B6A2-AFFEDAD7B2F7} TEXT
+Category           : (1)
+CategoryNumber     : 1
+ReplacementStrings : {MESSAGE {287FA6AC-42BA-47B9-B6A2-AFFEDAD7B2F7} TEXT}
+Source             : testlog
+TimeGenerated      : 3/23/2024 11:10:37 AM
+TimeWritten        : 3/23/2024 11:10:37 AM
+UserName           :
 
 ```
-this eventlog entry is produced by running the powershell script `launcher.ps1` during the install:
+this eventlog entry is produced by running the powershell script `launcher.ps1` during the install (see the `//SetProperty[@Id="WixQuietExecCmdLine"]/@Value`attribute):
+```text
+POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#launcherScript]&quot; &quot;testlog&quot; &quot;message [MESSAGEID] text&quot; 2```
 ```powershell
-"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -noprofile -noninteractive -file "C:\Program Files\Powershell Script Runner\launcher.ps1" "testlog" "message text"
+"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -noprofile -noninteractive -file "C:\Program Files\Powershell Script Runner\launcher.ps1" "testlog" "message {287FA6AC-42BA-47B9-B6A2-AFFEDAD7B2F7} text" 2
 ```
 eventually calling system cmdlet
 ```powershell
@@ -79,7 +99,11 @@ write-eventlog -logname testlog -source testlog -eventid 1 -entrytype  informati
 
 ![add remove programs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-powershell-run/screenshots/capture-add-remove-programs.png)
 
-The scripts will be installed to 
+The scripts will be installed to `c:\Program Files\Powershell Script Runner`
+
+```powershell
+dir 'c:\Program Files\Powershell Script Runner'
+```
 ```text
  Directory of c:\Program Files\Powershell Script Runner
 

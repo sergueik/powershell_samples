@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Powershell Script Runner Installer" Language="1033" Version="1.0.0.0" Manufacturer="My Company" UpgradeCode="0105d0b1-94a7-456f-8d01-c8767596625b">
+  <Product Id="*" Name="Powershell Script Runner Installer" Language="1033" Version="1.0.0.0" Manufacturer="My Company" UpgradeCode="{0105d0b1-94a7-456f-8d01-c8767596625b}">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
     <MediaTemplate EmbedCab="yes"/>
@@ -10,12 +10,13 @@
     <Property Id="POWERSHELLEXE">
       <RegistrySearch Id="POWERSHELLEXE" Type="raw" Root="HKLM" Key="SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" Name="Path"/>
     </Property>
-    <Condition Message="This application requires Windows PowerShell."><![CDATA[Installed OR POWERSHELLEXE]]></Condition>
-    <SetProperty Id="WixQuietExecCmdLine" Before="InvokeTestPS1" Sequence="execute" Value="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#TestPS1File]&quot; &quot;testlog&quot; &quot;message text&quot; 2"/>
-    <CustomAction Id="InvokeTestPS1" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/>
+    <Property Id="MESSAGEID" Value="{287fa6ac-42ba-47b9-b6a2-affedad7b2f7}" />
 
+    <Condition Message="This application requires Windows PowerShell."><![CDATA[Installed OR POWERSHELLEXE]]></Condition>
+    <SetProperty Id="WixQuietExecCmdLine" Before="InvokePowershell" Sequence="execute" Value="&quot;[POWERSHELLEXE]&quot; -noprofile -noninteractive -file &quot;[#launcherScript]&quot; &quot;testlog&quot; &quot;message [MESSAGEID] text&quot; 2"/>
+    <CustomAction Id="InvokePowershell" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check" Impersonate="no"/>
     <InstallExecuteSequence>
-     <Custom Action="InvokeTestPS1" After="InstallFinalize"><![CDATA[NOT Installed]]></Custom> 
+     <Custom Action="InvokePowershell" After="InstallFinalize"><![CDATA[NOT Installed]]></Custom> 
     </InstallExecuteSequence>
 
   </Product>
@@ -31,13 +32,13 @@
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="launcherScript" Guid="{33b93b79-a971-406f-ac6d-fe5fa2f602cd}">
-        <File Id="TestPS1File" Name="launcher.ps1" DiskId="1" Source="launcher.ps1"/>
+        <File Id="launcherScript" Name="launcher.ps1" DiskId="1" Source="launcher.ps1"/>
         <RemoveFolder Id="INSTALLFOLDER" On="uninstall"/>
-        <RemoveFile Id="TestPS1File" Name="launcher.ps1" On="uninstall"/>
+        <RemoveFile Id="launcherScript" Name="launcher.ps1" On="uninstall"/>
       </Component>
       <Component Id="dependencyScript" Guid="{dc7c67a9-65aa-4b7f-9052-bc949ee3495d}">
-        <File Id="DependencyPS1File" Name="dependency.ps1" DiskId="1" Source="dependency.ps1"/>
-        <RemoveFile Id="DependencyPS1File" Name="dependency.ps1" On="uninstall"/>
+        <File Id="dependencyScript" Name="dependency.ps1" DiskId="1" Source="dependency.ps1"/>
+        <RemoveFile Id="dependencyScript" Name="dependency.ps1" On="uninstall"/>
       </Component>
     </ComponentGroup>
   </Fragment>
