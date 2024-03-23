@@ -5,7 +5,7 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
     <MediaTemplate EmbedCab="yes"/>
     <Feature Id="ProductFeature" Title="EventSourceInstaller" Level="1">
-      <ComponentGroupRef Id="ProductComponents"/>
+      <ComponentGroupRef Id="ComponentGroupId"/>
     </Feature>
   </Product>
   <Fragment>
@@ -16,12 +16,12 @@
     </Directory>
   </Fragment>
   <Fragment>
-    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="cmpMessagesDLL" Guid="{F868FE8E-8F1E-4AEC-82AE-B5AB012E152F}">
-        <File Id="fileMessagesDLL" Source="$(env.WINDIR)\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll"/>
+    <ComponentGroup Id="ComponentGroupId" Directory="INSTALLFOLDER">
+      <Component Id="FileComponent" Guid="{F868FE8E-8F1E-4AEC-82AE-B5AB012E152F}">
+        <File Id="fileId" Source="$(env.WINDIR)\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll"/>
       </Component>
-      <Component Id="cmpEventSource" Guid="{2E5A07EC-914B-454F-98C8-77A5F6073C52}">
-        <util:EventSource KeyPath="yes" EventMessageFile="[#fileMessagesDLL]" CategoryMessageFile="[#fileMessagesDLL]" CategoryCount="1" Name="MyCustomEventSource" Log="mycustomlog2"/>
+      <Component Id="EventSourceComponent" Guid="{2E5A07EC-914B-454F-98C8-77A5F6073C52}">
+        <util:EventSource KeyPath="yes" EventMessageFile="[#fileId]" CategoryMessageFile="[#fileId]" CategoryCount="1" Name="MyCustomEventSource" Log="mycustomlog2"/>
       </Component>
     </ComponentGroup>
   </Fragment>

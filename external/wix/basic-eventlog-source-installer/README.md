@@ -6,27 +6,26 @@ from [source code](https://resources.oreilly.com/examples/9781784393212) of __Wi
 ### Usage
 
 
-#### Build the Test App
+* Build the Test App
 
 ```powershell
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
 msbuild.exe basic-eventlog-tool.sln
 ```
 
-#### Package
+* build Package
 
 * update guid, version and other attributes (optional)
 
 ```powershell
-cd Setup
-$name = 'Product.wxs' 
+$name = 'Setup\Product.wxs' 
 $xml = [xml](get-content -path $name )
 $xml.Normalize()
 $guid = [guid]::NewGuid()
 $xml.Wix.Product.Id = $guid.ToString()
 $xml.Save($name)
 ```
-* NOTE: this operation will switch the XML resource to Windows line endings
+* NOTE: this operation will convert the XML resource to Windows line endings
 
 
 * compile the package
@@ -51,6 +50,30 @@ in elevated prompt
 msiexec.exe /l*v a.log /quiet /i Setup\bin\Debug\Setup.msi
 ```
 ### confirm
+
+
+```powershell
+$name = 'mycustomlog2' ; 
+get-childitem -path HKLM:\SYSTEM\CurrentControlSet\services\eventlog\$name
+
+
+    Hive:
+    HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\eventlog\mycustomlog2
+
+
+Name                           Property
+----                           --------
+MyCustomEventSource            EventMessageFile    : C:\Program Files\EventSourceInstaller\EventLogMessages.dll
+                               CategoryMessageFile : C:\Program Files\EventSourceInstaller\EventLogMessages.dll
+                               CategoryCount       : 1
+
+```
+
+NOTE: the installer causes system level dummy EventLog category message
+file resource `c:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll`
+be copied into its directory.
+How to make it set the Registry value to just the path `%windir%\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll` is a WIP
+
 
 ![Applications and Services Event Logs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-eventlog-applications-and-services.png)
 
@@ -131,13 +154,13 @@ Program\bin\Debug\EventSourceTestApp.exe
   * check the logs have been added
 
 ```powershell
-get-eventlog -logname Application -source MyCustomEventSource -newest 2| format-list
+get-eventlog -logname Application -source MyCustomEventSource
 ```
-will return
+will raise an error
 ```text
 get-eventlog : No matches found
 ```
-update with relevant `logname`:
+update with command specifying the custom `logname` and add formatting:
 ```powershell
 get-eventlog -logname mycustomlog2 -source MyCustomEventSource -newest 2| format-list
 ```
@@ -234,18 +257,13 @@ this will lead to a warning `LGHT1076: ICE71: The Media table has no entries` at
 
 If the stub `messages.dll` is used when creating the installer, the logs end up being written to `Application` log (unverified).
 
-The log info show that something is missing but something is still logged:
+The log info will contain warning information about missing description but the intended messages are still logged:
 
 ```text
 Index              : 6
 EntryType          : Information
 InstanceId         : 101
-Message            : The description for Event ID '101' in Source
-                     'MyCustomEventSource' cannot be found.  The local
-                     computer may not have the necessary registry information
-                     or message DLL files to display the message, or you may
-                     not have permission to access them.  The following
-                     information is part of the event:'75 percent'
+Message            : The description for Event ID '100' in Source 'MyCustomEventSource' cannot be found.  The local computer may not have the necessary registry information or message DLL files to display the message, or you may not have permission to access them.  The following information is part of the event: '75 percent'
 Category           : (1)
 CategoryNumber     : 1
 ReplacementStrings : {75 percent}
@@ -257,12 +275,7 @@ UserName           :
 Index              : 5
 EntryType          : Error
 InstanceId         : 100
-Message            : The description for Event ID '100' in Source
-                     'MyCustomEventSource' cannot be found.  The local
-                     computer may not have the necessary registry information
-                     or message DLL files to display the message, or you may
-                     not have permission to access them.  The following
-                     information is part of the event:
+Message            : The description for Event ID '100' in Source 'MyCustomEventSource' cannot be found.  The local computer may not have the necessary registry information or message DLL files to display the message, or you may not have permission to access them.  The following information is part of the event:
 Category           : (1)
 CategoryNumber     : 1
 ReplacementStrings : {}
@@ -316,7 +329,7 @@ keywords:
 
 ```
 
-The message dll  `C:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll` is actually owned by Microsoft and is part of __Microsoft.NET Framework__ but it accepts message Event ID 1 and 2.
+The message dll `C:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll` is actually owned by Microsoft and is part of __Microsoft.NET Framework__ but it accepts message Event ID 1 and 2.
 The file size of version __4.0.30319.33440__ is 786KB and of version __4.8.3761.0__ is 785 KB. There is no .Net Assembly Manifest in this dll - it is resource-only
 
 when open in `reshacker` the `EventLogMessages` shows a message table with trivial templates for every Event ID:
@@ -325,6 +338,31 @@ when open in `reshacker` the `EventLogMessages` shows a message table with trivi
 
 indicating it is safe to use with custom logging without explicitly copying a replica when installing event log message file. It is not entirely clear from the Wix Util Extension EventSource Element [documentation](https://wixtoolset.org/docs/v3/xsd/util/eventsource) how to use the %ENVIRONMENT_VARIABLE% syntax to refer to a file already present on the user's machine -  this is a work in progress.
 
+### MSI Log
+
+apparently installer actions
+
+```text
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: ActionStart(Name=RemoveRegistryValues,Description=Removing system registry values,Template=Key: [1], Name: [2])
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: ProgressTotal(Total=3,Type=1,ByteEquivalent=13200)
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: RegOpenKey(Root=-2147483646,Key=SYSTEM\CurrentControlSet\Services\EventLog\mycustomlog2\MyCustomEventSource,,BinaryType=0,,)
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: RegRemoveValue(Name=EventMessageFile,Value=#%[#fileMessagesDLL],)
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: RegRemoveValue(Name=CategoryMessageFile,Value=#%[#fileMessagesDLL],)
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: RegRemoveValue(Name=CategoryCount,Value=#1,)
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: ActionStart(Name=RemoveFiles,Description=Removing files,Template=File: [1], Directory: [9])
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: ProgressTotal(Total=1,Type=1,ByteEquivalent=175000)
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: SetTargetFolder(Folder=C:\Program Files\EventSourceInstaller\)
+MSI (s) (A8:BC) [17:30:21:724]: Executing op: FileRemove(,FileName=EventLogMessages.dll,,ComponentId={F868FE8E-8F1E-4AEC-82AE-B5AB012E152F})
+MSI (s) (A8:BC) [17:30:21:724]: Verifying accessibility of file: EventLogMessages.dll
+
+```
+are wrapped in database transactions
+
+```txt
+MSI (s) (A8:BC) [17:30:21:677]: Note: 1: 2228 2:  3: Patch 4: SELECT `Patch`.`File_`, `Patch`.`Header`, `Patch`.`Attributes`, `Patch`.`Sequence`, `Patch`.`StreamRef_` FROM `Patch` WHERE `Patch`.`File_` = ? AND `Patch`.`#_MsiActive`=? ORDER BY `Patch`.`Sequence` 
+MSI (s) (A8:BC) [17:30:21:677]: Note: 1: 2228 2:  3: Error 4: SELECT `Message` FROM `Error` WHERE `Error` = 1302 
+
+```
 ### See Also
 
    * `EventSource` element (Wix Toolset 3.x Util Extension) [documentation](https://wixtoolset.org/docs/v3/xsd/util/eventsource/)
