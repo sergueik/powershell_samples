@@ -20,6 +20,10 @@
 
 # based on:
 # http://blogs.msdn.com/b/virtual_pc_guy/archive/2010/09/23/a-self-elevating-powershell-script.aspx
+# see also:
+# https://stackoverflow.com/questions/7985755/how-to-detect-if-cmd-is-running-as-administrator-has-elevated-privileges
+# https://stackoverflow.com/questions/1894967/how-to-request-administrator-access-inside-a-batch-file
+
 param (
   [string]$message = 'sensitive operation',
   [switch] $debug

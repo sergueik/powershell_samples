@@ -1,4 +1,12 @@
 # origin: http://www.cyberforum.ru/powershell/thread1719005.html
+# NOTE: crafted by original author in "powershell-way"-heavy fashion
+# considered a *good* practice  by original author
+# a cleaner C# variant is possible
+
+# see also:
+# https://stackoverflow.com/questions/7985755/how-to-detect-if-cmd-is-running-as-administrator-has-elevated-privileges
+# https://stackoverflow.com/questions/1894967/how-to-request-administrator-access-inside-a-batch-file
+
 function Invoke-Sudo {
   begin {
     function private:ConvertTo-RegularString([Security.SecureString]$s) {
@@ -7,7 +15,7 @@ function Invoke-Sudo {
       )
     }
     
-    function private:Get-Win32Error([Int32]$e) {
+    function private:get-win32error([Int32]$e) {
       [PSObject].Assembly.GetType(
         'Microsoft.PowerShell.Commands.Internal.Win32Native'
       ).GetMethod(
@@ -15,39 +23,43 @@ function Invoke-Sudo {
       ).Invoke($null, @($e))
     }
     
-    if ((New-Object Security.Principal.WindowsPrincipal(
+    if ((new-object Security.Principal.WindowsPrincipal(
       [Security.Principal.WindowsIdentity]::GetCurrent()
     )).IsInRole(
       [Security.Principal.WindowsBuiltInRole]::Administrator
     )) {
-      Get-Win32Error 12
+      get-win32error 12
       break
     }
   }
   process {
-    $usr = Read-Host 'Domain\User' -AsSecureString
-    if (($$ = ConvertTo-RegularString $usr) -notmatch '\\') {
-      Get-Win32Error 10
+    # TODO: covert $domain, $user to method parameters
+    [string]$domain = $env:computername
+    [string]$username = 'user' 
+    $usr = read-host ('{0}\{1}' -f $domain, $username  ) -AsSecureString
+    if (($$ = convertto-regularstring $usr) -notmatch '\\') {
+      get-win32error 10
       break
     }
     
-    $dom, $usr = $$.Split('\\')
+    $domain, $username = $$.Split('\\')
     try {
-      $p = New-Object Diagnostics.Process
-      $p.StartInfo.Domain = $dom
-      $p.StartInfo.FileName = 'powershell'
-      $p.StartInfo.LoadUserProfile = $false
-      $p.StartInfo.Password = $(Read-Host 'Password' -AsSecureString)
-      $p.StartInfo.UserName = $usr
-      $p.StartInfo.UseShellExecute = $false
-      $p.StartInfo.WorkingDirectory = $HOME
-      [void]$p.Start()
+      $process = new-object Diagnostics.Process
+      $process.StartInfo.Domain = $domain
+      $process.StartInfo.FileName = 'powershell'
+      $process.StartInfo.LoadUserProfile = $false
+      $process.StartInfo.Password = $(Read-Host 'Password' -AsSecureString)
+      $process.StartInfo.UserName = $username
+      $process.StartInfo.UseShellExecute = $false
+      $process.StartInfo.WorkingDirectory = $HOME
+      [void]$process.Start()
       
-      Start-Sleep -Miliseconds 100
-      Stop-Process -Id $PID 
+      start-sleep -Miliseconds 100
+	  # NOTE: not tested
+      stop-process -Id $PID 
     }
     catch [Management.Automation.MethodInvocationException] {
-      $_.Exception.InnerException
+      write-host $_.Exception.InnerException
     }
   }
   end {}
