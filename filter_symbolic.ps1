@@ -114,3 +114,61 @@ $z3.Count
 
 
 #>
+<#
+
+why "Documents and Settings" is the hard link
+https://en.wikipedia.org/wiki/Inode
+
+Windows NTFS has a master file table (MFT) storing files in a B-tree. 
+Each entry has a "fileID", analogous to the inode number, that uniquely refers to this entry.[25] The three timestamps, a device ID, attributes, reference count, and file sizes are found in the entry, but unlike in POSIX the permissions are expressed through a different API.[26] The on-disk layout is more complex.[27] The earlier FAT file systems did not have such a table and were incapable of making hard links.
+
+http://en.wikipedia.org/wiki/NTFS_junction_point
+
+
+http://en.wikipedia.org/wiki/Symbolic_link
+
+https://www.2brightsparks.com/resources/articles/NTFS-Hard-Links-Junctions-and-Symbolic-Links.pdf
+
+* Junctions
+
+Sometimes referred to as soft links, the function of a junction is to reference a target directory, unlike a
+hard link which points to a file. Junctions can be created to link directories located on different partitions
+or volume, but only locally on the same computer. It does this through the implementation of the NTFS
+feature called reparse points. Redirected targets in junctions are defined by an absolute path. An
+absolute path refers to a path which will contain the root element and the complete directory list that is
+required to locate the target. For example, \Main\Folder\report is an absolute path. All of the
+information required to locate the target is contained in the path string.
+
+Like hard links, directory junctions do not take up additional space even though they are stored on the
+drive partition; their function is to point to the original files in the original directory. Thus, it should be
+noted that if the target is deleted, moved or renamed, all junctions which point to the target will break
+and continue to point to a non-existing directory. Content changes from any of the junction links or the
+target will automatically propagate to the rest.
+
+Junctions are only compatible with Windows 2000 or later. An example in which junctions are often
+used is on Windows Vista, where the name `C:\Documents and Settings` is a junction that points to
+`C:\Users`. Thus, older programs that reference hard-coded legacy file paths can continue to work in Vista.
+
+* Symbolic Links
+
+Symbolic links were recently introduced in Windows Vista/Windows Server 2008 or later. An NTFS
+symbolic link is a file system object that points to another file system object. In simpler terms, it is a
+more advanced type of shortcut. Symbolic links can point to any file or folder either on the local
+computer or using a SMB path to point at targets over a network (the target machine on the remote end
+needs to run Windows Vista or later). They do not use any disk space.
+
+A symbolic link could use either a relative path or an absolute path to point to its target. A relative path
+has to be combined with another path in order to properly access the target file. For a detailed
+explanation between the difference of absolute and relative paths, please refer to this link:
+
+http://msdn.microsoft.com/en-us/library/aa363878(v=vs.85).aspx
+
+* Note
+
+When a hard link/junction/symbolic link is deleted using
+Windows Explorer The original file and other hard links pointing to it remains.
+If all associated links are removed, the data is deleted
+Windows Vista or later: target is unchanged.
+Windows 2000, XP & 2003: target & subfolders are deleted
+
+#>
