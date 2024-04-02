@@ -336,19 +336,17 @@ update `src/main/resources/application.properties` with encrypted material produ
 ```java
 jasypt.encryptor.algorithm=PBEWithHMACSHA512AndAES_256
 defaultPassword = ENC(/sTJrNjHLNl5DM+5U7pI9xTSBXmHytNR2rLYlO75GFuhpLoOyrK/7NTGS8s1VS0y)
-
 ```
 
 and `src/main/resources/key.txt`
 ```text
 password
-
 ```
 run
 ```sh
 mvn spring-boot:run
 ```
-```
+
 this will show in console
 ```text
   .   ____          _            __ _ _
@@ -399,7 +397,7 @@ Endpoint is -------->https://user:test@localhost:30000
 ```sh
 python app3.py --operation encrypt --value test --password password --debug
 ```
-```
+```text
 running debug mode
 salt (encrypt): a4d9147d4a8eb9b5c3b3b1aa2065c2d2
 key (encrypt): 953db9e0f12f7b21e251c72d235d0aee24b76379d0afe1d24381ed629c8d4762
@@ -448,53 +446,41 @@ Compiling Program
 Compiling Test
 Build finished successfully. (00:00:09.6828762)
 ```
-and runs after
-### See Also
+and runs afterwards
 
-  * `Rfc2898DeriveBytes` class [documentation](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.rfc2898derivebytes?view=netframework-4.5) - need more undertanding of password-based key derivation function PBDKF2. ifthe same password and salt is used to derive keys two times, and the keys are used during encryption and decryptiion the original data should be decrypted successfully.
-  * https://stackoverflow.com/questions/4329909/hashing-passwords-with-md5-or-sha-256-c-sharp
-  * https://www.codeproject.com/Tips/1156169/Encrypt-Strings-with-Passwords-AES-SHA
-  * https://fastapi.metacpan.org/source/ARODLAND/Crypt-PBKDF2-0.161520/lib/Crypt
-  * [Request for Comments: 2898 PKCS #5: Password-Based Cryptography Specification Version 2.0](https://datatracker.ietf.org/doc/html/rfc2898)
-  * Perl CPAN [Crypt::Rijndael](https://metacpan.org/dist/Crypt-Rijndael) module
-  * Perl CPAN [Crypt::PBE](https://metacpan.org/pod/Crypt::PBE) module
-  * [basic exit options in .net c#](https://www.c-sharpcorner.com/UploadFile/c713c3/how-to-exit-in-C-Sharp/)
-  * [cross Platform AES 256 GCM Encryption / Decryption](https://www.codeproject.com/Articles/1265115/Cross-Platform-AES-256-GCM-Encryption-Decryption) - uses  `BouncyCastle.Crypto.dll` in [c# .net core version](https://github.com/KashifMushtaq/AesGcm256) and in [Java version](https://github.com/KashifMushtaq/Aes256GCM_Java) (NOTE: the latter needs converson fron netbeans `build.xml` to maven)
-  * [Symmetric Key Encryption by AES])(https://www.codeproject.com/Articles/1085427/Symmetric-Key-Encryption-by-AES)(Java)  
-  * [Simple AES Encryption using C#](https://www.codeproject.com/Articles/1278566/Simple-AES-Encryption-using-Csharp) - uses static `iv`
-  * [Using RSA and AES for File Encryption](https://www.codeproject.com/Tips/834977/Using-RSA-and-AES-for-File-Encryption) - lacks the PBE part, appears to use random bytes for `key` and `iv`
-  * [Encryption Standard (AES) and Security Assertion Markup Language (SAML)](https://www.codeproject.com/Articles/1023379/Security-on-the-Web-by-Advanced-Encryption-Standar)
-  * [CBC Stream Cipher in C# (With wrappers for two open source AES implementations in C# and C)](https://www.codeproject.com/Articles/7546/A-CBC-Stream-Cipher-in-C-With-wrappers-for-two-ope) - with Derived Key method
-  * [How to Encrypt and Decrypt String using AES Algorithm](https://www.codeproject.com/Tips/839656/How-to-encrypt-and-decrypt-string-using-AES-algori)
-  * [Windows / Android (C#/Java) Compatible Data Encryption with Compression](https://www.codeproject.com/Tips/5356513/Windows-Android-Csharp-Java-Compatible-Data-Encryp) - uses AES and HMACSHA256 - no source repo, only inline
-  * [AES Encrypted Data Transmission between Arduino (ESP32) and C# (ASP.NET)](https://www.codeproject.com/Articles/5365769/AES-Encrypted-Data-Transmission-between-Arduino-ES)
-  * [comment](https://www.appsloveworld.com/csharp/100/101/how-do-i-use-sha-512-with-rfc2898derivebytes-in-my-salt-hash-code)
+#### Powershell-Specific List Challenge and Workaround
 
-### Powershell-Specific Challenge ad workaround
+* reading the contents of a file `a.txt` with a *single line of text* creates `String`:
 
-```text
-a.txt: *single line of text*
-b.txt *two lines of text*
+```powershell
 $x = get-content -path ( resolve-path 'a.txt').path
 
-$y = get-content -path ( resolve-path 'b.txt').path
-
 $x.geTType()
-
+```
+```text
 IsPublic IsSerial Name                                     BaseType
 -------- -------- ----                                     --------
 True     True     String                                   System.Object
 
+```
+but doing the same reading contents of a file `b.txt` with a *multiple lines of text* creates `Array`:
+
+```powershell
+
+$y = get-content -path ( resolve-path 'b.txt').path
 
 $y.geTType()
 
+```
+```text
 IsPublic IsSerial Name                                     BaseType
 -------- -------- ----                                     --------
 True     True     Object[]                                 System.Array
 
-
 ```
-#### Workarounds
+##### Workarounds
+
+* cast to an array:
 ```powershell
 $x = @(get-content -path ( resolve-path 'a.txt').path)
 $x.getType()
@@ -517,27 +503,54 @@ IsPublic IsSerial Name                                     BaseType
 True     True     Object[]                                 System.Array
 ```
 
+* cast to aray through "leading comma unary operator in expression mode"
 * NOTE: cryptic
+
 ```powershell
 $x = (,(get-content -path ( resolve-path 'a.txt').path))
 $x.getType()
 ```
 
-```text
+or even
 
+```powershell
+$x = ,(get-content -path ( resolve-path 'a.txt').path)
+$x.getType()
+```
+
+```text
 IsPublic IsSerial Name                                     BaseType
 -------- -------- ----                                     --------
 True     True     Object[]                                 System.Array
 ```
 
-# see also:
-```
-### Resources
 
+### See Also
+
+  * `Rfc2898DeriveBytes` class [documentation](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.rfc2898derivebytes?view=netframework-4.5) - need more undertanding of password-based key derivation function PBDKF2. ifthe same password and salt is used to derive keys two times, and the keys are used during encryption and decryptiion the original data should be decrypted successfully.
+  * https://stackoverflow.com/questions/4329909/hashing-passwords-with-md5-or-sha-256-c-sharp
+  * https://www.codeproject.com/Tips/1156169/Encrypt-Strings-with-Passwords-AES-SHA
+  * https://fastapi.metacpan.org/source/ARODLAND/Crypt-PBKDF2-0.161520/lib/Crypt
+  * [Request for Comments: 2898 PKCS #5: Password-Based Cryptography Specification Version 2.0](https://datatracker.ietf.org/doc/html/rfc2898)
+  * Perl CPAN [Crypt::Rijndael](https://metacpan.org/dist/Crypt-Rijndael) module
+  * Perl CPAN [Crypt::PBE](https://metacpan.org/pod/Crypt::PBE) module
+  * [basic exit options in .net c#](https://www.c-sharpcorner.com/UploadFile/c713c3/how-to-exit-in-C-Sharp/)
+  * [cross Platform AES 256 GCM Encryption / Decryption](https://www.codeproject.com/Articles/1265115/Cross-Platform-AES-256-GCM-Encryption-Decryption) - uses  `BouncyCastle.Crypto.dll` in [c# .net core version](https://github.com/KashifMushtaq/AesGcm256) and in [Java version](https://github.com/KashifMushtaq/Aes256GCM_Java) (NOTE: the latter needs converson fron netbeans `build.xml` to maven)
+  * [Symmetric Key Encryption by AES])(https://www.codeproject.com/Articles/1085427/Symmetric-Key-Encryption-by-AES)(Java)  
+  * [Simple AES Encryption using C#](https://www.codeproject.com/Articles/1278566/Simple-AES-Encryption-using-Csharp) - uses static `iv`
+  * [Using RSA and AES for File Encryption](https://www.codeproject.com/Tips/834977/Using-RSA-and-AES-for-File-Encryption) - lacks the PBE part, appears to use random bytes for `key` and `iv`
+  * [Encryption Standard (AES) and Security Assertion Markup Language (SAML)](https://www.codeproject.com/Articles/1023379/Security-on-the-Web-by-Advanced-Encryption-Standar)
+  * [CBC Stream Cipher in C# (With wrappers for two open source AES implementations in C# and C)](https://www.codeproject.com/Articles/7546/A-CBC-Stream-Cipher-in-C-With-wrappers-for-two-ope) - with Derived Key method
+  * [How to Encrypt and Decrypt String using AES Algorithm](https://www.codeproject.com/Tips/839656/How-to-encrypt-and-decrypt-string-using-AES-algori)
+  * [Windows / Android (C#/Java) Compatible Data Encryption with Compression](https://www.codeproject.com/Tips/5356513/Windows-Android-Csharp-Java-Compatible-Data-Encryp) - uses AES and HMACSHA256 - no source repo, only inline
+  * [AES Encrypted Data Transmission between Arduino (ESP32) and C# (ASP.NET)](https://www.codeproject.com/Articles/5365769/AES-Encrypted-Data-Transmission-between-Arduino-ES)
+  * [windows / Android (C#/Java) Compatible Data Encryption with Compression](https://www.codeproject.com/Tips/5356513/Windows-Android-Csharp-Java-Compatible-Data-Encryp) - code sample only
+  * [protectedJson: Integrating ASP.NET Core Configuration and Data Protection](https://www.codeproject.com/Articles/5372873/ProtectedJson-Integrating-ASP-NET-Core-Configurati)
+  * [comment](https://www.appsloveworld.com/csharp/100/101/how-do-i-use-sha-512-with-rfc2898derivebytes-in-my-salt-hash-code)
   * https://cdn3.iconfinder.com/data/icons/cryptocurrency-10/64/hash-function-power-cryptocurrency-256.png
   * https://www.iconfinder.com/search/icons?q=data
   * https://www.iconfinder.com/icons/2858157/data_lines_report_icon
   * https://www.iconfinder.com/icons/5309433/business_cryptocurrency_function_hash_security_icon
-
+  * [Why is a leading comma required when creating an array](https://stackoverflow.com/questions/42772083/why-is-a-leading-comma-required-when-creating-an-array)
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

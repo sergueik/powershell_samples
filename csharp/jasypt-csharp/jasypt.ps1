@@ -79,6 +79,9 @@ if ($file_args) {
   }
   # NOTE: do not get-content from the specicied text file "raw"
   # but split and trim all trailing whitespace from the first line
+  # NOTE: without the index [0] one can drop parenthesis in the
+  # "leading comma unary operator in expression mode" assignment 
+  # still producing an array
   $key_content = (,(get-content -path $k.path))[0]
   # alternative:
   # $key_content = @(get-content -path $k.path.path))[0]

@@ -103,8 +103,12 @@ if ($file_args) {
   # The comma operator is the array construction operator in PowerShell (similar to the cons function in LISP.)
   # based on https://qna.habr.com/q/1341894 (not quoting the origin)
   # NOTE:  cryptic - relies on
-  #
+  # NOTE: without the index [0] one can drop parenthesis in the
+  # "leading comma unary operator in expression mode" assignment 
+  # still producing an array
   $key_content = (,(get-content -path $k.path))[0]
+  # alternative:
+  # $key_content = @(get-content -path $k.path.path))[0]
   $password = $key_content -replace ' *$', ''
   write-host ('password: {0}' -f $password)
 
