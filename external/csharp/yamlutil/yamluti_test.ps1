@@ -2,18 +2,21 @@ param (
   [String]$assembly_path = './Utility/bin/Debug',
   [String]$datafile = 'sampledata.yaml'
 )
-<#
+
 if ($env:PROCESSOR_ARCHITECTURE -ne 'x86') {
   # if the dll is compiled in SharpDevelop for x86 (e.g. for debugging)
   # attempt to load in 64 bit Powershell will fail with "BadImageFormatException"
   write-output 'this test needs to be run on c:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe'
   exit 1;
 }
-#>
+
 $asssembly = 'YamlUtility.dll'
 $shared_assemblies = @($asssembly)
 pushd $assembly_path
-
+if (-not (test-path ($shared_assemblies[0]))) {
+  write-output ('Dependency missing: {0}' -f $shared_assemblies[0])
+  exit 1;
+}
 add-type -path $shared_assemblies[0]
 $asssembly_version = ((get-item -path $asssembly | select-object -expandproperty VersionInfo).ProductVersion ) -replace '\..*$', ''
 write-output ('Running with assembly version {0}' -f $asssembly_version)
