@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
+
 namespace Yaml
 {
     public class YamlParser
@@ -958,4 +959,493 @@ namespace Yaml
 
 
     }
+        public class YamlParserEvent : ParserEvent 
+    {
+
+        private int _level = 0;
+        #region ParserEvent Members
+
+        public void Event(int i)
+        {
+            switch (i)
+            {
+                case YamlParser.MAP_CLOSE:
+                case YamlParser.LIST_CLOSE:
+                case YamlParser.MAP_NO_OPEN:
+                case YamlParser.LIST_NO_OPEN:
+                    this._level--;
+                    break;
+            }
+
+            Console.WriteLine(sp() + (char) i);
+
+            switch (i)
+            {
+                case YamlParser.LIST_OPEN:
+                case YamlParser.MAP_OPEN:
+                    this._level++;
+                    break;
+            }
+        }
+
+        public void Event(string s)
+        {
+            
+        }
+
+        public void Content(string a, string b)
+        {
+            Console.WriteLine(sp() + a + " : <" + b + ">");
+        }
+
+        public void Property(string a, string b)
+        {
+            Console.WriteLine(sp() + "( " + a + " : <" + b + "> )");
+        }
+
+        public void Error(Exception e, int line)
+        {
+            Console.WriteLine("Error near line " + line + ": " + e.ToString());
+        }
+
+        #endregion
+
+        private String sp()
+        {
+            if (_level < 0) return "";            
+            return new String(' ',_level);
+        }
+    }
+    public class Marker : IDisposable
+    {
+        private ParserReader _reader;
+        private bool _resetCalled;
+
+        public Marker(ParserReader reader)
+        {
+            if (reader == null) throw new ArgumentNullException("reader");
+            _reader = reader;
+            _reader.Mark();
+        }
+
+        public string GetString()
+        {
+            return _reader.GetString();
+        }
+
+        public void Reset()
+        {            
+            _reader.Reset();
+            _resetCalled = true;
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if(!_resetCalled)
+                _reader.Unmark();            
+        }
+
+        #endregion
+    }
+    public interface ParserEvent
+    {
+        void @Event(int i);
+        void @Event(String s);
+        void Content(String a, String b);
+        void Property(String a, String b);
+        void Error(Exception e, int line);
+    }
+
+    public class ParserException : FormatException
+    {
+
+        public ParserException()
+            : base()
+        {
+        }
+
+        public ParserException(string message)
+            : base(message)
+        {
+
+        }
+
+        public ParserException(string message, int line)
+            :base(message)
+        {
+            _lineNumber = line;
+        }
+
+        private int _lineNumber;
+
+        public int LineNumber
+        {
+            get { return _lineNumber; }
+            set { _lineNumber = value; }
+        }
+	
+    }
+    public class ParserReader
+    {
+        private TextReader _reader;
+        private char[] _buffer;        
+        private int _bufferPosition;
+        private int _readPosition;
+        private int _eofPosition;
+        private int _markLevel;        
+        private int[] _marks;
+        private int _bufferSize ;
+        
+        
+        public const int DEFAULT_BUFFER_LEN = 4096;
+
+        public ParserReader(TextReader reader)
+            : this(reader,DEFAULT_BUFFER_LEN)
+        {
+
+        }
+
+        public ParserReader(TextReader reader, int bufferSize)
+        {
+            if (reader == null) throw new ArgumentNullException("reader");
+            if (bufferSize < 0) throw new ArgumentOutOfRangeException("bufferSize");           
+
+            this._bufferSize = bufferSize;
+            this._reader = reader;            
+            this._buffer = new char[_bufferSize];
+            this._buffer[0] = Char.MinValue;
+            this._bufferPosition = 0;
+            this._readPosition = 0;
+            this._eofPosition = -1;
+            this._markLevel = 0;            
+            this._marks = new int[32];            
+        }
+
+        public char CurrentChar
+        {
+            get {
+                if (_bufferPosition == 0)
+                    throw new InvalidOperationException("A Read operation must occur prior to accessing the CurrentChar field.");
+                return this._buffer[this._bufferPosition - 1]; 
+            }
+        }
+	
+
+        /// <summary>
+        /// Gets a string from the last Mark() to the current character
+        /// </summary>
+        /// <returns></returns>
+        public string GetString() 
+        {
+            int begin = this._marks[this._markLevel - 1];
+            int end = this._bufferPosition;
+
+            return new String(this._buffer, begin, end - begin);
+        }
+
+        /// <summary>
+        /// Returns the current character then
+        /// reads the next character in the stream.
+        /// 
+        /// 
+        /// </summary>
+        /// <returns>-1 if no more chars are available or the next character</returns>
+        public int Read()
+        {               
+            _bufferPosition++;
+            if (PastEndOfBuffer())
+                if (!FillBuffer())
+                {
+                    //_bufferPosition = _eofPosition;
+                    return -1;
+                }
+            
+            return CurrentChar;
+        }
+
+        public int Peek()
+        {
+            try
+            {
+                return this.Read();
+            }
+            finally
+            {
+                this.Unread();
+            }
+        }
+
+        public bool ReadIf(int c)
+        {
+            if (this.Peek() == c)
+            {
+                this.Read();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public int ReadIf(Predicate<int> match)
+        {
+            if (match(this.Peek()))
+            {
+                return this.Read();
+            }
+            else 
+            {
+                return -1;
+            }
+        }
+        /// <summary>
+        /// Checks the next character for a match, if it matches then it reads in the character
+        /// </summary>
+        /// <param name="match">delegate to match with in the form of bool(int)</param>
+        /// <returns>Returns the number of matched characters</returns>
+        public int ReadWhile(Predicate<int> match) 
+        {
+            int i = 0;
+            while (match(this.Peek()))
+            {
+                this.Read();
+                i++;
+            }
+            return i;
+        }
+
+
+        /// <summary>
+        /// Checks the next character for a match, if it matches then it reads in the character
+        /// </summary>
+        /// <param name="match">delegate to match with in the form of bool(int)</param>
+        /// <returns>Returns the number of matched characters</returns>
+        public int ReadWhile(int maxReads, Predicate<int> match)
+        {
+            int i = 0;
+            while (match(this.Peek()) && maxReads-- > 0)
+            {
+                this.Read();
+                i++;
+            }
+            return i;
+        }
+
+        /// <summary>
+        /// Returns a value indicating is the bufferPosition is more then the number of characters read into the buffer.
+        /// </summary>
+        /// <returns></returns>
+        private bool PastEndOfBuffer()
+        {
+            return _bufferPosition > _readPosition;
+        }
+
+        /// <summary>
+        /// Private function to fill the character buffer. Doubles the buffer sizeif it is not big enough.
+        /// </summary>
+        private bool FillBuffer()
+        {
+            if (_bufferPosition >= _eofPosition && _eofPosition != -1)
+                return false;
+
+            if (_bufferPosition > _buffer.Length) //double buffer
+            {
+                char[] charBuffer = new char[_buffer.Length * 2];
+                Buffer.BlockCopy(_buffer, 0, charBuffer, 0, _readPosition * 2);
+                _buffer = charBuffer;                
+            }
+            
+            int charsRead = _reader.Read(_buffer,_readPosition,_buffer.Length - _readPosition);
+            if (charsRead == 0)
+            {
+                _eofPosition = _readPosition + 1;
+                return false;
+            }
+            
+            _readPosition += charsRead;
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the current character
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete("Use CurrentChar field")]
+        public int GetCurrent()
+        {
+            return this.Peek();
+             
+        }
+
+        /// <summary>
+        /// Gets the character prior to the last character. If there is no previous character it returns -1;
+        /// </summary>
+        /// <returns></returns>
+        public int GetPrevious()
+        {            
+            if (this._bufferPosition < 2)
+                return -1;
+            else 
+                return this._buffer[this._bufferPosition - 2];
+        }
+
+        /// <summary>
+        /// Marks a location in the stream. This can be used for marking undo points to go back in the event of incorrect parsing or a failure.
+        /// </summary>        
+        public void Mark()
+        {
+            if (_markLevel == 32) throw new InvalidOperationException("Cannot create more then 32 marks deep.");
+            this._marks[this._markLevel] = this._bufferPosition;
+            this._markLevel++;
+        }
+
+        /// <summary>
+        /// Unmarks the last location in the stream that was set.
+        /// </summary>        
+        public void Unmark()
+        {
+            if (this._markLevel < 1)
+                throw new InvalidOperationException("No more marks to unmark");
+
+            this._markLevel--;
+        }
+
+        public Marker GetMarker()
+        {
+            return new Marker(this);
+        }
+
+        /// <summary>
+        /// Reverts reading back to the previous mark. Performs an Unmark.
+        /// </summary>
+        public void Reset()
+        {
+            Unmark();
+            this._bufferPosition = this._marks[this._markLevel];
+        }
+
+        [Obsolete("This method is obsolete there should be no reason to go backwords when marking is available.")]
+        public void Unread() {            
+            if (_bufferPosition == 0) 
+                throw new InvalidOperationException("Cannot unread past beginning of buffer.");
+            _bufferPosition--;
+        }
+    }
+
+    public class YamlCharacter
+    {
+
+        private const string INDICATORS = "-:[]{},?*&!|#@%^'\"";
+        private const string INDICATORS_SP = "-:";
+        private const string INDICATORS_INLINE = "[]{},";
+        private const string INDICATORS_SIMPLE = ":[]{},";
+        private const string INDICATORS_NONSP = "?*&!]|#@%^\"'";
+        public static bool @Is(char c, YamlCharacterType type)
+        {
+            switch (type)
+            {
+                case YamlCharacterType.Printable: return IsPrintableChar(c);
+                case YamlCharacterType.Word: return IsWordChar(c);
+                case YamlCharacterType.Line: return IsLineChar(c);
+                case YamlCharacterType.LineSP: return IsLineSpChar(c);
+                case YamlCharacterType.Space: return IsSpaceChar(c);
+                case YamlCharacterType.LineBreak: return IsLineBreakChar(c);
+                case YamlCharacterType.Digit: return Char.IsDigit(c);
+                case YamlCharacterType.Indent: return (c == ' ');                
+                default: return false;
+
+            }
+
+        }
+
+        public static bool IsLineBreakChar(char c)
+        {
+            if (c == 10 || c == 13 || c == 0x85 || c == 0x2028 || c == 0x2029) return true;
+            return false;
+        }
+
+        public static bool IsSpaceChar(char c)
+        {
+            if (c == 9 || c == 0x20) return true;
+            return false;
+        }
+
+        public static bool IsLineSpChar(char c)
+        {
+            if (c == 10 || c == 13 || c == 0x85) return false;
+            return IsPrintableChar(c);
+        }
+
+        public static bool IsWordChar(char c)
+        {
+            if (c >= 0x41 && c <= 0x5a) return true;
+            if (c >= 0x61 && c <= 0x7a) return true;
+            if (c >= 0x30 && c <= 0x39) return true;
+            if (c == '-') return true;
+            return false;
+        }
+
+        public static bool IsPrintableChar(char c)
+        {
+            if (c >= 0x20 && c <= 0x7e) return true;
+            if (c == 9 || c == 10 || c == 13 || c == 0x85) return true;
+            if (c >= 0xa0 && c <= 0xd7ff) return true;
+            if (c >= 0xe000 && c <= 0xfffd) return true;                        
+            return false;
+        }
+
+        public static bool IsLineChar(char c)
+        {
+            if (c == 0x20 || c == 9 || c == 10 || c == 13 || c == 0x85) return false;
+            return IsPrintableChar(c);
+        }
+
+        public static bool @Is(int c, YamlCharacterType type)
+        {
+            if (c == -1) return false;
+            char ch = Convert.ToChar(c);
+            return Is(ch, type);
+        }
+
+        public static bool IsIndicator(char c)
+        {            
+            return (INDICATORS.IndexOf(c) != -1);
+        }
+
+        public static bool IsIndicatorSpace(char c)
+        {
+            return (INDICATORS_SP.IndexOf(c) != -1);
+        }
+
+        public static bool IsIndicatorInline(char c)
+        {
+            return (INDICATORS_INLINE.IndexOf(c) != -1);
+        }
+        
+        public static bool IsIndicatorNonSpace(char c)
+        {
+            return (INDICATORS_NONSP.IndexOf(c) != -1);
+        }
+
+        public static bool IsIndicatorSimple(char c)
+        {
+            return (INDICATORS_SIMPLE.IndexOf(c) != -1);
+        }
+
+    }
+    public enum YamlCharacterType
+    {
+        Printable,
+        Word,
+        Line,
+        LineSP,
+        Space ,
+        LineBreak,
+        Digit,
+        Indent,
+    }
+
 }

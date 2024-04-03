@@ -5,15 +5,17 @@ using Yaml;
 using NUnit.Framework;
 using System.IO;
 
-namespace Yaml.Tests {
-
-	[TestFixture]
-    public class ParserReaderTests {
+namespace Yaml.Tests
+{
+    [TestFixture]
+    public class ParserReaderTests
+    {
 
         [Test,ExpectedException(typeof(InvalidOperationException),ExpectedMessage="Cannot create more then 32 marks deep.")]
-        public void MarkDepthTest() {
-            var stream = new MemoryStream();
-            var writer = new StreamWriter(stream);
+        public void MarkDepthTest()
+        {
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
             
             writer.Write("hi pals");
             writer.Flush();
@@ -22,7 +24,7 @@ namespace Yaml.Tests {
             using (TextReader reader = new StreamReader(stream))
             {
                 
-                var parser = new ParserReader(reader);
+                ParserReader parser = new ParserReader(reader);
                 parser.Mark();
                 parser.Mark();
                 parser.Mark();
