@@ -848,50 +848,47 @@ and is fixed by running the install in elevated prompt
 
 ### See Also
 
-  * https://blog.sflow.com/2011/02/windows-load-average.html
-  * `pdh.h` [information](https://docs.microsoft.com/en-us/windows/win32/api/pdh/)
-  * [p/invoke PDH](https://github.com/dahall/Vanara/blob/master/PInvoke/Pdh/Pdh.cs)
-  * [read performance data from a log file with C# pinvoke](http://adamserrata.blogspot.com/2009/01/how-to-use-c-to-read-performance-data.html)
-  * java JNA [adapter](https://java-native-access.github.io/jna/4.2.0/com/sun/jna/platform/win32/Pdh.html) of Windows Performance Data Helper (a.k.a. PDH).
-  * Java PDH raw counters [example](https://github.com/java-native-access/jna/blob/master/contrib/platform/test/com/sun/jna/platform/win32/PdhTest.java)
-
-  * Similar [native app](https://github.com/sflow/host-sflow) (NOTE: not updatedin the Windows part since 2012).
-  * [hint](https://www.urtech.ca/2015/09/solved-cannot-load-counter-name-data-because-an-invalid-index-was-read-from-the-registry/) for fixing the `Cannot load Counter Name data because an invalid index '♀ßÇü♦♂ ' was read from the registry.` error
-  * https://copy.sh/v86/?profile=windows98
-  * https://www.sysprobs.com/pre-installed-windows-98-se-virtualbox-image
-  * http://virtualdiskimages.weebly.com/vmware.html
-  * https://social.msdn.microsoft.com/Forums/en-US/217f4163-45a8-4352-aed8-d6581ff13ce8/set-recovery-options-in-properties-of-windows-service?forum=Vsexpressvcs
-  * Alternatives of .NET ServiceInstaller does not provide to modify the  registry entries responsible for Recovery options of Windows C# Windows service [discussion](https://social.msdn.microsoft.com/Forums/en-US/217f4163-45a8-4352-aed8-d6581ff13ce8/set-recovery-options-in-properties-of-windows-service?forum=Vsexpressvcs) and [stackoverflow](https://stackoverflow.com/questions/53009043/how-to-change-windows-service-recovery-option-using-c-sharp)
-  * https://github.com/joaoportela/CircularBuffer-CSharp
-  * http://www.java2s.com/Tutorial/CSharp/0450__LINQ/Catalog0450__LINQ.htm
-  * http://www.java2s.com/Tutorial/CSharp/0450__LINQ/UseLINQwithDictionary.htm
-  * a simpler [circular buffer](http://www.java2s.com/Open-Source/CSharp_Free_Code/DotNet/Download_Circular_Buffer_for_NET.htm)
-  * [blog](https://csharp.christiannagel.com/2022/03/22/windowsservice-2/) on nuget package `Microsoft.Extensions.Hosting.WindowsServices` adapting the Windows Service specifics to the .Net 6.x runtime thus creating "latest greatest" version of Windows Service
-  * Service Install [overview](https://docs.microsoft.com/en-us/dotnet/framework/windows-services/how-to-install-and-uninstall-services) (now ranked "legacy" by Microsoft)
-  * [creating](https://docs.microsoft.com/en-us/dotnet/core/extensions/windows-service)  a "new" Windows Service through subclassing a `BackgroundService`
-  * [worker Services in .net](https://docs.microsoft.com/en-us/dotnet/core/extensions/workers)
-  * `new-service` cmdlet [documentation](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/new-service?view=powershell-5.1)
-  * [blog](https://www.yaplex.com/blog/create-a-windows-service-using-powershell/) on installing Windows Service using several cmdlets
-  * Win32 PerfMon monitoring [service](https://github.com/Iristyle/PerfTap) that publishes Windows performance data for usage in Graphite
-  * an [old article](https://www.codeproject.com/Articles/3990/Simple-Windows-Service-Sample) on __Simple Windows Service Sample__
-  * [hosting](https://www.codeproject.com/Articles/38160/WCF-Service-Library-with-Windows-Service-Hosting) an WCF (SOAP) web app within a Windows Service
-  * [Windows Service Applications Introduction](https://learn.microsoft.com/en-us/dotnet/framework/windows-services/introduction-to-windows-service-applications)
-  * [stackoverflow link](https://stackoverflow.com/questions/1140002/where-can-i-find-a-detailed-view-of-the-lifecycle-of-a-windows-service-as-develo) for lifecycle of a Windows Service
-  * [developing a Windows SERVICE Application using .NET Framework with C#](https://www.codeproject.com/Articles/6106/Developing-a-Windows-SERVICE-Application-using-NET)
-  * __what are Windows Services?__ [blog](https://stackify.com/what-are-windows-services)
-  * [minimum user permissions required to install a Windows service](https://superuser.com/questions/91908/what-are-the-minimum-user-permissions-required-to-install-a-windows-service) - a 13 year old answer which is still valid. The TLDR anser is: Only processes with Administrative privileges are able to operate Service Control Manager
-  * [service security and access rights](https://learn.microsoft.com/en-us/windows/win32/services/service-security-and-access-rights) - very detailed list of rights mapped to accounts
-  * [stackoverflow](https://stackoverflow.com/questions/9021075/how-to-create-an-installer-for-a-net-windows-service-using-visual-studio)
-  * [stackoverlow](https://stackoverflow.com/questions/1942039/how-to-install-and-start-a-windows-service-using-wix) on How to install and start a Windows Service using WiX
-  * [creating a Windows Service and Installer using Visual Studio and WiX](https://cmartcoding.com/creating-a-windows-service-and-installer-using-net-and-wix/) - no details about the resulting XML, only covered steps to do in UI
-  * [how To Add Windows Services with WiX Installer](https://www.advancedinstaller.com/versus/wix-toolset/wix-installer-add-windows-services.html) - explained the critical XML parts, has a full WiX source file example
-  * [stackoverflow](https://serverfault.com/questions/328260/what-is-the-closest-equivalent-of-load-average-in-windows-available-via-wmi) on What is the closest equivalent of __load average__ in Windows available via __WMI__?
-  * [discussion](https://www.cyberforum.ru/csharp-net/thread106428-page2.html#post8424851) of implementing single instance forms (in Russian)
-  * `PerformanceCounter` class [reference](https://learn.microsoft.com/en-us/windows/win32/perfctrs/performance-counters-reference)
-  * `PerformanceCounter` [functins](https://learn.microsoft.com/en-us/windows/win32/perfctrs/performance-counters-functions)
-  * [capturing Performance Counter Data for a Process by Process Id](https://weblog.west-wind.com/posts/2014/Sep/27/Capturing-Performance-Counter-Data-for-a-Process-by-Process-Id)
-  * [monitoring Windows resources with Performance Counters](https://wazuh.com/blog/monitoring-windows-resources-with-performance-counters/)
-  * [working with](https://stackoverflow.com/questions/38370012/win32-processor-only-shows-cpu0) `LoadPercentage` property of `Win32_processor` WMI object
+   * https://blog.sflow.com/2011/02/windows-load-average.html
+   * `pdh.h` [information](https://docs.microsoft.com/en-us/windows/win32/api/pdh/)
+   * [p/invoke PDH](https://github.com/dahall/Vanara/blob/master/PInvoke/Pdh/Pdh.cs)
+   * [read performance data from a log file with C# pinvoke](http://adamserrata.blogspot.com/2009/01/how-to-use-c-to-read-performance-data.html)
+   * java JNA [adapter](https://java-native-access.github.io/jna/4.2.0/com/sun/jna/platform/win32/Pdh.html) of Windows Performance Data Helper (a.k.a. PDH).
+   * Java PDH raw counters [example](https://github.com/java-native-access/jna/blob/master/contrib/platform/test/com/sun/jna/platform/win32/PdhTest.java)
+   * Similar [native app](https://github.com/sflow/host-sflow) (NOTE: not updatedin the Windows part since 2012).
+   * [hint](https://www.urtech.ca/2015/09/solved-cannot-load-counter-name-data-because-an-invalid-index-was-read-from-the-registry/) for fixing the `Cannot load Counter Name data because an invalid index '♀ßÇü♦♂ ' was read from the registry.` error
+   * https://copy.sh/v86/?profile=windows98
+   * https://www.sysprobs.com/pre-installed-windows-98-se-virtualbox-image
+   * http://virtualdiskimages.weebly.com/vmware.html
+   * https://social.msdn.microsoft.com/Forums/en-US/217f4163-45a8-4352-aed8-d6581ff13ce8/set-recovery-options-in-properties-of-windows-service?forum=Vsexpressvcs
+   * Alternatives of .NET ServiceInstaller does not provide to modify the  registry entries responsible for Recovery options of Windows C# Windows service [discussion](https://social.msdn.microsoft.com/Forums/en-US/217f4163-45a8-4352-aed8-d6581ff13ce8/set-recovery-options-in-properties-of-windows-service?forum=Vsexpressvcs) and [stackoverflow](https://stackoverflow.com/questions/53009043/how-to-change-windows-service-recovery-option-using-c-sharp)
+   * https://github.com/joaoportela/CircularBuffer-CSharp
+   * http://www.java2s.com/Tutorial/CSharp/0450__LINQ/Catalog0450__LINQ.htm
+   * http://www.java2s.com/Tutorial/CSharp/0450__LINQ/UseLINQwithDictionary.htm
+   * a simpler [circular buffer](http://www.java2s.com/Open-Source/CSharp_Free_Code/DotNet/Download_Circular_Buffer_for_NET.htm)
+   * [blog](https://csharp.christiannagel.com/2022/03/22/windowsservice-2/) on nuget package `Microsoft.Extensions.Hosting.WindowsServices` adapting the Windows Service specifics to the .Net 6.x runtime thus creating "latest greatest" version of Windows Service
+   * Service Install [overview](https://docs.microsoft.com/en-us/dotnet/framework/windows-services/how-to-install-and-uninstall-services) (now ranked "legacy" by Microsoft)
+   * [creating](https://docs.microsoft.com/en-us/dotnet/core/extensions/windows-service)  a "new" Windows Service through subclassing a `BackgroundService`
+   * [worker Services in .net](https://docs.microsoft.com/en-us/dotnet/core/extensions/workers)
+   * `new-service` cmdlet [documentation](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/new-service?view=powershell-5.1)
+   * [blog](https://www.yaplex.com/blog/create-a-windows-service-using-powershell/) on installing Windows Service using several cmdlets
+   * Win32 PerfMon monitoring [service](https://github.com/Iristyle/PerfTap) that publishes Windows performance data for usage in Graphite
+   * an [old article](https://www.codeproject.com/Articles/3990/Simple-Windows-Service-Sample) on __Simple Windows Service Sample__
+   * [hosting](https://www.codeproject.com/Articles/38160/WCF-Service-Library-with-Windows-Service-Hosting) an WCF (SOAP) web app within a Windows Service
+   * [Windows Service Applications Introduction](https://learn.microsoft.com/en-us/dotnet/framework/windows-services/introduction-to-windows-service-applications)
+   * [stackoverflow link](https://stackoverflow.com/questions/1140002/where-can-i-find-a-detailed-view-of-the-lifecycle-of-a-windows-service-as-develo) for lifecycle of a Windows Service
+   * [developing a Windows SERVICE Application using .NET Framework with C#](https://www.codeproject.com/Articles/6106/Developing-a-Windows-SERVICE-Application-using-NET)
+   * __what are Windows Services?__ [blog](https://stackify.com/what-are-windows-services)
+   * [minimum user permissions required to install a Windows service](https://superuser.com/questions/91908/what-are-the-minimum-user-permissions-required-to-install-a-windows-service) - a 13 year old answer which is still valid. The TLDR anser is: Only processes with Administrative privileges are able to operate Service Control Manager
+   * [service security and access rights](https://learn.microsoft.com/en-us/windows/win32/services/service-security-and-access-rights) - very detailed list of rights mapped to accounts
+   * [stackoverflow](https://stackoverflow.com/questions/9021075/how-to-create-an-installer-for-a-net-windows-service-using-visual-studio)
+   * [stackoverlow](https://stackoverflow.com/questions/1942039/how-to-install-and-start-a-windows-service-using-wix) on How to install and start a Windows Service using WiX
+   * [creating a Windows Service and Installer using Visual Studio and WiX](https://cmartcoding.com/creating-a-windows-service-and-installer-using-net-and-wix/) - no details about the resulting XML, only covered steps to do in UI
+   * [how To Add Windows Services with WiX Installer](https://www.advancedinstaller.com/versus/wix-toolset/wix-installer-add-windows-services.html) - explained the critical XML parts, has a full WiX source file example
+   * [stackoverflow](https://serverfault.com/questions/328260/what-is-the-closest-equivalent-of-load-average-in-windows-available-via-wmi) on What is the closest equivalent of __load average__ in Windows available via __WMI__?
+   * [discussion](https://www.cyberforum.ru/csharp-net/thread106428-page2.html#post8424851) of implementing single instance forms (in Russian)
+   * [capturing Performance Counter Data for a Process by Process Id](https://weblog.west-wind.com/posts/2014/Sep/27/Capturing-Performance-Counter-Data-for-a-Process-by-Process-Id)
+   * [monitoring Windows resources with Performance Counters](https://wazuh.com/blog/monitoring-windows-resources-with-performance-counters/)
+   * [working with](https://stackoverflow.com/questions/38370012/win32-processor-only-shows-cpu0) `LoadPercentage` property of `Win32_processor` WMI object
    * find out how processor load using WMI `Win32_PerfFormattedData_PerfOS_Processor` in C# [article](https://www.codeproject.com/Articles/42580/find-out-how-processor-load-using-wmi)
    * basic Processor metric inventory via WMI `Win32_Processor` [article](https://www.codeproject.com/Articles/26310/Using-WMI-to-retrieve-processor-information-in-C)
    * https://www.codeproject.com/Articles/9462/Counting-Physical-and-Logical-Processors
@@ -902,11 +899,19 @@ and is fixed by running the install in elevated prompt
    * Perf Counter web control [article](https://www.codeproject.com/Articles/17861/AJAX-enabled-Performance-Counter-Web-Control)
    * `Perfon.Net` -  alternative metric collection helper class [article](https://www.codeproject.com/Articles/1170712/Asp-Net-Monitor-performance-without-using-windows)
    * simple custom performance counter app in c# [article](https://www.codeproject.com/Articles/1170712/Asp-Net-Monitor-performance-without-using-windows)
-   * MsiExec.exe and InstMsi.exe Error Messages (for Developers) [document](https://learn.microsoft.com/en-us/windows/win32/msi/error-codes)	
-  * [collection of projects demonstrating Windows services for powershell scirpt, named pipes event logs etc.](https://github.com/MScholtes/Windows-Service)
-
-  * Daniel Doubrovkine's [dblock/log4jna](https://github.com/dblock/log4jna) using [JNA](https://github.com/java-native-access/jna) to call `advapi32.dll` `ReportEvent` [method](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-reporteventw) for creating event log messsages, no native Windows dll needs to be installed. The project using mingw and Visual Studio to and [antun](https://www.google.com/search?q=maven+anrtun+plugin) to compile message resource dll `Win32EventLogAppender.dll` from `mc` files.
-
+   * `msiexec.exe` and `instmsi.exe` Error Messages (for Developers) [document](https://learn.microsoft.com/en-us/windows/win32/msi/error-codes)	
+   * [collection of projects demonstrating Windows services for powershell scirpt, named pipes event logs etc.](https://github.com/MScholtes/Windows-Service)
+   * Daniel Doubrovkine's [dblock/log4jna](https://github.com/dblock/log4jna) using [JNA](https://github.com/java-native-access/jna) to call `advapi32.dll` `ReportEvent` [method](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-reporteventw) for creating event log messsages, no native Windows dll needs to be installed. The project using mingw and Visual Studio to and [antun](https://www.google.com/search?q=maven+anrtun+plugin) to compile message resource dll `Win32EventLogAppender.dll` from `mc` files.
+   * [Performance Counters](https://learn.microsoft.com/en-us/windows/win32/perfctrs/performance-counters-portal)
+     + [About Performance Counters](https://learn.microsoft.com/en-us/windows/win32/perfctrs/about-performance-counters)
+     + [Using Performance Counters](https://learn.microsoft.com/en-us/windows/win32/perfctrs/using-performance-counters)
+     + [Performance Counters Reference](https://learn.microsoft.com/en-us/windows/win32/perfctrs/performance-counters-reference)
+     + [Performance Counter functions](https://learn.microsoft.com/en-us/windows/win32/perfctrs/performance-counters-functions)
+     + [performance Counters XML Schema](https://learn.microsoft.com/en-us/windows/win32/perfctrs/performance-counters-schema)
+   * https://www.mssqltips.com/sqlservertutorial/9183/perfmon-counters-for-cpu-usage-memory-disk-and-network-performance/#:~:text=[Processor]%20%22Queue%20Length%22,you%20have%20some%20CPU%20pressure.
+   * https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-2000-server/cc938643(v=technet.10)?redirectedfrom=MSDN
+   * Performance Monitor Interface to the PI System [document](http://cdn.osisoft.com/interfaces/1898/PI_PIPerfMon_1.4.1.0.doc)
+  
 ### Vintage Screenshots
 
 ![ActiveState Perl PPM chimera script Example](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture-ppm_bat.jpg)
@@ -920,6 +925,65 @@ The projects and solutions are not compatible with Visual Studio 2019 or later:
 ![Visual Studio 2019 reporting crash when loading project file](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture_visualstudio_project_failure.png)
 ```powershell
 new-eventlog -source LoadAverageCounterService -logname LoadAverageCounterServiceLog
+```
+### Performance Counter Selection
+
+The `Processor:% Processor Time` is the built in 
+performance counter used 
+by the [Performance Monitor](https://learn.microsoft.com/en-us/sql/relational-databases/performance-monitor/monitor-resource-usage-system-monitor) 
+to demonstrate windows cpu utilization.
+To determine the average for all processors on multipocessor system, one should use the `System: %Total Processor Time`
+counter instead.
+This counter monitors the amount of time the CPU spends executing a thread that is not idle. 
+A consistent state of 80 percent to 90 percent might indicate the need to upgrade your CPU or add more processors
+There are additional counters like `Processor: %User Time`, `System: Processor Queue Length`
+
+```c#
+private string counterName = "% Total Processor Time";
+```
+```txt
+TimeGenerated : 4/4/2024 1:14:34 PM
+Message       : Exception reading "System\%Total Processor Time":
+                System.InvalidOperationException: Could not locate Performance
+                Counter with specified category name 'System', counter name
+                '%Total Processor Time'.
+                   at System.Diagnostics.PerformanceCounter.InitializeImpl()
+                   at System.Diagnostics.PerformanceCounter.Initialize()
+                   at System.Diagnostics.PerformanceCounter.NextSample()
+                   at System.Diagnostics.PerformanceCounter.get_RawValue()
+                   at TransactionService.DBWriter.CollectMetrics() in c:\develo
+                per\sergueik\powershell_samples\csharp\loadaverage-service\Prog
+                ram\DBWriter.cs:line 158
+InstanceId    : 99
+```
+```text
+
+Exception reading "Processor\% Processor Time": System.InvalidOperationException: Counter is not single instance, an instance name needs to be specified.
+   at System.Diagnostics.PerformanceCounter.NextSample()
+   at System.Diagnostics.PerformanceCounter.get_RawValue()
+   at TransactionService.DBWriter.CollectMetrics() in c:\developer\sergueik
+
+```
+NOTE:  normalization is broken:
+When collecting the `Processor\% Processor Time\0` counter
+```text
+LoadAverageService Service Started Successfully on 4/4/2024 1:41:42 PM. 
+Collection Inteval: 1000. AutoAverage Interval: 120000
+DEBUG: False
+NOOP: False
+AUTORUN: False
+CATEGORY: Processor
+COUNTER: % Processor Time
+INSTANCE: 0
+```
+the average values are too big and even become negative:
+```powershell
+control.ps1
+```
+```text
+LOAD1MIN: -1492663761.97
+LOAD5MIN: 494202691.49
+LOAD15MIN: 454677173.41
 ```
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
