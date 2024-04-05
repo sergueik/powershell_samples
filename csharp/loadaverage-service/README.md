@@ -3,8 +3,23 @@
 
 https://www.codeproject.com/Articles/13655/Mastering-Windows-Services
 
-this directory contains application collecting the `\\System\Processor Queue Length` performance counter to generate load average - like metrics.
-windows Service applications are long-running applications that do not have a user interface it is a good container to run low level metrics
+this directory contains application 
+collecting the `\\System\Processor Queue Length` performance counter to generate load average - like metrics.
+
+Techically same code can be used for collecting and averaging any supported Windows Performance Counters metrics,
+for example the `System\Processor Queue Length` or `Processor\% Processor Time\0` where the notation is:
+
+
+token | description | comment
+--- | --- | ---
+`Processor` | category |
+`% Processor Time`| counter |
+`0`  | Instance  | blank for *single instance* counters
+
+The code was modeled after the native app implementation found in [host-sflow](https://github.com/sflow/host-sflow):
+
+A windows Service applications are long-running applications that do not have a user interface it is a good container to run low level metrics
+
 
 ![perfmon](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture_perfmon.png)
 
