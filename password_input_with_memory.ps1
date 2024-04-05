@@ -1,4 +1,4 @@
-#Copyright (c) 2014,2018,2020,2021,2022 Serguei Kouzmine
+#Copyright (c) 2014,2018,2020,2021,2022,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -296,6 +296,7 @@ if ($store_flag){
 #>
   # https://github.com/davotronic5000/PowerShell_Credential_Manager/blob/master/PSCredentialManager.Api/Imports.cs
   # https://www.pinvoke.net/default.aspx/advapi32/CredRead.html
+  # https://www.p-invoke.net/advapi32/credread
   # https://gist.github.com/meziantou/10311113
   $shared_assemblies = @(
     'CredentialManagement.dll',

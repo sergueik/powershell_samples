@@ -1,4 +1,4 @@
-#Copyright (c) 2021 Serguei Kouzmine
+#Copyright (c) 2021,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -31,11 +31,15 @@ param (
 )
 # http://www.cyberforum.ru/powershell/thread1502608.html
 # http://www.pinvoke.net/default.aspx/user32.getwindowrect
+# https://www.p-invoke.net/user32/getwindowrect
+
 # http://www.pinvoke.net/default.aspx/user32.findwindow
+# https://www.p-invoke.net/user32/findwindow-1
+# https://pinvokeisalive.gitbook.io/pinvoke/desktopfunctions/user32/findwindowa
 # https://stackoverflow.com/questions/9668872/how-to-get-windows-position
 Add-Type @"
 using System;
-using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;o
 
 public class Win32 {
 	[DllImport("user32.dll", SetLastError = true)]

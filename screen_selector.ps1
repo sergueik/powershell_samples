@@ -1,4 +1,4 @@
-#Copyright (c) 2022 Serguei Kouzmine
+#Copyright (c) 2022,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -59,8 +59,11 @@ function move_to_screen{
     # https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.control.move?view=netframework-4.0
     $form.SetBounds($bounds.X, $bounds.Y, $form.Size.Width, $form.Size.Height)
     # for pinvoke see
+
     # https://stackoverflow.com/questions/3961249/display-window-on-top-of-other-windows-but-not-the-task-bar/3961447#3961447
     # http://www.pinvoke.net/default.aspx/user32.setwindowpos
+    # https://www.p-invoke.net/coredll/setwindowpos
+    # https://pinvokeisalive.gitbook.io/pinvoke/desktopfunctions/user32/setwindowpos
     # https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowpos
     # https://stackoverflow.com/questions/53012896/using-setwindowpos-with-multiple-monitors
 

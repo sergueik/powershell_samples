@@ -47,7 +47,8 @@ static class KnownFolders
         */
 // see also: 
 // https://www.pinvoke.net/default.aspx/shell32.shgetknownfolderpath
-//
+// https://pinvokeisalive.gitbook.io/pinvoke/desktopfunctions/shell32/shgetknownfolderpath
+// https://www.p-invoke.net/shell32/shgetknownfolderpath
 
     [DllImport("shell32.dll")]
 static extern int SHGetKnownFolderPath( [MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out IntPtr ppszPath);

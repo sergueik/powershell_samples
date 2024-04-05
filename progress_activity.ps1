@@ -1,4 +1,4 @@
-#Copyright (c) 2020 Serguei Kouzmine
+#Copyright (c) 2020,2024 Serguei Kouzmine
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
 #in the Software without restriction, including without limitation the rights
@@ -158,6 +158,9 @@ namespace SendInputsDemo {
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetCursorPos(out POINT lpPoint);
         // https://www.pinvoke.net/default.aspx/user32.getcursorpos
+	// NOTE: as of 04/04/2024 the www.pinvoke.net is down and
+	// one alternative is
+	// https://www.p-invoke.net/coredll/getcursorpos
 
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT {

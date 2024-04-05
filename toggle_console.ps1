@@ -1,4 +1,4 @@
-#Copyright (c) 2014 Serguei Kouzmine
+#Copyright (c) 2014,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -34,12 +34,18 @@ $f = New-Object System.Windows.Forms.Form
 $f.SuspendLayout()
 $f.Size = New-Object System.Drawing.Size (132,105)
 # $f.Location = New-Object System.Drawing.Point(0 , 0)
+u
 $s = New-Object System.Windows.Forms.Button
 $s.Text = 'ShowConsole'
 function toggle_console_display {
   param([int]$ShowWindowCommand
   )
   # http://pinvoke.net/default.aspx/Enums/ShowWindowCommand.html
+  # NOTE: as of 04/04/2024 the www.pinvoke.net is down
+  # the enums are not expained in 
+  # https://www.p-invoke.net
+  # https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow#parameters
+  # https://pinvokeisalive.gitbook.io/pinvoke/directory/enums/showwindowcommands
   $SW_HIDE = 0
   $SW_SHOWNORMAL = 1
   $SW_NORMAL = 1
