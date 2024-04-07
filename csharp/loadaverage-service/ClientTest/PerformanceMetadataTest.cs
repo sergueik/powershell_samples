@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Timers;
+using TransactionService;
+
+using NUnit.Framework;
+
+namespace Tests {
+	
+	[TestFixture]
+	public class PerformanceMetadataTest {
+		[Test]
+		public void test1() {
+			try {
+				var utility = new Utility();
+				var names  = utility.CategoryNames;
+				Console.Error.WriteLine(String.Format("Loaded {0} Category names", names.Length));
+			} catch (Exception e){
+				Console.Error.WriteLine("Exception: " + e.ToString());
+				Assert.Fail();
+			}
+		}
+
+		[Ignore]
+		[Test]
+		public void test2() {
+			try {
+				var utility = new Utility();
+				utility.CategoryName = "Processor";
+				var names = utility.CounterNames;
+				Console.Error.WriteLine(String.Format("Loaded {0} Counter names", names.Length));
+			} catch (Exception e){
+				Console.Error.WriteLine("Exception: " + e.ToString());
+				Assert.Fail();
+			}
+		}
+		[Test]
+		public void test3() {
+			try {
+				var utility = new Utility();
+				utility.CategoryName = "System";
+				var names = utility.CounterNames;
+				Console.Error.WriteLine(String.Format("Loaded {0} Counter names", names.Length));
+			} catch (Exception e){
+				Console.Error.WriteLine("Exception: " + e.ToString());
+				Assert.Fail();
+			}
+		}
+
+		// System.ArgumentException: Counter is not single instance, an instance name needs to be specified.
+	}
+}
