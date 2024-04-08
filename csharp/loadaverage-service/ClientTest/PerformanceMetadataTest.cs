@@ -16,7 +16,7 @@ namespace Tests {
 		[Test]
 		public void test1() {
 			try {
-				var utility = new Utility();
+				var utility = new PerformanceMetadataUtility();
 				var names  = utility.CategoryNames;
 				Assert.IsNotNull(names);
 				Console.Error.WriteLine(String.Format("Loaded {0} Category names", names.Count));
@@ -30,7 +30,7 @@ namespace Tests {
 		[Test]
 		public void test2() {
 			try {
-				var utility = new Utility();
+				var utility = new PerformanceMetadataUtility();
 				utility.CategoryName = "Processor";
 				var names = utility.CounterNames;
 				Assert.IsNotNull(names);
@@ -43,7 +43,7 @@ namespace Tests {
 		[Test]
 		public void test3() {
 			try {
-				var utility = new Utility();
+				var utility = new PerformanceMetadataUtility();
 				utility.CategoryName = "System";
 				var names = utility.CounterNames;
 				Assert.IsNotNull(names);

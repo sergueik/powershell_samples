@@ -11,7 +11,7 @@ using System.Linq;
 // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountercategory.getcounters?view=netframework-4.5
 namespace TransactionService  {
 	
-	public class Utility {
+	public class PerformanceMetadataUtility {
 		private List<string> categoryNames = new List<string>();
 		private string categoryName = null;
 		private List<string> counterNames = new List<string>();

@@ -876,6 +876,8 @@ new-eventlog -source LoadAverageCounterService -logname LoadAverageCounterServic
 ```
 ### Performance Counter Selection
 
+![performance counter browser app](https://github.com/sergueik/powershell_samples/blob/master/csharp/loadaverage-service/screenshots/capture-performance-counters.png)
+
 The `Processor:% Processor Time` is the built in 
 performance counter used 
 by the [Performance Monitor](https://learn.microsoft.com/en-us/sql/relational-databases/performance-monitor/monitor-resource-usage-system-monitor) 

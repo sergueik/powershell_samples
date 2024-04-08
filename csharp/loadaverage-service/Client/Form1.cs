@@ -64,7 +64,7 @@ namespace TransactionService {
 			this.txtCustID.Name = "txtCustID";
 			this.txtCustID.Size = new System.Drawing.Size(120, 20);
 			this.txtCustID.TabIndex = 0;
-			var utility = new Utility();
+			var utility = new PerformanceMetadataUtility();
 			
 			var names  = utility.CategoryNames;
 			this.txtCustID.Items.Clear();
@@ -196,7 +196,7 @@ namespace TransactionService {
 		private void CustID_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			categoryName = txtCustID.GetItemText(txtCustID.SelectedItem);
-			var utility = new Utility();
+			var utility = new PerformanceMetadataUtility();
 			utility.CategoryName = categoryName;
 			var names  = utility.CounterNames;
 			this.txtFirstName.Items.Clear();
