@@ -18,7 +18,8 @@ namespace Tests {
 			try {
 				var utility = new Utility();
 				var names  = utility.CategoryNames;
-				Console.Error.WriteLine(String.Format("Loaded {0} Category names", names.Length));
+				Assert.IsNotNull(names);
+				Console.Error.WriteLine(String.Format("Loaded {0} Category names", names.Count));
 			} catch (Exception e){
 				Console.Error.WriteLine("Exception: " + e.ToString());
 				Assert.Fail();
@@ -32,7 +33,8 @@ namespace Tests {
 				var utility = new Utility();
 				utility.CategoryName = "Processor";
 				var names = utility.CounterNames;
-				Console.Error.WriteLine(String.Format("Loaded {0} Counter names", names.Length));
+				Assert.IsNotNull(names);
+				Console.Error.WriteLine(String.Format("Loaded {0} Counter names", names.Count));
 			} catch (Exception e){
 				Console.Error.WriteLine("Exception: " + e.ToString());
 				Assert.Fail();
@@ -44,7 +46,8 @@ namespace Tests {
 				var utility = new Utility();
 				utility.CategoryName = "System";
 				var names = utility.CounterNames;
-				Console.Error.WriteLine(String.Format("Loaded {0} Counter names", names.Length));
+				Assert.IsNotNull(names);
+				Console.Error.WriteLine(String.Format("Loaded {0} Counter names", names.Count));
 			} catch (Exception e){
 				Console.Error.WriteLine("Exception: " + e.ToString());
 				Assert.Fail();

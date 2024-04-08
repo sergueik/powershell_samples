@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Collections;
+using System.Collections.Generic;
+
 using System.Linq;
 
 // based on: https://dotnetcodr.com/2014/11/12/listing-all-performance-counters-on-windows-with-c-net/
@@ -9,33 +12,45 @@ using System.Linq;
 namespace TransactionService  {
 	
 	public class Utility {
-		private string[] categoryNames = { };
+		private List<string> categoryNames = new List<string>();
 		private string categoryName = null;
-		private string[] counterNames = { };
+		private List<string> counterNames = new List<string>();
 		public String CategoryName {
 			get { 
 				return categoryName;
 			}
 			set { categoryName = value; }
 		}
-		public String[] CategoryNames {
+		public List<string> CategoryNames {
 			get {
-				if (categoryNames.Length == 0) {
+				if (categoryNames.Count == 0) {
 					var categories = PerformanceCounterCategory.GetCategories();
 					foreach (PerformanceCounterCategory performanceCounterCategory in categories) {
-						categoryNames.Append(performanceCounterCategory.CategoryName);
+						categoryNames.Add(performanceCounterCategory.CategoryName);
 					}
 				}
 				return categoryNames;
 			}
 		}
-		public String[] CounterNames {
+		public List<string> CounterNames {
 			get {
 				if (categoryName != null) {
 					var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
-					var counters = performanceCounterCategory.GetCounters();
+					
+					var instances = performanceCounterCategory.GetInstanceNames();
+					if (instances.Any()) {
+						var instance = instances.First();
+						if (performanceCounterCategory.InstanceExists(instance)) {
+							var counters = performanceCounterCategory.GetCounters(instance);
+							foreach (PerformanceCounter performanceCounter in counters) {
+								Console.WriteLine("Category: {0}, instance: {1}, counter: {2}", performanceCounter.CategoryName, instance, performanceCounter.CounterName);
+							}
+						}
+					} else {
+						var counters = performanceCounterCategory.GetCounters();
 					foreach (PerformanceCounter performanceCounter in counters) {
-						counterNames.Append(performanceCounter.CounterName);
+						counterNames.Add(performanceCounter.CounterName);
+					}
 					}
 				}
 				return counterNames;
