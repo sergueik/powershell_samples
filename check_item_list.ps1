@@ -17,66 +17,57 @@
 #LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
-
+param(
+  [string]$sentence = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit'  
+)
 function rotate_message {
   param(
-    [string] $s1 = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
-    [string] $s2 = 'ipsum'
+    [string] $sentence = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
+    [string] $word = 'ipsum'
   )
-  $s3 = @($s1 -split $s2)
+  $parts = @($sentence -split $word)
   # TODO: check if found
-  return $s2 + $s3[1] + ' ' + $s3[0]
+  return $word + $parts[1] + ' ' + $parts[0]
 }
-Add-Type -TypeDefinition @"
+Add-Type -TypeDefinition @'
 
-// "
 using System;
 using System.Windows.Forms;
-public class Win32Window : IWin32Window
-{
-    private IntPtr _hWnd;
-    private int _data;
-    private string _message;
+public class Win32Window : IWin32Window {
+    private IntPtr handle;
+    private int data;
+    private string message;
 
-    public int Data
-    {
-        get { return _data; }
-        set { _data = value; }
+    public int Data {
+        get { return data; }
+        set { data = value; }
     }
-    public string Message
-    {
-        get { return _message; }
-        set { _message = value; }
+    public string Message {
+        get { return message; }
+        set { message = value; }
     }
 
-    public Win32Window(IntPtr handle)
-    {
-        _hWnd = handle;
+    public Win32Window(IntPtr handle) {
+        this.handle = handle;
     }
 
-    public IntPtr Handle
-    {
-        get { return _hWnd; }
+    public IntPtr Handle {
+        get { return handle; }
     }
 }
 
-"@ -ReferencedAssemblies 'System.Windows.Forms.dll'
+'@ -ReferencedAssemblies 'System.Windows.Forms.dll'
 
 # http://www.java2s.com/Code/CSharp/GUI-Windows-Form/CheckedListBoxItemCheckevent.htm
 
-function PromptCheckedList
-{
-     Param(
-	[String] $title, 
-	[String] $message)
+function PromptCheckedList {
+  Param(
+    [String] $title, 
+    [String] $message
+  )
   [string]$rotated_message = ''
   [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Drawing') 
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Collections.Generic') 
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Collections') 
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.ComponentModel') 
   [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Text') 
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Data') 
   $f = new-object System.Windows.Forms.Form 
   $f.Text = $title
 
@@ -85,7 +76,7 @@ function PromptCheckedList
   $d.SuspendLayout()
   $i.SuspendLayout()
   $f.SuspendLayout()
-  $i.Font = new-object System.Drawing.Font('Microsoft Sans Serif', 11, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point, 0);
+  $i.Font = new-object System.Drawing.Font('Microsoft Sans Serif', 11, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point, 0)
   $i.FormattingEnabled = $true
   $i.Items.AddRange(( $message -split '[ ,]+' ))
 
@@ -95,20 +86,20 @@ function PromptCheckedList
   $i.TabIndex = 0
   $i.TabStop = $false
   $event_handler = {  
-       param(
-            [Object] $sender, 
-            [System.Windows.Forms.ItemCheckEventArgs ] $eventargs 
-         )
-         $item = $i.SelectedItem
-         # NOTE: need a global to keep the items
-         $rotated_message = rotate_message -s2 $item -s1 $message
+    param(
+      [Object] $sender, 
+      [System.Windows.Forms.ItemCheckEventArgs ] $eventargs 
+    )
 
-         if ( $eventargs.NewValue -eq  [System.Windows.Forms.CheckState]::Checked ) {
+    $word = $i.SelectedItem
 
-            $d.Items.Add( $rotated_message)
-         } else {
-            $d.Items.Remove( $rotated_message )
-         }
+    $rotated_message = rotate_message -word $word -sentence $message
+    # write-host ('rotated_message: "{0}"' -f $rotated_message)
+    if ( $eventargs.NewValue -eq  [System.Windows.Forms.CheckState]::Checked ) {
+      $d.Items.Add( $rotated_message)
+    } else {
+      $d.Items.Remove( $rotated_message )
+    }
   }
   $i.Add_ItemCheck($event_handler) 
 
@@ -117,7 +108,7 @@ function PromptCheckedList
   $d.ItemHeight = 20
   $d.Location =  new-object System.Drawing.Point(236, 12)
   $d.Name = 'displayListBox'
-  $d.Size = new-object System.Drawing.Size(190, 184)
+  $d.Size = new-object System.Drawing.Size(230, 184)
   $d.TabIndex = 1
 
   $b  = new-object System.Windows.Forms.Button
@@ -138,7 +129,7 @@ function PromptCheckedList
  })
      
   $f.AutoScaleBaseSize = new-object System.Drawing.Size(5, 13)
-  $f.ClientSize = new-object System.Drawing.Size(408, 317)
+  $f.ClientSize = new-object System.Drawing.Size(478, 317)
   $components =  new-object System.ComponentModel.Container
 
   $f.Controls.AddRange( @( $i, $d, $b))
@@ -152,9 +143,9 @@ function PromptCheckedList
 
   $f.StartPosition = 'CenterScreen'
 
-  $f.KeyPreview = $True
+  $f.KeyPreview = $true
 
-  $f.Topmost = $True
+  $f.Topmost = $true
   $caller = new-object Win32Window -ArgumentList ([System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle)
 
   $f.Add_Shown( { $f.Activate() } )
@@ -167,6 +158,8 @@ function PromptCheckedList
 }
 
 $DebugPreference = 'Continue'
-$result = PromptCheckedList ''  'Lorem ipsum dolor sit amet, consectetur adipisicing elit' 
+$result = PromptCheckedList '' $sentence
 
-# write-debug ('Selection is : {0}' -f  , $result )
+write-debug ('Selection is : {0}' -f  , $result )
+
+# . .\check_item_list.ps1 -sentence 'quick fox jumped over lazy dog'
