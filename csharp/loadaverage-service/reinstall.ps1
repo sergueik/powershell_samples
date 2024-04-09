@@ -41,13 +41,13 @@ param(
 if ([bool]$psboundparameters['help'].ispresent) {
   write-host @"
 Example Usage:
-.
 reinstall.ps1 [-uninstall]
-install already compiled service executable ${APPDIR}\$APPNAME as  Windows Service named $SERVICENAME
+
+install already compiled service executable ${APPDIR}\$APPNAME as a Windows Service named $SERVICENAME
 
 Options:
 
-uninstall       - stop after uninstalling the service
+uninstall       - quit after uninstalling the service
 servicename     - provide alternative service name
 appdir          - specify the directory of the executable (default $APPDIR) 
 appname         - specify the name of the executable (default $APPNAME) - to allow compiling the same source in Visual Studio and other IDE in parallel

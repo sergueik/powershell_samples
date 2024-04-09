@@ -936,6 +936,156 @@ LOAD5MIN: 494202691.49
 LOAD15MIN: 454677173.41
 ```
 
+#### Inventory
+
+  * __Categories__
+   - .NET CLR Data
+   - .NET CLR Exceptions
+   - .NET CLR Interop
+   - .NET CLR Jit
+   - .NET CLR Loading
+   - .NET CLR LocksAndThreads
+   - .NET CLR Memory
+   - .NET CLR Networking
+   - .NET CLR Networking 4.0.0.0
+   - .NET CLR Remoting
+   - .NET CLR Security
+   - Authorization Manager Applications
+   - BitLocker
+   - Browser
+   - Cache
+   - Distributed Routing Table
+   - Event Tracing for Windows
+   - Event Tracing for Windows Session
+   - Fax Service
+   - FileSystem Disk Activity
+   - Generic IKEv1, AuthIP, and IKEv2
+   - Hyper-V Dynamic Memory Integration Service
+   - ICMP
+   - ICMPv6
+   - IPHTTPS Global
+   - IPHTTPS Session
+   - IPsec Connections
+   - IPsec Driver
+   - IPv4
+   - IPv6
+   - Job Object
+   - LogicalDisk
+   - Memory
+   - NBT Connection
+   - Netlogon
+   - Network Adapter
+   - Network Interface
+   - Network QoS Policy
+   - Objects
+   - Paging File
+   - Peer Name Resolution Protocol
+   - Per Processor Network Activity Cycles
+   - Per Processor Network Interface Card Activity
+   - Physical Network Interface Card Activity
+   - PhysicalDisk
+   - Power Meter
+   - PowerShell Workflow
+   - Print Queue
+   - Process
+   - Processor
+   - Processor Information
+   - RAS
+   - Redirector
+   - SMB Server Sessions
+   - SMB Server Shares
+   - Search Indexer
+   - Storage Spaces Tier
+   - Storage Spaces Write Cache
+   - Synchronization
+   - System
+   - TCPIP Performance Diagnostics
+   - TCPv4
+   - TCPv6
+   - Telephony
+   - Terminal Services
+   - Terminal Services Session
+   - Thread
+   - UDPv4
+   - UDPv6
+   - USB
+   - DNS64 Global
+
+(slightly abbreviated)
+  * __Memory__ counters:
+
+     - % Committed Bytes In Use
+     - Available Bytes
+     - Available KBytes
+     - Available MBytes
+     - Cache Bytes
+     - Cache Bytes Peak
+     - Cache Faults/sec
+     - Commit Limit
+     - Committed Bytes
+     - Demand Zero Faults/sec
+     - Free & Zero Page List Bytes
+     - Free System Page Table Entries
+     - Long-Term Average Standby Cache Lifetime (s)
+     - Modified Page List Bytes
+     - Page Faults/sec
+     - Page Reads/sec
+     - Page Writes/sec
+     - Pages Input/sec
+     - Pages Output/sec
+     - Pages/sec
+     - Pool Nonpaged Allocs
+     - Pool Nonpaged Bytes
+     - Pool Paged Allocs
+     - Pool Paged Bytes
+     - Pool Paged Resident Bytes
+     - Standby Cache Core Bytes
+     - Standby Cache Normal Priority Bytes
+     - Standby Cache Reserve Bytes
+     - System Cache Resident Bytes
+     - System Code Resident Bytes
+     - System Code Total Bytes
+     - System Driver Resident Bytes
+     - System Driver Total Bytes
+     - Transition Faults/sec
+     - Transition Pages RePurposed/sec
+     - Write Copies/sec
+(slightly abbreviated)
+
+  * 'PhysicalDisk' counters (individually for each disk C: D: etc.):
+
+
+    -  Current Disk Queue Length
+    -  % Disk Time
+    -  Avg. Disk Queue Length
+    -  % Disk Read Time
+    -  Avg. Disk Read Queue Length
+    -  % Disk Write Time
+    -  Avg. Disk Write Queue Length
+    -  Avg. Disk sec/Transfer
+    -  Avg. Disk sec/Read
+    -  Avg. Disk sec/Write
+    -  Disk Transfers/sec
+    -  Disk Reads/sec
+    -  Disk Writes/sec
+    -  Disk Bytes/sec
+    -  Disk Read Bytes/sec
+    -  Disk Write Bytes/sec
+    -  Avg. Disk Bytes/Transfer
+    -  Avg. Disk Bytes/Read
+    -  Avg. Disk Bytes/Write
+    -  % Idle Time
+    -  Split IO/Sec
+
+
+```powershell
+. .\perf_counter_config.ps1  -Category Memory -Counter 'Available bytes'
+```
+```XML
+    <add key="CategoryName" value="Memory"/>
+    <add key="CounterName" value="Available bytes"/>
+    <add key="InstanceName" value=""/>
+```
 ### See Also
 
    * https://blog.sflow.com/2011/02/windows-load-average.html
