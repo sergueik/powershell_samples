@@ -6,6 +6,8 @@ VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTest", "ClientTest\ClientTest.csproj", "{5CFDE072-A714-43D2-9AAA-8E1DC0F611C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -16,6 +18,10 @@ Global
 		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Debug|x86.Build.0 = Debug|x86
 		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Release|x86.ActiveCfg = Release|x86
 		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Release|x86.Build.0 = Release|x86
+		{5CFDE072-A714-43D2-9AAA-8E1DC0F611C7}.Debug|x86.ActiveCfg = Debug|x86
+		{5CFDE072-A714-43D2-9AAA-8E1DC0F611C7}.Debug|x86.Build.0 = Debug|x86
+		{5CFDE072-A714-43D2-9AAA-8E1DC0F611C7}.Release|x86.ActiveCfg = Release|x86
+		{5CFDE072-A714-43D2-9AAA-8E1DC0F611C7}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

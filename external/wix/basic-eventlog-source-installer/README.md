@@ -384,7 +384,290 @@ MSI (s) (A8:BC) [17:30:21:677]: Note: 1: 2228 2:  3: Error 4: SELECT `Message` F
 
 
 
+### Task Scheduler Default Logging
 
+is very verbose
+
+![Applications and Services Event Logs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-taskmanager-eventlog.png)
+
+```cmd
+wevtutil.exe el| findstr -i tasksch
+```
+or 
+```cmd
+wevtutil.exe enum-logs | findstr -i TaskScheduler
+```
+this will return
+```text
+Microsoft-Windows-TaskScheduler/Debug
+Microsoft-Windows-TaskScheduler/Diagnostic
+Microsoft-Windows-TaskScheduler/Operational
+```
+
+narrowing down
+to `Microsoft-Windows-TaskScheduler/Operational`:
+```cmd
+wevtutil.exe get-log Microsoft-Windows-TaskScheduler/Operational
+name: Microsoft-Windows-TaskScheduler/Operational
+enabled: true
+type: Operational
+owningPublisher: Microsoft-Windows-TaskScheduler
+isolation: Application
+channelAccess: O:BAG:SYD:(A;;0xf0007;;;SY)(A;;0x7;;;BA)(A;;0x7;;;SO)(A;;0x3;;;IU)(A;;0x3;;;SU)(A;;0x3;;;S-1-5-3)(A;;0x3;;;S-1-5-33)(A;;0x1;;;S-1-5-32-573)
+logging:
+  logFileName: %SystemRoot%\System32\Winevt\Logs\Microsoft-Windows-TaskScheduler%4Operational.evtx
+  retention: false
+  autoBackup: false
+  maxSize: 1179648
+publishing:
+  fileMax: 1
+
+
+```
+```cmd
+wevtutil.exe query-events  Microsoft-Windows-TaskScheduler/Operational /c:100 /f:text > a.log
+```
+shows enormous amount of operational events with technical data
+```text
+Event[97]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-03-21T11:57:37.555
+  Event ID: 201
+  Task: Action completed
+  Level: Information
+  Opcode: Stop
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler successfully completed task "\Microsoft\Windows\Windows Error Reporting\QueueReporting" , instance "{4B2A3BA3-DC24-4078-A0DF-20CE6D6AF42D}" , action "C:\Windows\system32\wermgr.exe" with return code 0.
+
+Event[98]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-03-21T11:57:37.555
+  Event ID: 102
+  Task: Task completed
+  Level: Information
+  Opcode: Stop
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler successfully finished "{4B2A3BA3-DC24-4078-A0DF-20CE6D6AF42D}" instance of the "\Microsoft\Windows\Windows Error Reporting\QueueReporting" task for user "sergueik42\sergueik".
+
+Event[99]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-03-21T12:06:48.727
+  Event ID: 107
+  Task: Task triggered on scheduler
+  Level: Information
+  Opcode: Info
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler launched "{D709EB52-D77F-4F42-997E-4BA33417CFCA}"  instance of task "\Microsoft\Windows\RAC\RacTask" due to a time trigger condition.
+
+
+```
+NOTE: `wevutil.exe` does not offer simple way to specify query arguments):
+```text
+Read events from an event log, log file or using structured query.
+
+Usage:
+
+wevtutil { qe | query-events } <PATH> [/OPTION:VALUE [/OPTION:VALUE] ...]
+
+<PATH>
+By default, you provide a log name for the <PATH> parameter. However, if you use
+
+the /lf option, you must provide the path to a log file for the <PATH> parameter
+.
+If you use the /sq parameter, you must provide the path to a file containing a
+structured query.
+
+Options:
+
+You can use either the short (for example, /f) or long (for example, /format) version of the option names. Options and their values are not case-sensitive.
+
+/{lf | logfile}:[true|false]
+If true, <PATH> is the full path to a log file.
+
+/{sq | structuredquery}:[true|false]
+If true, <PATH> is the full path to a file that contains a structured query.
+
+/{q | query}:VALUE
+VALUE is an XPath query to filter events read. If not specified, all events will be returned. This option is not available when /sq is true.
+
+/{bm | bookmark}:VALUE
+VALUE is the full path to a file that contains a bookmark from a previous query.
+
+
+/{sbm | savebookmark}:VALUE
+VALUE is the full path to a file in which to save a bookmark of this query. The file extension should be .xml.
+
+/{rd | reversedirection}:[true|false]
+Event read direction. If true, the most recent events are returned first.
+
+/{f | format}:[XML|Text|RenderedXml]
+The default value is XML. If Text is specified, prints events in an easy to read text format, rather than in XML format. If RenderedXml, prints events in XML format with rendering information. Note that printing events in Text or RenderedXml formats is slower than printing in XML format.
+
+/{l | locale}:VALUE
+VALUE is a locale string to print event text in a specific locale. Only available when printing events in text format using the /f option.
+
+/{c | count}:<n>
+Maximum number of events to read.
+
+/{e | element}:VALUE
+When outputting event XML, include a root element to produce well-formed XML.
+VALUE is the string you want within the root element. For example, specifying
+/e:root would result in output XML with the root element pair <root></root>.
+
+```
+NOTE: the equivalent Powershell command 
+```powershell
+get-eventlog -logname 'Microsoft-Windows-TaskScheduler/Operational'
+```
+is failing with
+```
+get-eventlog : The event log 'Microsoft-Windows-TaskScheduler/Operational' on computer '.' does not exist.
+```
+clearing all logs from the Task Scheduler Event Log, and installing a dummy scheduled task using the 
+developed Microsoft  Installer letting it run a few rounds
+produces
+```text
+Event[0]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-04-08T16:49:17.011
+  Event ID: 310
+  Task: Task Engine started
+  Level: Information
+  Opcode: Info
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler started Task Engine "S-1-5-18:NT AUTHORITY\System:Service:"  process. Command="taskeng.exe" , ProcessID=3764, ThreadID=3176
+
+Event[2]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-04-08T16:49:17.136
+  Event ID: 317
+  Task: Task Engine started
+  Level: Information
+  Opcode: Start
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler started Task Engine "S-1-5-18:NT AUTHORITY\System:Service:"  process.
+
+
+Event[7]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-04-08T16:49:25.370
+  Event ID: 106
+  Task: Task registered
+  Level: Information
+  Opcode: Info
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+User "S-1-5-18"  registered Task Scheduler task "\AUTOMATION\ATASK"
+
+
+Event[9]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-04-08T16:49:30.730
+  Event ID: 102
+  Task: Task completed
+  Level: Information
+  Opcode: Stop
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler successfully finished "{FD1E2E8D-4507-46FD-A61D-4F4C48BEA206}" instance of the "\GoogleUpdateTaskMachineUA" task for user "WORKGROUP\SERGUEIK42$".
+
+Event[10]:  
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-04-08T16:49:30.730
+  Event ID: 314
+  Task: Task Engine idle
+  Level: Information
+  Opcode: Info
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler has no tasks running for Task Engine "S-1-5-18:NT AUTHORITY\System:Service:" , and the idle timer has started.
+
+Event[11]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-04-08T16:51:00.011
+  Event ID: 326
+  Task: Launch condition not met, computer on batteries
+  Level: Warning
+  Opcode: Info
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler did not launch task "\AUTOMATION\ATASK"  because computer is running on batteries. User Action: If launching the task on batteries is required, change the respective flag in the task configuration.
+
+Event[12]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-04-08T16:51:00.011
+  Event ID: 101
+  Task: Task Start Failed
+  Level: Error
+  Opcode: Launch Failure
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler failed to start "\AUTOMATION\ATASK" task for user "NT AUTHORITY\System". Additional Data: Error Value: 2147750692.
+
+Event[13]:
+  Log Name: Microsoft-Windows-TaskScheduler/Operational
+  Source: Microsoft-Windows-TaskScheduler
+  Date: 2024-04-08T16:51:00.011
+  Event ID: 107
+  Task: Task triggered on scheduler
+  Level: Information
+  Opcode: Info
+  Keyword: N/A
+  User: S-1-5-18
+  User Name: NT AUTHORITY\SYSTEM
+  Computer: sergueik42
+  Description: 
+Task Scheduler launched "{2CB05819-EC0B-4E54-BF45-FA2B6B38E610}"  instance of task "\AUTOMATION\ATASK" due to a time trigger condition.
+
+```
+These logs are more than somewhat excessive - the event log is filtered and rendered by __Task Scheduler__ itself, though performance is mediocre
+
+![Applications and Services Event Logs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-taskscheduler-task-history.png)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

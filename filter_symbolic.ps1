@@ -172,3 +172,28 @@ Windows Vista or later: target is unchanged.
 Windows 2000, XP & 2003: target & subfolders are deleted
 
 #>
+
+<#
+in addition to
+Directory Junction being an older type of symbolic link, 
+(e.g. it does not support UNC paths (network paths that begin with \\) and relative paths
+
+
+
+the practical difference is this:
+
+creation of Directory Junction does not require admin privileges:
+mklink /j  b a
+Junction created for b <<===>> a
+
+del b
+The directory name is invalid.
+
+rd b
+
+creation of File or Directory symbolic link require elevation:
+mklink /d  b a
+you do not have sufficient privilege to perform this operation
+see also:
+https://superuser.com/questions/343074/directory-junction-vs-directory-symbolic-link
+#>

@@ -1,4 +1,4 @@
-#Copyright (c) 2014 Serguei Kouzmine
+#Copyright (c) 2014,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -17,58 +17,58 @@
 #LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
+param(
+  [string]$sentence = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit'  
+)
+function rotate_message {
+  param(
+    [string] $sentence = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
+    [string] $word = 'ipsum'
+  )
+  $parts = @($sentence -split $word)
+  # TODO: check if found
+  return $word + $parts[1] + ' ' + $parts[0]
+}
+Add-Type -TypeDefinition @'
 
-Add-Type -TypeDefinition @"
-
-// "
 using System;
 using System.Windows.Forms;
-public class Win32Window : IWin32Window
-{
-    private IntPtr _hWnd;
-    private int _data;
-    private string _message;
+public class Win32Window : IWin32Window {
+    private IntPtr handle;
+    private int data;
+    private string message;
 
-    public int Data
-    {
-        get { return _data; }
-        set { _data = value; }
+    public int Data {
+        get { return data; }
+        set { data = value; }
     }
-    public string Message
-    {
-        get { return _message; }
-        set { _message = value; }
+    public string Message {
+        get { return message; }
+        set { message = value; }
     }
 
-    public Win32Window(IntPtr handle)
-    {
-        _hWnd = handle;
+    public Win32Window(IntPtr handle) {
+        this.handle = handle;
     }
 
-    public IntPtr Handle
-    {
-        get { return _hWnd; }
+    public IntPtr Handle {
+        get { return handle; }
     }
 }
 
-"@ -ReferencedAssemblies 'System.Windows.Forms.dll'
+'@ -ReferencedAssemblies 'System.Windows.Forms.dll'
 
 # http://www.java2s.com/Code/CSharp/GUI-Windows-Form/CheckedListBoxItemCheckevent.htm
 
-function PromptCheckedList
-{
-     Param(
-	[String] $title, 
-	[String] $message)
-
+function PromptCheckedList {
+  Param(
+    [String] $title, 
+    [String] $message
+  )
+  [string]$rotated_message = ''
   [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Drawing') 
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Collections.Generic') 
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Collections') 
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.ComponentModel') 
   [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Text') 
-  [void] [System.Reflection.Assembly]::LoadWithPartialName('System.Data') 
-  $f = New-Object System.Windows.Forms.Form 
+  $f = new-object System.Windows.Forms.Form 
   $f.Text = $title
 
   $i = new-object System.Windows.Forms.CheckedListBox
@@ -76,41 +76,45 @@ function PromptCheckedList
   $d.SuspendLayout()
   $i.SuspendLayout()
   $f.SuspendLayout()
-  $i.Font = new-object System.Drawing.Font('Microsoft Sans Serif', 11, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point, 0);
-  $i.FormattingEnabled = $true;
-  $i.Items.AddRange(( $message -split '[ ,]+' ));
+  $i.Font = new-object System.Drawing.Font('Microsoft Sans Serif', 11, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Point, 0)
+  $i.FormattingEnabled = $true
+  $i.Items.AddRange(( $message -split '[ ,]+' ))
 
-  $i.Location = New-Object System.Drawing.Point(17, 12)
+  $i.Location = new-object System.Drawing.Point(17, 12)
   $i.Name = 'inputCheckedListBox'
-  $i.Size = New-Object System.Drawing.Size(202, 188)
+  $i.Size = new-object System.Drawing.Size(202, 188)
   $i.TabIndex = 0
   $i.TabStop = $false
   $event_handler = {  
-       param(
-            [Object] $sender, 
-            [System.Windows.Forms.ItemCheckEventArgs ] $eventargs 
-         )
-         $item = $i.SelectedItem
-         if ( $eventargs.NewValue -eq  [System.Windows.Forms.CheckState]::Checked ) { 
-            $d.Items.Add( $item );
-         } else {
-            $d.Items.Remove( $item );
-         }
+    param(
+      [Object] $sender, 
+      [System.Windows.Forms.ItemCheckEventArgs ] $eventargs 
+    )
+
+    $word = $i.SelectedItem
+
+    $rotated_message = rotate_message -word $word -sentence $message
+    # write-host ('rotated_message: "{0}"' -f $rotated_message)
+    if ( $eventargs.NewValue -eq  [System.Windows.Forms.CheckState]::Checked ) {
+      $d.Items.Add( $rotated_message)
+    } else {
+      $d.Items.Remove( $rotated_message )
+    }
   }
   $i.Add_ItemCheck($event_handler) 
 
-  $d.Font = New-Object System.Drawing.Font('Verdana', 11)
+  $d.Font = new-object System.Drawing.Font('Verdana', 11)
   $d.FormattingEnabled = $true
-  $d.ItemHeight = 20;
-  $d.Location =  New-Object System.Drawing.Point(236, 12);
-  $d.Name = 'displayListBox';
-  $d.Size = New-Object System.Drawing.Size(190, 184);
-  $d.TabIndex = 1;
+  $d.ItemHeight = 20
+  $d.Location =  new-object System.Drawing.Point(236, 12)
+  $d.Name = 'displayListBox'
+  $d.Size = new-object System.Drawing.Size(230, 184)
+  $d.TabIndex = 1
 
-  $b  = New-Object System.Windows.Forms.Button
-  $b.Location = New-Object System.Drawing.Point(8, 280)
+  $b  = new-object System.Windows.Forms.Button
+  $b.Location = new-object System.Drawing.Point(8, 280)
   $b.Name = 'button1'
-  $b.Size = New-Object System.Drawing.Size(112, 32)
+  $b.Size = new-object System.Drawing.Size(112, 32)
   $b.TabIndex = 4
   $b.Text = 'Done'
 
@@ -124,9 +128,9 @@ function PromptCheckedList
     $f.Close()
  })
      
-  $f.AutoScaleBaseSize = New-Object System.Drawing.Size(5, 13)
-  $f.ClientSize = New-Object System.Drawing.Size(408, 317)
-  $components =  New-Object System.ComponentModel.Container
+  $f.AutoScaleBaseSize = new-object System.Drawing.Size(5, 13)
+  $f.ClientSize = new-object System.Drawing.Size(478, 317)
+  $components =  new-object System.ComponentModel.Container
 
   $f.Controls.AddRange( @( $i, $d, $b))
 
@@ -139,10 +143,10 @@ function PromptCheckedList
 
   $f.StartPosition = 'CenterScreen'
 
-  $f.KeyPreview = $True
+  $f.KeyPreview = $true
 
-  $f.Topmost = $True
-  $caller = New-Object Win32Window -ArgumentList ([System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle)
+  $f.Topmost = $true
+  $caller = new-object Win32Window -ArgumentList ([System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle)
 
   $f.Add_Shown( { $f.Activate() } )
 
@@ -154,6 +158,8 @@ function PromptCheckedList
 }
 
 $DebugPreference = 'Continue'
-$result = PromptCheckedList ''  'Lorem ipsum dolor sit amet, consectetur adipisicing elit' 
+$result = PromptCheckedList '' $sentence
 
 write-debug ('Selection is : {0}' -f  , $result )
+
+# . .\check_item_list.ps1 -sentence 'quick fox jumped over lazy dog'

@@ -1,4 +1,4 @@
-#Copyright (c) 2022,2023 Serguei Kouzmine
+#Copyright (c) 2022,2023,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,8 @@ param(
   [string]$SERVICENAME = 'LoadAverageService',
   [string]$APPNAME = 'LoadAverageService.exe',
   # for Visual Studio artifact use 'WindowsApplication.exe'
-  [string]$APPDIR = 'Program\bin\Release',
+  [string]$APPDIR = 'Program\bin\Debug',
+  # NOTE: the project file and ShareDevelop solution still point to Debug
   # for Visual Studio artifact use 'bin\Release'
   [switch]$configure,
   [switch]$info,
@@ -33,8 +34,34 @@ param(
   [int]$delay = 120,
   [string]$datafile = 'c:\temp\loadaverage.txt',
   [string]$new_config_file = 'app.config',
+  [switch]$help,
   [switch]$debug
 )
+
+if ([bool]$psboundparameters['help'].ispresent) {
+  write-host @"
+Example Usage:
+reinstall.ps1 [-uninstall]
+
+install already compiled service executable ${APPDIR}\$APPNAME as a Windows Service named $SERVICENAME
+
+Options:
+
+uninstall       - quit after uninstalling the service
+servicename     - provide alternative service name
+appdir          - specify the directory of the executable (default $APPDIR) 
+appname         - specify the name of the executable (default $APPNAME) - to allow compiling the same source in Visual Studio and other IDE in parallel
+new_config_file - alternative ${APPNAME}.config (untested)
+delay           - wait after starting the service befoe checking the data collected by servive (default 120 sec)
+configure       - configure the application before installing (experimental, untested)
+force
+noop
+debug
+"@
+  exit
+}
+
+
 <#
 TODO: add build steps
 
