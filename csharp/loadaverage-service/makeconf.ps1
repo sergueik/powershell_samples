@@ -35,7 +35,7 @@ param(
 if ([bool]$psboundparameters['help'].ispresent) {
   write-host @"
 Example Usage:
-perf_counter_config.ps1 [-list]
+makeconf.ps1 [-list]
 examine performanc counters
 
 Options:
@@ -49,25 +49,25 @@ force
 help
 debug
 Example Usage:
-.\perf_counter_config.ps1 -list
+.\makeconf.ps1 -list
 prints  some 100 category names
-.\perf_counter_config.ps1 -category 'PhysicalDisk' -list
+.\makeconf.ps1 -category 'PhysicalDisk' -list
 prints some 20 counter names belonging to 'PhysicalDisk' category
-.\perf_counter_config.ps1 -list -Category Memory
+.\makeconf.ps1 -list -Category Memory
 
-.\perf_counter_config.ps1 -Category Memory -Counter 'Available bytes'
+.\makeconf.ps1 -Category Memory -Counter 'Available bytes'
 prints app.xml fragment:
     <add key="CategoryName" value="Memory"/>
     <add key="CounterName" value="Available bytes"/>
     <add key="InstanceName" value=""/>
 
-.\perf_counter_config.ps1 -Category PhysicalDisk -Counter '% Disk Time'
+.\makeconf.ps1 -Category PhysicalDisk -Counter '% Disk Time'
 prints app.xml fragment:
     <add key="CategoryName" value="PhysicalDisk"/>
     <add key="CounterName" value="% Disk Time"/>
     <add key="InstanceName" value="0"/>
 
-.\perf_counter_config.ps1 -Category X -Counter Y
+.\makeconf.ps1 -Category X -Counter Y
 will print an error
 The combination of Category X and Counter Y is Invalid
 "@

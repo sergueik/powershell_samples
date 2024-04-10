@@ -11,12 +11,17 @@ using System.Linq;
 // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountercategory.getcounters?view=netframework-4.5
 namespace TransactionService
 {
-	
 	public class PerformanceMetadataUtility
 	{
 		private string categoryName = null;
+		private string instanceName = null;
+		public String InstanceName {
+			get {
+				return instanceName;
+			}
+		}
 		public String CategoryName {
-			get { 
+			get {
 				return categoryName;
 			}
 			set { categoryName = value; }
@@ -38,7 +43,7 @@ namespace TransactionService
 			get {
 				if (categoryName != null) {
 					var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
-					
+
 					var instances = performanceCounterCategory.GetInstanceNames();
 					if (instances.Any()) {
 						var instance = instances.First();
@@ -58,20 +63,20 @@ namespace TransactionService
 					}
 				}
 				return counterNames;
-				
+
 			}
 		}
 		private string counterName = null;
 		public string CounterName {
-			get { 
+			get {
 				return counterName;
 			}
 			set { counterName = value; }
 		}
-	
+
 		// private readonly bool valid = false;
 		public Boolean Valid {
-			get { 
+			get {
 				if (this.CategoryName.Length == 0 || this.CounterName.Length == 0) {
 					return false;
 				}
@@ -83,8 +88,10 @@ namespace TransactionService
 						if (performanceCounterCategory.InstanceExists(instance)) {
 							var counters = performanceCounterCategory.GetCounters(instance);
 							foreach (PerformanceCounter performanceCounter in counters) {
-								if (performanceCounter.CounterName.Equals(this.CounterName))
+								if (performanceCounter.CounterName.Equals(this.CounterName)){
+									this.instanceName = instance;
 									return true;
+								}
 							}
 						}
 					}
@@ -93,12 +100,12 @@ namespace TransactionService
 					foreach (PerformanceCounter performanceCounter in counters) {
 						if (performanceCounter.CounterName.Equals(this.CounterName))
 							return true;
-					}   
+					}
 				}
 				return false;
 			}
-			
+
 		}
-		
+
 	}
 }
