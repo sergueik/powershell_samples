@@ -27,7 +27,7 @@ param(
   [string]$category = '', # 'PhysicalDisk'
   [string]$counter = '',
   [switch]$configure,
-  [switch]$all,
+  [switch]$list,
   [switch]$help,
   [switch]$debug
 )
@@ -35,31 +35,49 @@ param(
 if ([bool]$psboundparameters['help'].ispresent) {
   write-host @"
 Example Usage:
-perf_counter_config.ps1 [-all]
+perf_counter_config.ps1 [-list]
 examine performanc counters
 
 Options:
 
-all       - list all Performance Categories or all Performance Counters for specific Category, if one is provided
+list       - list list Performance Categories or list Performance Counters for specific Category, if one is provided
 configure - print the application config section
 category  - name of the Category to explore e.g. 'PhysicalDisk'
 NOTE: some categories also require an intance to return the counters (see example below)
-counter   - name of the Counter to write config e.g. . When none is provided, all Counters for specified category are listed
+counter   - name of the Counter to write config e.g. . When none is provided, list Counters for specified category are listed
 force
 help
 debug
 Example Usage:
+.\perf_counter_config.ps1 -list
+prints  some 100 category names
+.\perf_counter_config.ps1 -category 'PhysicalDisk' -list
+prints some 20 counter names belonging to 'PhysicalDisk' category
+.\perf_counter_config.ps1 -list -Category Memory
 
-.\perf_counter_config.ps1 -category 'PhysicalDisk' -all
-.\perf_counter_config.ps1 -all -Category Memory
+.\perf_counter_config.ps1 -Category Memory -Counter 'Available bytes'
+prints app.xml fragment:
+    <add key="CategoryName" value="Memory"/>
+    <add key="CounterName" value="Available bytes"/>
+    <add key="InstanceName" value=""/>
 
-.\perf_counter_config.ps1  -Category Memory -Counter 'Available bytes'
+.\perf_counter_config.ps1 -Category PhysicalDisk -Counter '% Disk Time'
+prints app.xml fragment:
+    <add key="CategoryName" value="PhysicalDisk"/>
+    <add key="CounterName" value="% Disk Time"/>
+    <add key="InstanceName" value="0"/>
+
+.\perf_counter_config.ps1 -Category X -Counter Y
+will print an error
+The combination of Category X and Counter Y is Invalid
 "@
   exit
 }
 
 $debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
+
 add-type -TypeDefinition @'
+
 using System;
 using System.Diagnostics;
 using System.Collections;
@@ -68,15 +86,14 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class PerformanceMetadataUtility {
-  private List<string> categoryNames = new List<string>();
   private string categoryName = null;
-  private List<string> counterNames = new List<string>();
   public String CategoryName {
     get { 
       return categoryName;
     }
     set { categoryName = value; }
   }
+  private List<string> categoryNames = new List<string>();
   public List<string> CategoryNames {
     get {
       if (categoryNames.Count == 0) {
@@ -88,38 +105,78 @@ public class PerformanceMetadataUtility {
       return categoryNames;
     }
   }
+  private List<string> counterNames = new List<string>();
   public List<string> CounterNames {
     get {
       if (categoryName != null) {
         var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
-        
+          
         var instances = performanceCounterCategory.GetInstanceNames();
         if (instances.Any()) {
           var instance = instances.First();
           if (performanceCounterCategory.InstanceExists(instance)) {
             var counters = performanceCounterCategory.GetCounters(instance);
             foreach (PerformanceCounter performanceCounter in counters) {
-              Console.Error.WriteLine("Category: {0}, instance: {1}, counter: {2}", performanceCounter.CategoryName, instance, performanceCounter.CounterName);
-              counterNames.Add(String.Format("instance: {0}, counter: {1}", instance, performanceCounter.CounterName));
+              // Console.WriteLine("Category: {0}, instance: {1}, counter: {2}", performanceCounter.CategoryName, instance, performanceCounter.CounterName);
+              // TODO: find the appropriate format for instance
+              counterNames.Add(performanceCounter.CounterName);
             }
           }
         } else {
           var counters = performanceCounterCategory.GetCounters();
-        foreach (PerformanceCounter performanceCounter in counters) {
-          counterNames.Add(performanceCounter.CounterName);
-        }
+          foreach (PerformanceCounter performanceCounter in counters) {
+            counterNames.Add(performanceCounter.CounterName);
+          }
         }
       }
       return counterNames;
-      
+        
     }
   }
+  private string counterName = null;
+  public string CounterName {
+    get { 
+      return counterName;
+    }
+    set { counterName = value; }
+  }
+  
+  // private readonly bool valid = false;
+  public Boolean Valid {
+    get { 
+      if (this.CategoryName.Length == 0 || this.CounterName.Length == 0) {
+        return false;
+      }
+      var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
+      var instances = performanceCounterCategory.GetInstanceNames();
+      if (instances.Any()) {
+        // System.ArgumentException: Counter is not single instance, an instance name needs to be specified.
+        foreach (string instance in instances) {
+          if (performanceCounterCategory.InstanceExists(instance)) {
+            var counters = performanceCounterCategory.GetCounters(instance);
+            foreach (PerformanceCounter performanceCounter in counters) {
+              if (performanceCounter.CounterName.Equals(this.CounterName))
+                return true;
+            }
+          }
+        }
+      } else {
+        var counters = performanceCounterCategory.GetCounters();
+        foreach (PerformanceCounter performanceCounter in counters) {
+          if (performanceCounter.CounterName.Equals(this.CounterName))
+            return true;
+        }   
+      }
+      return false;
+    }
+      
+  }
+    
 }
-
 '@
 
 $o = new-object PerformanceMetadataUtility
-if ([bool]$psboundparameters['all'].ispresent) {
+if ([bool]$psboundparameters['list'].ispresent) {
   if ($category -eq '') {
     write-output $o.CategoryNames
   } else {
@@ -127,16 +184,26 @@ if ([bool]$psboundparameters['all'].ispresent) {
     write-output $o.CounterNames
   }
 } else {
-  # TODO: verify that a category / counter exist, provide instance hint
+  
+  # Perform check explicitly
   if ($category -ne '') {
     if ($counter -ne '') {
-     $instance = '';
-     write-output @"
-    <add key="CategoryName" value="${category}"/>
-    <add key="CounterName" value="${counter}"/>
-    <add key="InstanceName" value="${instance}"/>
-
-"@
+      $o.CategoryName = $category
+      
+      $o.CounterName = $counter  
+      # NOTE: 'Valid' is a getter
+      if ($o.Valid) {
+	     # TODO: while verifying that a category / counter exist, provide instance hint
+      	 $instance = '';
+      	 write-output @"
+      	<add key="CategoryName" value="${category}"/>
+      	<add key="CounterName" value="${counter}"/>
+      	<add key="InstanceName" value="${instance}"/>
+      "@
+      } else {
+        write-host ('The combination of Category "{0}" and Counter "{1}" is Invalid' -f $category,$counter)
+      }
+      
    }  
  }
 }
