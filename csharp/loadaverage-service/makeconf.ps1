@@ -63,9 +63,10 @@ prints app.xml fragment:
 
 .\makeconf.ps1 -Category PhysicalDisk -Counter '% Disk Time'
 prints app.xml fragment:
-    <add key="CategoryName" value="PhysicalDisk"/>
-    <add key="CounterName" value="% Disk Time"/>
-    <add key="InstanceName" value="0"/>
+
+<add key="CategoryName" value="PhysicalDisk"/>
+<add key="CounterName" value="% Disk Time"/>
+<add key="InstanceName" value="0 C: D:"/>
 
 .\makeconf.ps1 -Category X -Counter Y
 will print an error
@@ -87,8 +88,14 @@ using System.Linq;
 
 public class PerformanceMetadataUtility {
   private string categoryName = null;
+  private string instanceName = null;
+  public String InstanceName {
+    get {
+      return instanceName;
+    }
+  }
   public String CategoryName {
-    get { 
+    get {
       return categoryName;
     }
     set { categoryName = value; }
@@ -110,7 +117,7 @@ public class PerformanceMetadataUtility {
     get {
       if (categoryName != null) {
         var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
-          
+
         var instances = performanceCounterCategory.GetInstanceNames();
         if (instances.Any()) {
           var instance = instances.First();
@@ -130,20 +137,20 @@ public class PerformanceMetadataUtility {
         }
       }
       return counterNames;
-        
+
     }
   }
   private string counterName = null;
   public string CounterName {
-    get { 
+    get {
       return counterName;
     }
     set { counterName = value; }
   }
-  
+
   // private readonly bool valid = false;
   public Boolean Valid {
-    get { 
+    get {
       if (this.CategoryName.Length == 0 || this.CounterName.Length == 0) {
         return false;
       }
@@ -155,8 +162,10 @@ public class PerformanceMetadataUtility {
           if (performanceCounterCategory.InstanceExists(instance)) {
             var counters = performanceCounterCategory.GetCounters(instance);
             foreach (PerformanceCounter performanceCounter in counters) {
-              if (performanceCounter.CounterName.Equals(this.CounterName))
+              if (performanceCounter.CounterName.Equals(this.CounterName)) {
+                this.instanceName = instance;
                 return true;
+              }
             }
           }
         }
@@ -165,13 +174,13 @@ public class PerformanceMetadataUtility {
         foreach (PerformanceCounter performanceCounter in counters) {
           if (performanceCounter.CounterName.Equals(this.CounterName))
             return true;
-        }   
+        }
       }
       return false;
     }
-      
+
   }
-    
+
 }
 '@
 
@@ -194,12 +203,12 @@ if ([bool]$psboundparameters['list'].ispresent) {
       # NOTE: 'Valid' is a getter
       if ($o.Valid) {
 	     # TODO: while verifying that a category / counter exist, provide instance hint
-      	 $instance = '';
+      	 $instance = $o.InstanceName;
       	 write-output @"
       	<add key="CategoryName" value="${category}"/>
       	<add key="CounterName" value="${counter}"/>
       	<add key="InstanceName" value="${instance}"/>
-      "@
+"@
       } else {
         write-host ('The combination of Category "{0}" and Counter "{1}" is Invalid' -f $category,$counter)
       }
