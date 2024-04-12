@@ -3,7 +3,10 @@
 This directory contains the code from the 
 [translate PBE Codes from Java to C#](https://cuteprogramming.wordpress.com/2015/02/20/translate-pbe-codes-from-java-to-c/) blog and 
 [Emulating PBEWithMD5AndDES Encryption under .NET](https://www.codeproject.com/Articles/16450/Emulating-PBEWithMD5AndDES-Encryption-under-NET) codeproject article used to do [PBE](https://en.wikipedia.org/wiki/Password-based_cryptography)
-encryption in way compatible with [jasypt](http://www.jasypt.org/howtoencryptuserpasswords.html)
+encryption in compatible way with [jasypt](http://www.jasypt.org/howtoencryptuserpasswords.html) using DES/SHA256
+
+The application has no external dependencies - the `System.Security.Cryptography` is available in the system GAC.
+
 ### Usage
 
 ```powershell
@@ -171,7 +174,8 @@ decrypted: information
 Currently we cover `PBEWithMD5AndDES` algorithm. This is the same encryption used by last __1.x__ release  of the jasypt available on author's [guthub](https://github.com/jasypt/jasypt/releases). The __3.x__ releases default to `PBEWithHmacSHA512AndAES_256` algorithm. The easies way to tweak the algorythm to different binary block sizes is to compare the two versions of `Crypt:PBE` Perl module in the [CPAN](https://metacpan.org/pod/Crypt::PBE)
 
 ### See Also
- 
+
+  * [PBKDF1](https://www.cryptopp.com/wiki/PKCS5_PBKDF1)
   * [hashing loop](https://metacpan.org/release/GDT/Crypt-PBE-0.102/source/lib/Crypt/PBE/PBKDF1.pm#L139) essential for jasypt [password, salt and iteration count based encryption](http://www.jasypt.org/howtoencryptuserpasswords.html) Iterate the hash function at least 1,000 times rule.
   * [equivalent Python code](https://github.com/fareliner/jasypt4py/blob/master/jasypt4py/generator.py#L162)
   * [cross Platform AES 256 GCM Encryption / Decryptio](https://www.codeproject.com/Articles/1265115/Cross-Platform-AES-256-GCM-Encryption-Decryption)

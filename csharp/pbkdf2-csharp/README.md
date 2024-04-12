@@ -4,8 +4,13 @@
 this directory contains replica with code fixes of the __C# AES 256 bits Encryption Library with Salt__
 [project](https://www.codeproject.com/Articles/769741/Csharp-AES-bits-Encryption-Library-with-Salt)
 with the achieved compatibility with Perl [Crypt::PBE](https://metacpan.org/pod/Crypt::PBE) and intended goal of compatibility 
-with certain Java [Jasypt](http://www.jasypt.org/) AES algorithms - not achieved since Jasypt itself is currently [broken](https://github.com/jasypt/jasypt/issues/122) with the several PBE/AES -
-but at least provide a step towards achieving the same
+and Java [Jasypt](http://www.jasypt.org/) using AES/SHA512.
+
+NOTE, Jasypt CLI
+ is currently [broken](https://github.com/jasypt/jasypt/issues/122) 
+in selecting PBE/AES hashing / encryption, but default is compatble
+
+The application has no external dependencies - the `System.Security.Cryptography` is available in the system GAC.
 
 ### Usage
 
@@ -527,11 +532,13 @@ True     True     Object[]                                 System.Array
 
 ### See Also
 
+  * [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2)
   * `Rfc2898DeriveBytes` class [documentation](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.rfc2898derivebytes?view=netframework-4.5) - need more undertanding of password-based key derivation function PBDKF2. ifthe same password and salt is used to derive keys two times, and the keys are used during encryption and decryptiion the original data should be decrypted successfully.
   * https://stackoverflow.com/questions/4329909/hashing-passwords-with-md5-or-sha-256-c-sharp
   * https://www.codeproject.com/Tips/1156169/Encrypt-Strings-with-Passwords-AES-SHA
   * https://fastapi.metacpan.org/source/ARODLAND/Crypt-PBKDF2-0.161520/lib/Crypt
   * [Request for Comments: 2898 PKCS #5: Password-Based Cryptography Specification Version 2.0](https://datatracker.ietf.org/doc/html/rfc2898)
+  * [Password-Based Key Derivation Function 2 (PBKDF2) test vectors](https://www.rfc-editor.org/rfc/rfc6070.html)
   * Perl CPAN [Crypt::Rijndael](https://metacpan.org/dist/Crypt-Rijndael) module
   * Perl CPAN [Crypt::PBE](https://metacpan.org/pod/Crypt::PBE) module
   * [basic exit options in .net c#](https://www.c-sharpcorner.com/UploadFile/c713c3/how-to-exit-in-C-Sharp/)
