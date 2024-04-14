@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 
 namespace Utils {
 	public class AES {
+		// https://datatracker.ietf.org/doc/html/rfc2898
 		private Rfc2898DeriveBytes deriveBytes;
 		private bool debug = false;
 		public  bool Debug { set { debug = value; } }
