@@ -4,7 +4,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # SharpDevelop 5.1
 VisualStudioVersion = 12.0.20827.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowToRunPowerShell", "HowToRunPowerShell\HowToRunPowerShell.csproj", "{23EFEEB7-FE12-4DC1-9CEB-C49CE0857571}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "Program\Program.csproj", "{23EFEEB7-FE12-4DC1-9CEB-C49CE0857571}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
