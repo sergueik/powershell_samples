@@ -33,10 +33,11 @@ param(
 )
 
 if ([bool]$psboundparameters['help'].ispresent) {
+$name = 'makeconf.ps1' 
   write-host @"
 Example Usage:
-makeconf.ps1 [-list]
-examine performanc counters
+${name} [-list]
+examine performance counters
 
 Options:
 
@@ -49,26 +50,26 @@ force
 help
 debug
 Example Usage:
-.\makeconf.ps1 -list
+.\${name} -list
 prints  some 100 category names
-.\makeconf.ps1 -category 'PhysicalDisk' -list
+.\${name} -category 'PhysicalDisk' -list
 prints some 20 counter names belonging to 'PhysicalDisk' category
-.\makeconf.ps1 -list -Category Memory
+.\${name} -list -Category Memory
 
-.\makeconf.ps1 -Category Memory -Counter 'Available bytes'
+.\${name} -Category Memory -Counter 'Available bytes'
 prints app.xml fragment:
     <add key="CategoryName" value="Memory"/>
     <add key="CounterName" value="Available bytes"/>
     <add key="InstanceName" value=""/>
 
-.\makeconf.ps1 -Category PhysicalDisk -Counter '% Disk Time'
+.\${name} -Category PhysicalDisk -Counter '% Disk Time'
 prints app.xml fragment:
 
 <add key="CategoryName" value="PhysicalDisk"/>
 <add key="CounterName" value="% Disk Time"/>
 <add key="InstanceName" value="0 C: D:"/>
 
-.\makeconf.ps1 -Category X -Counter Y
+.\${name} -Category X -Counter Y
 will print an error
 The combination of Category X and Counter Y is Invalid
 "@
