@@ -180,6 +180,51 @@ curl -sv "http://127.0.0.1:64676/data.json?name=data.json&hash=0DFA1329F15FEFA86
 
 ```
 
+### Status code tests
+* the `code` query string parameter allows testing arbitrary response statuses. The `filename` arguments are ignored when `code` is present
+
+```cmd
+curl -vs http://localhost:49727/dummy?code=403
+```
+```text
+* Uses proxy env variable no_proxy == '192.168.99.103,192.168.99.100'
+*   Trying ::1:49727...
+* Connected to localhost (::1) port 49727 (#0)
+> GET /dummy?code=403 HTTP/1.1
+> Host: localhost:49727
+> User-Agent: curl/7.75.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 403 Forbidden
+< Transfer-Encoding: chunked
+< Server: Microsoft-HTTPAPI/2.0
+< Date: Thu, 18 Apr 2024 04:15:32 GMT
+<
+{ [5 bytes data]
+
+```
+NOTE:  bogus HTTP status codes are returned regardless:
+```
+curl -vs http://localhost:49727/dummy?code=999
+```
+* Uses proxy env variable no_proxy == '192.168.99.103,192.168.99.100'
+*   Trying ::1:49727...
+* Connected to localhost (::1) port 49727 (#0)
+> GET /dummy?code=999 HTTP/1.1
+> Host: localhost:49727
+> User-Agent: curl/7.75.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 999
+< Transfer-Encoding: chunked
+< Server: Microsoft-HTTPAPI/2.0
+< Date: Thu, 18 Apr 2024 04:36:24 GMT
+<
+{ [5 bytes data]
+* Connection #0 to host localhost left intact
+```
 ### Powershell Script
 * start the server
 

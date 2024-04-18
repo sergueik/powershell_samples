@@ -47,15 +47,16 @@ namespace Test {
 		// could not be foundt
 		// [OneTimeTearDownAttribute]
 		[TestFixtureSetUpAttribute]
-		public void TearDown()
-		{
+		public void TearDown() {
+			if (pageServer!= null)
 			pageServer.Stop();
 			Assert.IsEmpty(verificationErrors.ToString());
 		}
 
+		// the test is run simply to have the server running
 		[Test]
 		public void test() {
-			Thread.Sleep(100000);
+			Thread.Sleep(1000000);
 			// Common.GetLocalHostPageContent("ng_dropdown.htm");
 		}
 		

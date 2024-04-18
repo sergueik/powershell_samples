@@ -31,6 +31,7 @@ namespace Utils {
 		private string documentRoot;
 		private HttpListener _listener;
 		private int port;
+		private int code = 0;
 
 		public int Port {
 			get { return port; }
@@ -48,7 +49,7 @@ namespace Utils {
 			tcpListener.Stop();
 			this.Initialize(documentRoot, unusedPort);
 		}
-		
+
 		public void Stop() {
 			_serverThread.Abort();
 			_listener.Stop();
@@ -71,7 +72,7 @@ namespace Utils {
 		// origin: http://www.java2s.com/Code/CSharp/Security/GetMD5Hash.htm
 		public static string getMD5Hash(byte[] inputBytes) {
 			MD5 md5 = MD5.Create();
-			
+
 			byte[] hash = md5.ComputeHash(inputBytes);
 			var stringBuilder = new StringBuilder();
 			for (int i = 0; i < hash.Length; i++) {
@@ -79,9 +80,9 @@ namespace Utils {
 			}
 			return stringBuilder.ToString();
 		}
-		
+
 		private void Process(HttpListenerContext context) {
-			
+
 			if (String.Compare(context.Request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) != 0) {
 				Console.Error.WriteLine(String.Format("not implemented: {0}", context.Request.HttpMethod));
 				context.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
@@ -92,11 +93,15 @@ namespace Utils {
 			queryString = context.Request.QueryString;
 			if (queryString.AllKeys.Contains("filename")) {
 				fileName = queryString["filename"];
-				Console.Error.WriteLine(String.Format("filename: {0}", fileName));			
+				Console.Error.WriteLine(String.Format("filename: {0}", fileName));
+			}
+			if (queryString.AllKeys.Contains("code")) {
+				code = int.Parse(queryString["code"]);
+				Console.Error.WriteLine(String.Format("code: {0}", code));
 			}
 			if (queryString.AllKeys.Contains("hash")) {
 				hash = queryString["hash"];
-				Console.Error.WriteLine(String.Format("hash: {0}", hash));			
+				Console.Error.WriteLine(String.Format("hash: {0}", hash));
 			} else {
 				hash = "";
 			}
@@ -136,6 +141,11 @@ namespace Utils {
 					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 				}
 			}
+			if (code != 0) {
+				// https://learn.microsoft.com/en-us/dotnet/api/system.net.httplistenerresponse.statuscode?view=netframework-4.5
+				// https://learn.microsoft.com/en-us/dotnet/api/system.net.httpstatuscode?view=netframework-4.5
+				context.Response.StatusCode = (int)((HttpStatusCode)code);
+			}
 			context.Response.OutputStream.Close();
 		}
 
@@ -145,7 +155,7 @@ namespace Utils {
 			_serverThread = new Thread(this.Listen);
 			_serverThread.Start();
 		}
-		
+
 		private static IDictionary<string, string> mimeTypes = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
         #region extension to MIME type list
 			{ ".htm", "text/html" },
