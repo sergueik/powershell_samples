@@ -20,10 +20,8 @@ using System.Threading;
 // see also:
 // https://github.com/unosquare/embedio
 // https://github.com/bonesoul/uhttpsharp
-namespace Utils
-{
-	public class SimpleHTTPServer
-	{
+namespace Utils {
+	public class SimpleHTTPServer {
 
 		private NameValueCollection queryString = new NameValueCollection();
 		private String hash = null;
@@ -38,13 +36,11 @@ namespace Utils
 			get { return port; }
 		}
 
-		public SimpleHTTPServer(string documentRoot, int port)
-		{
+		public SimpleHTTPServer(string documentRoot, int port) {
 			this.Initialize(documentRoot, port);
 		}
 
-		public SimpleHTTPServer(string documentRoot)
-		{
+		public SimpleHTTPServer(string documentRoot) {
 			// find an unused port
 			var tcpListener = new TcpListener(IPAddress.Loopback, 0);
 			tcpListener.Start();
@@ -53,14 +49,12 @@ namespace Utils
 			this.Initialize(documentRoot, unusedPort);
 		}
 		
-		public void Stop()
-		{
+		public void Stop() {
 			_serverThread.Abort();
 			_listener.Stop();
 		}
 
-		private void Listen()
-		{
+		private void Listen() {
 			_listener = new HttpListener();
 			_listener.Prefixes.Add("http://*:" + port.ToString() + "/");
 			_listener.Start();
@@ -68,8 +62,8 @@ namespace Utils
 				try {
 					HttpListenerContext context = _listener.GetContext();
 					Process(context);
-				} catch (Exception) {
-
+				} catch (Exception e) {
+					Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
 				}
 			}
 		}
@@ -106,49 +100,46 @@ namespace Utils
 			} else {
 				hash = "";
 			}
-			String filePath = Path.Combine(documentRoot, fileName);
-			Console.Error.WriteLine(String.Format("inspect file: {0}", filePath));
-			if (File.Exists(filePath)) {
-				try {
-					byte[] fileBytes = File.ReadAllBytes(filePath);
-					String fileHash = getMD5Hash(fileBytes);
-					if (string.IsNullOrEmpty(hash) || String.Compare(hash, fileHash, StringComparison.OrdinalIgnoreCase) != 0) {
-						Console.Error.WriteLine(String.Format("Return {0}", filePath));
-						string mime;
-						context.Response.ContentType = mimeTypes.TryGetValue(Path.GetExtension(filePath), out mime) ? mime : "application/octet-stream";
-						// https://stackoverflow.com/questions/32537219/error-httpwebrequest-bytes-to-be-written-to-the-stream-exceed-the-content-len
-						context.Response.ContentLength64 = fileBytes.Length;
-						context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
-						context.Response.AddHeader("Last-Modified", System.IO.File.GetLastWriteTime(filePath).ToString("r"));
-						context.Response.AddHeader("Hash", fileHash);
-						Console.Error.WriteLine(String.Format("Send {0} bytes", fileBytes.Length));
-						 
-						context.Response.OutputStream.Write(fileBytes, 0, fileBytes.Length);
-						context.Response.OutputStream.Flush();
+			if (fileName != null) {
+				String filePath = Path.Combine(documentRoot, fileName);
+				Console.Error.WriteLine(String.Format("inspect file: {0}", filePath));
+				if (File.Exists(filePath)) {
+					try {
+						byte[] fileBytes = File.ReadAllBytes(filePath);
+						String fileHash = getMD5Hash(fileBytes);
+						if (string.IsNullOrEmpty(hash) || String.Compare(hash, fileHash, StringComparison.OrdinalIgnoreCase) != 0) {
+							Console.Error.WriteLine(String.Format("Return {0}", filePath));
+							string mime;
+							context.Response.ContentType = mimeTypes.TryGetValue(Path.GetExtension(filePath), out mime) ? mime : "application/octet-stream";
+							// https://stackoverflow.com/questions/32537219/error-httpwebrequest-bytes-to-be-written-to-the-stream-exceed-the-content-len
+							context.Response.ContentLength64 = fileBytes.Length;
+							context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
+							context.Response.AddHeader("Last-Modified", System.IO.File.GetLastWriteTime(filePath).ToString("r"));
+							context.Response.AddHeader("Hash", fileHash);
+							Console.Error.WriteLine(String.Format("Send {0} bytes", fileBytes.Length));
 
-						context.Response.StatusCode = (int)HttpStatusCode.OK;
-					} else {
-						Console.Error.WriteLine(String.Format("Unmodified: {0}", fileName));
-						context.Response.StatusCode = (int)HttpStatusCode.NotModified;
-						context.Response.OutputStream.Flush();
+							context.Response.OutputStream.Write(fileBytes, 0, fileBytes.Length);
+							context.Response.OutputStream.Flush();
+
+							context.Response.StatusCode = (int)HttpStatusCode.OK;
+						} else {
+							Console.Error.WriteLine(String.Format("Unmodified: {0}", fileName));
+							context.Response.StatusCode = (int)HttpStatusCode.NotModified;
+							context.Response.OutputStream.Flush();
+						}
+					} catch (Exception e) {
+						Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
+						context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 					}
-
-						
-				} catch (Exception e) {
-					Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+				} else {
+					Console.Error.WriteLine(String.Format("Processing hash error: {0}", hash));
+					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 				}
-
-			} else {
-				Console.Error.WriteLine(String.Format("Processing hash error: {0}", hash));			
-				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			}
-				
 			context.Response.OutputStream.Close();
 		}
 
-		private void Initialize(string documentRoot, int port)
-		{
+		private void Initialize(string documentRoot, int port) {
 			this.documentRoot = documentRoot;
 			this.port = port;
 			_serverThread = new Thread(this.Listen);
@@ -157,19 +148,13 @@ namespace Utils
 		
 		private static IDictionary<string, string> mimeTypes = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
         #region extension to MIME type list
-			{ ".css", "text/css" },
-			{ ".gif", "image/gif" },
 			{ ".htm", "text/html" },
 			{ ".html", "text/html" },
-			{ ".ico", "image/x-icon" },
-			{ ".jpeg", "image/jpeg" },
-			{ ".jpg", "image/jpeg" },
 			{ ".js", "application/x-javascript" },
 			{ ".json", "application/json" },
-			{ ".png", "image/png" },
 			{ ".txt", "text/plain" },
          #endregion
 		};
 	}
-		
+
 }

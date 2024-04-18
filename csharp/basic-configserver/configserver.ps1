@@ -1,4 +1,4 @@
-﻿#Copyright (c) 2023 Serguei Kouzmine
+﻿#Copyright (c) 2023,2024 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -246,8 +246,8 @@ public class ${utility_class} {
       try {
         HttpListenerContext context = _listener.GetContext();
         Process(context);
-      } catch (Exception) {
-
+      } catch (Exception e) {
+        Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
       }
     }
   }
@@ -284,47 +284,44 @@ public class ${utility_class} {
     } else {
       hash = "";
     }
-    String filePath = Path.Combine(documentRoot, fileName);
-    Console.Error.WriteLine(String.Format("inspect file: {0}", filePath));
-    if (File.Exists(filePath)) {
-      try {
-        byte[] fileBytes = File.ReadAllBytes(filePath);
-        String fileHash = getMD5Hash(fileBytes);
-        if (string.IsNullOrEmpty(hash) || String.Compare(hash, fileHash, StringComparison.OrdinalIgnoreCase) != 0) {
-          Console.Error.WriteLine(String.Format("Return {0}", filePath));
-          string mime;
-          context.Response.ContentType = mimeTypes.TryGetValue(Path.GetExtension(filePath), out mime) ? mime : "application/octet-stream";
-          // https://stackoverflow.com/questions/32537219/error-httpwebrequest-bytes-to-be-written-to-the-stream-exceed-the-content-len
-          context.Response.ContentLength64 = fileBytes.Length;
-          context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
-          context.Response.AddHeader("Last-Modified", System.IO.File.GetLastWriteTime(filePath).ToString("r"));
-          context.Response.AddHeader("Hash", fileHash);
-          Console.Error.WriteLine(String.Format("Send {0} bytes", fileBytes.Length));
-           
-          context.Response.OutputStream.Write(fileBytes, 0, fileBytes.Length);
-          context.Response.OutputStream.Flush();
+    if (fileName != null) {
+      String filePath = Path.Combine(documentRoot, fileName);
+      Console.Error.WriteLine(String.Format("inspect file: {0}", filePath));
+      if (File.Exists(filePath)) {
+        try {
+          byte[] fileBytes = File.ReadAllBytes(filePath);
+          String fileHash = getMD5Hash(fileBytes);
+          if (string.IsNullOrEmpty(hash) || String.Compare(hash, fileHash, StringComparison.OrdinalIgnoreCase) != 0) {
+            Console.Error.WriteLine(String.Format("Return {0}", filePath));
+            string mime;
+            context.Response.ContentType = mimeTypes.TryGetValue(Path.GetExtension(filePath), out mime) ? mime : "application/octet-stream";
+            // https://stackoverflow.com/questions/32537219/error-httpwebrequest-bytes-to-be-written-to-the-stream-exceed-the-content-len
+            context.Response.ContentLength64 = fileBytes.Length;
+            context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
+            context.Response.AddHeader("Last-Modified", System.IO.File.GetLastWriteTime(filePath).ToString("r"));
+            context.Response.AddHeader("Hash", fileHash);
+            Console.Error.WriteLine(String.Format("Send {0} bytes", fileBytes.Length));
 
-          context.Response.StatusCode = (int)HttpStatusCode.OK;
-        } else {
-          Console.Error.WriteLine(String.Format("Unmodified: {0}", fileName));
-          context.Response.StatusCode = (int)HttpStatusCode.NotModified;
-          context.Response.OutputStream.Flush();
+            context.Response.OutputStream.Write(fileBytes, 0, fileBytes.Length);
+            context.Response.OutputStream.Flush();
+
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
+          } else {
+            Console.Error.WriteLine(String.Format("Unmodified: {0}", fileName));
+            context.Response.StatusCode = (int)HttpStatusCode.NotModified;
+            context.Response.OutputStream.Flush();
+          }
+        } catch (Exception e) {
+          Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
+          context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         }
-
-          
-      } catch (Exception e) {
-        Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+      } else {
+        Console.Error.WriteLine(String.Format("Processing hash error: {0}", hash));
+        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
       }
-
-    } else {
-      Console.Error.WriteLine(String.Format("Processing hash error: {0}", hash));      
-      context.Response.StatusCode = (int)HttpStatusCode.NotFound;
     }
-      
     context.Response.OutputStream.Close();
   }
-
   
   private static IDictionary<string, string> mimeTypes = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
   #region extension to MIME type list
