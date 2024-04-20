@@ -1097,6 +1097,10 @@ LOAD15MIN: 454677173.41
    * Similar [native app](https://github.com/sflow/host-sflow) (NOTE: not updatedin the Windows part since 2012).
    * [hint](https://www.urtech.ca/2015/09/solved-cannot-load-counter-name-data-because-an-invalid-index-was-read-from-the-registry/) for fixing the `Cannot load Counter Name data because an invalid index '♀ßÇü♦♂ ' was read from the registry.` error
    * https://copy.sh/v86/?profile=windows98
+   * https://winworldpc.com/product/windows-98/98-second-edition
+   * https://forums.virtualbox.org/viewtopic.php?t=110232
+   * [windows 98 software](https://forums.virtualbox.org/viewtopic.php?t=109901)
+   * https://github.com/JHRobotics/patcher9x/
    * https://www.sysprobs.com/pre-installed-windows-98-se-virtualbox-image
    * http://virtualdiskimages.weebly.com/vmware.html
    * https://social.msdn.microsoft.com/Forums/en-US/217f4163-45a8-4352-aed8-d6581ff13ce8/set-recovery-options-in-properties-of-windows-service?forum=Vsexpressvcs
