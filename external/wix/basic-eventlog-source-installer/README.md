@@ -68,7 +68,15 @@ MyCustomEventSource            EventMessageFile    : C:\Program Files\EventSourc
                                CategoryCount       : 1
 
 ```
-
+NOTE: at this time the cmdlet 
+```powrshell
+get-eventlog -logname $name
+```
+returns error:
+```text
+get-eventlog : No matches found
+```
+To add event log entries run the supplied program as discussed below.
 NOTE: the installer causes system level dummy EventLog category message
 file resource `c:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll`
 be copied into its directory.
@@ -668,6 +676,11 @@ Task Scheduler launched "{2CB05819-EC0B-4E54-BF45-FA2B6B38E610}"  instance of ta
 These logs are more than somewhat excessive - the event log is filtered and rendered by __Task Scheduler__ itself, though performance is mediocre
 
 ![Applications and Services Event Logs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-taskscheduler-task-history.png)
+
+
+### See Also
+
+  * [history](https://en.wikipedia.org/wiki/Windows_Installer)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

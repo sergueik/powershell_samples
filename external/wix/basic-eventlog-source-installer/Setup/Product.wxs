@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?define EventLogSource="MyCustomEventSource" ?>
+<?define EventLogName="mycustomlog2" ?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Product Id="*" Name="EventSourceInstaller" Language="1033" Version="1.0.0.0" Manufacturer="My Company" UpgradeCode="c4304df9-266e-459b-bc02-f663af2b5fbd">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
@@ -21,7 +23,7 @@
         <File Id="fileId" Source="$(env.WINDIR)\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll"/>
       </Component>
       <Component Id="EventSourceComponent" Guid="{2E5A07EC-914B-454F-98C8-77A5F6073C52}">
-        <util:EventSource KeyPath="yes" EventMessageFile="[#fileId]" CategoryMessageFile="[#fileId]" CategoryCount="1" Name="MyCustomEventSource" Log="mycustomlog2"/>
+        <util:EventSource KeyPath="yes" EventMessageFile="[#fileId]" CategoryMessageFile="[#fileId]" CategoryCount="1" Name="$(var.EventLogSource)" Log="$(var.EventLogName)"/>
       </Component>
     </ComponentGroup>
   </Fragment>
