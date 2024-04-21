@@ -63,7 +63,7 @@ get-childitem -path HKLM:\SYSTEM\CurrentControlSet\services\eventlog\$name
 
 Name                           Property
 ----                           --------
-MyCustomEventSource2            EventMessageFile    : C:\Program Files\EventSourceInstaller\EventLogMessages.dll
+MyCustomEventSource2           EventMessageFile    : C:\Program Files\EventSourceInstaller\EventLogMessages.dll
                                CategoryMessageFile : C:\Program Files\EventSourceInstaller\EventLogMessages.dll
                                CategoryCount       : 1
 
@@ -74,14 +74,24 @@ get-eventlog -logname $name
 ```
 returns error:
 ```text
-get-eventlog : No matches found
-```
-To add event log entries run the supplied program as discussed below.
-NOTE: the installer causes system level dummy EventLog category message
+get-eventlog : No mnaller causes system level dummy EventLog category message
 file resource `c:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll`
-be copied into its directory.
-How to make it set the Registry value to just the path `%windir%\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll` is a WIP
-
+be copied into theapplication directory. The registry will contain the path to the appplication directory in the `CategoryMessageFile` and `EventMessageFile` values which is apparently not ideal.
+How to get __Wix__ construct the Registry `CategoryMessageFile` and `EventMessageFile` values to just the path `%windir%\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll` is soved by replacing the textbook attibute 
+```xml
+<util:EventSource KeyPath="yes" EventMessageFile="[#fileId]">
+```
+combined 
+with 
+```xml
+<Component Id="FileComponent">
+  <File Id="fileId" Source="$(env.WINDIR)\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll"/>
+</Component>  
+```
+with
+```xml
+<util:EventSource KeyPath="yes" EventMessageFile="$(env.WINDIR)\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll">
+```
 
 ![Applications and Services Event Logs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-eventlog-applications-and-services.png)
 
@@ -705,6 +715,7 @@ These logs are more than somewhat excessive - the event log is filtered and rend
 ### See Also
 
   * [history](https://en.wikipedia.org/wiki/Windows_Installer)
+  * Wix v3 `EventSource `Element (Util Extension) [documentation](https://wixtoolset.org/docs/v3/xsd/util/eventsource/)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
