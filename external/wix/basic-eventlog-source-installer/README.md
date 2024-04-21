@@ -68,7 +68,7 @@ MyCustomEventSource2           EventMessageFile    : C:\Program Files\EventSourc
                                CategoryCount       : 1
 
 ```
-NOTE: if this is the first time the custom event log is installed the cmdlet
+NOTE: if this is the first time the custom event log is installed the cmdlet 
 ```powrshell
 get-eventlog -logname $name
 ```
@@ -76,7 +76,7 @@ prints an error:
 ```text
 get-eventlog : No matches found
 ```
-To create event log entries run the supplied program as discussed below.
+To add event log entries run the supplied program as discussed below.
 
 NOTE: the installer component
 
@@ -90,7 +90,7 @@ combined with
 ```xml
 <util:EventSource KeyPath="yes" EventMessageFile="[#fileId]">
 ```
-attribute is causing the system level dummy EventLog category message file resource dll
+attibute  is causing the system level dummy EventLog category message file  resource dll
  `c:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll`
 provided by Microsoft be copied into the application directory as a standard file resource.
 The registry will then contain the values of `CategoryMessageFile` and `EventMessageFile` set to the path to the appplication directory
@@ -723,10 +723,55 @@ These logs are more than somewhat excessive - the event log is filtered and rend
 ![Applications and Services Event Logs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-eventlog-source-installer/screenshots/capture-taskscheduler-task-history.png)
 
 
+### NOTE
+
+* to modify the values in `Product.wxs` 
+```xml
+<?define EventLogSource="MyCustomEventSource2"?>
+<?define EventLogName="mycustomlog2" ?>
+<?define Resource="$(env.WINDIR)\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll" ?>
+```
+with Powershell one cannot use `select-xml`:
+
+```powershell
+$filepath = (resolve-path 'product.wxs').path
+[XML]$product = get-content –path ($filepath)
+```
+```powershell
+$product | select-xml –xpath “//define”
+```
+the result will be blank. In fact the xpath `/*` will find only the root node: 
+
+```powershell
+$product | Select-Xml –Xpath '/*'
+```
+```xml
+Node Path        Pattern
+---- ----        -------
+Wix  InputStream /*
+```
+no processing instructions can be worked with this way.
+
+* To solve it need the following C#-style code:
+
+```powershell
+$filepath = (resolve-path 'product.wxs').path
+[xml]$product  = new-object System.Xml.XmlDocument
+$product.Load($filepath)
+
+[System.Xml.XmlProcessingInstruction[]] $defines = $product.SelectNodes("/processing-instruction('define')")
+$defines.count
+
+$defines.item(0).Value = 'EventLogSource="MyCustomEventSource3"'
+$product.save($filepath) 
+```
+
 ### See Also
 
   * [history](https://en.wikipedia.org/wiki/Windows_Installer)
-  * Wix v3 `EventSource `Element (Util Extension) [documentation](https://wixtoolset.org/docs/v3/xsd/util/eventsource/)
+  * __Wix v3__ `EventSource `Element (Util Extension) [documentation](https://wixtoolset.org/docs/v3/xsd/util/eventsource/)   
+  * https://stackoverflow.com/questions/9426910/what-is-the-xpath-expression-to-select-a-processing-instruction
+
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
