@@ -63,7 +63,7 @@ get-childitem -path HKLM:\SYSTEM\CurrentControlSet\services\eventlog\$name
 
 Name                           Property
 ----                           --------
-MyCustomEventSource            EventMessageFile    : C:\Program Files\EventSourceInstaller\EventLogMessages.dll
+MyCustomEventSource2            EventMessageFile    : C:\Program Files\EventSourceInstaller\EventLogMessages.dll
                                CategoryMessageFile : C:\Program Files\EventSourceInstaller\EventLogMessages.dll
                                CategoryCount       : 1
 
@@ -126,10 +126,10 @@ Failed to read configuration for log mycustomlog2. The specified channel could n
 the file `c:\Windows\System32\winevt\Logs\mycustomlog2.evtx` may remain if there were logs added
 
 ```cmd
-wevtutil.exe get-publisher MyCustomEventSource
+wevtutil.exe get-publisher MyCustomEventSource2
 ```
 ```text
-name: MyCustomEventSource
+name: MyCustomEventSource2
 guid: 00000000-0000-0000-0000-000000000000
 helpLink: http://go.microsoft.com/fwlink/events.asp?CoName=Microsoft%20Corporation&ProdName=Microsoft%c2%ae%20.NET%20Framework&ProdVer=4.0.30319.0&FileName=EventLogMessages.dll&FileVer=4.8.3761.0
 messageFileName: C:\Program Files\EventSourceInstaller\EventLogMessages.dll
@@ -162,7 +162,7 @@ Program\bin\Debug\EventSourceTestApp.exe
   * check the logs have been added
 
 ```powershell
-get-eventlog -logname Application -source MyCustomEventSource
+get-eventlog -logname Application -source MyCustomEventSource2
 ```
 will raise an error
 ```text
@@ -170,10 +170,34 @@ get-eventlog : No matches found
 ```
 update with command specifying the custom `logname` and add formatting:
 ```powershell
-get-eventlog -logname mycustomlog2 -source MyCustomEventSource -newest 2| format-list
+get-eventlog -logname mycustomlog2 -source MyCustomEventSource2 -newest 2| format-list
 ```
+```text
+Index              : 3
+EntryType          : Information
+InstanceId         : 0
+Message            : Test log message
+Category           : %1
+CategoryNumber     : 0
+ReplacementStrings : {Test log message}
+Source             : MyCustomEventSource2
+TimeGenerated      : 4/20/2024 5:58:24 PM
+TimeWritten        : 4/20/2024 5:58:24 PM
+UserName           :
 
-
+Index              : 2
+EntryType          : Information
+InstanceId         : 0
+Message            : Test log message
+Category           : %1
+CategoryNumber     : 0
+ReplacementStrings : {Test log message}
+Source             : MyCustomEventSource2
+TimeGenerated      : 4/20/2024 5:58:23 PM
+TimeWritten        : 4/20/2024 5:58:23 PM
+UserName           :
+```
+one like to provide misc. EntryTypes like below - this is work in progress
 ```text
 Index              : 14
 EntryType          : Information
