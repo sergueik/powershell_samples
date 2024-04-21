@@ -68,27 +68,38 @@ MyCustomEventSource2           EventMessageFile    : C:\Program Files\EventSourc
                                CategoryCount       : 1
 
 ```
-NOTE: at this time the cmdlet 
+NOTE: if this is the first time the custom event log is installed the cmdlet
 ```powrshell
 get-eventlog -logname $name
 ```
-returns error:
+prints an error:
 ```text
-get-eventlog : No mnaller causes system level dummy EventLog category message
-file resource `c:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll`
-be copied into theapplication directory. The registry will contain the path to the appplication directory in the `CategoryMessageFile` and `EventMessageFile` values which is apparently not ideal.
-How to get __Wix__ construct the Registry `CategoryMessageFile` and `EventMessageFile` values to just the path `%windir%\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll` is soved by replacing the textbook attibute 
-```xml
-<util:EventSource KeyPath="yes" EventMessageFile="[#fileId]">
+get-eventlog : No matches found
 ```
-combined 
-with 
+To create event log entries run the supplied program as discussed below.
+
+NOTE: the installer component
+
 ```xml
 <Component Id="FileComponent">
   <File Id="fileId" Source="$(env.WINDIR)\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll"/>
 </Component>  
 ```
-with
+
+combined with
+```xml
+<util:EventSource KeyPath="yes" EventMessageFile="[#fileId]">
+```
+attribute is causing the system level dummy EventLog category message file resource dll
+ `c:\Windows\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll`
+provided by Microsoft be copied into the application directory as a standard file resource.
+The registry will then contain the values of `CategoryMessageFile` and `EventMessageFile` set to the path to the appplication directory
+which is apparently not ideal.
+
+
+To make  __Wix__ construct the Registry `CategoryMessageFile` and `EventMessageFile`
+values to just the plain string `%windir%\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll`
+is solved by replacing the above attribute with
 ```xml
 <util:EventSource KeyPath="yes" EventMessageFile="$(env.WINDIR)\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll">
 ```
