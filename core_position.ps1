@@ -37,9 +37,11 @@ param (
 # https://www.p-invoke.net/user32/findwindow-1
 # https://pinvokeisalive.gitbook.io/pinvoke/desktopfunctions/user32/findwindowa
 # https://stackoverflow.com/questions/9668872/how-to-get-windows-position
+# see also:
+# https://stackoverflow.com/questions/13520705/move-mouse-to-position-and-left-click
 Add-Type @"
 using System;
-using System.Runtime.InteropServices;o
+using System.Runtime.InteropServices;
 
 public class Win32 {
 	[DllImport("user32.dll", SetLastError = true)]
