@@ -87,6 +87,93 @@ if ($debug_flag) {
   }
 }
 write-output $o.RawValue
+<#
+# NOTE: need to find information about some counter rawvalue normalization
+
+.\get_counter_value.ps1 -category PhysicalDisk -counter '% Idle Time'
+        <add key="CategoryName" value="PhysicalDisk"/>
+        <add key="CounterName" value="% Idle Time"/>
+        <add key="InstanceName" value="0 C: D:"/>
+$category = 'Processor'
+$instance =  '0'
+$counter =  '% Processor Time'
+$o = new-object System.Diagnostics.PerformanceCounter
+$categoryName = $category 
+$instanceName = $instance
+$counterName = $counter
+write-output $o
+write-output $o.RawValue
+# = 1111503437500
+
+CategoryName     : PhysicalDisk
+CounterHelp      : % Idle Time reports the percentage of time during the
+                   sample interval that the disk was idle.
+CounterName      : % Idle Time
+CounterType      : 542573824
+InstanceLifetime : Global
+InstanceName     : 0
+ReadOnly         : True
+MachineName      : .
+RawValue         :
+Site             :
+Container        :
+
+% Processor Time
+$o = Get-Counter -counter  '\Processor(0)\% Processor Time'
+
+$o | select-object -property * | format-list
+
+Readings       : \\lenovo-pc\processor(0)\% processor time :
+                 0.0021399542049827
 
 
+Timestamp      : 4/25/2024 1:15:39 PM
+CounterSamples : {0}
+
+$s = $o.CounterSamples
+
+$s| select-object -property *
+
+
+Path             : \\lenovo-pc\processor(0)\% processor time
+InstanceName     : 0
+CookedValue      : 0.0021399542049827
+RawValue         : 97964843750
+SecondValue      : 133585389397873252
+MultipleCount    : 1
+CounterType      : Timer100NsInverse
+Timestamp        : 4/25/2024 1:15:39 PM
+Timestamp100NSec : 133585245397870000
+Status           : 0
+DefaultScale     : 0
+TimeBase         : 10000000
+
+$s| get-member
+# NOTE: the CookedValue is a property of PerformanceCounterSample
+# The PerformanceCounterSample class is not in System.Diagnostics namespace
+# it is not available to plain .Net application
+# https://learn.microsoft.com/en-us/dotnet/api/microsoft.powershell.commands.getcounter.performancecountersample?view=powershellsdk-1.1.0
+
+   TypeName: Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample
+
+Name             MemberType Definition
+----             ---------- ----------
+Equals           Method     bool Equals(System.Object obj)
+GetHashCode      Method     int GetHashCode()
+GetType          Method     type GetType()
+ToString         Method     string ToString()
+CookedValue      Property   double CookedValue {get;set;}
+CounterType      Property   System.Diagnostics.PerformanceCounterType Counte...
+DefaultScale     Property   uint32 DefaultScale {get;set;}
+InstanceName     Property   string InstanceName {get;set;}
+MultipleCount    Property   uint32 MultipleCount {get;set;}
+Path             Property   string Path {get;set;}
+RawValue         Property   uint64 RawValue {get;set;}
+SecondValue      Property   uint64 SecondValue {get;set;}
+Status           Property   uint32 Status {get;set;}
+TimeBase         Property   uint64 TimeBase {get;set;}
+Timestamp        Property   datetime Timestamp {get;set;}
+Timestamp100NSec Property   uint64 Timestamp100NSec {get;set;}
+
+#>
 
