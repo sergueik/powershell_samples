@@ -1161,7 +1161,8 @@ LOAD15MIN: 454677173.41
    * listing all performance counters on Windows [programmatically](https://dotnetcodr.com/2014/11/12/listing-all-performance-counters-on-windows-with-c-net/)  example
    * [nvidia performance counters discussion](https://stackoverflow.com/questions/36389944/c-sharp-performance-counter-help-nvidia-gpu)
    * [issues/48447](https://github.com/MicrosoftDocs/azure-docs/issues/48447) for Azure Powershell command to add performance counters from the managed a.k.a. connected computers that run the Windows operating system
-
+  * https://gist.github.com/romannort/73e169aa1a43bfb1fd505413cf075138
+  * https://stackoverflow.com/questions/11067565/powershell-get-a-specific-process-counter-with-id-process
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 

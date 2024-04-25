@@ -80,7 +80,6 @@ namespace Tests {
 				utility.CounterName = "Disk Write Bytes/sec";
 				// NOTE: Error CS0815: Cannot assign <null> to an implicitly-typed local variable
 				string instanceName = null;
-				Assert.IsNull(instanceName);
 				Assert.IsTrue(utility.Valid);
 				instanceName = utility.InstanceName;
 				Assert.IsNotNull(instanceName);
@@ -101,5 +100,39 @@ namespace Tests {
 				Assert.IsFalse(utility.Valid);
 				Console.Error.WriteLine(String.Format(@"Category ""{0}"" {1} Counter ""{2}"" is {3}", utility.CategoryName, (utility.InstanceName ==null ? "" : String.Format(@"Instance ""{0}""" , utility.InstanceName)), utility.CounterName, (utility.Valid ? "Valid" : "Invalid")));
 		}
+		
+		
+		[Test]
+		public void test7() {
+			try {
+				var utility = new PerformanceMetadataUtility();
+				utility.CategoryName = "Memory";
+				utility.CounterName = "Available MBytes";
+				String counterHelp = utility.CounterHelp;
+				Assert.IsNotNull(counterHelp);
+
+				Console.Error.WriteLine(String.Format(@"Category ""{0}"" {1} Counter ""{2}"" Counter Help: {3}", utility.CategoryName, (utility.InstanceName ==null ? "" : String.Format(@"Instance ""{0}""" , utility.InstanceName)), utility.CounterName, counterHelp));
+			} catch (Exception e) {
+				Console.Error.WriteLine("Exception: " + e.ToString());
+				Assert.Fail();
+			}
+		}
+		[Test]
+		public void test8() {
+			try {
+				var utility = new PerformanceMetadataUtility();
+				utility.CategoryName = "PhysicalDisk";
+				utility.CounterName = "Disk Write Bytes/sec";
+				String counterHelp = utility.CounterHelp;
+				Assert.IsNotNull(counterHelp);
+
+				Console.Error.WriteLine(String.Format(@"Category ""{0}"" {1} Counter ""{2}"" Counter Help: {3}", utility.CategoryName, (utility.InstanceName ==null ? "" : String.Format(@"Instance ""{0}""" , utility.InstanceName)), utility.CounterName, counterHelp));
+			} catch (Exception e) {
+				Console.Error.WriteLine("Exception: " + e.ToString());
+				Assert.Fail();
+			}
+		}
+
+
 	}
 }

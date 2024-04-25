@@ -13,9 +13,7 @@ public class PerformanceMetadataUtility {
   private List<string> counterNames = new List<string>();
   private string counterName = null;
   // private readonly bool valid = false;
-  // TODO:
-  // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecounter.counterhelp?view=netframework-4.5
-  
+
   public String InstanceName {
     get {
       return instanceName;
@@ -106,7 +104,41 @@ public class PerformanceMetadataUtility {
       }
       return false;
     }
+  }
 
+
+  public String CounterHelp {
+    get {
+      if (this.CategoryName.Length == 0 || this.CounterName.Length == 0) {
+        return null;
+      }
+
+      var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
+      var instances = performanceCounterCategory.GetInstanceNames();
+      if (instances.Any()) {
+        // System.ArgumentException: Counter is not single instance, an instance name needs to be specified.
+        foreach (string instance in instances) {
+		  // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountercategory.instanceexists?view=netframework-4.5#system-diagnostics-performancecountercategory-instanceexists(system-strings)
+          if (performanceCounterCategory.InstanceExists(instance)) {
+            var counters = performanceCounterCategory.GetCounters(instance);
+            foreach (PerformanceCounter performanceCounter in counters) {
+              if (performanceCounter.CounterName.Equals(this.CounterName)) {
+                // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecounter.counterhelp?view=netframework-4.5
+                return performanceCounter.CounterHelp;
+              }
+            }
+          }
+        }
+      } else {
+        var counters = performanceCounterCategory.GetCounters();
+        foreach (PerformanceCounter performanceCounter in counters) {
+          if (performanceCounter.CounterName.Equals(this.CounterName))
+          	// https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecounter.counterhelp?view=netframework-4.5            		
+            return performanceCounter.CounterHelp;
+        }
+      }
+      return null;
+    }
   }
 
 }
