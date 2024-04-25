@@ -1159,6 +1159,8 @@ LOAD15MIN: 454677173.41
    * list of performance counters in specific category [document](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc780836(v=ws.10)) `Process` performance object
    * https://stackoverflow.com/questions/2299097/performance-counter-category-names-c
    * listing all performance counters on Windows [programmatically](https://dotnetcodr.com/2014/11/12/listing-all-performance-counters-on-windows-with-c-net/)  example
+   * [nvidia performance counters discussion](https://stackoverflow.com/questions/36389944/c-sharp-performance-counter-help-nvidia-gpu)
+   * [issues/48447](https://github.com/MicrosoftDocs/azure-docs/issues/48447) for Azure Powershell command to add performance counters from the managed a.k.a. connected computers that run the Windows operating system
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

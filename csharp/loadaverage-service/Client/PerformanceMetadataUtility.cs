@@ -6,8 +6,16 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class PerformanceMetadataUtility {
+
   private string categoryName = null;
   private string instanceName = null;
+  private List<string> categoryNames = new List<string>();
+  private List<string> counterNames = new List<string>();
+  private string counterName = null;
+  // private readonly bool valid = false;
+  // TODO:
+  // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecounter.counterhelp?view=netframework-4.5
+  
   public String InstanceName {
     get {
       return instanceName;
@@ -19,10 +27,10 @@ public class PerformanceMetadataUtility {
     }
     set { categoryName = value; }
   }
-  private List<string> categoryNames = new List<string>();
   public List<string> CategoryNames {
     get {
       if (categoryNames.Count == 0) {
+  		// https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountercategory?view=netframework-4.5
         var categories = PerformanceCounterCategory.GetCategories();
         foreach (PerformanceCounterCategory performanceCounterCategory in categories) {
           categoryNames.Add(performanceCounterCategory.CategoryName);
@@ -31,7 +39,7 @@ public class PerformanceMetadataUtility {
       return categoryNames;
     }
   }
-  private List<string> counterNames = new List<string>();
+
   public List<string> CounterNames {
     get {
       if (categoryName != null) {
@@ -50,6 +58,7 @@ public class PerformanceMetadataUtility {
           }
         } else {
           var counters = performanceCounterCategory.GetCounters();
+          // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecounter?view=netframework-4.5
           foreach (PerformanceCounter performanceCounter in counters) {
             counterNames.Add(performanceCounter.CounterName);
           }
@@ -59,7 +68,7 @@ public class PerformanceMetadataUtility {
 
     }
   }
-  private string counterName = null;
+
   public string CounterName {
     get {
       return counterName;
@@ -67,7 +76,6 @@ public class PerformanceMetadataUtility {
     set { counterName = value; }
   }
 
-  // private readonly bool valid = false;
   public Boolean Valid {
     get {
       if (this.CategoryName.Length == 0 || this.CounterName.Length == 0) {
@@ -78,6 +86,7 @@ public class PerformanceMetadataUtility {
       if (instances.Any()) {
         // System.ArgumentException: Counter is not single instance, an instance name needs to be specified.
         foreach (string instance in instances) {
+		  // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountercategory.instanceexists?view=netframework-4.5#system-diagnostics-performancecountercategory-instanceexists(system-strings)
           if (performanceCounterCategory.InstanceExists(instance)) {
             var counters = performanceCounterCategory.GetCounters(instance);
             foreach (PerformanceCounter performanceCounter in counters) {
