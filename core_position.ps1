@@ -39,6 +39,7 @@ param (
 # https://stackoverflow.com/questions/9668872/how-to-get-windows-position
 # see also:
 # https://stackoverflow.com/questions/13520705/move-mouse-to-position-and-left-click
+
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
@@ -253,3 +254,31 @@ drawbounds -rect $region -handle $handle
 start-sleep -seconds 3
 
 get-process | where-object { $_.name -match $name } | stop-process
+
+# see also client apps e.g. https://pkg.go.dev/github.com/go-vgo/robotgo#section-readme
+# https://github.com/go-vgo/robotgo/blob/master/examples/mouse/main.go
+<#
+@'
+package main
+
+import (
+	"fmt"
+	"github.com/go-vgo/robotgo"
+	hook "github.com/robotn/gohook"
+)
+
+func main() {
+	fmt.Println("--- Please hold MouseLeft---")
+	hook.Register(hook.MouseHold, nil, func(e hook.Event) {
+		if e.Button == 1 {
+			sx, sy := robotgo.GetScreenSize()
+			robotgo.MouseSleep = 100
+			robotgo.MoveSmooth(sx/2, sy/2-20, 5.0, 5.0)
+		}
+	})
+
+	s := hook.Start()
+	<-hook.Process(s)
+}
+'@
+#>
