@@ -20,8 +20,8 @@
 
 param (
   [string]$instance = $null,
-  [string]$category = 'System',
-  [string]$counter = 'Processor Queue Length',
+  [string]$category = $null,
+  [string]$counter = $null,
   [switch]$help,
   [switch]$debug
 
@@ -38,6 +38,7 @@ if ([bool]$psboundparameters['help'].ispresent) {
       if ($Instance -ne '') {
         $o.InstanceName = $instance
       }
+      
       write-output $o.CounterHelp
       exit
     }
@@ -58,7 +59,8 @@ ory assigned to the standby (cached), free and zero page lists.
 
 ${name} -Category Memory -Counter 'Available bytes'
 
-13079433216
+RawValue: 3150073856
+RawValue: 3149938688 CookedValue: 3149938688
 
 
 ${name} -Category Processor -Counter '% Processor Time' -help
@@ -68,7 +70,8 @@ ${name} -Category Processor -Counter '% Processor Time' -help
 ${name} -Category Processor -Counter '% Processor Time' -instance '0' -debug
 
 Category: "Processor" Counter: "% Processor Time" Intance: "0"
-65955468750
+RawValue: 65955468750
+RawValue: 65955468750 CookedValue: 0
 "@
   exit
 }
@@ -81,12 +84,31 @@ $o.CounterName = $counter
 $o.InstanceName = $instance
 if ($debug_flag) {
   if ($Instance -ne '') {
-    write-output ('Category: "{0}" Counter: "{1}" Instance: "{2}"' -f $category, $counter, $instance)
+    write-output ('Category: "{0}"  Instance: "{1}" Counter: "{1}"' -f $category, $counter, $instance)
   } else {
     write-output ('Category: "{0}" Counter: "{1}"' -f $category, $counter)
   }
 }
-write-output $o.RawValue
+write-output ('RawValue: {0}' -f $o.RawValue)
+# run system cmdlet
+if ($Instance -ne '') {
+  $p = ( '\{0}({1})\{2}' -f $category, $instance, $counter)
+  } else {
+  $p = (  '\{0}\{1}' -f $category, $counter)
+}
+$o = Get-Counter -counter $p
+$s = $o.CounterSamples
+$r = $s |Get-Member -Name CookedValue
+if ($debug_flag) {
+  # NOTE: not getting the value
+  $r
+}
+$data = $s | select-object -property CookedValue,TimeBase,RawValue
+write-output ('RawValue: {0} CookedValue: {1}' -f $data.RawValue , $data.CookedValue )
+ 
+
+
+# write-output $r.CookedValue
 <#
 # NOTE: need to find information about some counter rawvalue normalization
 
@@ -149,7 +171,9 @@ DefaultScale     : 0
 TimeBase         : 10000000
 
 $s| get-member
-# NOTE: the CookedValue is a property of PerformanceCounterSample
+
+# NOTE: the CookedValue is a property of PerformanceCounterSample object
+# it existed in Powershell Version 2.0 already, but not in the .Net
 # The PerformanceCounterSample class is not in System.Diagnostics namespace
 # it is not available to plain .Net application
 # https://learn.microsoft.com/en-us/dotnet/api/microsoft.powershell.commands.getcounter.performancecountersample?view=powershellsdk-1.1.0
@@ -175,5 +199,57 @@ TimeBase         Property   uint64 TimeBase {get;set;}
 Timestamp        Property   datetime Timestamp {get;set;}
 Timestamp100NSec Property   uint64 Timestamp100NSec {get;set;}
 
+
+# NOTE: apparenty the CounterSamples membertype is a Property
+# however a plain getter '.' call does not retrieve its Property. 
+# It apparently behaves similar to NoteProperty
+# see also:
+# https://stackoverflow.com/questions/29141914/what-is-a-powershell-noteproperty
+# https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/get-member?view=powershell-5.1
+$s.RawValue
+# the property assess was problematic in early version of Powershell:
+# 2.x
+$s.RawValue -eq $null
+$True
+# 5.x
+$s.RawValue -eq $null
+False
+$s |Get-Member -Name RawValue
+
+
+   TypeName: Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample
+
+Name     MemberType Definition
+----     ---------- ----------
+RawValue Property   System.UInt64 TimeBase {get;set;}
+
+
+$r = $s |Get-Member -Name RawValue
+$r |select-object -property * |format-list
+
+
+TypeName   : Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample
+Name       : RawValue
+MemberType : Property
+Definition : System.UInt64 RawValue {get;set;}
+# this is becoming too complex. The following workaround is possible.
+# for general solution, see `ConvertTo-Hashtable` (parse_json_hash.ps1)
+# origin: https://4sysops.com/archives/convert-json-to-a-powershell-hash-table/
+# see also: https://github.com/sergueik/powershell_ui_samples/blob/master/external/parse_json_hash.ps1
+# http://blogs.msdn.com/b/timid/archive/2013/03/05/converting-pscustomobject-to-from-hashtables.aspx
+ 
+$s | select-object -property CookedValue,TimeBase,RawValue
+
+               CookedValue                   TimeBase                  RawValue
+               -----------                   --------                  --------
+                    1.5625                   10000000                1304531250
+
+$data = $s | select-object -property CookedValue,TimeBase,RawValue
+
+
+$data.RawValue / $data.TimeBase
+130.453125
+$data.CookedValue
+1.5625
 #>
 
