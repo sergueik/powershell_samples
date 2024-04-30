@@ -32,8 +32,174 @@ param(
   [switch]$debug
 )
 
+$debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
+
+add-type -TypeDefinition @'
+
+using System;
+using System.Diagnostics;
+using System.Collections;
+using System.Collections.Generic;
+
+using System.Linq;
+
+public class PerformanceMetadataUtility {
+
+  private string categoryName = null;
+  private string instanceName = null;
+  private List<string> categoryNames = new List<string>();
+  private List<string> counterNames = new List<string>();
+  private string counterName = null;
+  // private readonly bool valid = false;
+
+  public String InstanceName {
+    get {
+      return instanceName;
+    }
+  }
+  public String CategoryName {
+    get {
+      return categoryName;
+    }
+    set { categoryName = value; }
+  }
+  public List<string> CategoryNames {
+    get {
+      if (categoryNames.Count == 0) {
+  		// https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountercategory?view=netframework-4.5
+        var categories = PerformanceCounterCategory.GetCategories();
+        foreach (PerformanceCounterCategory performanceCounterCategory in categories) {
+          categoryNames.Add(performanceCounterCategory.CategoryName);
+        }
+      }
+      return categoryNames;
+    }
+  }
+
+  public List<string> CounterNames {
+    get {
+      if (categoryName != null) {
+        var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
+
+        var instances = performanceCounterCategory.GetInstanceNames();
+        if (instances.Any()) {
+          var instance = instances.First();
+          if (performanceCounterCategory.InstanceExists(instance)) {
+            var counters = performanceCounterCategory.GetCounters(instance);
+            foreach (PerformanceCounter performanceCounter in counters) {
+              // Console.WriteLine("Category: {0}, instance: {1}, counter: {2}", performanceCounter.CategoryName, instance, performanceCounter.CounterName);
+              // TODO: find the appropriate format for instance
+              counterNames.Add(performanceCounter.CounterName);
+            }
+          }
+        } else {
+          var counters = performanceCounterCategory.GetCounters();
+          // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecounter?view=netframework-4.5
+          foreach (PerformanceCounter performanceCounter in counters) {
+            counterNames.Add(performanceCounter.CounterName);
+          }
+        }
+      }
+      return counterNames;
+
+    }
+  }
+
+  public string CounterName {
+    get {
+      return counterName;
+    }
+    set { counterName = value; }
+  }
+
+  public Boolean Valid {
+    get {
+      if (this.CategoryName.Length == 0 || this.CounterName.Length == 0) {
+        return false;
+      }
+      var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
+      var instances = performanceCounterCategory.GetInstanceNames();
+      if (instances.Any()) {
+        // System.ArgumentException: Counter is not single instance, an instance name needs to be specified.
+        foreach (string instance in instances) {
+		  // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountercategory.instanceexists?view=netframework-4.5#system-diagnostics-performancecountercategory-instanceexists(system-strings)
+          if (performanceCounterCategory.InstanceExists(instance)) {
+            var counters = performanceCounterCategory.GetCounters(instance);
+            foreach (PerformanceCounter performanceCounter in counters) {
+              if (performanceCounter.CounterName.Equals(this.CounterName)) {
+                this.instanceName = instance;
+                return true;
+              }
+            }
+          }
+        }
+      } else {
+        var counters = performanceCounterCategory.GetCounters();
+        foreach (PerformanceCounter performanceCounter in counters) {
+          if (performanceCounter.CounterName.Equals(this.CounterName))
+            return true;
+        }
+      }
+      return false;
+    }
+  }
+
+  public String CounterHelp {
+    get {
+      if (this.CategoryName.Length == 0 || this.CounterName.Length == 0) {
+        return null;
+      }
+
+      var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
+      var instances = performanceCounterCategory.GetInstanceNames();
+      if (instances.Any()) {
+        // System.ArgumentException: Counter is not single instance, an instance name needs to be specified.
+        foreach (string instance in instances) {
+		  // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountercategory.instanceexists?view=netframework-4.5#system-diagnostics-performancecountercategory-instanceexists(system-strings)
+          if (performanceCounterCategory.InstanceExists(instance)) {
+            var counters = performanceCounterCategory.GetCounters(instance);
+            foreach (PerformanceCounter performanceCounter in counters) {
+              if (performanceCounter.CounterName.Equals(this.CounterName)) {
+                // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecounter.counterhelp?view=netframework-4.5
+                return performanceCounter.CounterHelp;
+              }
+            }
+          }
+        }
+      } else {
+        var counters = performanceCounterCategory.GetCounters();
+        foreach (PerformanceCounter performanceCounter in counters) {
+          if (performanceCounter.CounterName.Equals(this.CounterName))
+          	// https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecounter.counterhelp?view=netframework-4.5            		
+            return performanceCounter.CounterHelp;
+        }
+      }
+      return null;
+    }
+  }
+
+}
+'@
+
 if ([bool]$psboundparameters['help'].ispresent) {
-$name = 'makeconf.ps1' 
+
+  if ($category -ne '') {
+    if ($counter -ne '') {
+
+      $o = new-object PerformanceMetadataUtility
+      $o.CategoryName = $category
+      $o.CounterName = $counter
+      if ($o.Valid) {
+        write-output $o.CounterHelp 
+      } else {
+        write-output ('The combination of Category "{0}" and Counter "{1}" is Invalid' -f $category,$counter)
+      }
+      exit
+    }
+  }
+
+
+$name = 'makeconf.ps1'
   write-host @"
 Example Usage:
 ${name} [-list]
@@ -72,118 +238,14 @@ prints app.xml fragment:
 .\${name} -Category X -Counter Y
 will print an error
 The combination of Category X and Counter Y is Invalid
+
+.\${name} -help -Category PhysicalDisk -Counter '% Disk Time'
+% Disk Time is the percentage of elapsed time that the selected disk drive was busy servicing read or write requests.
+
 "@
   exit
 }
 
-$debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $debug.ToBool()
-
-add-type -TypeDefinition @'
-
-using System;
-using System.Diagnostics;
-using System.Collections;
-using System.Collections.Generic;
-
-using System.Linq;
-
-public class PerformanceMetadataUtility {
-  private string categoryName = null;
-  private string instanceName = null;
-  public String InstanceName {
-    get {
-      return instanceName;
-    }
-  }
-  public String CategoryName {
-    get {
-      return categoryName;
-    }
-    set { categoryName = value; }
-  }
-  private List<string> categoryNames = new List<string>();
-  public List<string> CategoryNames {
-    get {
-      if (categoryNames.Count == 0) {
-        var categories = PerformanceCounterCategory.GetCategories();
-        foreach (PerformanceCounterCategory performanceCounterCategory in categories) {
-          categoryNames.Add(performanceCounterCategory.CategoryName);
-        }
-      }
-      return categoryNames;
-    }
-  }
-  private List<string> counterNames = new List<string>();
-  public List<string> CounterNames {
-    get {
-      if (categoryName != null) {
-        var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
-
-        var instances = performanceCounterCategory.GetInstanceNames();
-        if (instances.Any()) {
-          var instance = instances.First();
-          if (performanceCounterCategory.InstanceExists(instance)) {
-            var counters = performanceCounterCategory.GetCounters(instance);
-            foreach (PerformanceCounter performanceCounter in counters) {
-              // Console.WriteLine("Category: {0}, instance: {1}, counter: {2}", performanceCounter.CategoryName, instance, performanceCounter.CounterName);
-              // TODO: find the appropriate format for instance
-              counterNames.Add(performanceCounter.CounterName);
-            }
-          }
-        } else {
-          var counters = performanceCounterCategory.GetCounters();
-          foreach (PerformanceCounter performanceCounter in counters) {
-            counterNames.Add(performanceCounter.CounterName);
-          }
-        }
-      }
-      return counterNames;
-
-    }
-  }
-  private string counterName = null;
-  public string CounterName {
-    get {
-      return counterName;
-    }
-    set { counterName = value; }
-  }
-
-  // private readonly bool valid = false;
-  public Boolean Valid {
-    get {
-      if (this.CategoryName.Length == 0 || this.CounterName.Length == 0) {
-        return false;
-      }
-      var performanceCounterCategory = new PerformanceCounterCategory(categoryName);
-      var instances = performanceCounterCategory.GetInstanceNames();
-      if (instances.Any()) {
-        // System.ArgumentException: Counter is not single instance, an instance name needs to be specified.
-        foreach (string instance in instances) {
-          if (performanceCounterCategory.InstanceExists(instance)) {
-            var counters = performanceCounterCategory.GetCounters(instance);
-            foreach (PerformanceCounter performanceCounter in counters) {
-              if (performanceCounter.CounterName.Equals(this.CounterName)) {
-                this.instanceName = instance;
-                return true;
-              }
-            }
-          }
-        }
-      } else {
-        var counters = performanceCounterCategory.GetCounters();
-        foreach (PerformanceCounter performanceCounter in counters) {
-          if (performanceCounter.CounterName.Equals(this.CounterName))
-            return true;
-        }
-      }
-      return false;
-    }
-
-  }
-
-}
-'@
 
 $o = new-object PerformanceMetadataUtility
 if ([bool]$psboundparameters['list'].ispresent) {
@@ -203,7 +265,7 @@ if ([bool]$psboundparameters['list'].ispresent) {
       $o.CounterName = $counter  
       # NOTE: 'Valid' is a getter
       if ($o.Valid) {
-	     # TODO: while verifying that a category / counter exist, provide instance hint
+	 # TODO: while verifying that a category / counter exist, provide instance hint
       	 $instance = $o.InstanceName;
       	 write-output @"
       	<add key="CategoryName" value="${category}"/>
@@ -211,7 +273,7 @@ if ([bool]$psboundparameters['list'].ispresent) {
       	<add key="InstanceName" value="${instance}"/>
 "@
       } else {
-        write-host ('The combination of Category "{0}" and Counter "{1}" is Invalid' -f $category,$counter)
+        write-output ('The combination of Category "{0}" and Counter "{1}" is Invalid' -f $category,$counter)
       }
       
    }  
