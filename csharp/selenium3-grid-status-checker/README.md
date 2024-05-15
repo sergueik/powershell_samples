@@ -451,7 +451,10 @@ does not work when there are many system tray applications and may need more wor
     + http://www.devhut.net/webbrowser-activex-control-google-maps-invalid-character-scripting-error/
     + https://stackoverflow.com/questions/17922308/use-latest-version-of-internet-explorer-in-the-webbrowser-control/17922508#17922508
     + https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/general-info/ee330730(v=vs.85)
-
+   * misc. ini parsers
+    + https://github.com/rickyah/ini-parser/
+    + https://github.com/MarioZ/MadMilkman.Ini
+    + https://stackoverflow.com/questions/217902/reading-writing-an-ini-file
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
