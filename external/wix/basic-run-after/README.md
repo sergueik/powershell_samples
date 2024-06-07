@@ -197,6 +197,7 @@ will open `notepad.exe` without the argument. Many other attempts will fail to l
   * [Enable Windows Installer logging](https://support.microsoft.com/kb/223300) - explains the flags in the value `KEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Installer\Logging`
   * [icuxika/WiXToolset3Builder](https://github.com/icuxika/WiXToolset3Builder) - `light` and `candle` command options example
 
+  * [history](https://en.wikipedia.org/wiki/Windows_Installer)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

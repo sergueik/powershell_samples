@@ -85,7 +85,9 @@ when the drive letter used to install the application is a real volume
 ![volume](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-ddrive/screenshots/capture-volume.png)
 
 no error is observed with (un)installing the application to alternate drive letter
+### See Also
 
+  * [history](https://en.wikipedia.org/wiki/Windows_Installer)
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 

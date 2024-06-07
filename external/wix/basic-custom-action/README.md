@@ -200,6 +200,7 @@ STATUS: Inactive
    * [use Group Policy to remotely install software](https://learn.microsoft.com/en-us/troubleshoot/windows-server/group-policy/use-group-policy-to-install-software)
    * [deploy Software using Group Policy](https://activedirectorypro.com/deploy-software-using-group-policy)
    * __lessmsi__ [project page](https://lessmsi.activescott.com/) and [source repository](https://github.com/activescott/lessmsi)
+   * [history](https://en.wikipedia.org/wiki/Windows_Installer)
 
 
 ### Author

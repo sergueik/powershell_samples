@@ -328,6 +328,7 @@ always has elevated privileges while doing installs. locked  heavily into Window
   * https://serverfault.com/questions/561246/environment-variable-for-net-framework-location
   * https://manfredlange.blogspot.com/2010/02/using-environment-variables-in-wix.html
   * https://blog.bartdemeyer.be/2013/10/create-an-installer-for-website-with-wix-part-1/
+  * [history](https://en.wikipedia.org/wiki/Windows_Installer)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
