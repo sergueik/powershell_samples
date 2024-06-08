@@ -43,6 +43,9 @@ if (test-path -path $zip_path) {
   start-sleep -second 3
 }
 $shell = new-object -com 'Shell.Application'
+# NOTE: alternative approach is to install J# and use 
+# 'vjslib.dll'
+# see also: https://www.codeproject.com/Tips/22902/How-to-download-an-image-file-as-a-Zip-file-using
 [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression.FileSystem') | out-null
 # create empty zip
 try{
