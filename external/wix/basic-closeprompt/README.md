@@ -36,6 +36,7 @@ msiexec.exe /l*v a.log /x Setup\bin\Debug\Setup.msi
      + https://www.codeproject.com/Articles/335585/Building-Installation-Packages-with-Windows-Instal
      + https://www.codeproject.com/Articles/865604/Writing-a-Wix-Extension-to-Read-XML-Files
      + https://www.codeproject.com/Articles/44191/Drivers-Installation-With-WiX
+  * [history](https://en.wikipedia.org/wiki/Windows_Installer)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

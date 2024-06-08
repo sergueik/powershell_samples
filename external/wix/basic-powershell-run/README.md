@@ -258,6 +258,7 @@ msiexec.exe /l*v a.log /qn /x bin\Debug\Setup.msi
    * https://wixtoolset.org/docs/v3/customactions/qtexec/
    * https://wixtoolset.org/docs/tools/wixext/quietexec/
    * https://stackoverflow.com/questions/31305483/switches-in-wixshellexectarget
+  * [history](https://en.wikipedia.org/wiki/Windows_Installer)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

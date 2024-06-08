@@ -92,10 +92,14 @@ msiexec.exe /l*v a.log /x Setup\bin\Debug\Setup.msi
 
 ### See Also
 
-    * https://stackoverflow.com/questions/59046817/how-to-log-custom-messages-in-wix-installer-code
-    * https://github.com/kurtanr/WiXInstallerExamples
-    * https://stackoverflow.com/questions/26216718/wix-customaction-dll
+  * https://stackoverflow.com/questions/59046817/how-to-log-custom-messages-in-wix-installer-code
+  * https://github.com/kurtanr/WiXInstallerExamples
+  * https://stackoverflow.com/questions/26216718/wix-customaction-dll
 
-    * https://wixtoolset.org/docs/v3/
-    * https://stackoverflow.com/questions/9556474/automatically-populate-a-timestamp-field-in-postgresql-when-a-new-row-is-inserte
-    * https://stackoverflow.com/questions/27101579/how-to-pass-parameters-to-the-custom-action
+  * https://wixtoolset.org/docs/v3/
+  * https://stackoverflow.com/questions/9556474/automatically-populate-a-timestamp-field-in-postgresql-when-a-new-row-is-inserte
+  * https://stackoverflow.com/questions/27101579/how-to-pass-parameters-to-the-custom-action
+  * [history](https://en.wikipedia.org/wiki/Windows_Installer)
+
+### Author
+[Serguei Kouzmine](kouzmine_serguei@yahoo.com)

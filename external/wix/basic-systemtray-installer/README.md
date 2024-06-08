@@ -231,13 +231,13 @@ The application executable is not removed during the uninstall (this is a bug)
 
 ### See Also
 
-
   * MSI [Installer](https://github.com/binjr/binjr/blob/master/distribution/bundlers/win_msi/binjr.wxs) of RRD Time Series Data Browser [](https://github.com/binjr/binjr) 
   * [Installer](https://github.com/Windos/BurntToast/blob/main/Installer/src/BurntToast.wxs) for [Module](https://github.com/Windos/BurntToast) for creating and displaying Toast Notifications on Microsoft Windows 10
   * [converting per-machine install to per-user](https://stackoverflow.com/questions/12102771/how-do-i-install-to-localappdata-folder)
   * `InstallPrivileges` and `InstallScope` attribute of `Package` element [discussion](https://wix-users.narkive.com/pOkFtyxs/creating-msi-for-non-admin-user)
   * [stackoverflow](https://stackoverflow.com/questions/28320441/is-it-possible-to-install-the-same-application-either-per-user-or-per-machine) about challenges of per-use install and  combining both
   * [stackoverflow discussion](https://stackoverflow.com/questions/54602947/wix-msi-installer-successfully-runs-for-uninstalling-an-app-but-the-app-has-not) for MSI installer successfully runs for uninstalling an app but the app has not been uninstalled situation
+  * [history](https://en.wikipedia.org/wiki/Windows_Installer)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

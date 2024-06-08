@@ -355,6 +355,7 @@ the command below is just for reference
     + https://davton.com/blog/how-to-pass-custom-actions-to-a-wix-installer-using-command-line-arguments/
 
   * https://stackoverflow.com/questions/9075564/change-settings-for-power-for-windows-scheduled-task
+  * [history](https://en.wikipedia.org/wiki/Windows_Installer)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
