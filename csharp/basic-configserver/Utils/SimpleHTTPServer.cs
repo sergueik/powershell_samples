@@ -27,9 +27,9 @@ namespace Utils {
 		private String hash = null;
 		private	string fileName = null;
 
-		private Thread _serverThread;
+		private Thread serverThread;
 		private string documentRoot;
-		private HttpListener _listener;
+		private HttpListener listener;
 		private int port;
 		private int code = 0;
 
@@ -51,18 +51,22 @@ namespace Utils {
 		}
 
 		public void Stop() {
-			_serverThread.Abort();
-			_listener.Stop();
+			serverThread.Abort();
+			listener.Stop();
+			Console.Error.WriteLine("Stopped");
 		}
 
 		private void Listen() {
-			_listener = new HttpListener();
-			_listener.Prefixes.Add("http://*:" + port.ToString() + "/");
-			_listener.Start();
+			listener = new HttpListener();
+			listener.Prefixes.Add("http://*:" + port.ToString() + "/");
+			listener.Start();
 			while (true) {
 				try {
-					HttpListenerContext context = _listener.GetContext();
+					HttpListenerContext context = listener.GetContext();
 					Process(context);
+				}	catch(ThreadAbortException e) {
+					Console.Error.WriteLine(String.Format("Exception (ignored): {0}", e.ToString()));
+					return;
 				} catch (Exception e) {
 					Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
 				}
@@ -91,6 +95,7 @@ namespace Utils {
 				return;
 			}
 			queryString = context.Request.QueryString;
+			Console.Error.WriteLine(String.Format("Query String: {0}", queryString.AllKeys.ToArray()));
 			if (queryString.AllKeys.Contains("filename")) {
 				fileName = queryString["filename"];
 				Console.Error.WriteLine(String.Format("filename: {0}", fileName));
@@ -152,8 +157,8 @@ namespace Utils {
 		private void Initialize(string documentRoot, int port) {
 			this.documentRoot = documentRoot;
 			this.port = port;
-			_serverThread = new Thread(this.Listen);
-			_serverThread.Start();
+			serverThread = new Thread(this.Listen);
+			serverThread.Start();
 		}
 
 		private static IDictionary<string, string> mimeTypes = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {

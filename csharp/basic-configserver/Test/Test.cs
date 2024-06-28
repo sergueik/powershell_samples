@@ -30,7 +30,7 @@ namespace Test {
 
 			// initialize custom HttpListener subclass to host the local files
 			// https://docs.microsoft.com/en-us/dotnet/api/system.net.httplistener?redirectedfrom=MSDN&view=netframework-4.7.2
-			String documentRoot = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "");
+			String documentRoot = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "");
 			
 			Console.Error.WriteLine(String.Format("Using document root path: {0}", documentRoot));
 			pageServer = new SimpleHTTPServer(documentRoot);
@@ -46,18 +46,22 @@ namespace Test {
 		// Error CS0246: The type or namespace name 'OneTimeTearDownAttributeAttribute' 
 		// could not be foundt
 		// [OneTimeTearDownAttribute]
-		[TestFixtureSetUpAttribute]
+		// [TestFixtureSetUpAttribute]
+		[TestFixtureTearDownAttribute]
 		public void TearDown() {
-			if (pageServer!= null)
-			pageServer.Stop();
+			if (pageServer!= null) {
+				Console.Error.WriteLine("Stopping pageserver: " + pageServer);
+				pageServer.Stop();
+			}
 			Assert.IsEmpty(verificationErrors.ToString());
 		}
 
 		// the test is run simply to have the server running
 		[Test]
 		public void test() {
-			Thread.Sleep(1000000);
-			// Common.GetLocalHostPageContent("ng_dropdown.htm");
+			// Thread.Sleep(1000000);
+			Common.Port  = port;
+			Common.GetLocalHostPageContent("dummy.htm");
 		}
 		
 	}

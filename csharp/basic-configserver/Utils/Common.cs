@@ -3,7 +3,7 @@ using System.Security.Principal;
 using System;
 using System.IO;
 using System.Linq;
-
+using System.Net;
 
 namespace Utils {
 
@@ -17,8 +17,8 @@ namespace Utils {
 			}
 		}
 
-		public static string CreateTempFile(string content){
-			FileInfo testFile = new FileInfo("webdriver.tmp");
+		public static string CreateTempFile(string content) {
+			var testFile = new FileInfo("webdriver.tmp");
 			if (testFile.Exists) {
 				testFile.Delete();
 			}
@@ -29,7 +29,14 @@ namespace Utils {
 		}
 
 		public static void GetLocalHostPageContent(string filename) {
-			//  driver.Navigate().GoToUrl(String.Format("http://127.0.0.1:{0}/{1}{2}", port, "resources", filename));
+			//  https://stackoverflow.com/questions/4510212/how-i-can-get-web-pages-content-and-save-it-into-the-string-variable
+			
+			using (WebClient client = new WebClient()) {
+				string downloadString = client.DownloadString(String.Format("http://127.0.0.1:{0}/{1}?filename={1}&name={2}", port, "index.html", filename));
+				Console.Error.WriteLine("Data: " + downloadString);
+				
+				Console.Error.WriteLine("Headers: " + client.Headers.ToString());
+			}
 		}
 
 	}
