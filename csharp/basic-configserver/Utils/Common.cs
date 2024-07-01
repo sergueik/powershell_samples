@@ -28,15 +28,28 @@ namespace Utils {
 			return testFile.FullName;
 		}
 
-		public static void GetLocalHostPageContent(string filename) {
+		public static void GetLocalHostPageContentFromWebClient(string filename) {
 			//  https://stackoverflow.com/questions/4510212/how-i-can-get-web-pages-content-and-save-it-into-the-string-variable
-			
-			using (WebClient client = new WebClient()) {
-				string downloadString = client.DownloadString(String.Format("http://127.0.0.1:{0}/{1}?filename={1}&name={2}", port, "index.html", filename));
-				Console.Error.WriteLine("Data: " + downloadString);
-				
-				Console.Error.WriteLine("Headers: " + client.Headers.ToString());
+			var url = String.Format("http://127.0.0.1:{0}/{1}?filename={1}&name={2}", port, "index.html", filename);
+			using (var client = new WebClient()) {
+				var data = client.DownloadString(url);
+				Console.Error.WriteLine("Data: " + data);
+// NOTE: Headers				
+//				Console.Error.WriteLine("Headers: " + client.Headers.ToString());
 			}
+		}
+
+		public static void GetLocalHostPageContentFromWebRequestResponseStream(string filename) {
+			var url = String.Format("http://127.0.0.1:{0}/{1}?filename={1}&name={2}", port, "index.html", filename);
+			WebRequest request = WebRequest.Create(url);
+			WebResponse response = request.GetResponse();
+			Stream responseStream = response.GetResponseStream();
+			var data = String.Empty;
+			using (var streamReader = new StreamReader(responseStream)) {
+				data = streamReader.ReadToEnd();
+				Console.Error.WriteLine("Data: " + data);
+			}
+
 		}
 
 	}

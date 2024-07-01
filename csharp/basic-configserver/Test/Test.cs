@@ -37,6 +37,7 @@ namespace Test {
 			// NOTE: the constructor calls 
 			// pageServer.Initialize() and pageServer.Listen();
 			port = pageServer.Port;
+			Common.Port = port;
 			Console.Error.WriteLine(String.Format("Using Port {0}", port));
 
 		}
@@ -57,11 +58,20 @@ namespace Test {
 		}
 
 		// the test is run simply to have the server running
+		[Ignore]
 		[Test]
-		public void test() {
-			// Thread.Sleep(1000000);
-			Common.Port  = port;
-			Common.GetLocalHostPageContent("dummy.htm");
+		public void test1() {
+			Thread.Sleep(1000000);
+		}
+		
+		[Test]
+		public void test2() {
+			Common.GetLocalHostPageContentFromWebClient("dummy.htm");
+		}
+
+		[Test]
+		public void test3() {
+			Common.GetLocalHostPageContentFromWebRequestResponseStream("dummy.htm");
 		}
 		
 	}
