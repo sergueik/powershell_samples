@@ -383,7 +383,10 @@ namespace SystemTrayApp {
         public static void Main()
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+// Exception calling "Main" with "0" argument(s):
+// "SetCompatibleTextRenderingDefault must be called before the first
+// IWin32Window object is created in the application."
+           //  Application.SetCompatibleTextRenderingDefault(false);
 
             using (ProcessIcon pi = new ProcessIcon())
             {

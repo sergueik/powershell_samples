@@ -45,6 +45,7 @@ namespace SystemTrayApp {
 		}
 
 		public void Dispose() {
+			notifyIcon.Visible = false;
 			notifyIcon.Dispose();
 		}
 
