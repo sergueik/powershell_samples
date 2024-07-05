@@ -11,16 +11,13 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing.Imaging;
-public class Win32Window : IWin32Window
-{
+public class Win32Window : IWin32Window {
     private IntPtr _hWnd;
-    public IntPtr Handle
-    {
+    public IntPtr Handle {
         get { return _hWnd; }
     }
 
-    public Win32Window(IntPtr handle)
-    {
+    public Win32Window(IntPtr handle) {
         _hWnd = handle;
     }
 }
@@ -38,46 +35,40 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
 
-namespace SystemTrayApp
-{
+namespace SystemTrayApp {
 
-    public class ProcessIcon : IDisposable
-    {
+    public class ProcessIcon : IDisposable {
         NotifyIcon ni;
-        public ProcessIcon()
-        {
+        public ProcessIcon() {
             ni = new NotifyIcon();
         }
 
-        public void Display()
-        {
+        public void Display() {
             ni.MouseClick += new MouseEventHandler(ni_MouseClick);
             // ni.Icon = Resources.SystemTrayApp;
-            ni.Text = "System Tray Utility Application Demonstration Program";
+            // https://learn.microsoft.com/en-us/dotnet/api/system.drawing.icon?view=netframework-4.5#examples
+            ni.Icon = new System.Drawing.Icon(System.Drawing.SystemIcons.Exclamation, 16, 16);
+            ni.Text = "System Tray";
             ni.Visible = true;
+            // Console.Error.WriteLine("Creating ContextMenus");
             ni.ContextMenuStrip = new ContextMenus().Create();
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             ni.Dispose();
         }
 
-        void ni_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
+        void ni_MouseClick(object sender, MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
                 Process.Start("explorer", null);
             }
         }
     }
 
-    class ContextMenus
-    {
+    class ContextMenus {
         bool isAboutLoaded = false;
 
-        public ContextMenuStrip Create()
-        {
+        public ContextMenuStrip Create() {
             // Add the default menu options.
             ContextMenuStrip menu = new ContextMenuStrip();
             ToolStripMenuItem item;
@@ -112,33 +103,27 @@ namespace SystemTrayApp
             return menu;
         }
 
-        void Explorer_Click(object sender, EventArgs e)
-        {
+        void Explorer_Click(object sender, EventArgs e) {
             Process.Start("explorer", null);
         }
 
-        void About_Click(object sender, EventArgs e)
-        {
-            if (!isAboutLoaded)
-            {
+        void About_Click(object sender, EventArgs e) {
+            if (!isAboutLoaded) {
                 isAboutLoaded = true;
                 new AboutBox().ShowDialog();
                 isAboutLoaded = false;
             }
         }
 
-        void Exit_Click(object sender, EventArgs e)
-        {
+        void Exit_Click(object sender, EventArgs e) {
             // Quit without further ado.
             Application.Exit();
         }
     }
 
-    class AboutBox: Form
-    {
+    class AboutBox: Form {
 
-        public AboutBox()
-        {
+        public AboutBox() {
             InitializeComponent();
             this.Text = String.Format("About {0}", AssemblyTitle);
             this.labelProductName.Text = AssemblyProduct;
@@ -150,17 +135,14 @@ namespace SystemTrayApp
 
         private System.ComponentModel.IContainer components = null;
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
         }
 
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBox));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
@@ -419,7 +401,7 @@ namespace SystemTrayApp
 
 $owner = New-Object Win32Window -ArgumentList ([System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle)
 
-$i = New-Object -typeName 'SystemTrayApp.ProcessIcon'
+# $i = new-object -typeName 'SystemTrayApp.ProcessIcon'
 # $i.Display()
 
 $p = [SystemTrayApp.Program]::Main()
