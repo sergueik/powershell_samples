@@ -20,13 +20,14 @@ namespace SystemTrayApp {
 			notifyIcon.MouseClick += new MouseEventHandler(ni_MouseClick);
             notifyIcon.Icon = idle_icon;
 			// https://learn.microsoft.com/en-us/dotnet/api/system.reflection.assemblydescriptionattribute?view=netframework-4.5
-			string assemblyDescription = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute( Assembly.GetExecutingAssembly(), typeof(AssemblyDescriptionAttribute), false)).Description;
-			notifyIcon.Text = assemblyDescription;
+			// string assemblyDescription = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute( Assembly.GetExecutingAssembly(), typeof(AssemblyDescriptionAttribute), false)).Description;
+			// notifyIcon.Text = assemblyDescription;
 
+			notifyIcon.Text = "text";
 			notifyIcon.Visible = true;
 			
-			notifyIcon.BalloonTipText = "polls status of Selenium Grid";
-            notifyIcon.BalloonTipTitle = "System Tray Selenium Grid Status Checker";
+			notifyIcon.BalloonTipText = "Balloon Tip Text";
+			notifyIcon.BalloonTipTitle = "System Tray App";
 
 			notifyIcon.ContextMenuStrip = new ContextMenus().Create();
             myTimer.Tick += new EventHandler(TimerEventProcessor);
