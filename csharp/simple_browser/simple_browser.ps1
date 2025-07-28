@@ -106,6 +106,12 @@ public class Win32Window : IWin32Window
     private IntPtr _hWnd;
     private string _cookies;
     private string _url;
+    private string _payload;
+    public string Payload
+    {
+        get { return _payload; }
+        set { _payload = value; }
+    }
 
     public string Cookies
     {
@@ -224,7 +230,40 @@ function promptForContinueWithCookies (
   $f.add_Load({
       param([object]$sender,[System.EventArgs]$eventArgs)
       $browser.Navigate($login_url)
-$data = @'
+[String]$html = $caller.convert($caller.payload) 
+$browser.DocumentText = $html
+    })
+
+  $browser.Add_Navigated(
+    {
+
+      param([object]$sender,[System.Windows.Forms.WebBrowserNavigatedEventArgs]$eventArgs)
+      # wait for the user to successfully log in 
+      # then capture the global cookies and sent to $caller
+      $url = $browser.Url.ToString()
+      if ($caller -ne $null -and $url -ne $null -and $url -match $caller.Url) {
+        $caller.Cookies = $caller.GetGlobalCookies($url)
+      }
+    }
+  )
+
+  $f.ResumeLayout($false)
+  $f.Topmost = $True
+
+  $f.Add_Shown({ $f.Activate() })
+
+  [void]$f.ShowDialog([win32window]($caller))
+  $browser.Dispose() 
+}
+
+$caller = new-object Win32Window -ArgumentList ([System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle)
+$service_host = 'http://localhost:8088'
+$login_route = 'app#/users/sign-in'
+$login_url = ('{0}/{1}' -f $service_host,$login_route)
+
+$caller.Url = 'app#/environments'
+$caller.Payload = @'
+
 ### Info
 
 
@@ -267,38 +306,7 @@ to have file dialog rendered (WIP)
 
 
 '@
-[String]$html = $caller.convert($data) 
-$browser.DocumentText = $html
-    })
 
-  $browser.Add_Navigated(
-    {
-
-      param([object]$sender,[System.Windows.Forms.WebBrowserNavigatedEventArgs]$eventArgs)
-      # wait for the user to successfully log in 
-      # then capture the global cookies and sent to $caller
-      $url = $browser.Url.ToString()
-      if ($caller -ne $null -and $url -ne $null -and $url -match $caller.Url) {
-        $caller.Cookies = $caller.GetGlobalCookies($url)
-      }
-    }
-  )
-
-  $f.ResumeLayout($false)
-  $f.Topmost = $True
-
-  $f.Add_Shown({ $f.Activate() })
-
-  [void]$f.ShowDialog([win32window]($caller))
-  $browser.Dispose() 
-}
-
-$caller = new-object Win32Window -ArgumentList ([System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle)
-$service_host = 'http://localhost:8088'
-$login_route = 'app#/users/sign-in'
-$login_url = ('{0}/{1}' -f $service_host,$login_route)
-
-$caller.Url = 'app#/environments'
 promptForContinueWithCookies $login_url $caller
 
 Write-Host ("{0}->{1}" -f $caller.Url,$caller.Cookies)
