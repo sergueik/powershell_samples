@@ -1,15 +1,10 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
-using Markdig;
-using CommonMark;
-using System.IO;
 
-namespace Utils
-{
+namespace Utils {
 
-	public class Helper
-	{
+	public class Helper {
 		[DllImport("wininet.dll", SetLastError = true)]
 		public static extern bool InternetGetCookieEx(
 			string url,
@@ -32,14 +27,6 @@ namespace Utils
 			} else {
 				return null;
 			}
-		}
-
-		public string convert() {
-		
-			string markdown = File.ReadAllText("README.md");
-			// string html = Markdown.ToHtml(markdown);
-			var result = CommonMark.CommonMarkConverter.Convert(markdown);
-			return result;
 		}
 	}
 

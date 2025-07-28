@@ -39,11 +39,9 @@
     <Prefer32Bit>False</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+	  <!-- NOTE: including twice. What will happen if add project refence only? -->
     <Reference Include="CommonMark">
       <HintPath>..\packages\CommonMark.NET.0.15.1\lib\net45\CommonMark.dll</HintPath>
-    </Reference>
-    <Reference Include="Markdig">
-      <HintPath>..\packages\Markdig.0.41.3\lib\net462\Markdig.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

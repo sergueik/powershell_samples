@@ -26,17 +26,13 @@
     <Reference Include="CommonMark">
       <HintPath>..\packages\CommonMark.NET.0.15.1\lib\net45\CommonMark.dll</HintPath>
     </Reference>
-    <Reference Include="Markdig">
-      <HintPath>..\packages\Markdig.0.41.3\lib\net462\Markdig.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.IO" />
     <Reference Include="System.Runtime.InteropServices" />
-    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper.cs" />
+    <Compile Include="MarkdownConvertor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

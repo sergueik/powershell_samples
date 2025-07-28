@@ -61,13 +61,12 @@ public class SimpleBrowserLocalFile : Form {
  
 		Console.Error.WriteLine("Loading uri: " + localFile);
 		try {
-			webBrowser1.Url = new System.Uri(localFile, System.UriKind.Absolute);
+			// TODO: about:blank
+			webBrowser1.Url = new Uri(localFile, System.UriKind.Absolute);
 			// https://stackoverflow.com/questions/17926197/open-local-file-in-system-windows-forms-webbrowser-control
 			// webBrowser1.DocumentText = pageContent;
-			String html = "<h1>test</h1>";
-			string fullHtml = String.Format(@"<html><head><meta charset='utf-8'></head><body>{0}</body></html>",html);
-			Helper helper = new Helper();
-			html = helper.convert();
+				var markdownConvertor = new MarkdownConvertor();
+			var html = markdownConvertor.convert();
 			webBrowser1.DocumentText = html;
 		} catch (UriFormatException e) {
 			Console.Error.WriteLine(e.ToString());
