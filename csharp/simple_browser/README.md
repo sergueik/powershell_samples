@@ -11,14 +11,26 @@
 |             |          |         |
 
 ### Usage
+
+* make sure  to place `Markdig.dll` into default assembly cache directory `c:\java\selenium\csharp\sharedassemblies`
 ```powershell
 simple_browser_localfile.ps1 -file <MARKDOWN>
 ```
+or
+
+```powershell
+simple_browser_localfile.ps1 -browse
+```
+to have file dialog rendered (WIP)
+
+
+![form](screenshots/form.png)
 
 ### See Also
    * `nuget.exe` [download](https://dist.nuget.org/win-x86-commandline/v2.8.6/nuget.exe). SharpDevelop installs one under `c:\Program Files\SharpDevelop\4.4\AddIns\Misc\PackageManagement` (`c:\Program Files (x86)\SharpDevelop\5.1\AddIns\Misc\PackageManagement" on 64 bit host) 
   * tls 1.2 issue  (*The request was aborted: Could not create SSL/TLS secure channel.*) [fix](https://stackoverflow.com/questions/58993743/could-not-create-ssl-tls-secure-channel-while-trying-to-search-for-nuget-package)
   * [CommonMark.NET](https://github.com/Knagis/CommonMark.NET) nuget dependency [CommonMark.NET](https://www.nuget.org/packages/CommonMark.NET) - lacks table support
+  * https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.webbrowser?view=netframework-4.8
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

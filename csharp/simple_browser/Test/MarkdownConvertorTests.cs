@@ -33,6 +33,7 @@ namespace Tests {
 			Assert.IsNotNull(result);
 			StringAssert.Contains("<td>Hello world!</td>", result);
 		}
+
 		[Test]
 		public void test3() {
 			payload = @"```
@@ -45,5 +46,18 @@ namespace Tests {
 			StringAssert.Contains(@"<pre><code>", result);
 		}
 
+		[Test]
+		public void test4() {
+			payload = @"
+  * Hello world!
+";
+
+			result = helper.convert(payload);
+			Console.Error.WriteLine("HTML " + result);
+			Assert.IsNotNull(result);
+			
+			StringAssert.Contains(
+				@"<ul><li>Hello world!", result.Replace("\n", ""));
+		}
 	}
 }
