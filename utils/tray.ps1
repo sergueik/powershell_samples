@@ -33,4 +33,6 @@ $rb.CopyHere("a2.txt", 0)
 ($rb.items()).count
 
 # 3
+# origin: http://forum.oszone.net/thread-355724.html
+# (New-Object -ComObject Shell.Application).NameSpace(0x0a).Items() | ? {$($_.ExtendedProperty('{9B174B33-40FF-11D2-A27E-00C04FC30871} 2'))+'\'+$($_.Name) -like $file} | Remove-Item
 
