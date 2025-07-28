@@ -8,42 +8,12 @@ using System.Net;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-public class Form1Helper : Form
-{
-    [DllImport("wininet.dll", SetLastError = true)]
-    public static extern bool InternetGetCookieEx(
-        string url,
-        string cookieName,
-        StringBuilder cookieData,
-        ref int size,
-        Int32 dwFlags,
-        IntPtr lpReserved);
 
-    private const int INTERNET_COOKIE_HTTPONLY = 0x00002000;
-    private const int INTERNET_OPTION_END_BROWSER_SESSION = 42;
-
-    public static string GetGlobalCookies(string uri)
-    {
-        int datasize = 1024;
-        StringBuilder cookieData = new StringBuilder((int)datasize);
-        if (InternetGetCookieEx(uri, null, cookieData, ref datasize, INTERNET_COOKIE_HTTPONLY, IntPtr.Zero)
-            && cookieData.Length > 0)
-        {
-            return cookieData.ToString().Replace(';', ',');
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-}
-
-public class Form1 : Form
+public class SimpleBrowser : Form
 {
     private System.Windows.Forms.WebBrowser webBrowser1;
 
-    public Form1()
+    public SimpleBrowser()
     {
         InitializeComponent();
         webBrowser1.Navigate("http://localhost:8088/app#/users/sign-in");

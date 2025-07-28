@@ -5,22 +5,23 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Utils;
 
-public class WebBrowserDemo {
-	[STAThread]
-	public static void Main() {
-		Application.EnableVisualStyles();
-		Application.Run(new Form1());
-	}
-}
-
-public class Form1 : Form {
+public class SimpleBrowserLocalFile : Form {
 	private String localFile = @"file://c:\developer\sergueik\powershell_ui_samples\test.html";
 	// TODO: suppress warning CS0414:
 	// because add-Type :  Warning as Error
 	private StatusStrip statusStrip1;
 	private ToolStripProgressBar toolStripProgressBar1;
 	private WebBrowser webBrowser1;
+
+	[STAThread]
+	public static void Main() {
+		Application.EnableVisualStyles();
+		Application.Run(new SimpleBrowserLocalFile());
+	}
+
+		
 	private void webBrowser1_ProgressChanged(object sender, WebBrowserProgressChangedEventArgs e) {
 		toolStripProgressBar1.Maximum = (int)e.MaximumProgress;
 		toolStripProgressBar1.Value = (int)e.CurrentProgress;
@@ -30,7 +31,7 @@ public class Form1 : Form {
 		toolStripProgressBar1.Value = toolStripProgressBar1.Maximum;     
 	}
 	
-	public Form1() {
+	public SimpleBrowserLocalFile() {
 		statusStrip1 = new StatusStrip();
 		toolStripProgressBar1 = new ToolStripProgressBar();
 		webBrowser1 = new WebBrowser();
@@ -63,6 +64,11 @@ public class Form1 : Form {
 			webBrowser1.Url = new System.Uri(localFile, System.UriKind.Absolute);
 			// https://stackoverflow.com/questions/17926197/open-local-file-in-system-windows-forms-webbrowser-control
 			// webBrowser1.DocumentText = pageContent;
+			String html = "<h1>test</h1>";
+			string fullHtml = String.Format(@"<html><head><meta charset='utf-8'></head><body>{0}</body></html>",html);
+			Helper helper = new Helper();
+			html = helper.convert();
+			webBrowser1.DocumentText = html;
 		} catch (UriFormatException e) {
 			Console.Error.WriteLine(e.ToString());
 			return;
