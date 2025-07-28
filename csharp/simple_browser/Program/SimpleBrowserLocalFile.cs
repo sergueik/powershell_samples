@@ -22,18 +22,19 @@ public class SimpleBrowserLocalFile : Form {
 	}
 
 		
-	private void webBrowser1_ProgressChanged(object sender, WebBrowserProgressChangedEventArgs e) {
+	private void progressChanged(object sender, WebBrowserProgressChangedEventArgs e) {
 		toolStripProgressBar1.Maximum = (int)e.MaximumProgress;
 		toolStripProgressBar1.Value = (int)e.CurrentProgress;
 	}
 
-	private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
+	private void documentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
 		toolStripProgressBar1.Value = toolStripProgressBar1.Maximum;     
 	}
 	
 	public SimpleBrowserLocalFile() {
 		statusStrip1 = new StatusStrip();
 		toolStripProgressBar1 = new ToolStripProgressBar();
+		// https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls/webbrowser-control-overview
 		webBrowser1 = new WebBrowser();
 		statusStrip1.SuspendLayout();
 		SuspendLayout();
@@ -42,22 +43,22 @@ public class SimpleBrowserLocalFile : Form {
 			toolStripProgressBar1
 		});
 		statusStrip1.LayoutStyle = ToolStripLayoutStyle.Table;
-		statusStrip1.Location = new System.Drawing.Point(0, 488);
+		statusStrip1.Location = new Point(0, 488);
 		statusStrip1.Name = "statusStrip1";
-		statusStrip1.Size = new System.Drawing.Size(695, 22);
+		statusStrip1.Size = new Size(695, 22);
 		statusStrip1.TabIndex = 0;
 		statusStrip1.Text = "statusStrip1";
 
 		toolStripProgressBar1.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
 		toolStripProgressBar1.Name = "toolStripProgressBar1";
-		toolStripProgressBar1.Size = new System.Drawing.Size(100, 15);
+		toolStripProgressBar1.Size = new Size(100, 15);
 		toolStripProgressBar1.Text = "toolStripProgressBar1";
 
 
 		webBrowser1.Dock = DockStyle.Fill;
-		webBrowser1.Location = new System.Drawing.Point(0, 0);
+		webBrowser1.Location = new Point(0, 0);
 		webBrowser1.Name = "webBrowser1";
-		webBrowser1.Size = new System.Drawing.Size(695, 488);
+		webBrowser1.Size = new Size(695, 488);
  
 		Console.Error.WriteLine("Loading uri: " + localFile);
 		try {
@@ -75,8 +76,8 @@ public class SimpleBrowserLocalFile : Form {
 			Console.Error.WriteLine(e.ToString());
 			return;
 		}
-		webBrowser1.ProgressChanged += new WebBrowserProgressChangedEventHandler(webBrowser1_ProgressChanged);
-		webBrowser1.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(webBrowser1_DocumentCompleted);
+		webBrowser1.ProgressChanged += new WebBrowserProgressChangedEventHandler(progressChanged);
+		webBrowser1.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(documentCompleted);
 
 		AutoScaleDimensions = new SizeF(6F, 13F);
 		AutoScaleMode = AutoScaleMode.Font;
@@ -104,7 +105,7 @@ public class SimpleBrowserLocalFile : Form {
 		}
 		try {
 			webBrowser1.Navigate(new Uri(address));
-		} catch (System.UriFormatException) {
+		} catch (UriFormatException) {
 			return;
 		}
 	}

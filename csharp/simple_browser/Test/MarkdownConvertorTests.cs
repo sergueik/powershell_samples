@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
 using NUnit.Framework;
-using System.Collections;
-using System.Reflection;
 using Utils;
 
 
@@ -23,18 +19,31 @@ namespace Tests {
 			Assert.IsNotNull(result);
 			StringAssert.Contains("<strong>Hello world!</strong>", result);
 		}
+
 		[Test]
 		public void test2() {
 			payload = @"|         |            |  
 |----------------------|---------|
-| foo     | bar        | baz     |  
+| Hello world!     | Hello world!        | Hello world!     |  
 | 1    | 2        | 3     |  
 ";
 
-			result = helper.convert2(payload);
+			result = helper.convert(payload);
 			Console.Error.WriteLine("HTML " + result);
 			Assert.IsNotNull(result);
-			StringAssert.Contains("<strong>Hello world!</strong>", result);
+			StringAssert.Contains("<td>Hello world!</td>", result);
 		}
+		[Test]
+		public void test3() {
+			payload = @"```
+			Hello world!
+```";
+
+			result = helper.convert(payload);
+			Console.Error.WriteLine("HTML " + result);
+			Assert.IsNotNull(result);
+			StringAssert.Contains(@"<pre><code>", result);
+		}
+
 	}
 }

@@ -1,25 +1,23 @@
 using System;
-using CommonMark;
 using Markdig;
 using System.IO;
 
-namespace Utils {
+namespace Utils
+{
 
-	public class MarkdownConvertor {
+	public class MarkdownConvertor
+	{
+		// Includes Table + many more
+		private   MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
 		public string convert() {
 			string payload = File.ReadAllText("README.md");
-			var result = CommonMarkConverter.Convert(payload);
+			var result = Markdown.ToHtml(payload, pipeline);
 			return result;
 		}
 
 		public string convert(string payload) {
-			var result = CommonMarkConverter.Convert(payload);
-			return result;
-		}
-		
-		public string convert2(string payload) {
-			var result = Markdown.ToHtml(payload);
+			var result = Markdown.ToHtml(payload, pipeline);
 			return result;
 		}
 	}

@@ -23,9 +23,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommonMark">
-      <HintPath>..\packages\CommonMark.NET.0.15.1\lib\net45\CommonMark.dll</HintPath>
-    </Reference>
     <Reference Include="Markdig">
       <HintPath>..\packages\Markdig.0.15.0\lib\net35\Markdig.dll</HintPath>
     </Reference>
@@ -39,7 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="..\README.md" >
+    <None Include="..\README.md">
       <Link>README.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
