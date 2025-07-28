@@ -15,10 +15,23 @@ namespace Tests {
 		private string result;
 
 		[Test]
-		public void test() {
+		public void test1() {
 			payload = "**Hello world!**";
 
 			result = helper.convert(payload);
+			Console.Error.WriteLine("HTML " + result);
+			Assert.IsNotNull(result);
+			StringAssert.Contains("<strong>Hello world!</strong>", result);
+		}
+		[Test]
+		public void test2() {
+			payload = @"|         |            |  
+|----------------------|---------|
+| foo     | bar        | baz     |  
+| 1    | 2        | 3     |  
+";
+
+			result = helper.convert2(payload);
 			Console.Error.WriteLine("HTML " + result);
 			Assert.IsNotNull(result);
 			StringAssert.Contains("<strong>Hello world!</strong>", result);

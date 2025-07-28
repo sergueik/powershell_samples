@@ -1,5 +1,6 @@
 using System;
 using CommonMark;
+using Markdig;
 using System.IO;
 
 namespace Utils {
@@ -14,6 +15,11 @@ namespace Utils {
 
 		public string convert(string payload) {
 			var result = CommonMarkConverter.Convert(payload);
+			return result;
+		}
+		
+		public string convert2(string payload) {
+			var result = Markdown.ToHtml(payload);
 			return result;
 		}
 	}

@@ -43,6 +43,9 @@
     <Reference Include="CommonMark">
       <HintPath>..\packages\CommonMark.NET.0.15.1\lib\net45\CommonMark.dll</HintPath>
     </Reference>
+    <Reference Include="Markdig">
+      <HintPath>..\packages\Markdig.0.15.0\lib\net35\Markdig.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
