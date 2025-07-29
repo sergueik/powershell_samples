@@ -61,10 +61,6 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <!--
-    <Compile Include="SimpleBrowser.cs">
-      <SubType>Component</SubType>
-    </Compile> -->
     <Compile Include="SimpleBrowserLocalFile.cs">
       <SubType>Component</SubType>
     </Compile>
