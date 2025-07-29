@@ -23,7 +23,9 @@
 # see also:
 # https://stackoverflow.com/questions/17926197/open-local-file-in-system-windows-forms-webbrowser-control
 # http://www.java2s.com/Tutorial/CSharp/0460__GUI-Windows-Forms/AsimpleBrowser.htm
-
+param (
+  [string]$filename = 'README.md'
+)
 function assembly_is_loaded{
   param(
     [string[]]$defined_type_names = @(),
@@ -95,218 +97,104 @@ Add-Type -TypeDefinition @"
 // "
 using System;
 using System.Text;
-using System.Net;
 using System.Windows.Forms;
 using Markdig;
 
 using System.Runtime.InteropServices;
 
-public class Win32Window : IWin32Window
-{
-    private IntPtr _hWnd;
-    private string _cookies;
-    private string _url;
-    private string _payload;
-    public string Payload
-    {
-        get { return _payload; }
-        set { _payload = value; }
-    }
+public class Win32Window : IWin32Window {
+	private IntPtr _hWnd;
+	private string _payload;
+	public string Payload {
+		get { return _payload; }
+		set { _payload = value; }
+	}
 
-    public string Cookies
-    {
-        get { return _cookies; }
-        set { _cookies = value; }
-    }
+	public Win32Window(IntPtr handle)
+	{
+		_hWnd = handle;
+	}
 
-    public string Url
-    {
-        get { return _url; }
-        set { _url = value; }
-    }
+	public IntPtr Handle {
+		get { return _hWnd; }
+	}
 
-    public Win32Window(IntPtr handle)
-    {
-        _hWnd = handle;
-    }
+	public string convert(string payload) {
+		var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+		var result = Markdown.ToHtml(payload, pipeline);
+		return result;
+	}
 
-    public IntPtr Handle
-    {
-        get { return _hWnd; }
-    }
-
-    [DllImport("wininet.dll", SetLastError = true)]
-    public static extern bool InternetGetCookieEx(
-        string url,
-        string cookieName,
-        StringBuilder cookieData,
-        ref int size,
-        Int32 dwFlags,
-        IntPtr lpReserved);
-
-    private const int INTERNET_COOKIE_HTTPONLY = 0x00002000;
-    private const int INTERNET_OPTION_END_BROWSER_SESSION = 42;
-
-    public string GetGlobalCookies(string uri) {
-        int datasize = 1024;
-        StringBuilder cookieData = new StringBuilder((int)datasize);
-        if (InternetGetCookieEx(uri, null, cookieData, ref datasize, INTERNET_COOKIE_HTTPONLY, IntPtr.Zero)
-            && cookieData.Length > 0) {
-            return cookieData.ToString().Replace(';', ',');
-        } else {
-            return null;
-        }
-    }
-
-  // https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.webbrowser?view=netframework-4.0
-// Navigates to the given URL if it is valid.
-/*
-private void Navigate(String address) {
-    var prefix = "http://";
-    if (String.IsNullOrEmpty(address)) return;
-    if (address.Equals("about:blank")) return;
-    if (!address.StartsWith(prefix)) {
-        address = prefix + address;
-    }
-    try {
-        webBrowser1.Navigate(new Uri(address));
-    } catch (System.UriFormatException) {
-        return;
-    }
-}
-*/
-
-		public string convert(string payload) {
-			var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-			var result = Markdown.ToHtml(payload, pipeline);
-			return result;
-		}
-
-// Updates the URL in TextBoxAddress upon navigation.
-/*
-private void Navigated(object sender, WebBrowserNavigatedEventArgs e) {
-    toolStripTextBox1.Text = webBrowser1.Url.ToString();
-}
-*/
 }
 
-"@ -ReferencedAssemblies 'System.Windows.Forms.dll','System.Runtime.InteropServices.dll','System.Net.dll', 'C:\java\selenium\csharp\sharedassemblies\Markdig.dll'
+"@ -ReferencedAssemblies 'System.Windows.Forms.dll','System.Runtime.InteropServices.dll','C:\java\selenium\csharp\sharedassemblies\Markdig.dll'
 
-function promptForContinueWithCookies (
-  [string]$login_url = $null,
+function render {
+
+param(
   [object]$caller = $null
 )
-{
   @( 'System.Drawing','System.Collections','System.ComponentModel','System.Windows.Forms','System.Data') | ForEach-Object { [void][System.Reflection.Assembly]::LoadWithPartialName($_) }
 
   $f = new-object System.Windows.Forms.Form
   $f.Text = $title
 
-  $timer1 = new-object System.Timers.Timer
-  $label1 = new-object System.Windows.Forms.Label
-
   $f.SuspendLayout()
-  $components = new-object System.ComponentModel.Container
 
-  $browser = new-object System.Windows.Forms.WebBrowser
+  $b = new-object System.Windows.Forms.WebBrowser
   $f.SuspendLayout();
 
-  # webBrowser1
-  $browser.Dock = [System.Windows.Forms.DockStyle]::Fill
-  $browser.Location = new-object System.Drawing.Point (0,0)
-  $browser.Name = "webBrowser1"
-  $browser.Size = new-object System.Drawing.Size (600,600)
-  $browser.TabIndex = 0
-  # Form1 
+  $b.Dock = [System.Windows.Forms.DockStyle]::Fill
+  $b.Location = new-object System.Drawing.Point (0,0)
+  $b.Name = 'webBrowser1'
+  $b.Size = new-object System.Drawing.Size (600,600)
+  $b.TabIndex = 0
+
   $f.AutoScaleDimensions = new-object System.Drawing.SizeF (6,13)
   $f.AutoScaleMode = [System.Windows.Forms.AutoScaleMode]::Font
   $f.ClientSize = new-object System.Drawing.Size (600,600)
-  $f.Controls.Add($browser)
-  $f.Text = "Login to octopus"
+  $f.Controls.Add($b)
+  $f.Text = 'Render Markdoown'
   $f.ResumeLayout($false)
-
-
-
   $f.add_Load({
       param([object]$sender,[System.EventArgs]$eventArgs)
-      $browser.Navigate($login_url)
-[String]$html = $caller.convert($caller.payload) 
-$browser.DocumentText = $html
+        [String]$html = $caller.convert($caller.payload)
+        $b.DocumentText = $html
     })
-
-  $browser.Add_Navigated(
-    {
-
-      param([object]$sender,[System.Windows.Forms.WebBrowserNavigatedEventArgs]$eventArgs)
-      # wait for the user to successfully log in 
-      # then capture the global cookies and sent to $caller
-      $url = $browser.Url.ToString()
-      if ($caller -ne $null -and $url -ne $null -and $url -match $caller.Url) {
-        $caller.Cookies = $caller.GetGlobalCookies($url)
-      }
-    }
-  )
 
   $f.ResumeLayout($false)
   $f.Topmost = $True
 
   $f.Add_Shown({ $f.Activate() })
 
+  # TODO: debug Exception 
+  # calling "ShowDialog" with "1" argument(s): "The handle is invalid"
+
   [void]$f.ShowDialog([win32window]($caller))
-  $browser.Dispose() 
+  $b.Dispose()
+}
+
+if (($filename -eq $null ) -or ($filename -eq '' ) -or (-not (test-path -path $filename ))){
+  # NOTE: format
+  $initial_directory = ( resolve-path '.' ).Path
+  $filter_expression = 'Markdown Documents (*.md)|*.md|All files (*.*)| *.*'
+  add-type -AssemblyName 'System.Windows.Forms'
+  $o = new-object System.Windows.Forms.OpenFileDialog -Property @{
+    InitialDirectory = $initial_directory
+    Filter = $filter_expression
+  }
+  $null = $o.ShowDialog()
+  $filename = $o | select-object -expandproperty FileName
+  if ($filename -ne $null) {
+    write-output ('selected filename: {0}' -f $filename)
+  }
 }
 
 $caller = new-object Win32Window -ArgumentList ([System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle)
-$service_host = 'http://localhost:8088'
-$login_route = 'app#/users/sign-in'
-$login_url = ('{0}/{1}' -f $service_host,$login_route)
 
-$caller.Url = 'app#/environments'
-$caller.Payload = @'
+$payload = ( get-content -path $filename -encoding utf8 ) -join "`r`n"
 
-### Info
+$caller.payload = $payload
+[String]$html = $caller.convert($caller.payload)
 
-
-[Markdown](https://www.markdownguide.org/basic-syntax/) renderer relying on Markdown-to-HTML converter [Markdig](https://github.com/xoofx/markdig) added as nuget dependency
-[Markdig](https://www.nuget.org/packages/Markdig) version __0.15.0__ to perform Markdown to HTML conversion then render in
- [WebBrowser1](https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls/webbrowser-control-overview) ActiveX control embedded in an Windows Forms or in WPF through `System.Windows.Forms.WebBrowser`
-
-| dependency  | version  |         |
-|------------------------|---------|
-| Markdig     | 0.15.0   |         |
-|             |          |         |
-
-### Usage
-
-* make sure  to place `Markdig.dll` into default assembly cache directory `c:\java\selenium\csharp\sharedassemblies`
-```powershell
-simple_browser_localfile.ps1 -file <MARKDOWN>
-```
-or
-
-```powershell
-simple_browser_localfile.ps1 -browse
-```
-to have file dialog rendered (WIP)
-
-
-![form](screenshots/form.png)
-
-### See Also
-   * `nuget.exe` [download](https://dist.nuget.org/win-x86-commandline/v2.8.6/nuget.exe). SharpDevelop installs one under `c:\Program Files\SharpDevelop\4.4\AddIns\Misc\PackageManagement` (`c:\Program Files (x86)\SharpDevelop\5.1\AddIns\Misc\PackageManagement" on 64 bit host) 
-  * tls 1.2 issue  (*The request was aborted: Could not create SSL/TLS secure channel.*) [fix](https://stackoverflow.com/questions/58993743/could-not-create-ssl-tls-secure-channel-while-trying-to-search-for-nuget-package)
-  * [CommonMark.NET](https://github.com/Knagis/CommonMark.NET) nuget dependency [CommonMark.NET](https://www.nuget.org/packages/CommonMark.NET) - lacks table support
-  * https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.webbrowser?view=netframework-4.8
-
-### Author
-[Serguei Kouzmine](kouzmine_serguei@yahoo.com)
-
-
-
-
-
-'@
-
-promptForContinueWithCookies $login_url $caller
-
-Write-Host ("{0}->{1}" -f $caller.Url,$caller.Cookies)
+render -caller $caller
