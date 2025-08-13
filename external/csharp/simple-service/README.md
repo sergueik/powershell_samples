@@ -482,7 +482,38 @@ Troubleshooting can be slow because many parts of the system (accounts, services
 S4U is like giving a trusted helper the keys to run errands for you. It’s powerful and saves time—but if the helper is careless or the locks change, things break or get unsafe.
 
 ![Service4Uer flow diagram](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-service/screenshots/s4u_flow.png)
+```
 
+#### S4U Workflow (Beginner-Friendly)
+
+Time →
++---------+           +-------------------+           +-------------------+           +-------------+
+|  User   |           | Front-end Service |           | Back-end Service  |           |     KDC     |
+| (Alice) |           |   (Web App)       |           |   (Database)      |           | (Domain Ctrl)|
++---------+           +-------------------+           +-------------------+           +-------------+
+     |                         |                           |                           |
+     |  Step 0: Optional login |                           |                           |
+     |------------------------>|                           |                           |
+     |                         |                           |                           |
+     |                         | Step 1: Front-end requests |                           |
+     |                         |  to act on behalf of user  |                           |
+     |                         |-------------------------->|                           |
+     |                         |                           |                           |
+     |                         | <------ Step 2: Front-end |                           |
+     |                         |  receives confirmation    |                           |
+     |                         |                           |                           |
+     |                         | Step 3: Front-end requests |                           |
+     |                         |  access to back-end       |                           |
+     |                         |-------------------------->|                           |
+     |                         |                           |                           |
+     |                         | <------ Step 4: Back-end  |                           |
+     |                         |  confirms access          |                           |
+     |                         |                           |                           |
+     |                         | Step 5: Front-end uses    |                           |
+     |                         |  back-end results         |                           |
+     |                         |-------------------------->|                           |
+
+```
 ### See Also
 
   * [x86 PC emulator and x86-to-wasm JIT, running in the browser](https://copy.sh/v86/) running [windows 98 retail](https://copy.sh/v86/?profile=windows98) and [github project](https://github.com/copy/v86)
