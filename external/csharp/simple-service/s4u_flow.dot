@@ -1,0 +1,24 @@
+digraph S4U_Workflow {
+    rankdir=LR;
+    node [shape=box, style=rounded, fontname="Arial"];
+
+    // Actors
+    User [shape=ellipse, label="User\n(Alice)", style=filled, fillcolor=lightblue];
+    Frontend [shape=box3d, label="Front-end Service\n(Web App)", style=filled, fillcolor=lightgreen];
+    Backend [shape=box3d, label="Back-end Service\n(Database)", style=filled, fillcolor=lightyellow];
+    KDC [shape=diamond, label="Domain Controller\n(KDC)", style=filled, fillcolor=lightpink];
+
+    // S4U2Self flow
+    User -> Frontend [label="Optional login or credentials"];
+    Frontend -> KDC [label="S4U2Self: Request ticket for User"];
+    KDC -> Frontend [label="Service Ticket for User (TGS)"];
+
+    // S4U2Proxy flow
+    Frontend -> KDC [label="S4U2Proxy: Request ticket for Backend"];
+    KDC -> Frontend [label="Service Ticket for Backend as User"];
+    Frontend -> Backend [label="Access Backend using ticket"];
+
+    // Styling for clarity
+    edge [fontsize=10];
+}
+

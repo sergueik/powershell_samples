@@ -444,6 +444,45 @@ Technically,Microsoft introduced __Task Scheduler__ (formerly named __Windows 95
 
 ![Windows 2k Example 1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-service/screenshots/win2k_scheduled_task1.png)
 
+### About Service4User Functionality
+
+#### Kerberos S4U — Beginner’s View
+
+__Kerberos__ is a default security system that lets computers prove who they are without sending passwords over the network. Windows uses it heavily for logging in and letting services talk to each other safely.
+
+__Service for User__ (__S4U__) is a special Microsoft feature added to Kerberos. It’s meant to help in two situations:
+
+__S4U2Self__ – A service can say: “I’m this user” and get a ticket to act as them, even if the user didn’t log in with Kerberos.
+
+__S4U2Proxy__ – Once a service has a ticket for a user, it can get another ticket to talk to another service as that user.
+
+#### Why it’s useful:
+
+Lets you build systems where one program can do work for a user in the background.
+
+Common in web apps and enterprise software that connect to databases or file shares on behalf of a user.
+
+#### Why it’s hard:
+
+It only works if the network and accounts are set up just right in Active Directory. One wrong flag or missing setting can break it.
+
+Updates to Windows may change how it behaves, so automation that once worked can suddenly fail.
+
+Tickets can be too big if a user is in many groups.
+
+Clocks must be in sync, or authentication fails.
+
+#### Why to be cautious:
+
+If set up carelessly, S4U can let a program pretend to be a powerful user. Hackers could abuse this if they get into the wrong account.
+
+Troubleshooting can be slow because many parts of the system (accounts, services, network settings, domain controllers) have to align.
+
+#### Bottom line:
+S4U is like giving a trusted helper the keys to run errands for you. It’s powerful and saves time—but if the helper is careless or the locks change, things break or get unsafe.
+
+![Service4Uer flow diagram](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-service/screenshots/s4u_flow.png)
+
 ### See Also
 
   * [x86 PC emulator and x86-to-wasm JIT, running in the browser](https://copy.sh/v86/) running [windows 98 retail](https://copy.sh/v86/?profile=windows98) and [github project](https://github.com/copy/v86)
@@ -460,6 +499,9 @@ Technically,Microsoft introduced __Task Scheduler__ (formerly named __Windows 95
   * [Task Scheduler Schema Elements](https://learn.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-schema-elements?source=recommendations)
   * [S4U](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-sfu/8ee85a47-7526-4184-a7c5-25a5e4155d7d) - Kerberos Network Authentication Service (V5) Service for User (S4U) Extension provides two extensions to the Kerberos Protocol.
   * KERB_S4U_LOGON structure (ntsecapi.h) [documentation](https://learn.microsoft.com/en-us/windows/win32/api/ntsecapi/ns-ntsecapi-kerb_s4u_logon)
+  * [Kerberos WIKI on Services4User](https://k5wiki.kerberos.org/wiki/Projects/Services4User)
+  * [MSDN S4U documentaation](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-sfu/3bff5864-8135-400e-bdd9-33b552051d94?redirectedfrom=MSDN)
+  * [Kerberos Explained простыми словами](https://habr.com/ru/articles/803163/)(in Russian)
   * [logonType Simple Type in TaskScheduler XML Schema](https://learn.microsoft.com/en-us/windows/win32/taskschd/taskschedulerschema-logontype-simpletype)
   * standalone class doing elevation check - [Application Startup Permissions Validator](https://www.codeproject.com/Tips/3245/Application-Startup-Permissions-Validator)
   * [requesting Admin Approval at Application Start](https://www.codeproject.com/Articles/66259/Requesting-Admin-Approval-at-Application-Start)
