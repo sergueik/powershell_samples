@@ -105,6 +105,12 @@ using System.Runtime.InteropServices;
 public class Win32Window : IWin32Window {
 	private IntPtr _hWnd;
 	private string _payload;
+	private string _filepath;
+
+	public string FilePath {
+		get { return _filepath; }
+		set { _filepath = value; }
+	}
 	public string Payload {
 		get { return _payload; }
 		set { _payload = value; }
@@ -136,6 +142,17 @@ param(
 )
   @( 'System.Drawing','System.Collections','System.ComponentModel','System.Windows.Forms','System.Data') | ForEach-Object { [void][System.Reflection.Assembly]::LoadWithPartialName($_) }
 
+
+  $filename = resolve-path -path $filename 
+  $w = new-object System.IO.FileSystemWatcher
+  $w.Path = split-path $filename # directory name
+  write-host ('filename: {0}' -f $filename )
+  $w.Filter = (split-path $filename -Leaf) # filename 
+  $w.NotifyFilter = [System.IO.NotifyFilters]::LastWrite
+  # TODO: Exception setting "EnableRaisingEvents": "The path is not of a legal form."
+
+  $w.EnableRaisingEvents = $true
+
   $f = new-object System.Windows.Forms.Form
   $f.Text = $title
 
@@ -149,6 +166,17 @@ param(
   $b.Name = 'webBrowser1'
   $b.Size = new-object System.Drawing.Size (600,600)
   $b.TabIndex = 0
+
+  # long version of event delegate combination
+  register-objectevent $w Changed -Action {
+    start-sleep -Milliseconds 200
+    # Reload and render HTML
+    $payload = ( get-content -path $filename -encoding utf8 ) -join "`r`n"
+    $caller.payload = $payload
+    [String]$html = $caller.convert($caller.payload)
+    $b.DocumentText = $html
+   }
+
 
   $f.AutoScaleDimensions = new-object System.Drawing.SizeF (6,13)
   $f.AutoScaleMode = [System.Windows.Forms.AutoScaleMode]::Font
