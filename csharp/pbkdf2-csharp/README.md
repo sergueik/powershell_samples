@@ -585,6 +585,25 @@ There are no benchmarks found
 
 ```	
 
+
+NOTE: cannot open in ildasm.exe __.Net 3.5__:
+
+```cmd
+"c:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\ildasm.exe" /text  packages\BenchmarkDotNet.0.9.8\lib\net45\BenchmarkDotNet.dll
+
+```
+ - no output
+```text
+//  Microsoft (R) .NET Framework IL Disassembler.  Version 3.5.30729.1
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+
+```
+need to use
+```cmd
+
+"c:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\ildasm.exe" /text packages\BenchmarkDotNet.0.9.8\lib\net45\BenchmarkDotNet.dll
+
+```
 ### See Also
 
   * [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2)
@@ -614,5 +633,6 @@ There are no benchmarks found
   * https://www.iconfinder.com/icons/2858157/data_lines_report_icon
   * https://www.iconfinder.com/icons/5309433/business_cryptocurrency_function_hash_security_icon
   * [Why is a leading comma required when creating an array](https://stackoverflow.com/questions/42772083/why-is-a-leading-comma-required-when-creating-an-array)
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
