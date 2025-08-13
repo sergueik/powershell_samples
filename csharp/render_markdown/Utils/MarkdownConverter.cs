@@ -2,11 +2,9 @@ using System;
 using Markdig;
 using System.IO;
 
-namespace Utils
-{
+namespace Utils {
 
-	public class MarkdownConvertor
-	{
+	public class MarkdownConverter : IMarkdownConverter  {
 		// Includes Table + many more
 		private   MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
@@ -20,6 +18,13 @@ namespace Utils
 			var result = Markdown.ToHtml(payload, pipeline);
 			return result;
 		}
+		
+		public string convertFile(string filePath) {
+        var content = File.ReadAllText(filePath);
+        return this.convert(content);
+    }
 	}
+	
+	
 
 }

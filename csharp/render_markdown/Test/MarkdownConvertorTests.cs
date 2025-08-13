@@ -6,7 +6,7 @@ using Utils;
 namespace Tests {
 	[TestFixture]
 	public class MarkdownConvertorTests {
-		private  MarkdownConvertor helper = new MarkdownConvertor();
+		private  IMarkdownConverter helper = new MarkdownConverter();
 		private string payload;
 		private string result;
 
