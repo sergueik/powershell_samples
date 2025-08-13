@@ -41,14 +41,14 @@ namespace Test {
 
 		[Test] 
 		public void encryptTest1() {
-			String value = Program.Program.Encrypt(plainValue, password, saltString );
+			var value = Program.Program.Encrypt(plainValue, password, saltString );
 			StringAssert.Contains(encryptedValue, value);
 		}
 
 		[Test]
 		public void encryptTest2() {
-			String value = Program.Program.Encrypt(plainValue, password, saltString);
-			byte[] salt = Utils.Convertor.HexStringToByteArray(saltString);
+			var value = Program.Program.Encrypt(plainValue, password, saltString);
+			byte[] salt = Convertor.HexStringToByteArray(saltString);
 			// remove the padding
 			var regex = new Regex("=+$");
 
@@ -64,7 +64,7 @@ namespace Test {
 
 		[Test] 
 		public void decryptTest1() {
-			String value = Program.Program.Decrypt(encryptedValue, password);
+			var value = Program.Program.Decrypt(encryptedValue, password);
 			StringAssert.IsMatch(plainValue, value);
 
 		}
@@ -72,14 +72,14 @@ namespace Test {
 		[Test]
 		public void encryptTest3() {
 
-			Rfc2898DeriveBytes deriveBytes = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(password), Utils.Convertor.HexStringToByteArray(saltString), 1000);
+			var deriveBytes = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(password), Utils.Convertor.HexStringToByteArray(saltString), 1000);
 			// ignore the key in this test 
 			deriveBytes.GetBytes(32);
 
 			var iv1 = deriveBytes.GetBytes(16);
 			Console.Error.WriteLine("IV (computed): "  + Convertor.ByteArrayToHexString(iv1));
 
-			String value = Program.Program.Encrypt(plainValue, password, saltString);
+			var value = Program.Program.Encrypt(plainValue, password, saltString);
 			// read  salt and iv from payload
 			var payload = Convert.FromBase64String(value);
 			var salt = new byte[16];

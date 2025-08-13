@@ -35,16 +35,16 @@ namespace Test {
 
 		[Test]
 		public void test2() {
-			String result = parseArgs.GetMacro("debug");
+			var result = parseArgs.GetMacro("debug");
 			Assert.IsNotNull(result);
 			StringAssert.AreEqualIgnoringCase("TRUE", result);
-			bool debug = Boolean.Parse(parseArgs.GetMacro("debug"));
+			var debug = Boolean.Parse(parseArgs.GetMacro("debug"));
 			Assert.AreEqual(true, debug);
 		}
 
 		[Test]
 		public void test3() {
-			String result = parseArgs.GetMacro("arg_with_space");
+			var result = parseArgs.GetMacro("arg_with_space");
 			Assert.IsNotNull(result);
 			StringAssert.Contains(" ", result);
 			Assert.AreEqual("a test", result);
@@ -52,7 +52,7 @@ namespace Test {
 
 		[Test]
 		public void test4() {
-			String result = parseArgs.GetMacro("arg_with_repeated_spaces");
+			var result = parseArgs.GetMacro("arg_with_repeated_spaces");
 			Assert.IsNotNull(result);
 			StringAssert.Contains("  ", result);
 			Assert.AreEqual("another test  with    space", result);
@@ -60,7 +60,7 @@ namespace Test {
 
 		[Test]
 		public void test5() {
-			String[] tokens = ParseArgs.splitTokens(commandLine);
+			var tokens = ParseArgs.splitTokens(commandLine);
 			Assert.AreEqual(5, tokens.Length);
 
 			Console.Error.WriteLine("Length: " + tokens.Length);

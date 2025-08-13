@@ -263,9 +263,9 @@ password: secret
 value: jC/GNzmkjkA6dpCM5J7zNr4EYTMqH+igAAa8Z1/Lkp0=
 reading: 32 bytes of payload
 reading: 0 bytes of data
-salt: O/Æ79¤Z@:v?Oäzó6
+salt: O/ 79 Z@:v?O z 6
 salt: 8C2FC63739A48E403A76908CE49EF336
-iv: _?a3*?è  ?¼g_E'?
+iv: _?a3*?  ? g_E'?
 iv(hex): BE0461332A1FE8A00006BC675FCB929D
 data:
 data(hex):
@@ -530,6 +530,26 @@ True     True     Object[]                                 System.Array
 ```
 
 
+### Next Steps
+
+convert to .net Core
+
+Pure C# logic using only System namespaces (e.g., System.Security.Cryptography).
+
+No UI, no WinForms/WPF, no COM, no embedded browser â€” all major Core blockers are absent.
+
+Only changes needed:
+
+Convert the .csproj to SDK-style (simpler, cross-platform).
+
+Update using directives if necessary (minor, Core is mostly compatible).
+
+
+one can defer test  subproject conversion if it is hard
+
+
+
+
 ### See Also
 
   * [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2)
@@ -559,5 +579,8 @@ True     True     Object[]                                 System.Array
   * https://www.iconfinder.com/icons/2858157/data_lines_report_icon
   * https://www.iconfinder.com/icons/5309433/business_cryptocurrency_function_hash_security_icon
   * [Why is a leading comma required when creating an array](https://stackoverflow.com/questions/42772083/why-is-a-leading-comma-required-when-creating-an-array)
+  * [BCryptPbkdf.Net](https://github.com/Devolutions/BCryptPbkdf.Net) - pure C# implementation of bcrypt_pbkdf, used to derive passwords for OpenSSH keys on .net core. Project includes benchmark tests
+  * [](https://benchmarkdotnet.org/articles/overview.html)
+ 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

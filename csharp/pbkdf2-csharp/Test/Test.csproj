@@ -65,12 +65,15 @@
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Security" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="nunit.framework" />
-    <Reference Include="System" />
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
   <ItemGroup>

@@ -35,7 +35,7 @@ namespace Test {
 
 		[Test]
 		public void test2() {
-			string result = Convertor.ByteArrayToString(bytes);
+			var result = Convertor.ByteArrayToString(bytes);
 			Assert.IsNotNull(result);
 			Assert.AreEqual( 8, result.Length);
 			StringAssert.AreEqualIgnoringCase("ABCDEFGH", result);
@@ -43,7 +43,7 @@ namespace Test {
 
 		[Test]
 		public void test3() {
-			string result = Convertor.ByteArrayToHexString(bytes);
+			var result = Convertor.ByteArrayToHexString(bytes);
 			Assert.IsNotNull(result);
 			Assert.AreEqual( 16, result.Length);
 			StringAssert.AreEqualIgnoringCase("6162636465666768", result);
@@ -64,9 +64,9 @@ namespace Test {
 		
 				[Test]
 		public void test5() {
-			String result1 = Convertor.ByteArrayToString(bytes);
-			String result2 = Convertor.StringtoHexString(result1);
-			String result3 = Convertor.ByteArrayToHexString(bytes);
+			var result1 = Convertor.ByteArrayToString(bytes);
+			var result2 = Convertor.StringtoHexString(result1);
+			var result3 = Convertor.ByteArrayToHexString(bytes);
 			StringAssert.AreEqualIgnoringCase(result3, result2);
 		}
 	}
