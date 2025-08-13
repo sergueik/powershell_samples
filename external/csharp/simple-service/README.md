@@ -482,10 +482,10 @@ Troubleshooting can be slow because many parts of the system (accounts, services
 S4U is like giving a trusted helper the keys to run errands for you. It’s powerful and saves time—but if the helper is careless or the locks change, things break or get unsafe.
 
 ![Service4Uer flow diagram](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-service/screenshots/s4u_flow.png)
-```
+
 
 #### S4U Workflow (Beginner-Friendly)
-
+```
 Time →
 +---------+           +-------------------+           +-------------------+           +-------------+
 |  User   |           | Front-end Service |           | Back-end Service  |           |     KDC     |
@@ -514,6 +514,21 @@ Time →
      |                         |-------------------------->|                           |
 
 ```
+### 🛑 Silent Failures Due to S4U Misconfigurations
+
+When implementing Services for User (S4U), certain configurations can lead to silent failures, making troubleshooting challenging. Common pitfalls include:
+
+- **Untrusted Delegation**: If a service isn't marked as "Trusted for Delegation" in Active Directory, it cannot obtain a service ticket on behalf of a user. This results in access being denied without clear errors.
+
+- **Cross-Domain Constraints**: Constrained delegation across different Active Directory domains is not supported in some versions of Windows Server. This limitation can cause delegation attempts to fail silently.
+
+- **Expired or Invalid Tickets**: If a user's ticket-granting ticket (TGT) has expired or is invalid, S4U2Self requests will fail, leading to access denials without explicit error messages.
+
+- **Encryption Mismatches**: Some systems may not support the encryption types required for S4U operations. For instance, certain versions of Windows Server might not accept non-forwardable tickets in S4U2Proxy requests, resulting in errors like `KRB_ERR_BADOPTION`.
+
+For a comprehensive understanding and troubleshooting guidance, refer to Microsoft's documentation on S4U-related errors: [KDC_ERR_C_PRINCIPAL_UNKNOWN](https://learn.microsoft.com/en-us/troubleshoot/windows-server/certificates-and-public-key-infrastructure-pki/kdc-err-c-principal-unknown-s4u2self-request).
+
+
 ### See Also
 
   * [x86 PC emulator and x86-to-wasm JIT, running in the browser](https://copy.sh/v86/) running [windows 98 retail](https://copy.sh/v86/?profile=windows98) and [github project](https://github.com/copy/v86)

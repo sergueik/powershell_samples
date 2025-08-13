@@ -1,24 +1,20 @@
-digraph S4U_Workflow {
+digraph S4U_Timeline {
     rankdir=LR;
     node [shape=box, style=rounded, fontname="Arial"];
 
-    // Actors
-    User [shape=ellipse, label="User\n(Alice)", style=filled, fillcolor=lightblue];
-    Frontend [shape=box3d, label="Front-end Service\n(Web App)", style=filled, fillcolor=lightgreen];
-    Backend [shape=box3d, label="Back-end Service\n(Database)", style=filled, fillcolor=lightyellow];
-    KDC [shape=diamond, label="Domain Controller\n(KDC)", style=filled, fillcolor=lightpink];
+    User [shape=ellipse, label=<User<BR/>Alice>, style=filled, fillcolor=lightblue];
+    Frontend [shape=box, label=<Front-end Service<BR/>Web App>, style=filled, fillcolor=lightgreen];
+    Backend [shape=box, label=<Back-end Service<BR/>Database>, style=filled, fillcolor=lightyellow];
+    KDC [shape=ellipse, label=<Domain Controller<BR/>KDC>, style=filled, fillcolor=lightpink];
 
-    // S4U2Self flow
-    User -> Frontend [label="Optional login or credentials"];
-    Frontend -> KDC [label="S4U2Self: Request ticket for User"];
-    KDC -> Frontend [label="Service Ticket for User (TGS)"];
+    User -> Frontend [label="Step 0: Optional login/creds"];
+    Frontend -> KDC [label="Step 1: S4U2Self request"];
+    KDC -> Frontend [label="Step 2: Ticket for User"];
+    Frontend -> KDC [label="Step 3: S4U2Proxy request"];
+    KDC -> Frontend [label="Step 4: Ticket for Backend"];
+    Frontend -> Backend [label="Step 5: Access Backend as User"];
 
-    // S4U2Proxy flow
-    Frontend -> KDC [label="S4U2Proxy: Request ticket for Backend"];
-    KDC -> Frontend [label="Service Ticket for Backend as User"];
-    Frontend -> Backend [label="Access Backend using ticket"];
+    { rank=same; User; Frontend; Backend; KDC; }
 
-    // Styling for clarity
-    edge [fontsize=10];
+    edge [fontsize=10, color=black];
 }
-
