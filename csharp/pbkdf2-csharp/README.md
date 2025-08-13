@@ -548,7 +548,42 @@ Update using directives if necessary (minor, Core is mostly compatible).
 one can defer test  subproject conversion if it is hard
 
 
+### Running Benchmarks
 
+```cmd
+cd Benchmarks\bin\Debug
+.\Benchmarks.exe
+```
+```text
+
+// ***** BenchmarkRunner: Start   *****
+// Found benchmarks:
+
+// Validating benchmarks:
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  BenchmarkDotNet.Artifacts\results\BenchmarkRun-001-2025-08-13-04-07-20-report.csv
+  BenchmarkDotNet.Artifacts\results\BenchmarkRun-001-2025-08-13-04-07-20-report-github.md
+  BenchmarkDotNet.Artifacts\results\BenchmarkRun-001-2025-08-13-04-07-20-report.html
+
+// * Detailed results *
+Total time: 00:00:00 (0 sec)
+
+// * Summary *
+
+Host Process Environment Information:
+BenchmarkDotNet=v0.9.8.0
+OS=Microsoft Windows NT 6.2.9200.0
+Processor=11th Gen Intel(R) Core(TM) i5-11300H 3.10GHz, ProcessorCount=8
+Frequency=10000000 ticks, Resolution=100.0000 ns, Timer=UNKNOWN
+CLR=MS.NET 4.0.30319.42000, Arch=32-bit DEBUG
+GC=Concurrent Workstation
+JitModules=clrjit-v4.8.9310.0
+
+There are no benchmarks found
+
+```	
 
 ### See Also
 
@@ -579,8 +614,5 @@ one can defer test  subproject conversion if it is hard
   * https://www.iconfinder.com/icons/2858157/data_lines_report_icon
   * https://www.iconfinder.com/icons/5309433/business_cryptocurrency_function_hash_security_icon
   * [Why is a leading comma required when creating an array](https://stackoverflow.com/questions/42772083/why-is-a-leading-comma-required-when-creating-an-array)
-  * [BCryptPbkdf.Net](https://github.com/Devolutions/BCryptPbkdf.Net) - pure C# implementation of bcrypt_pbkdf, used to derive passwords for OpenSSH keys on .net core. Project includes benchmark tests
-  * [](https://benchmarkdotnet.org/articles/overview.html)
- 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
