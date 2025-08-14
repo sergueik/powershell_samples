@@ -600,16 +600,14 @@ NOTE: cannot open in ildasm.exe __.Net 3.5__:
 ```
 need to use
 ```cmd
-
 "c:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\ildasm.exe" /text packages\BenchmarkDotNet.0.9.8\lib\net45\BenchmarkDotNet.dll
-
 ```
 
 
 ### Porting to .Net Core
 
-	* navigate to `https://dotnet.microsoft.com/en-us/download/dotnet/6.0` to download the SDK archive, pick per Linux platform / CPU
-	* purge the possibly installed - it is prone to lack the `host/fxr`
+  * navigate to `https://dotnet.microsoft.com/en-us/download/dotnet/6.0` to download the SDK archive, pick per Linux platform / CPU
+  * purge the possibly installed - it is prone to lack the `host/fxr`
 ```sh
 sudo apt remove --purge dotnet-sdk-6.0
 file ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz
@@ -617,11 +615,11 @@ file ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz
 ```text
 /home/sergueik/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz: gzip compressed data, from Unix, original size modulo 2^32 515799040
 ```
-	* explore the archive into `/usr/share/dotnet`
+  * explore the archive into `/usr/share/dotnet`
 ```sh
 sudo tar -xzvf ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz -C /usr/share/dotnet
 ```
-    * verify
+  * verify
     
 ```sh
 dotnet --list-sdks
@@ -629,7 +627,7 @@ dotnet --list-sdks
 ```text
 6.0.428 [/usr/share/dotnet/sdk]
 ```
-	* generate SDK `*.csproj` files by hand in `Utils`, `Program`, `Test`.
+  * generate SDK `*.csproj` files by hand in `Utils`, `Program`, `Test`.
 ```XML
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
@@ -652,14 +650,14 @@ dotnet --list-sdks
 ```
 ```text
 ```
-	* generate solution file
+  * generate solution file
 ```sh
 dotnet new sln -n pbkdf2-csharp --force
 ```
 ```text
 The template "Solution File" was created successfully.
 ```
-	* add projects to solution
+  * add projects to solution
 ```sh
 dotnet sln add Test/Test.csproj
 dotnet sln add Program/Program.csproj
@@ -667,7 +665,7 @@ dotnet sln add Utils/Utils.csproj
 ```
 ```text
 ```
-	* compile and build solution
+  * compile and build solution
 ```sh
 dotnet build pbkdf2-csharp.sln
 ```
@@ -683,9 +681,8 @@ MSBuild version 17.3.4+a400405ba for .NET
 
 Build succeeded.
 
-
 ```
-	* compile and run tests
+  * compile and run tests
 ```sh
 dotnet add Test package NUnit --version 3.13.3
 dotnet add Test package NUnit3TestAdapter --version 4.3.1
@@ -695,7 +692,7 @@ dotnet test Test
 ```text
 Passed!  - Failed:     0, Passed:    16, Skipped:     0, Total:    16, Duration: 66 ms - /home/sergueik/src/powershell_samples/csharp/pbkdf2-csharp/Test/bin/Debug/net6.0/Test.dll (net6.0)
 ```
-	* run console application:
+  * run console application:
 ```sh
 ./Program/bin/Debug/net6.0/Program -value=hello -password=secret -operation=encrypt -strong true  -debug false
 ```
@@ -753,6 +750,9 @@ decrypted: hello
   * https://www.iconfinder.com/search/icons?q=data
   * https://www.iconfinder.com/icons/2858157/data_lines_report_icon
   * https://www.iconfinder.com/icons/5309433/business_cryptocurrency_function_hash_security_icon
+  * [BenchmarkDotNet](https://benchmarkdotnet.org/articles/guides/troubleshooting.html) 
+  * [BenchmarkDotNet](https://www.nuget.org/packages/BenchmarkDotNet)  nuget reference. Note the signature of `BenchmarkRunner.Run(...)`.
+  * [BCryptPbkdf.Net](https://github.com/Devolutions/BCryptPbkdf.Net/tree/maste)- A pure C# implementation of bcrypt_pbkdf, with Benchmark.net tests, on .Net  core.
   * [Why is a leading comma required when creating an array](https://stackoverflow.com/questions/42772083/why-is-a-leading-comma-required-when-creating-an-array)
 
 ### Author
