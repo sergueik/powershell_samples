@@ -604,6 +604,127 @@ need to use
 "c:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\ildasm.exe" /text packages\BenchmarkDotNet.0.9.8\lib\net45\BenchmarkDotNet.dll
 
 ```
+
+
+### Porting to .Net Core
+
+	* navigate to `https://dotnet.microsoft.com/en-us/download/dotnet/6.0` to download the SDK archive, pick per Linux platform / CPU
+	* purge the possibly installed - it is prone to lack the `host/fxr`
+```sh
+sudo apt remove --purge dotnet-sdk-6.0
+file ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz
+```
+```text
+/home/sergueik/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz: gzip compressed data, from Unix, original size modulo 2^32 515799040
+```
+	* explore the archive into `/usr/share/dotnet`
+```sh
+sudo tar -xzvf ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz -C /usr/share/dotnet
+```
+    * verify
+    
+```sh
+dotnet --list-sdks
+```
+```text
+6.0.428 [/usr/share/dotnet/sdk]
+```
+	* generate SDK `*.csproj` files by hand in `Utils`, `Program`, `Test`.
+```XML
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Utils\Utils.csproj" />
+    <ProjectReference Include="..\Program\Program.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.3" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
+  </ItemGroup>
+</Project>
+```
+```text
+```
+	* generate solution file
+```sh
+dotnet new sln -n pbkdf2-csharp --force
+```
+```text
+The template "Solution File" was created successfully.
+```
+	* add projects to solution
+```sh
+dotnet sln add Test/Test.csproj
+dotnet sln add Program/Program.csproj
+dotnet sln add Utils/Utils.csproj
+```
+```text
+```
+	* compile and build solution
+```sh
+dotnet build pbkdf2-csharp.sln
+```
+```text
+MSBuild version 17.3.4+a400405ba for .NET
+  Determining projects to restore...
+/home/sergueik/src/powershell_samples/csharp/pbkdf2-csharp/Test/Test.csproj : warning NU1603: Test depends on Microsoft.NET.Test.Sdk (>= 17.8.3) but Microsoft.NET.Test.Sdk 17.8.3 was not found. An approximate best match of Microsoft.NET.Test.Sdk 17.9.0 was resolved. [/home/sergueik/src/powershell_samples/csharp/pbkdf2-csharp/pbkdf2-csharp.sln]
+  All projects are up-to-date for restore.
+/home/sergueik/src/powershell_samples/csharp/pbkdf2-csharp/Test/Test.csproj : warning NU1603: Test depends on Microsoft.NET.Test.Sdk (>= 17.8.3) but Microsoft.NET.Test.Sdk 17.8.3 was not found. An approximate best match of Microsoft.NET.Test.Sdk 17.9.0 was resolved.
+  Utils -> /home/sergueik/src/powershell_samples/csharp/pbkdf2-csharp/Utils/bin/Debug/net6.0/Utils.dll
+  Program -> /home/sergueik/src/powershell_samples/csharp/pbkdf2-csharp/Program/bin/Debug/net6.0/Program.dll
+  Test -> /home/sergueik/src/powershell_samples/csharp/pbkdf2-csharp/Test/bin/Debug/net6.0/Test.dll
+
+Build succeeded.
+
+
+```
+	* compile and run tests
+```sh
+dotnet add Test package NUnit --version 3.13.3
+dotnet add Test package NUnit3TestAdapter --version 4.3.1
+dotnet add Test package Microsoft.NET.Test.Sdk --version 17.8.3
+dotnet test Test
+```
+```text
+Passed!  - Failed:     0, Passed:    16, Skipped:     0, Total:    16, Duration: 66 ms - /home/sergueik/src/powershell_samples/csharp/pbkdf2-csharp/Test/bin/Debug/net6.0/Test.dll (net6.0)
+```
+	* run console application:
+```sh
+./Program/bin/Debug/net6.0/Program -value=hello -password=secret -operation=encrypt -strong true  -debug false
+```
+```text
+debug: true
+password: secret
+value: hello
+use SHA512: True
+salt: BDADAA085A7DF321373CC27D1606C698
+key: 2730A531AC75617909DCE36C0CD83D697DE1CEAB01D9F803006C4E878A46A469
+iv: C769F10EAF40525297FF706B0E7912D8
+data: E3730FEBFA7AD1AF31EE17D098F8D0FE
+encrypted: WLalBjEeam/Db0j03mUv0QpEDID6Dr90FyKjs1Yb/3DHG9PG4sbxDhC9mYRuGoes
+encrypted: WLalBjEeam/Db0j03mUv0QpEDID6Dr90FyKjs1Yb/3DHG9PG4sbxDhC9mYRuGoes
+```
+```sh
+./Program/bin/Debug/net6.0/Program -value=WLalBjEeam/Db0j03mUv0QpEDID6Dr90FyKjs1Yb/3DHG9PG4sbxDhC9mYRuGoes -password=secret -operation=decrypt -strong true  -debug false
+```
+```text
+debug: true
+password: secret
+value: WLalBjEeam/Db0j03mUv0QpEDID6Dr90FyKjs1Yb/3DHG9PG4sbxDhC9mYRuGoes
+use SHA512: True
+salt: 58B6A506311E6A6FC36F48F4DE652FD1
+iv: 0A440C80FA0EBF741722A3B3561BFF70
+data: C71BD3C6E2C6F10E10BD99846E1A87AC
+key: 43379493E5E1E32568D52B3BA6548BC8F5AA1BD4FC7CB74411211223FB4B94F7
+decrypted: hello
+```
 ### See Also
 
   * [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2)
