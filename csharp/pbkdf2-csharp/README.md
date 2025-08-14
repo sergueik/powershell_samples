@@ -607,7 +607,15 @@ need to use
 ### Porting to .Net Core
 
   * navigate to `https://dotnet.microsoft.com/en-us/download/dotnet/6.0` to download the SDK archive, pick per Linux platform / CPU
-  * purge the possibly installed - it is prone to lack the `host/fxr`
+or directly to `https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.428-linux-x64-binaries`
+
+![downloads](https://github.com/sergueik/powershell_samples/blob/master/csharp/pbkdf2-csharp/screenshots/downloads.png)
+
+```sh
+ curl  https://builds.dotnet.microsoft.com/dotnet/Sdk/6.0.428/dotnet-sdk-6.0.428-linux-x64.tar.gz -o ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz
+```
+
+* purge the possibly installed - it is prone to lack the `host/fxr`
 ```sh
 sudo apt remove --purge dotnet-sdk-6.0
 file ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz
@@ -619,7 +627,11 @@ file ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz
 ```sh
 sudo tar -xzvf ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz -C /usr/share/dotnet
 ```
-  * verify
+  * verify the presence of SDK:
+
+```sh
+export PATH=$PATH:/usr/share/dotnet
+```
     
 ```sh
 dotnet --list-sdks
@@ -627,7 +639,13 @@ dotnet --list-sdks
 ```text
 6.0.428 [/usr/share/dotnet/sdk]
 ```
+alternatibely use apt:
+
+```sh
+sudo apt install dotnet-sdk-6.0
+```
   * generate SDK `*.csproj` files by hand in `Utils`, `Program`, `Test`.
+
 ```XML
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
@@ -659,11 +677,12 @@ The template "Solution File" was created successfully.
 ```
   * add projects to solution
 ```sh
-dotnet sln add Test/Test.csproj
-dotnet sln add Program/Program.csproj
-dotnet sln add Utils/Utils.csproj
+dotnet sln add Utils/Utils.csproj Test/Test.csproj Program/Program.csproj
 ```
 ```text
+Project `Utils/Utils.csproj` added to the solution.
+Project `Test/Test.csproj` added to the solution.
+Project `Program/Program.csproj` added to the solution.`
 ```
   * compile and build solution
 ```sh

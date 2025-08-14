@@ -176,6 +176,9 @@ Currently we cover `PBEWithMD5AndDES` algorithm. This is the same encryption use
 ### Porting to .Net Core
 
   * navigate to `https://dotnet.microsoft.com/en-us/download/dotnet/6.0` to download the SDK archive, pick per Linux platform / CPU
+
+![downloads](https://github.com/sergueik/powershell_samples/blob/master/csharp/jasypt-csharp/screenshots/downloads.png)
+
   * purge the possibly installed - it is prone to lack the `host/fxr`
 ```sh
 sudo apt remove --purge dotnet-sdk-6.0
@@ -235,11 +238,12 @@ The template "Solution File" was created successfully.
 ```
   * add projects to solution
 ```sh
-dotnet sln add Test/Test.csproj
-dotnet sln add Program/Program.csproj
-dotnet sln add Utils/Utils.csproj
+dotnet sln add Utils/Utils.csproj Test/Test.csproj Program/Program.csproj
 ```
 ```text
+Project `Utils/Utils.csproj` added to the solution.
+Project `Test/Test.csproj` added to the solution.
+Project `Program/Program.csproj` added to the solution.`
 ```
   * compile and build solution
 ```sh
