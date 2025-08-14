@@ -38,13 +38,14 @@ namespace Test {
 			String result = Convertor.ByteArrayToHexString(keyGenerator.Key);
 			Assert.IsNotNull(result);
 			Assert.AreEqual(16, result.Length);
-			StringAssert.Contains(key, result);
-			Assert.AreEqual(key, result);
+			// TODO: make ignoring case only in Linux test
+			StringAssert.Contains(key.ToUpper(), result);
+			StringAssert.AreEqualIgnoringCase(key, result);
 			result = Convertor.ByteArrayToHexString(keyGenerator.IV);
 			Assert.IsNotNull(result);
 			Assert.AreEqual(16, result.Length);
-			StringAssert.Contains(iv, result);
-			Assert.AreEqual(iv, result);
+			StringAssert.Contains(iv.ToUpper(), result);
+			StringAssert.AreEqualIgnoringCase(iv, result);
 		}
 	}
 }

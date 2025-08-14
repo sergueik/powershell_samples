@@ -173,6 +173,126 @@ decrypted: information
 
 Currently we cover `PBEWithMD5AndDES` algorithm. This is the same encryption used by last __1.x__ release  of the jasypt available on author's [guthub](https://github.com/jasypt/jasypt/releases). The __3.x__ releases default to `PBEWithHmacSHA512AndAES_256` algorithm. The easies way to tweak the algorythm to different binary block sizes is to compare the two versions of `Crypt:PBE` Perl module in the [CPAN](https://metacpan.org/pod/Crypt::PBE)
 
+### Porting to .Net Core
+
+  * navigate to `https://dotnet.microsoft.com/en-us/download/dotnet/6.0` to download the SDK archive, pick per Linux platform / CPU
+  * purge the possibly installed - it is prone to lack the `host/fxr`
+```sh
+sudo apt remove --purge dotnet-sdk-6.0
+file ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz
+```
+```text
+/home/sergueik/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz: gzip compressed data, from Unix, original size modulo 2^32 515799040
+```
+  * explore the archive into `/usr/share/dotnet`
+```sh
+sudo tar -xzvf ~/Downloads/dotnet-sdk-6.0.428-linux-x64.tar.gz -C /usr/share/dotnet
+```
+  * verify
+    
+```sh
+dotnet --list-sdks
+```
+```text
+6.0.428 [/usr/share/dotnet/sdk]
+```
+  * generate SDK `*.csproj` files by hand in `Utils`, `Program`, `Test`.
+```XML
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Utils\Utils.csproj" />
+    <ProjectReference Include="..\Program\Program.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.3" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
+  </ItemGroup>
+</Project>
+```
+it is OK to use DOS path separators in project file ProjectReference attribute.
+  * make sure to supply `GenerateAssemblyInfo` in `Program/Program.cspoj`:
+```XML
+<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+```
+otherwise the error will be observed:
+```text
+Program/obj/Debug/net6.0/Program.AssemblyInfo.cs(19,12): error CS0579: Duplicate 'System.Reflection.AssemblyVersionAttribute' attribute
+```
+  * generate solution file
+```sh
+dotnet new sln -n jasypt-csharp --force
+```
+```text
+The template "Solution File" was created successfully.
+```
+  * add projects to solution
+```sh
+dotnet sln add Test/Test.csproj
+dotnet sln add Program/Program.csproj
+dotnet sln add Utils/Utils.csproj
+```
+```text
+```
+  * compile and build solution
+```sh
+dotnet build jasypt-csharp.sln
+```
+```text
+MSBuild version 17.3.4+a400405ba for .NET
+  Determining projects to restore...
+  jasypt-csharp/Test/Test.csproj : warning NU1603: Test depends on Microsoft.NET.Test.Sdk (>= 17.8.3) but Microsoft.NET.Test.Sdk 17.8.3 was not found. An approximate best match of Microsoft.NET.Test.Sdk 17.9.0 was resolved. [/home/sergueik/src/powershell_samples/csharp/pbkdf2-csharp/pbkdf2-csharp.sln]
+  All projects are up-to-date for restore.
+  jasypt-csharp/Test/Test.csproj : warning NU1603: Test depends on Microsoft.NET.Test.Sdk (>= 17.8.3) but Microsoft.NET.Test.Sdk 17.8.3 was not found. An approximate best match of Microsoft.NET.Test.Sdk 17.9.0 was resolved.
+  Utils -> jasypt-csharp/Utils/bin/Debug/net6.0/Utils.dll
+  Program -> jasypt-csharp/Program/bin/Debug/net6.0/Program.dll
+  Test -> jasypt-csharp/Test/bin/Debug/net6.0/Test.dll
+
+Build succeeded.
+
+```
+  * compile and run tests
+```sh
+dotnet add Test package NUnit --version 3.13.3
+dotnet add Test package NUnit3TestAdapter --version 4.3.1
+dotnet add Test package Microsoft.NET.Test.Sdk --version 17.8.3
+```
+```sh
+dotnet test Test
+```
+```text
+Passed!  - Failed:     0, Passed:    16, Skipped:     0, Total:    16, Duration: 96 ms
+```
+  * run console application:
+```sh
+Program/bin/Debug/net6.0/Program -value:something -password=abcdef -debug:true
+```
+```text
+password: abcdef
+value: something
+DK: 19B4AD025126253E990C6CDA7A528F68
+salt: DF9B47EEF09A9675
+encrypted: 35tH7vCalnXVp5FgFyWFEDL5Vm9m5mW3
+```
+```sh
+Program/bin/Debug/net6.0/Program -value:35tH7vCalnXVp5FgFyWFEDL5Vm9m5mW3 -password=abcdef -debug:true -operation:decrypt 
+password: abcdef
+```
+```text
+value: 35tH7vCalnXVp5FgFyWFEDL5Vm9m5mW3
+value: 35tH7vCalnXVp5FgFyWFEDL5Vm9m5mW3
+salt: DF9B47EEF09A9675
+DK: 19B4AD025126253E990C6CDA7A528F68
+decrypted: something
+```
+
 ### See Also
 
   * [PBKDF1](https://www.cryptopp.com/wiki/PKCS5_PBKDF1)
