@@ -8,9 +8,9 @@ and Java [Jasypt](http://www.jasypt.org/) using AES/SHA512.
 
 NOTE, Jasypt CLI
  is currently [broken](https://github.com/jasypt/jasypt/issues/122) 
-in selecting PBE/AES hashing / encryption, but default is compatble
+in selecting PBE/AES hashing / encryption, but default is compatible
 
-The application has no external dependencies - the `System.Security.Cryptography` is available in the system GAC.
+The application has no external dependencies - the `System.Security.Cryptography` is available in the system GAC on a generic Windows machine.
 
 ### Usage
 
@@ -644,6 +644,11 @@ alternatibely use apt:
 ```sh
 sudo apt install dotnet-sdk-6.0
 ```
+  * checkout the .Net Core versions of build sctipts
+
+```sh
+git checkout ec5d -- pbkdf2-csharp.sln Program/Program.csproj Test/Test.csproj Utils/Utils.csproj
+```
   * generate SDK `*.csproj` files by hand in `Utils`, `Program`, `Test`.
 
 ```XML
@@ -740,6 +745,11 @@ iv: 0A440C80FA0EBF741722A3B3561BFF70
 data: C71BD3C6E2C6F10E10BD99846E1A87AC
 key: 43379493E5E1E32568D52B3BA6548BC8F5AA1BD4FC7CB74411211223FB4B94F7
 decrypted: hello
+```
+  * cleanup
+```sh
+git checkout master -- pbkdf2-csharp.sln Program/Program.csproj Test/Test.csproj Utils/Utils.csproj
+
 ```
 ### Running .Net Core Assembly on Docker
 

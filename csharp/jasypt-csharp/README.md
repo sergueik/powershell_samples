@@ -5,7 +5,9 @@ This directory contains the code from the
 [Emulating PBEWithMD5AndDES Encryption under .NET](https://www.codeproject.com/Articles/16450/Emulating-PBEWithMD5AndDES-Encryption-under-NET) codeproject article used to do [PBE](https://en.wikipedia.org/wiki/Password-based_cryptography)
 encryption in compatible way with [jasypt](http://www.jasypt.org/howtoencryptuserpasswords.html) using DES/SHA256
 
-The application has no external dependencies - the `System.Security.Cryptography` is available in the system GAC.
+The application has no external dependencies - the `System.Security.Cryptography` is available in the system GAC on a generic Windows machine.
+
+
 
 ### Usage
 
@@ -51,7 +53,7 @@ DK: 6b397e8288089872321504f36f0f7d24
 salt: orc]I>??
 salt: f872a95dcc3e1919
 result: orc]I>??
-"ªruû"ó{ª-,IZ"d
+" ru " { -,IZ"d
 encrypted: +HKpXcw+GRkKIqqudfuT83uqlrhJWpPw
 ```
 ```powershell
@@ -60,7 +62,7 @@ encrypted: +HKpXcw+GRkKIqqudfuT83uqlrhJWpPw
 ```text
 value: /SsSdC91HQs0Wxnl1ZqH/6LU63yUc5fX
 value: /SsSdC91HQs0Wxnl1ZqH/6LU63yUc5fX
-payload: y+?t/u??4[?åOs+ÿ¢Oë|"s-x
+payload: y+?t/u??4[? Os+  O |"s-x
 salt: y+?t/u??
 salt: fd2b12742f751d0b
 DK: bcfc32ee3ac9b338c081fbc36f18fb7a
@@ -74,9 +76,9 @@ NOTE: the binary data is shown has few characters replaced
 password: true
 value: something
 DK: 63c149e1de0e1c77f9ec78ece653508b
-salt: ??¦O??Y?
+salt: ?? O??Y?
 salt: 8f3f7f4f8f3f9f1f
-result: ??¦O??Y?id~UX¬?dHn?_c   o?
+result: ?? O??Y?id~UX ?dHn?_c   o?
 encrypted: jz9/T48/nx9pZJjaWKwB8EhuP6+pCZwd
 ```
 
@@ -135,8 +137,8 @@ SVEOYtPGk5NZpEXYMZj/OAAOMivSCoFS
 password: secret
 value: SVEOYtPGk5NZpEXYMZj/OAAOMivSCoFS
 value: SVEOYtPGk5NZpEXYMZj/OAAOMivSCoFS
-payload: IQ?bOÆ""Y¤EO1~ÿ8 ?2+O?R
-salt: IQ?bOÆ""
+payload: IQ?bO ""Y EO1~ 8 ?2+O?R
+salt: IQ?bO ""
 salt: 49510e62d3c69393
 DK: 384382eed3795f3e5f5e6797a7dd91fd
 decrypted: password
@@ -199,6 +201,12 @@ dotnet --list-sdks
 ```text
 6.0.428 [/usr/share/dotnet/sdk]
 ```
+  * checkout the .Net Core versions of build scripts 
+
+```sh
+ git checkout 12d72 -- jasypt-csharp.sln Program/Program.csproj Test/Test.csproj Utils/Utils.csproj
+```
+
   * generate SDK `*.csproj` files by hand in `Utils`, `Program`, `Test`.
 ```XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -296,7 +304,12 @@ salt: DF9B47EEF09A9675
 DK: 19B4AD025126253E990C6CDA7A528F68
 decrypted: something
 ```
+  * cleanup
 
+```sh
+ git checkout master -- jasypt-csharp.sln Program/Program.csproj Test/Test.csproj Utils/Utils.csproj
+
+```
 ### See Also
 
   * [PBKDF1](https://www.cryptopp.com/wiki/PKCS5_PBKDF1)
