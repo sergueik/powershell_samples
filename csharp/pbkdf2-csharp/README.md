@@ -741,6 +741,58 @@ data: C71BD3C6E2C6F10E10BD99846E1A87AC
 key: 43379493E5E1E32568D52B3BA6548BC8F5AA1BD4FC7CB74411211223FB4B94F7
 decrypted: hello
 ```
+### Running .Net Core Assembly on Docker
+
+  * pull base images 
+```sh
+docker pull mcr.microsoft.com/dotnet/sdk:6.0
+docker pull mcr.microsoft.com/dotnet/runtime:6.0
+```
+  * pull comfigurations from commit ``:
+
+```sh
+scp sergueik@192.168.12.151:src/powershell_samples/csharp/pbkdf2-csharp/pb*sln   .
+scp sergueik@192.168.12.151:src/powershell_samples/csharp/pbkdf2-csharp/Program/Program.csproj Program/
+scp sergueik@192.168.12.151:src/powershell_samples/csharp/pbkdf2-csharp/Test/Test.csproj Program/
+scp sergueik@192.168.12.151:src/powershell_samples/csharp/pbkdf2-csharp/Test/Test.csproj Test
+scp sergueik@192.168.12.151:src/powershell_samples/csharp/pbkdf2-csharp/Utils/Utils.csproj Utils
+```
+  * build container
+```sh
+docker build -t program -f Dockerfile .
+```
+ * run tests
+```sh
+docker run -it program -value=hello -password=secret -operation=encrypt -strong true  -debug false
+```
+```text
+debug: true
+password: secret
+value: hello
+use SHA512: True
+salt: 4C591D6ED1CB4460D58118F4CA78AED3
+key: BA39D038F45CBA83D884D6297BE659D42FFF83FC2EBDD4BC51003688CCF2810B
+iv: FBC5316B3B7D6992E80A935515F76B13
+data: B41FEE967C43A88E11478F6A36FA61B0
+encrypted: TFkdbtHLRGDVgRj0yniu0/vFMWs7fWmS6AqTVRX3axO0H+6WfEOojhFHj2o2+mGw
+encrypted: TFkdbtHLRGDVgRj0yniu0/vFMWs7fWmS6AqTVRX3axO0H+6WfEOojhFHj2o2+mGw
+
+```
+```sh
+docker run -it program -value=TFkdbtHLRGDVgRj0yniu0/vFMWs7fWmS6AqTVRX3axO0H+6WfEOojhFHj2o2+mGw -password=secret -operation=decrypt -strong true  -debug false
+```
+```text
+debug: true
+password: secret
+value: TFkdbtHLRGDVgRj0yniu0/vFMWs7fWmS6AqTVRX3axO0H+6WfEOojhFHj2o2+mGw
+use SHA512: True
+salt: 4C591D6ED1CB4460D58118F4CA78AED3
+iv: FBC5316B3B7D6992E80A935515F76B13
+data: B41FEE967C43A88E11478F6A36FA61B0
+key: BA39D038F45CBA83D884D6297BE659D42FFF83FC2EBDD4BC51003688CCF2810B
+decrypted: hello
+
+```
 ### See Also
 
   * [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2)
