@@ -747,6 +747,7 @@ decrypted: hello
 ```sh
 docker pull mcr.microsoft.com/dotnet/sdk:6.0
 docker pull mcr.microsoft.com/dotnet/runtime:6.0
+docker pull mcr.microsoft.com/dotnet/runtime-deps:6.0-alpine3.16
 ```
   * pull comfigurations from commit ``:
 
@@ -761,6 +762,18 @@ scp sergueik@192.168.12.151:src/powershell_samples/csharp/pbkdf2-csharp/Utils/Ut
 ```sh
 docker build -t program -f Dockerfile .
 ```
+  * examine
+
+
+```sh
+docker run --entrypoint '' -it program  sh
+ ```
+```sh
+/app # ls
+```
+```text
+Program             Program.dll.config  Program.pdb         Utils.pdb
+ ```
  * run tests
 ```sh
 docker run -it program -value=hello -password=secret -operation=encrypt -strong true  -debug false
