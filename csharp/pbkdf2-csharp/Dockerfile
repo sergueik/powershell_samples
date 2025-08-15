@@ -14,7 +14,9 @@ RUN dotnet restore pbkdf2-csharp.sln --runtime linux-musl-x64 && \
 
 # Publish only the executable and dependencies for alpine
 RUN dotnet publish Program/Program.csproj -c Release -r linux-musl-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=true -o /app
-
+# NOTE: cannot use --no-build flag here:
+# it conflicts with PublishTrimmed=true option
+# Trimming / single-file requires a fresh or incremental build
 FROM mcr.microsoft.com/dotnet/runtime-deps:6.0-alpine3.16 AS runtime
 # NOTE: container does not include the .NET runtime itself.
 WORKDIR /app
