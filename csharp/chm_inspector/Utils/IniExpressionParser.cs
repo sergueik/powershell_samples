@@ -1,36 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 
-public static class IniExpressionParser
-{
-    // Example: "STGM_READ | STGM_SHARE_DENY_NONE"
-    public static uint ParseEnumExpression<TEnum>(string expr)
-        where TEnum : struct, Enum {
-        if (string.IsNullOrWhiteSpace(expr))
-            throw new ArgumentNullException(nameof(expr));
+namespace Utils {
+    public static class IniExpressionParser {
+        public static uint ParseEnumFlags<TEnum>(string expr)
+            where TEnum : struct {
+            if (string.IsNullOrWhiteSpace(expr))
+                throw new ArgumentException("Expression is empty", "expr");
 
-        uint result = 0;
-	// handle expressions like STGM_READ | STGM_SHARE_DENY_NONE
-        string[] tokens = expr.Split('|', StringSplitOptions.RemoveEmptyEntries);
+            uint result = 0;
+            string[] tokens = expr.Split('|');
+            foreach (string raw in tokens) {
+                string token = raw.Trim();
+                uint numeric;
+                TEnum value;
+                if (token.Length == 0)
+                    continue;
 
-        foreach (string token in tokens) {
-            string trimmed = token.Trim();
-
-            if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
-                // Allow explicit hex
-                result |= Convert.ToUInt32(trimmed, 16);
-            } else if (uint.TryParse(trimmed, out uint val)) {
-                result |= val;
-            } else if (Enum.TryParse(typeof(TEnum), trimmed, ignoreCase: true, out object? parsed)) {
-                result |= Convert.ToUInt32(parsed);
-            } else {
-                throw new FormatException(String.Format("Invalid flag value: {0}", trimmed ));
+                if (token.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
+                    result |= Convert.ToUInt32(token, 16);
+                } else if (Enum.TryParse<TEnum>(token, true, out value)) {
+                    result |= Convert.ToUInt32(value);
+                } else if (UInt32.TryParse(token, out numeric)) {
+                    result |= numeric;
+                } else {
+                    throw new FormatException("Unknown flag: " + token);
+                }
             }
+            return result;
         }
-
-        return result;
     }
 }
 

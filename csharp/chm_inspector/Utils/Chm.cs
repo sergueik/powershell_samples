@@ -132,9 +132,23 @@ namespace Utils {
 		HRESULT Compact(string pwcsName, ECompactionLev iLev);
 	}
 
+	[Flags]
+	public enum STGM : uint {
+	    STGM_READ = 0x00000000,
+	    STGM_WRITE = 0x00000001,
+	    STGM_READWRITE = 0x00000002,
+	    STGM_SHARE_DENY_NONE = 0x00000040,
+	    STGM_SHARE_DENY_READ = 0x00000030,
+	    STGM_SHARE_DENY_WRITE = 0x00000020,
+	    STGM_SHARE_EXCLUSIVE = 0x00000010,
+	    STGM_PRIORITY = 0x00040000,
+	    STGM_DELETEONRELEASE = 0x04000000,
+	    STGM_NOSCRATCH = 0x00100000
+	}
+	
 	public class Chm {
 		// https://www.pinvoke.net/default.aspx/Enums.STGty
-		public enum STGTY : uint {
+		public enum STGTY : int {
 		    STGTY_STORAGE = 1,
 		    STGTY_STREAM = 2,
 		    STGTY_ILOCKBYTES = 3,
@@ -143,40 +157,13 @@ namespace Utils {
 
 		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
 
-		/* Storage instantiation modes */
-		public const int STGM_DIRECT = 0x00000000;
-		public const int STGM_TRANSACTED = 0x00010000;
-		public const int STGM_SIMPLE = 0x08000000;
-
-		public const int STGM_READ = 0x00000000;
-		public const int STGM_WRITE = 0x00000001;
-		public const int STGM_READWRITE = 0x00000002;
-
-		public const int STGM_SHARE_DENY_NONE = 0x00000040;
-		public const int STGM_SHARE_DENY_READ = 0x00000030;
-		public const int STGM_SHARE_DENY_WRITE = 0x00000020;
-		public const int STGM_SHARE_EXCLUSIVE = 0x00000010;
-
-		public const int STGM_PRIORITY = 0x00040000;
-		public const int STGM_DELETEONRELEASE = 0x04000000;
-
-		public const int STGM_NOSCRATCH = 0x00100000;
-
-		public const int STGM_CREATE = 0x00001000;
-		public const int STGM_CONVERT = 0x00020000;
-		public const int STGM_FAILIFTHERE = 0x00000000;
-
-		public const int STGM_NOSNAPSHOT = 0x00200000;
-
-		public const int STGM_DIRECT_SWMR = 0x00400000;
-
 		public static string title(string file) {
 
 			object oIITStorage = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
 			var pITStorage = (IITStorage)oIITStorage;
 			if (pITStorage != null) {
 				IStorage pStorage;
-				HRESULT hr = pITStorage.StgOpenStorage(file, null, STGM_SHARE_EXCLUSIVE | STGM_READ, IntPtr.Zero, 0, out pStorage);
+				HRESULT hr = pITStorage.StgOpenStorage(file, null, (uint) (STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out pStorage);
 				if (hr == HRESULT.S_OK) {
 					IEnumSTATSTG pEnum;
 					pStorage.EnumElements(0, IntPtr.Zero, 0, out pEnum);
@@ -186,8 +173,8 @@ namespace Utils {
 						if (ss[0].pwcsName == "#SYSTEM") {
 							string title = null;
 							IStream pStream = null;
-							pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, STGM_SHARE_EXCLUSIVE | STGM_READ, 0, out pStream);
-							hr = pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, STGM_SHARE_EXCLUSIVE | STGM_READ, 0, out pStream);
+							pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out pStream);
+							hr = pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out pStream);
 							if (hr == HRESULT.S_OK) {
 								uint nSize = 4;
 								var pBuffer = new byte[nSize];
@@ -244,7 +231,7 @@ namespace Utils {
 			var iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 			var sections = iniFile.GetSectionNames();
 			// TODO: check if API method name configuration is present 	
-			uint grfMode = IniExpressionParser.ParseEnumExpression<STGM>(iniFile["List"]["grfMode"]);	
+			uint grfMode = IniExpressionParser.ParseEnumFlags<STGM>(iniFile["List"]["grfMode"]);	
 			int hr = Ole32.StgOpenStorage(file, null, grfMode, IntPtr.Zero, 0, out storage);
 			if (hr != 0 ||
 			    storage == null)

@@ -17,8 +17,8 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
-  <LangVersion>7.3</LangVersion>
-</PropertyGroup>
+    <LangVersion>5</LangVersion>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <NoStdLib>false</NoStdLib>
     <WarningLevel>4</WarningLevel>
