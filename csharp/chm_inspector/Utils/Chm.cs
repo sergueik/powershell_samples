@@ -47,8 +47,8 @@ namespace Utils
 		[DllImport("ole32.dll", CharSet = CharSet.Unicode)]
 		public static extern int StgOpenStorage(
 			string pwcsName,
-			IntPtr pstgPriority,
-			// IStorage pstgPriority,
+			// IntPtr pstgPriority,
+			IStorage pstgPriority,
 			uint grfMode,
 			IntPtr snbExclude,
 			uint reserved,
@@ -111,30 +111,30 @@ namespace Utils
 		IEnumSTATSTG Clone();
 	}
 
-		[ComImport]
-		[Guid("0000000b-0000-0000-C000-000000000046")]
-		[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-		public interface IStorage
-		{
-			HRESULT CreateStream(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStream ppstm);
-			HRESULT OpenStream(string pwcsName, IntPtr reserved1, uint grfMode, uint reserved2, out IStream ppstm);
-			HRESULT CreateStorage(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStorage ppstg);
-			HRESULT OpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstg);
-			HRESULT CopyTo(uint ciidExclude, Guid rgiidExclude, IntPtr snbExclude, IStorage pstgDest);
-			HRESULT MoveElementTo(string pwcsName, IStorage pstgDest, string pwcsNewName, uint grfFlags);
-			HRESULT Commit(uint grfCommitFlags);
-			HRESULT Revert();
-			HRESULT EnumElements(uint reserved1, IntPtr reserved2, uint reserved3, out IEnumSTATSTG ppenum);
-			HRESULT DestroyElement(string pwcsName);
-			HRESULT RenameElement(string pwcsOldName, string pwcsNewName);
-			HRESULT SetElementTimes(string pwcsName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime,
-				System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
+	[ComImport]
+	[Guid("0000000b-0000-0000-C000-000000000046")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IStorage
+	{
+		HRESULT CreateStream(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStream ppstm);
+		HRESULT OpenStream(string pwcsName, IntPtr reserved1, uint grfMode, uint reserved2, out IStream ppstm);
+		HRESULT CreateStorage(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStorage ppstg);
+		HRESULT OpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstg);
+		HRESULT CopyTo(uint ciidExclude, Guid rgiidExclude, IntPtr snbExclude, IStorage pstgDest);
+		HRESULT MoveElementTo(string pwcsName, IStorage pstgDest, string pwcsNewName, uint grfFlags);
+		HRESULT Commit(uint grfCommitFlags);
+		HRESULT Revert();
+		HRESULT EnumElements(uint reserved1, IntPtr reserved2, uint reserved3, out IEnumSTATSTG ppenum);
+		HRESULT DestroyElement(string pwcsName);
+		HRESULT RenameElement(string pwcsOldName, string pwcsNewName);
+		HRESULT SetElementTimes(string pwcsName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime,
+			System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
 
-			HRESULT SetClass(Guid clsid);
-			HRESULT SetStateBits(uint grfStateBits, uint grfMask);
-			HRESULT Stat(out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, uint grfStatFlag);
-		}
-/*	
+		HRESULT SetClass(Guid clsid);
+		HRESULT SetStateBits(uint grfStateBits, uint grfMask);
+		HRESULT Stat(out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, uint grfStatFlag);
+	}
+	/*	
 	[ComImport]
 	[Guid("0000000b-0000-0000-C000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -311,7 +311,8 @@ namespace Utils
 			public long QuadPart;
 		}
 		
-		public string title(string file) {
+		public string title(string file)
+		{
 			
 			object oIITStorage = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
 			IITStorage pITStorage = (IITStorage)oIITStorage;
@@ -380,10 +381,10 @@ namespace Utils
 		{
 			var urls = new List<string>();
 			IStorage storage;
-            
-			if (Ole32.StgOpenStorage(file, IntPtr.Zero, STGM_READ | STGM_SHARE_EXCLUSIVE, IntPtr.Zero, 0, out storage) != 0 ||
+			int hr = Ole32.StgOpenStorage(file, null, STGM_READ | STGM_SHARE_DENY_NONE /* STGM_READ | STGM_SHARE_EXCLUSIVE */, IntPtr.Zero, 0, out storage);
+			if (hr != 0 ||
 			    storage == null)
-				throw new Exception("Failed to open CHM.");
+				throw new Exception(String.Format("Failed to open CHM. Error: {0}", MessageHelper.Msg(hr)));
 			IEnumSTATSTG enumStg = null;
 			storage.EnumElements(0, IntPtr.Zero, 0, out enumStg);
 
