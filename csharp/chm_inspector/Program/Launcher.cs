@@ -5,17 +5,15 @@ using System.Drawing;
 using Utils;
 using System.Data;
 
-namespace Program
-{
+// based on: https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title
+namespace Program {
 
-	// origin: https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title
-	public partial class DialogMessage : Form {
+	public partial class Control : Form {
 
 		private Button button1;
 		private Button button2;
-		private	String file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
+		private Button button3;
 		private OpenFileDialog openFileDialog1;
-		private String initialDirectory = @"C:\";
 		private TextBox textBox1;
 		private DataSet dataSet;
 		private DataGrid dataGrid;
@@ -23,20 +21,20 @@ namespace Program
 		private DataGridTextBoxColumn textCol;
 		private Label versionLabel;
 		private Label lblImage;
-		private string versionString = "0.1.0";
+		private const string versionString = "0.2.0";
+		private const string initialDirectory = @"C:\";
+		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 
 		[STAThread]
-		public static void Main()
-		{
+		public static void Main() {
 			// use GDI
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			Application.EnableVisualStyles();
-			Application.Run(new DialogMessage());
+			Application.Run(new Control());
 		}
 
-		public DialogMessage()
-		{
+		public Control() {
 			InitializeComponent();
 		}
 
@@ -51,10 +49,9 @@ namespace Program
 			openFileDialog1.Filter = "chm files (*.chm)|*.chm|All files (*.*)|*.*";
 			openFileDialog1.FilterIndex = 0;
 			openFileDialog1.CheckFileExists = true;
-			openFileDialog1.CheckPathExists = true;	
+			openFileDialog1.CheckPathExists = true;
 			openFileDialog1.Multiselect = false;
 
-			
 			button1 = new Button();
 			button1.Location = new Point(30, 34);
 			button1.Name = "button1";
@@ -69,10 +66,19 @@ namespace Program
 			button2.Name = "button2";
 			button2.Size = new Size(90, 23);
 			button2.TabIndex = 2;
-			button2.Text = "Inspect";
+			button2.Text = "Title";
 			button2.Click += button2_Click;
 			Controls.Add(button2);
 
+			button3 = new Button();
+			button3.Location = new Point(230, 34);
+			button3.Name = "button3";
+			button3.Size = new Size(90, 23);
+			button3.TabIndex = 1;
+			button3.Text = "List";
+			button3.Click += button3_Click;
+			Controls.Add(button3);
+			
 			textBox1 = new TextBox();
 			textBox1.Location = new Point(30, 7);
 			textBox1.Name = "textBox1";
@@ -80,7 +86,7 @@ namespace Program
 			textBox1.Left = 30;
 			textBox1.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 			Controls.Add(textBox1);
-	
+
 			textBox1.Size = new Size(200, 23);
 			textBox1.TabIndex = 3;
 			textBox1.Text = "";
@@ -123,26 +129,20 @@ namespace Program
 			ClientSize = new Size(348, 429);
 			Controls.Add(dataGrid);
 
-			
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
-	
-		private void button1_Click(object sender, EventArgs e)
-		{
+
+		private void button1_Click(object sender, EventArgs e) {
 			var dr = this.openFileDialog1.ShowDialog();
 			if (dr == System.Windows.Forms.DialogResult.OK) {
 				foreach (String fileName in openFileDialog1.FileNames)
 					textBox1.Text = fileName;
-
 			}
 		}
 
-
-		private void MakeDataSet()
-		{
+		private void MakeDataSet() {
 			dataSet = new DataSet("DataSet");
-
 			var dataTable = new DataTable("Hosts");
 
 			// Create two columns, and add them to the first table.
@@ -165,17 +165,21 @@ namespace Program
 			dataTable.Rows[0]["hostname"] = "host1";
 		}
 
-		private void button2_Click(object sender, EventArgs e)
-		{        
-			var chm =  new Chm();
-			Chm.Urls(file);
-			String title = chm.title(file); 
+		private void button2_Click(object sender, EventArgs eventArgs) {        
+			String title = Chm.title(file); 
 			// TODO: sender
 			if (title != null)
 				MessageBox.Show("Title = " + title, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 		}
-	}
 
+		private void button3_Click(object sender, EventArgs eventArgs) {        
+			try {
+				Chm.Urls(file);
+			} catch( Exception e) {
+				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+		}
+	}
 }
 
