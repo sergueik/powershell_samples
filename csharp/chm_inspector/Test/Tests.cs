@@ -8,6 +8,7 @@ namespace Tests {
     public class ChmTests  {
         private const string file = @"C:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 
+        // NOTE: uncommenting the attribute break the little “green/red bullet” visual indicator in the SharpDevelop IDE.
         // [TestCase(TestName = "Urls should not throw exception")]
         [Test]
         public void test1() {
