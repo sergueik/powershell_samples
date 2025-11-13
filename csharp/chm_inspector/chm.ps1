@@ -2,10 +2,8 @@ param(
     [string]$file
 )
 
-# Generate a random class name
-$guid = [guid]::NewGuid().ToString("N")
-$csClassName = "Chm_$guid"
-
+# git show 163b842cc71625d5a1f1c95dafe9ed6b1b01fb6a:csharp/chm_inspector/Utils/Chm.cs
+#
 $source = @"
 using System;
 using System.Diagnostics;
@@ -14,7 +12,6 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices;
 //  using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
@@ -141,7 +138,7 @@ namespace Utils {
 		HRESULT Compact(string pwcsName, ECompactionLev iLev);
 	}
 
-	public class $csClassName {
+	public class Chm {
 		// https://www.pinvoke.net/default.aspx/Enums.STGty
 		public enum STGTY : uint {
 		    STGTY_STORAGE = 1,
@@ -189,7 +186,7 @@ namespace Utils {
 				if (hr == HRESULT.S_OK) {
 					IEnumSTATSTG pEnum;
 					pStorage.EnumElements(0, IntPtr.Zero, 0, out pEnum);
-					var ss = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+					System.Runtime.InteropServices.ComTypes.STATSTG[] ss = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 					uint c;
 					while (HRESULT.S_OK == pEnum.Next(1, ss, out c)) {
 						if (ss[0].pwcsName == "#SYSTEM") {
@@ -247,22 +244,7 @@ namespace Utils {
 		public static List<string> Urls(string file) {
 			var urls = new List<string>();
 			IStorage storage;
-			// const uint grfMode = STGM_READ | STGM_SHARE_DENY_NONE ; /* STGM_READ | STGM_SHARE_EXCLUSIVE  */
-
-
-			var iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
-			var sections = iniFile.GetSectionNames();
-			// var environments = iniFile["Environments"]["values"];
-			var grfModeStr = iniFile["List"]["grfMode"]; // default STGM_READ
-			uint grfMode = 0;
-
-			if (grfModeStr.StartsWith("0x"))
-				grfMode = Convert.ToUInt32(grfModeStr, 16);
-			else if (grfModeStr.Equals("STGM_READ | STGM_SHARE_DENY_NONE"))
-				grfMode = STGM_READ | STGM_SHARE_DENY_NONE;
-			else if (!uint.TryParse(grfModeStr, out grfMode))
-				grfMode = STGM_READ | STGM_SHARE_DENY_NONE;
-			
+			const uint grfMode = STGM_READ | STGM_SHARE_DENY_NONE ; /* STGM_READ | STGM_SHARE_EXCLUSIVE  */
 			int hr = Ole32.StgOpenStorage(file, null, grfMode, IntPtr.Zero, 0, out storage);
 			if (hr != 0 ||
 			    storage == null)
@@ -276,7 +258,7 @@ namespace Utils {
 			while (enumStg.Next(1, statArray, out fetched) == HRESULT.S_OK && fetched == 1) {
 				var st = statArray[0];
 				// Only include streams (files), skip sub-storages
-				if (st.type == (int)STGTY.STGTY_STREAM) {
+				if (st.type == (int) STGTY.STGTY_STREAM) {
 					urls.Add(st.pwcsName);
 				}
 			}
@@ -287,11 +269,44 @@ namespace Utils {
 			return urls;
 		}
 	}
-} 
+
+
+	public static class MessageHelper {
+		private const int FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x100;
+		private const int FORMAT_MESSAGE_FROM_SYSTEM = 0x1000;
+		private const int FORMAT_MESSAGE_IGNORE_INSERTS = 0x200;
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		private static extern int FormatMessage(
+			int dwFlags,
+			IntPtr lpSource,
+			int dwMessageId,
+			int dwLanguageId,
+			out IntPtr lpBuffer,
+			int nSize,
+			IntPtr Arguments);
+
+		[DllImport("kernel32.dll")]
+		private static extern IntPtr LocalFree(IntPtr hMem);
+
+		public static string Msg(int hr) {
+			IntPtr lpMsgBuf;
+			int ret = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+				               IntPtr.Zero, hr, 0, out lpMsgBuf, 0, IntPtr.Zero);
+			if (ret == 0)
+				return String.Format("Unknown HRESULT 0x{0:X8}", hr);
+			string message = Marshal.PtrToStringAuto(lpMsgBuf);
+			LocalFree(lpMsgBuf);
+			return message.Trim();
+		}
+	}
+
+}
 "@
 
 Add-Type -TypeDefinition $source -Language CSharp
-$urls = ([Type]($csClassName)).GetMethod("Urls").Invoke($null, @($file))
+# $urls = ([Type]($csClassName)).GetMethod("Urls").Invoke($null, @($file))
+[Utils.Chm]::Urls($file )
 <#
 Cannot convert the "Chm_b44ee5fdb6c549ba8c88ffb996c6557b" value of type
 "System.String" to type "System.Type".
