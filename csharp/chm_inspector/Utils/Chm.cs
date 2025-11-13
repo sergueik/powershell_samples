@@ -225,8 +225,6 @@ namespace Utils {
 		public static List<string> Urls(string file) {
 			var urls = new List<string>();
 			IStorage storage;
-			// const uint grfMode = STGM_READ | STGM_SHARE_DENY_NONE ; /* STGM_READ | STGM_SHARE_EXCLUSIVE  */
-
 
 			var iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 			var sections = iniFile.GetSectionNames();

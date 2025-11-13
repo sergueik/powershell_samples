@@ -21,7 +21,7 @@ namespace Program {
 		private DataGridTextBoxColumn textCol;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.2.0";
+		private const string versionString = "0.3.0";
 		private const string initialDirectory = @"C:\";
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 
