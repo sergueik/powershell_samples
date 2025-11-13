@@ -3,6 +3,11 @@ param(
 )
 
 # git show 163b842cc71625d5a1f1c95dafe9ed6b1b01fb6a:csharp/chm_inspector/Utils/Chm.cs
+# Generate a random class name
+$guid = [guid]::NewGuid().ToString("N")
+$csClassName = "Chm_$guid"
+
+
 #
 $source = @"
 using System;
@@ -138,7 +143,7 @@ namespace Utils {
 		HRESULT Compact(string pwcsName, ECompactionLev iLev);
 	}
 
-	public class Chm {
+	public class $csClassName {
 		// https://www.pinvoke.net/default.aspx/Enums.STGty
 		public enum STGTY : uint {
 		    STGTY_STORAGE = 1,
@@ -305,11 +310,14 @@ namespace Utils {
 "@
 
 Add-Type -TypeDefinition $source -Language CSharp
-# $urls = ([Type]($csClassName)).GetMethod("Urls").Invoke($null, @($file))
-[Utils.Chm]::Urls($file )
-<#
-Cannot convert the "Chm_b44ee5fdb6c549ba8c88ffb996c6557b" value of type
-"System.String" to type "System.Type".
-#>
-$urls | ForEach-Object { Write-Host $_ }
+$urls = ([Type]("Utils.$csClassName")).GetMethod("Urls").Invoke($null, @($file))
 
+<#
+ .\chm.ps1 "C:\Program Files\Oracle\VirtualBox\VirtualBox.chm"
+Exception calling "Invoke" with "2" argument(s): "Failed to open C:\Program
+Files\Oracle\VirtualBox\VirtualBox.chm. Error: Invalid flag error."
+
+#>
+$urls | foreach-object { 
+  write-host $_ 
+}
