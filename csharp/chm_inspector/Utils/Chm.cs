@@ -180,7 +180,7 @@ namespace Utils {
 				if (hr == HRESULT.S_OK) {
 					IEnumSTATSTG pEnum;
 					pStorage.EnumElements(0, IntPtr.Zero, 0, out pEnum);
-					System.Runtime.InteropServices.ComTypes.STATSTG[] ss = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+					var ss = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 					uint c;
 					while (HRESULT.S_OK == pEnum.Next(1, ss, out c)) {
 						if (ss[0].pwcsName == "#SYSTEM") {
@@ -238,7 +238,22 @@ namespace Utils {
 		public static List<string> Urls(string file) {
 			var urls = new List<string>();
 			IStorage storage;
-			const uint grfMode = STGM_READ | STGM_SHARE_DENY_NONE ; /* STGM_READ | STGM_SHARE_EXCLUSIVE  */
+			// const uint grfMode = STGM_READ | STGM_SHARE_DENY_NONE ; /* STGM_READ | STGM_SHARE_EXCLUSIVE  */
+
+
+			var iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
+			var sections = iniFile.GetSectionNames();
+			// var environments = iniFile["Environments"]["values"];
+			var grfModeStr = iniFile["List"]["grfMode"]; // default STGM_READ
+			uint grfMode = 0;
+
+			if (grfModeStr.StartsWith("0x"))
+				grfMode = Convert.ToUInt32(grfModeStr, 16);
+			else if (grfModeStr.Equals("STGM_READ | STGM_SHARE_DENY_NONE"))
+				grfMode = STGM_READ | STGM_SHARE_DENY_NONE;
+			else if (!uint.TryParse(grfModeStr, out grfMode))
+				grfMode = STGM_READ | STGM_SHARE_DENY_NONE;
+			
 			int hr = Ole32.StgOpenStorage(file, null, grfMode, IntPtr.Zero, 0, out storage);
 			if (hr != 0 ||
 			    storage == null)
@@ -252,7 +267,7 @@ namespace Utils {
 			while (enumStg.Next(1, statArray, out fetched) == HRESULT.S_OK && fetched == 1) {
 				var st = statArray[0];
 				// Only include streams (files), skip sub-storages
-				if (st.type == (int) STGTY.STGTY_STREAM) {
+				if (st.type == (int)STGTY.STGTY_STREAM) {
 					urls.Add(st.pwcsName);
 				}
 			}
