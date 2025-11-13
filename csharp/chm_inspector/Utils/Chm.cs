@@ -44,6 +44,14 @@ namespace Utils {
 		[FieldOffset(0)]
 		public long QuadPart;
 	}
+
+	// https://www.pinvoke.net/default.aspx/Enums.STGty
+	public enum STGTY : int {
+	    STGTY_STORAGE = 1,
+	    STGTY_STREAM = 2,
+	    STGTY_ILOCKBYTES = 3,
+	    STGTY_ROOT = 4
+	}
 	
 	public static class Ole32 {
 		[DllImport("ole32.dll", CharSet = CharSet.Unicode)]
@@ -147,13 +155,6 @@ namespace Utils {
 	}
 	
 	public class Chm {
-		// https://www.pinvoke.net/default.aspx/Enums.STGty
-		public enum STGTY : int {
-		    STGTY_STORAGE = 1,
-		    STGTY_STREAM = 2,
-		    STGTY_ILOCKBYTES = 3,
-		    STGTY_ROOT = 4
-		}
 
 		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
 
@@ -170,7 +171,7 @@ namespace Utils {
 					var ss = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 					uint c;
 					while (HRESULT.S_OK == pEnum.Next(1, ss, out c)) {
-						if (ss[0].pwcsName == "#SYSTEM") {
+						if (ss[0].pwcsName == "#URLSTR") {
 							string title = null;
 							IStream pStream = null;
 							pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out pStream);
@@ -237,7 +238,7 @@ namespace Utils {
 			IEnumSTATSTG enumStg = null;
 			storage.EnumElements(0, IntPtr.Zero, 0, out enumStg);
 
-			System.Runtime.InteropServices.ComTypes.STATSTG[] statArray = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+			var statArray = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 			uint fetched;
 
 			while (enumStg.Next(1, statArray, out fetched) == HRESULT.S_OK && fetched == 1) {
