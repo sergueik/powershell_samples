@@ -16,6 +16,9 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
+  <PropertyGroup>
+  <LangVersion>7.3</LangVersion>
+</PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <NoStdLib>false</NoStdLib>
     <WarningLevel>4</WarningLevel>
@@ -45,6 +48,7 @@
     <Compile Include="DynamicJson.cs" />
     <Compile Include="IniFileNative.cs" />
     <Compile Include="IniFiles.cs" />
+    <Compile Include="IniExpressionParser.cs" />
     <Compile Include="Mover.cs" />
     <Compile Include="DataDumper.cs" />
     <Compile Include="Chm.cs" />
