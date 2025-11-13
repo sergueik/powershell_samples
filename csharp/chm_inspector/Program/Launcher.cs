@@ -13,7 +13,7 @@ namespace Program
 
 		private Button button1;
 		private Button button2;
-		private	String file = @"c:\Windows\Help\mui\0409\sqlsodbc.chm";
+		private	String file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 		private OpenFileDialog openFileDialog1;
 		private String initialDirectory = @"C:\";
 		private TextBox textBox1;
@@ -168,6 +168,7 @@ namespace Program
 		private void button2_Click(object sender, EventArgs e)
 		{        
 			var chm =  new Chm();
+			Chm.Urls(file);
 			String title = chm.title(file); 
 			// TODO: sender
 			if (title != null)

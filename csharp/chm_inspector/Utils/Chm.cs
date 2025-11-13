@@ -7,57 +7,238 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.InteropServices;
+//  using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
+
 namespace Utils
 {
 	
-	public class Chm
+	public enum HRESULT : int
 	{
+		S_OK = 0,
+		S_FALSE = 1,
+		E_NOTIMPL = unchecked((int)0x80004001),
+		E_NOINTERFACE = unchecked((int)0x80004002),
+		E_POINTER = unchecked((int)0x80004003),
+		E_FAIL = unchecked((int)0x80004005),
+		E_UNEXPECTED = unchecked((int)0x8000FFFF),
+		E_OUTOFMEMORY = unchecked((int)0x8007000E),
+	};
 
-		public enum HRESULT : int
-		{
-			S_OK = 0,
-			S_FALSE = 1,
-			E_NOTIMPL = unchecked((int)0x80004001),
-			E_NOINTERFACE = unchecked((int)0x80004002),
-			E_POINTER = unchecked((int)0x80004003),
-			E_FAIL = unchecked((int)0x80004005),
-			E_UNEXPECTED = unchecked((int)0x8000FFFF),
-			E_OUTOFMEMORY = unchecked((int)0x8007000E),
-		}
+	[StructLayout(LayoutKind.Sequential)]
+	public struct ITS_Control_Data
+	{
+		public uint cdwControlData;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+		public uint[] adwControlData;
+	}
 
-		[StructLayout(LayoutKind.Sequential)]
-		public struct ITS_Control_Data
-		{
-			public uint cdwControlData;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
-			public uint[] adwControlData;
-		};
-
-		public enum ECompactionLev
-		{
-			COMPACT_DATA = 0,
-			COMPACT_DATA_AND_PATH
-		}
+	public enum ECompactionLev
+	{
+		COMPACT_DATA = 0,
+		COMPACT_DATA_AND_PATH
+	}
 		
-		Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
+	
+	
+	   
+	public static class Ole32
+	{
+		[DllImport("ole32.dll", CharSet = CharSet.Unicode)]
+		public static extern int StgOpenStorage(
+			string pwcsName,
+			IntPtr pstgPriority,
+			// IStorage pstgPriority,
+			uint grfMode,
+			IntPtr snbExclude,
+			uint reserved,
+			out IStorage ppstgOpen
+		);
+	}
+	/*
+	[ComImport]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("0000000D-0000-0000-C000-000000000046")] // IID_IEnumSTATSTG
+    public interface IEnumSTATSTG
+	{
+		[PreserveSig]
+		int Next(uint celt, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] STATSTG[] rgelt, out uint pceltFetched);
+
+		[PreserveSig]
+		int Skip(uint celt);
+
+		[PreserveSig]
+		int Reset();
+
+		[PreserveSig]
+		int Clone(out IEnumSTATSTG ppEnum);
+	}
+    */
+	[StructLayout(LayoutKind.Sequential)]
+	public struct FILETIME
+	{
+		public uint DateTimeLow;
+		public uint DateTimeHigh;
+	}
+	
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+	public struct STATSTG
+	{
+		public string pwcsName;
+		public uint type;
+		// STGTY_ enum
+		public ulong cbSize;
+		public FILETIME mtime;
+		public FILETIME ctime;
+		public FILETIME atime;
+		public uint grfMode;
+		public uint grfLocksSupported;
+		public Guid clsid;
+		public uint grfStateBits;
+		public uint reserved;
+	}
+	[ComImport]
+	[Guid("0000000d-0000-0000-C000-000000000046")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IEnumSTATSTG
+	{
+		// The user needs to allocate an STATSTG array whose size is celt.
+		[PreserveSig]
+		HRESULT Next(uint celt, [MarshalAs(UnmanagedType.LPArray), Out] System.Runtime.InteropServices.ComTypes.STATSTG[] rgelt, out uint pceltFetched);
+		HRESULT Skip(uint celt);
+		HRESULT Reset();
+		[return: MarshalAs(UnmanagedType.Interface)]
+		IEnumSTATSTG Clone();
+	}
 
 		[ComImport]
-		[Guid("88CC31DE-27AB-11D0-9DF9-00A0C922E6EC")]
+		[Guid("0000000b-0000-0000-C000-000000000046")]
 		[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-		public interface IITStorage
+		public interface IStorage
 		{
-			HRESULT StgCreateDocfile(string pwcsName, uint grfMode, uint reserved, out IStorage ppstgOpen);
-			HRESULT StgCreateDocfileOnILockBytes(IntPtr/*ILockBytes*/ plkbyt, uint grfMode, uint reserved, out IStorage ppstgOpen);
-			HRESULT StgIsStorageFile(string pwcsName);
-			HRESULT StgIsStorageILockBytes(IntPtr/*ILockBytes*/ plkbyt);
-			HRESULT StgOpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
-			HRESULT StgOpenStorageOnILockBytes(IntPtr/*ILockBytes*/ plkbyt, IStorage pStgPriority, uint grfMode,
-				IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
-			HRESULT StgSetTimes(string lpszName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime, System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
-			HRESULT SetControlData(ITS_Control_Data pControlData);
-			HRESULT DefaultControlData(out ITS_Control_Data ppControlData);
-			HRESULT Compact(string pwcsName, ECompactionLev iLev);
+			HRESULT CreateStream(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStream ppstm);
+			HRESULT OpenStream(string pwcsName, IntPtr reserved1, uint grfMode, uint reserved2, out IStream ppstm);
+			HRESULT CreateStorage(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStorage ppstg);
+			HRESULT OpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstg);
+			HRESULT CopyTo(uint ciidExclude, Guid rgiidExclude, IntPtr snbExclude, IStorage pstgDest);
+			HRESULT MoveElementTo(string pwcsName, IStorage pstgDest, string pwcsNewName, uint grfFlags);
+			HRESULT Commit(uint grfCommitFlags);
+			HRESULT Revert();
+			HRESULT EnumElements(uint reserved1, IntPtr reserved2, uint reserved3, out IEnumSTATSTG ppenum);
+			HRESULT DestroyElement(string pwcsName);
+			HRESULT RenameElement(string pwcsOldName, string pwcsNewName);
+			HRESULT SetElementTimes(string pwcsName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime,
+				System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
+
+			HRESULT SetClass(Guid clsid);
+			HRESULT SetStateBits(uint grfStateBits, uint grfMask);
+			HRESULT Stat(out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, uint grfStatFlag);
 		}
+/*	
+	[ComImport]
+	[Guid("0000000b-0000-0000-C000-000000000046")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IStorage
+	{
+		void CreateStream(
+			string pwcsName,
+			uint grfMode,
+			uint reserved1,
+			uint reserved2,
+			out IStream ppstm);
+
+		void OpenStream(
+			string pwcsName,
+			IntPtr reserved1,
+			uint grfMode,
+			uint reserved2,
+			out IStream ppstm);
+
+		void CreateStorage(
+			string pwcsName,
+			uint grfMode,
+			uint reserved1,
+			uint reserved2,
+			out IStorage ppstg);
+
+		void OpenStorage(
+			string pwcsName,
+			IStorage pstgPriority,
+			uint grfMode,
+			IntPtr snbExclude,
+			uint reserved,
+			out IStorage ppstg);
+
+		void CopyTo(
+			uint ciidExclude,
+			[In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] Guid[] rgiidExclude,
+			IntPtr snbExclude,
+			IStorage pstgDest);
+
+		void MoveElementTo(
+			string pwcsName,
+			IStorage pstgDest,
+			string pwcsNewName,
+			uint grfFlags);
+
+		void Commit(
+			uint grfCommitFlags);
+
+		void Revert();
+
+		void EnumElements(
+			uint reserved1,
+			IntPtr reserved2,
+			uint reserved3,
+			out IEnumSTATSTG ppenum);
+
+		void DestroyElement(
+			string pwcsName);
+
+		void RenameElement(
+			string pwcsOldName,
+			string pwcsNewName);
+
+		void SetElementTimes(
+			string pwcsName,
+			FILETIME pctime,
+			FILETIME patime,
+			FILETIME pmtime);
+
+		void SetClass(
+			Guid clsid);
+
+		void SetStateBits(
+			uint grfStateBits,
+			uint grfMask);
+
+		void Stat(
+			out STATSTG pstatstg,
+			uint grfStatFlag);
+	}
+	*/
+	[ComImport]
+	[Guid("88CC31DE-27AB-11D0-9DF9-00A0C922E6EC")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IITStorage
+	{
+		HRESULT StgCreateDocfile(string pwcsName, uint grfMode, uint reserved, out IStorage ppstgOpen);
+		HRESULT StgCreateDocfileOnILockBytes(IntPtr/*ILockBytes*/ plkbyt, uint grfMode, uint reserved, out IStorage ppstgOpen);
+		HRESULT StgIsStorageFile(string pwcsName);
+		HRESULT StgIsStorageILockBytes(IntPtr/*ILockBytes*/ plkbyt);
+		HRESULT StgOpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
+		HRESULT StgOpenStorageOnILockBytes(IntPtr/*ILockBytes*/ plkbyt, IStorage pStgPriority, uint grfMode,
+			IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
+		HRESULT StgSetTimes(string lpszName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime, System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
+		HRESULT SetControlData(ITS_Control_Data pControlData);
+		HRESULT DefaultControlData(out ITS_Control_Data ppControlData);
+		HRESULT Compact(string pwcsName, ECompactionLev iLev);
+	}
+
+	public class Chm
+	{
+		
+		Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
 
 		/* Storage instantiation modes */
 		public const int STGM_DIRECT = 0x00000000;
@@ -86,6 +267,7 @@ namespace Utils
 
 		public const int STGM_DIRECT_SWMR = 0x00400000;
 
+		/*
 		[ComImport]
 		[Guid("0000000b-0000-0000-C000-000000000046")]
 		[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -104,25 +286,12 @@ namespace Utils
 			HRESULT RenameElement(string pwcsOldName, string pwcsNewName);
 			HRESULT SetElementTimes(string pwcsName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime,
 				System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
+
 			HRESULT SetClass(Guid clsid);
 			HRESULT SetStateBits(uint grfStateBits, uint grfMask);
 			HRESULT Stat(out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, uint grfStatFlag);
 		}
-
-		[ComImport]
-		[Guid("0000000d-0000-0000-C000-000000000046")]
-		[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-		public interface IEnumSTATSTG
-		{
-			// The user needs to allocate an STATSTG array whose size is celt.
-			[PreserveSig]
-			HRESULT Next(uint celt, [MarshalAs(UnmanagedType.LPArray), Out] System.Runtime.InteropServices.ComTypes.STATSTG[] rgelt, out uint pceltFetched);
-			HRESULT Skip(uint celt);
-			HRESULT Reset();
-			[return: MarshalAs(UnmanagedType.Interface)]
-			IEnumSTATSTG Clone();
-		}
-
+*/
 		public enum STGTY : int
 		{
 			STGTY_STORAGE = 1,
@@ -142,8 +311,7 @@ namespace Utils
 			public long QuadPart;
 		}
 		
-		public string title(string file)
-		{
+		public string title(string file) {
 			
 			object oIITStorage = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
 			IITStorage pITStorage = (IITStorage)oIITStorage;
@@ -152,13 +320,14 @@ namespace Utils
 				HRESULT hr = pITStorage.StgOpenStorage(file, null, STGM_SHARE_EXCLUSIVE | STGM_READ, IntPtr.Zero, 0, out pStorage);
 				if (hr == HRESULT.S_OK) {
 					IEnumSTATSTG pEnum;
-					hr = pStorage.EnumElements(0, IntPtr.Zero, 0, out pEnum);
+					pStorage.EnumElements(0, IntPtr.Zero, 0, out pEnum);
 					System.Runtime.InteropServices.ComTypes.STATSTG[] ss = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 					uint c;
-					while (HRESULT.S_OK == pEnum.Next(1, ss, out /* uint */ c)) {
+					while (HRESULT.S_OK == pEnum.Next(1, ss, out c)) {
 						if (ss[0].pwcsName == "#SYSTEM") {
 							string title = null;
 							IStream pStream = null;
+							pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, STGM_SHARE_EXCLUSIVE | STGM_READ, 0, out pStream);
 							hr = pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, STGM_SHARE_EXCLUSIVE | STGM_READ, 0, out pStream);
 							if (hr == HRESULT.S_OK) {
 								uint nSize = 4;
@@ -206,6 +375,35 @@ namespace Utils
 			}
 			return null;
 		}
-			
+		
+		public static List<string> Urls(string file)
+		{
+			var urls = new List<string>();
+			IStorage storage;
+            
+			if (Ole32.StgOpenStorage(file, IntPtr.Zero, STGM_READ | STGM_SHARE_EXCLUSIVE, IntPtr.Zero, 0, out storage) != 0 ||
+			    storage == null)
+				throw new Exception("Failed to open CHM.");
+			IEnumSTATSTG enumStg = null;
+			storage.EnumElements(0, IntPtr.Zero, 0, out enumStg);
+
+			// System.Runtime.InteropServices.ComTypes.STATSTG[];
+			// var  statArray = new STATSTG[1];
+			System.Runtime.InteropServices.ComTypes.STATSTG[] statArray = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+			uint fetched;
+
+			while (enumStg.Next(1, statArray, out fetched) == HRESULT.S_OK && fetched == 1) {
+				var st = statArray[0];
+				// Only include streams (files), skip sub-storages
+				if (st.type == 2) { // STGTY_STREAM
+					urls.Add(st.pwcsName);
+				}
+			}
+
+			Marshal.ReleaseComObject(enumStg);
+			Marshal.ReleaseComObject(storage);
+
+			return urls;
+		}
 	}
 }
