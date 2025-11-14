@@ -203,11 +203,21 @@ namespace Program {
 		}
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
+				List<string> files = new List<string>();
+
 			try {
-				var files = Chm.Urls(file);
-				MakeDataSet(files);
+				
+        files  = Chm.urls_structured(file);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+}
+        if (files.Count == 0) {
+files  = Chm.urls_7zip(file);
+		}
+				
+				if (files.Count > 0) {
+				MakeDataSet(files);
 			}
 		}
 

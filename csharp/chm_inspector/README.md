@@ -13,6 +13,19 @@ Program to examine the contents of compiled help file without extracting it base
 
 ![selenium 3 grid status indicator stub](https://github.com/sergueik/powershell_samples/blob/master/csharp/selenium3-grid-status-checker/screenshots/capture-grid-status-indicator-stub.png)
 
+### TODO
+
+For real CHM introspection (beyond listing HTML filenames), then `#URLSTR` alone is not enough.
+The CHM internal structure is designed so that you must cross-reference several internal streams to reconstruct:
+
+  * Topic filenames
+  * Topic numeric IDs
+  * Topic titles
+  * Table of Contents (TOC)
+  * Index associations
+  * “Home” page
+  * Window definitions
+
 ### See Also
 
 

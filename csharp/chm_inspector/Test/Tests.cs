@@ -13,7 +13,7 @@ namespace Tests {
         [Test]
         public void test1() {
             try {
-                var urls = Chm.Urls(file);
+                var urls = Chm.urls_7zip(file);
                 Assert.NotNull(urls, "Urls() returned null.");
                 Console.WriteLine("Found {0} entries", urls.Count);
             } catch (Exception e) {

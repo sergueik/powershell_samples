@@ -150,7 +150,8 @@ namespace Utils {
 	    STGM_NOSCRATCH = 0x00100000
 	}
 
-	public class Chm {
+
+public class Chm {
 
 		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
 
@@ -219,7 +220,7 @@ namespace Utils {
 			return null;
 		}
 
-		public static List<string> Urls(string filePath) {
+		public static List<string> urls_7zip(string filePath) {
 		    var urls = new List<string>();
 		
 		    var processStartInfo = new ProcessStartInfo {
@@ -252,6 +253,75 @@ namespace Utils {
 		    }
 		
 		    return urls;
+		}
+
+		public static List<string> urls_structured(string file) {
+			var urls = new List<string>();
+
+			IStorage root;
+			int hr = Ole32.StgOpenStorage(
+				          file,
+				          null,
+				          (uint)(STGM.STGM_READ | STGM.STGM_SHARE_DENY_NONE),
+				          IntPtr.Zero,
+				          0,
+				          out root
+			          );
+
+			if (hr != 0 || root == null) 
+				throw new Exception(String.Format("Failed to open {0}. Error: {1}\n{2}", file,  ("0x"+hr.ToString("X")), MessageHelper.Msg(hr)));
+
+			IEnumSTATSTG enumStat;
+			root.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+
+			var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+			uint fetched;
+
+			while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+				string name = stat[0].pwcsName;
+
+				// #URLSTRxxxx streams contain URLs
+				if (!name.StartsWith("#URLSTR", StringComparison.OrdinalIgnoreCase))
+					continue;
+
+				// Open stream
+				IStream stm;
+				hr = (int)root.OpenStream(
+					name,
+					IntPtr.Zero,
+					(uint)(STGM.STGM_READ | STGM.STGM_SHARE_DENY_NONE),
+					0,
+					out stm
+				);
+
+				if (hr != 0 || stm == null)
+					continue;
+
+				// Read the entire stream into a buffer
+				ulong size = (ulong)stat[0].cbSize;
+				byte[] buf = new byte[size];
+
+				int toRead = (int)size;
+				IntPtr readPtr = Marshal.AllocCoTaskMem(4);
+				stm.Read(buf, toRead, readPtr);
+				Marshal.FreeCoTaskMem(readPtr);
+
+				// Decode as ANSI (CHM internal URLs are ANSI)
+				string url = System.Text.Encoding.Default.GetString(buf);
+
+				// Clean up nulls
+				url = url.TrimEnd('\0');
+
+				if (!string.IsNullOrWhiteSpace(url))
+					urls.Add(url);
+
+				Marshal.ReleaseComObject(stm);
+			}
+
+			Marshal.ReleaseComObject(enumStat);
+			Marshal.ReleaseComObject(root);
+
+			return urls;
 		}
 
 		// NOTE: not working: tries to open CHM via Structured Storage (StgOpenStorage)
