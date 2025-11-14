@@ -220,39 +220,38 @@ namespace Utils {
 		}
 
 		public static List<string> Urls(string filePath) {
-			var urls = new List<string>();
-			string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
-			Directory.CreateDirectory(tempDir);
-
-			try {
-				// NOTE: whitespace sensitive
-				String arguments = String.Format("x \"{0}\" -o\"{1}\"", filePath,  tempDir);
-				// Console.Error.WriteLine("{0} {1}", "\"c:\\Program Files\\7-zip\\7z.exe\"", arguments);
-				var processStartInfo = new ProcessStartInfo /*(@"c:\Program Files\7-zip\7z.exe", arguments) */ {
-					FileName = @"c:\Program Files\7-zip\7z.exe",
-					UseShellExecute = false,
-					Arguments = arguments,
-					WorkingDirectory = tempDir,
-					CreateNoWindow = true
-				};
-				const int waitForExit = 10000;
-				var process = Process.Start(processStartInfo);
-				process.WaitForExit(waitForExit);
-				if (process.ExitCode != 0)
-            		throw new Exception("7-Zip failed with exit code " + process.ExitCode);
-				string[] searchPatterns = { "*.html", "*.htm" };
-				var allMatchingFiles = new List<string>();
-				foreach (string pattern in searchPatterns) {
-					var filesForPattern = Directory.GetFiles(tempDir, pattern, SearchOption.AllDirectories);
-					allMatchingFiles.AddRange(filesForPattern);
-				}
-				foreach (var file in allMatchingFiles)
-					urls.Add(file.Substring(tempDir.Length + 1).Replace("\\", "/"));
-			} finally {
-				// optionally clean up
-				Directory.Delete(tempDir, true);
-			}
-			return urls;
+		    var urls = new List<string>();
+		
+		    var processStartInfo = new ProcessStartInfo {
+		        FileName = @"c:\Program Files\7-zip\7z.exe",
+		        Arguments = String.Format("l -slt \"{0}\"", filePath),
+		        RedirectStandardOutput = true,
+		        RedirectStandardError = true,
+		        UseShellExecute = false,
+		        CreateNoWindow = true
+		    };
+		
+		    using (var process = Process.Start(processStartInfo)) {
+		        var output = process.StandardOutput;
+		        string line;
+		        string currentPath;
+		
+		        while ((line = output.ReadLine()) != null) {
+		            if (line.StartsWith("Path = ")) {
+		                currentPath = line.Substring("Path = ".Length);
+		
+		                string lower = currentPath.ToLowerInvariant();
+		                if (lower.EndsWith(".html") || lower.EndsWith(".htm")) {
+		                    urls.Add(currentPath.Replace("\\", "/"));
+		                }
+		            }
+		        }
+		        process.WaitForExit(10000);
+		        if (process.ExitCode != 0)
+		            throw new Exception("7-Zip failed with exit code " + process.ExitCode);
+		    }
+		
+		    return urls;
 		}
 
 		// NOTE: not working: tries to open CHM via Structured Storage (StgOpenStorage)
