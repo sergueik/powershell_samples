@@ -123,18 +123,20 @@ namespace Program {
 			
 			checkHeaderCol = new CheckBoxDataGridColumn();
 
-			dataGrid.MouseDown += new MouseEventHandler(this.dataGrid_MouseDown);
-    		dataGrid.Paint += new PaintEventHandler(this.dataGrid_Paint);
+			dataGrid.MouseDown += dataGrid_MouseDown;
+    		dataGrid.Paint += dataGrid_Paint;
+    		
 			   // ---- checkbox column ----
-    checkHeaderCol = new CheckBoxDataGridColumn();
-    checkHeaderCol.MappingName = "IsSelected";  // MUST MATCH DataColumn name
-    checkHeaderCol.HeaderText = "";             // header checkbox will be drawn manually
-    checkHeaderCol.Width = 30;
-			dataGridTableStyle.GridColumnStyles.AddRange(new DataGridColumnStyle[] { checkHeaderCol, checkCol, textCol});
+		    checkHeaderCol = new CheckBoxDataGridColumn();
+		    checkHeaderCol.MappingName = "IsSelected";
+		    checkHeaderCol.HeaderText = "";
+		    checkHeaderCol.Width = 30;
+			dataGridTableStyle.GridColumnStyles.AddRange(new DataGridColumnStyle[] { checkCol, textCol });
+
 			dataGridTableStyle.HeaderForeColor = SystemColors.ControlText;
 			dataGridTableStyle.MappingName = "Hosts";
-tableStyle = new DataGridTableStyle();
-    tableStyle.MappingName = "Hosts";   // MUST MATCH DataTable.TableName
+			tableStyle = new DataGridTableStyle();
+		    tableStyle.MappingName = "Hosts";   // MUST MATCH DataTable.TableName
 
 			textCol.Format = "";
 			textCol.FormatInfo = null;
@@ -209,34 +211,57 @@ tableStyle = new DataGridTableStyle();
 			}
 		}
 
-		private void dataGrid_Paint(object sender, PaintEventArgs paintEventArgs){
-			if (this.tableStyle.GridColumnStyles.Count == 0)        
-					return;
-
-		    // header cell for column 0, row = -1
-		    Rectangle rect = dataGrid.GetCellBounds(0, -1);
+		private void dataGrid_Paint(object sender, PaintEventArgs e){
+		    // Ensure we have a table and at least one column
+		    if (dataGrid.DataSource == null || dataGridTableStyle.GridColumnStyles.Count == 0)
+		        return;
+		
+		    // Ensure column index 0 exists in the style
+		    if (dataGridTableStyle.GridColumnStyles.Count <= 0)
+		        return;
+		
+		    Rectangle rect;
+		    try {
+		        // For header, row = -1, column = 0 (first column)
+		        rect = dataGrid.GetCellBounds(0, -1);
+		    } catch {
+		        // Safe fallback: do nothing if bounds cannot be retrieved
+		        return;
+		    }
 		
 		    if (rect.Width <= 0 || rect.Height <= 0)
 		        return;
 		
-		    // adjust coordinates slightly
-		    Rectangle cb = new Rectangle(rect.X + 4, rect.Y + 3, 14, 14);
-		
+		    Rectangle cbRect = new Rectangle(rect.X + 4, rect.Y + 3, 14, 14);
 		    ControlPaint.DrawCheckBox(
-		        paintEventArgs.Graphics,
-		        cb,
+		        e.Graphics,
+		        cbRect,
 		        selectAll ? ButtonState.Checked : ButtonState.Normal
 		    );
+		    
+		     // Draw the "Select All" text to the right of the checkbox
+		    string headerText = "Select All";
+		    using (Brush textBrush = new SolidBrush(dataGridTableStyle.HeaderForeColor)) {
+		        Rectangle textRect = new Rectangle(cbRect.Right + 2, rect.Y, rect.Width - cbRect.Right - 2, rect.Height);
+		        StringFormat stringFormat = new StringFormat  {
+		            LineAlignment = StringAlignment.Center,
+		            Alignment = StringAlignment.Near
+		        };
+		        e.Graphics.DrawString(headerText, dataGrid.Font, textBrush, textRect, stringFormat);
+		    }
+		    
 		}
-
-		// this only work with CheckBoxDataGridColumn
-		
+	
 		private void dataGrid_MouseDown(object sender, MouseEventArgs mouseEventArgs) {
 		    DataGrid.HitTestInfo hit = dataGrid.HitTest(mouseEventArgs.X, mouseEventArgs.Y);
 		
-		    if (hit.Type == DataGrid.HitTestType.ColumnHeader &&
-		        hit.Column == 0) {
-		        checkHeaderCol.ToggleSelectAll(dataTable);
+		    if (hit.Type == DataGrid.HitTestType.ColumnHeader && hit.Column == 0) {
+		        selectAll = !selectAll;
+		
+		        foreach (DataRow row in dataTable.Rows) {
+		            row["selected"] = selectAll;  // use your existing column
+		        }
+		
 		        dataGrid.Invalidate();
 		    }
 		}
