@@ -2,8 +2,10 @@
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
-using Utils;
 using System.Data;
+using System.Collections.Generic;
+
+using Utils;
 
 // based on: https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title
 namespace Program {
@@ -16,12 +18,14 @@ namespace Program {
 		private OpenFileDialog openFileDialog1;
 		private TextBox textBox1;
 		private DataSet dataSet;
+		private DataTable dataTable;
 		private DataGrid dataGrid;
 		private DataGridTableStyle dataGridTableStyle;
 		private DataGridTextBoxColumn textCol;
+		private DataGridBoolColumn checkCol;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.3.0";
+		private const string versionString = "0.4.0";
 		private const string initialDirectory = @"C:\";
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 
@@ -78,7 +82,7 @@ namespace Program {
 			button3.Text = "List";
 			button3.Click += button3_Click;
 			Controls.Add(button3);
-			
+
 			textBox1 = new TextBox();
 			textBox1.Location = new Point(30, 7);
 			textBox1.Name = "textBox1";
@@ -107,9 +111,16 @@ namespace Program {
 			dataGridTableStyle});
 			dataGridTableStyle.AlternatingBackColor = Color.LightGray;
 			dataGridTableStyle.DataGrid = dataGrid;
-			dataGridTableStyle.GridColumnStyles.AddRange(new DataGridColumnStyle[] {textCol});
+
+			checkCol = new DataGridBoolColumn();
+    		checkCol.HeaderText = "Select";
+			checkCol.MappingName = "selected";
+			checkCol.Width = 50;
+
+			dataGridTableStyle.GridColumnStyles.AddRange(new DataGridColumnStyle[] { checkCol, textCol});
 			dataGridTableStyle.HeaderForeColor = SystemColors.ControlText;
 			dataGridTableStyle.MappingName = "Hosts";
+
 			textCol.Format = "";
 			textCol.FormatInfo = null;
 			textCol.HeaderText = "hostname";
@@ -139,16 +150,23 @@ namespace Program {
 				foreach (String fileName in openFileDialog1.FileNames)
 					textBox1.Text = fileName;
 			}
+
 		}
 
-		private void MakeDataSet() {
+		// NOTE: unused
+		private void MakeDataSet(List<string> files) {
 			dataSet = new DataSet("DataSet");
-			var dataTable = new DataTable("Hosts");
+			dataTable = new DataTable("Hosts");
 
+			var cSelected = new DataColumn("selected", typeof(bool));
+			cSelected.DefaultValue = false;
+			dataTable.Columns.Add(cSelected);
 			// Create two columns, and add them to the first table.
 			var cHostId = new DataColumn("HostId", typeof(int));
 			var chostname = new DataColumn("hostname");
 			dataTable.Columns.Add(cHostId);
+
+
 			dataTable.Columns.Add(chostname);
 
 			// Add the tables to the DataSet.
@@ -156,26 +174,29 @@ namespace Program {
 
 			DataRow newRow1;
 
-			for (int i = 1; i < 5; i++) {
+			for (int index = 1; index < files.Count ; index++) {
 				newRow1 = dataTable.NewRow();
-				newRow1["HostId"] = i;
+				newRow1["HostId"] = index;
+				newRow1["hostname"] = files[index];
 				// Add the row to the Hosts table.
 				dataTable.Rows.Add(newRow1);
 			}
-			dataTable.Rows[0]["hostname"] = "host1";
+			// dataTable.Rows[0]["hostname"] = "host1";
+			dataGrid.DataSource = dataTable;
 		}
 
-		private void button2_Click(object sender, EventArgs eventArgs) {        
-			String title = Chm.title(file); 
+		private void button2_Click(object sender, EventArgs eventArgs) {
+			String title = Chm.title(file);
 			// TODO: sender
 			if (title != null)
 				MessageBox.Show("Title = " + title, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 		}
 
-		private void button3_Click(object sender, EventArgs eventArgs) {        
+		private void button3_Click(object sender, EventArgs eventArgs) {
 			try {
-				Chm.Urls(file);
+				var files = Chm.Urls(file);
+				MakeDataSet(files);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
