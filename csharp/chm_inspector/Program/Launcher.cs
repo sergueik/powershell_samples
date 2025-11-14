@@ -23,6 +23,8 @@ namespace Program {
 		private DataGridTableStyle dataGridTableStyle;
 		private DataGridTextBoxColumn textCol;
 		private DataGridBoolColumn checkCol;
+		// private CheckBoxDataGridColumn checkCol;
+
 		private Label versionLabel;
 		private Label lblImage;
 		private const string versionString = "0.4.0";
@@ -113,6 +115,7 @@ namespace Program {
 			dataGridTableStyle.DataGrid = dataGrid;
 
 			checkCol = new DataGridBoolColumn();
+			// checkCol = new CheckBoxDataGridColumn();
     		checkCol.HeaderText = "Select";
 			checkCol.MappingName = "selected";
 			checkCol.Width = 50;
@@ -153,35 +156,26 @@ namespace Program {
 
 		}
 
-		// NOTE: unused
 		private void MakeDataSet(List<string> files) {
+
 			dataSet = new DataSet("DataSet");
 			dataTable = new DataTable("Hosts");
 
-			var cSelected = new DataColumn("selected", typeof(bool));
-			cSelected.DefaultValue = false;
-			dataTable.Columns.Add(cSelected);
-			// Create two columns, and add them to the first table.
-			var cHostId = new DataColumn("HostId", typeof(int));
-			var chostname = new DataColumn("hostname");
-			dataTable.Columns.Add(cHostId);
-
-
-			dataTable.Columns.Add(chostname);
-
-			// Add the tables to the DataSet.
+			var selected = new DataColumn("selected", typeof(bool));
+			selected.DefaultValue = false;
+			dataTable.Columns.Add(selected);
+			dataTable.Columns.Add(new DataColumn("HostId", typeof(int)));
+			dataTable.Columns.Add(new DataColumn("hostname"));
 			dataSet.Tables.Add(dataTable);
 
-			DataRow newRow1;
+			DataRow newRow;
 
 			for (int index = 1; index < files.Count ; index++) {
-				newRow1 = dataTable.NewRow();
-				newRow1["HostId"] = index;
-				newRow1["hostname"] = files[index];
-				// Add the row to the Hosts table.
-				dataTable.Rows.Add(newRow1);
+				newRow = dataTable.NewRow();
+				newRow["HostId"] = index;
+				newRow["hostname"] = files[index];
+				dataTable.Rows.Add(newRow);
 			}
-			// dataTable.Rows[0]["hostname"] = "host1";
 			dataGrid.DataSource = dataTable;
 		}
 
@@ -201,6 +195,61 @@ namespace Program {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
+
+		// this only work with CheckBoxDataGridColumn
+		/*
+		private void dataGrid_MouseDown(object sender, MouseEventArgs mouseEventArgs) {
+		    DataGrid.HitTestInfo hit = dataGrid.HitTest(mouseEventArgs.X, mouseEventArgs.Y);
+		
+		    if (hit.Type == DataGrid.HitTestType.ColumnHeader &&
+		        hit.Column == 0) {
+		        checkCol.ToggleSelectAll(dataTable);
+		        dataGrid.Invalidate();
+		    }
+		
+		}
+		*/
 	}
+	// customization od DataGrid
+	
+	public class CheckBoxDataGridColumn : DataGridTextBoxColumn {
+	    private bool selectAllChecked = false;
+	    private readonly Bitmap checkedBitmap = SystemIcons.Shield.ToBitmap();
+	    private readonly Bitmap uncheckedBitmap = SystemIcons.Application.ToBitmap();
+	
+	    public event EventHandler SelectAllChanged;
+	
+	    protected override void Paint( Graphics graphics, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight) {
+	        base.Paint(graphics, bounds, source, rowNum, backBrush, foreBrush, alignToRight);
+	
+	        // draw checkbox inside the cell
+	        bool value = Convert.ToBoolean(GetColumnValueAtRow(source, rowNum));
+	        ControlPaint.DrawCheckBox(
+	            graphics,
+	            new Rectangle(bounds.X + 2, bounds.Y + 2, 12, 12),
+	            value ? ButtonState.Checked : ButtonState.Normal);
+	    }
+	
+	    public void PaintHeader(Graphics graphics, Rectangle bounds) {
+	        ControlPaint.DrawCheckBox(
+	            graphics,
+	            new Rectangle(bounds.X + 2, bounds.Y + 2, 12, 12),
+	            selectAllChecked ? ButtonState.Checked : ButtonState.Normal);
+	    }
+			
+		public void ToggleSelectAll(DataTable table) {
+		    selectAllChecked = !selectAllChecked;
+		
+		    foreach (DataRow row in table.Rows) {
+		        row[this.MappingName] = selectAllChecked;
+		    }
+		
+		    if (SelectAllChanged != null) {
+		        SelectAllChanged(this, EventArgs.Empty);
+		    }
+		}
+
+	}
+
 }
 

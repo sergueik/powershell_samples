@@ -167,7 +167,7 @@ namespace Utils {
 					var ss = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 					uint c;
 					while (HRESULT.S_OK == pEnum.Next(1, ss, out c)) {
-						if (ss[0].pwcsName == "#URLSTR") {
+						if (ss[0].pwcsName == "#SYSTEM") {
 							string title = null;
 							IStream pStream = null;
 							pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out pStream);
@@ -198,7 +198,7 @@ namespace Utils {
 									pBuffer = new byte[nSize];
 									pcbRead = IntPtr.Zero;
 									pStream.Read(pBuffer, (int)nSize, pcbRead);
-									if (nCode == (int) STGTY.STGTY_ILOCKBYTES) {
+									if (nCode == (int) STGTY.STGTY_ILOCKBYTES) { 
 										IntPtr pBytesPtr = Marshal.AllocHGlobal(pBuffer.Length);
 										Marshal.Copy(pBuffer, 0, pBytesPtr, pBuffer.Length);
 										title = Marshal.PtrToStringAnsi(pBytesPtr);
