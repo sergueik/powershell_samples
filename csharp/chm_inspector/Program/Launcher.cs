@@ -23,13 +23,14 @@ namespace Program {
 		private DataGridTableStyle dataGridTableStyle;
 		private DataGridTextBoxColumn textCol;
 		private DataGridBoolColumn checkCol;
-		// private CheckBoxDataGridColumn checkCol;
-
+		private CheckBoxDataGridColumn checkHeaderCol;
+		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
 		private const string versionString = "0.4.0";
 		private const string initialDirectory = @"C:\";
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
+		private DataGridTableStyle tableStyle;
 
 		[STAThread]
 		public static void Main() {
@@ -115,20 +116,33 @@ namespace Program {
 			dataGridTableStyle.DataGrid = dataGrid;
 
 			checkCol = new DataGridBoolColumn();
-			// checkCol = new CheckBoxDataGridColumn();
     		checkCol.HeaderText = "Select";
 			checkCol.MappingName = "selected";
 			checkCol.Width = 50;
+			checkCol.HeaderText = "";
+			
+			checkHeaderCol = new CheckBoxDataGridColumn();
 
-			dataGridTableStyle.GridColumnStyles.AddRange(new DataGridColumnStyle[] { checkCol, textCol});
+			dataGrid.MouseDown += new MouseEventHandler(this.dataGrid_MouseDown);
+    		dataGrid.Paint += new PaintEventHandler(this.dataGrid_Paint);
+			   // ---- checkbox column ----
+    checkHeaderCol = new CheckBoxDataGridColumn();
+    checkHeaderCol.MappingName = "IsSelected";  // MUST MATCH DataColumn name
+    checkHeaderCol.HeaderText = "";             // header checkbox will be drawn manually
+    checkHeaderCol.Width = 30;
+			dataGridTableStyle.GridColumnStyles.AddRange(new DataGridColumnStyle[] { checkHeaderCol, checkCol, textCol});
 			dataGridTableStyle.HeaderForeColor = SystemColors.ControlText;
 			dataGridTableStyle.MappingName = "Hosts";
+tableStyle = new DataGridTableStyle();
+    tableStyle.MappingName = "Hosts";   // MUST MATCH DataTable.TableName
 
 			textCol.Format = "";
 			textCol.FormatInfo = null;
 			textCol.HeaderText = "hostname";
 			textCol.MappingName = "hostname";
 			textCol.Width = 300;
+			// dataGrid.MouseDown += new MouseEventHandler(this.dataGrid_MouseDown);
+			Controls.Add(dataGrid);
 
 			versionLabel = new Label();
 			versionLabel.BorderStyle = BorderStyle.None;
@@ -141,8 +155,7 @@ namespace Program {
 			AutoScaleDimensions = new SizeF(8F, 16F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(348, 429);
-			Controls.Add(dataGrid);
-
+	
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
@@ -196,40 +209,99 @@ namespace Program {
 			}
 		}
 
+		private void dataGrid_Paint(object sender, PaintEventArgs paintEventArgs){
+			if (this.tableStyle.GridColumnStyles.Count == 0)        
+					return;
+
+		    // header cell for column 0, row = -1
+		    Rectangle rect = dataGrid.GetCellBounds(0, -1);
+		
+		    if (rect.Width <= 0 || rect.Height <= 0)
+		        return;
+		
+		    // adjust coordinates slightly
+		    Rectangle cb = new Rectangle(rect.X + 4, rect.Y + 3, 14, 14);
+		
+		    ControlPaint.DrawCheckBox(
+		        paintEventArgs.Graphics,
+		        cb,
+		        selectAll ? ButtonState.Checked : ButtonState.Normal
+		    );
+		}
+
 		// this only work with CheckBoxDataGridColumn
-		/*
+		
 		private void dataGrid_MouseDown(object sender, MouseEventArgs mouseEventArgs) {
 		    DataGrid.HitTestInfo hit = dataGrid.HitTest(mouseEventArgs.X, mouseEventArgs.Y);
 		
 		    if (hit.Type == DataGrid.HitTestType.ColumnHeader &&
 		        hit.Column == 0) {
-		        checkCol.ToggleSelectAll(dataTable);
+		        checkHeaderCol.ToggleSelectAll(dataTable);
 		        dataGrid.Invalidate();
 		    }
-		
 		}
-		*/
+		
 	}
+	
+
 	// customization od DataGrid
 	
-	public class CheckBoxDataGridColumn : DataGridTextBoxColumn {
+	public class CheckBoxDataGridColumn : DataGridColumnStyle {
 	    private bool selectAllChecked = false;
 	    private readonly Bitmap checkedBitmap = SystemIcons.Shield.ToBitmap();
 	    private readonly Bitmap uncheckedBitmap = SystemIcons.Application.ToBitmap();
 	
 	    public event EventHandler SelectAllChanged;
 	
-	    protected override void Paint( Graphics graphics, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight) {
-	        base.Paint(graphics, bounds, source, rowNum, backBrush, foreBrush, alignToRight);
-	
-	        // draw checkbox inside the cell
-	        bool value = Convert.ToBoolean(GetColumnValueAtRow(source, rowNum));
-	        ControlPaint.DrawCheckBox(
-	            graphics,
-	            new Rectangle(bounds.X + 2, bounds.Y + 2, 12, 12),
-	            value ? ButtonState.Checked : ButtonState.Normal);
-	    }
-	
+	    protected override void Abort(int rowNum) {
+    	}
+    	
+	    protected override bool Commit(CurrencyManager dataSource, int rowNum) {
+        	return true;
+    	}
+	    
+	    protected override void Edit(CurrencyManager source, int rowNum, Rectangle bounds,
+                                 bool readOnly, string instantText, bool cellIsVisible) {
+    	}
+	    
+	    protected override Size GetPreferredSize(Graphics g, object value) {
+        return new Size(20, 20);
+    }
+
+    protected override int GetMinimumHeight() {
+        return 20;
+    }
+
+    protected override int GetPreferredHeight(Graphics g, object value) {
+        return 20;
+    }
+
+    protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source,
+                                  int rowNum, bool alignToRight) {
+        Paint(graphics, bounds, source, rowNum, Brushes.White, Brushes.Black, alignToRight);
+    }
+    protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source,
+                                  int rowNum) {
+        Paint(graphics, bounds, source, rowNum, Brushes.White, Brushes.Black, false);
+    }
+    protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source,
+                                  int rowNum, Brush backBrush, Brush foreBrush,
+                                  bool alignToRight) {
+        // Clear background
+        graphics.FillRectangle(backBrush, bounds);
+
+        object val = this.GetColumnValueAtRow(source, rowNum);
+        bool isChecked = false;
+
+        if (val is bool)
+            isChecked = (bool)val;
+
+        // Draw checkbox
+        var checkboxRectangle = new Rectangle(bounds.X + 4, bounds.Y + 2, 14, 14);
+        ControlPaint.DrawCheckBox(graphics, checkboxRectangle,
+            isChecked ? ButtonState.Checked : ButtonState.Normal);
+    }
+    
 	    public void PaintHeader(Graphics graphics, Rectangle bounds) {
 	        ControlPaint.DrawCheckBox(
 	            graphics,
