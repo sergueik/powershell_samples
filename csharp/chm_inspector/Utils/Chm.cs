@@ -256,20 +256,31 @@ public class Chm {
 		}
 
 		public static List<string> urls_structured(string file) {
+						
+			Nullable<int> zone = Security.PeekMotwZone(file);
+			if (zone.HasValue) {
+			    Console.WriteLine("File is blocked, ZoneId=" + zone.Value);
+				Security.RemoveMotw(file);
+			} else
+			    Console.WriteLine("File is safe");
+
+
+
 			var urls = new List<string>();
 
 			IStorage root;
+			uint grfMode = (uint)(STGM.STGM_READ | STGM.STGM_SHARE_DENY_NONE);
 			int hr = Ole32.StgOpenStorage(
 				          file,
 				          null,
-				          (uint)(STGM.STGM_READ | STGM.STGM_SHARE_DENY_NONE),
+				          grfMode,
 				          IntPtr.Zero,
 				          0,
 				          out root
 			          );
 
 			if (hr != 0 || root == null) 
-				throw new Exception(String.Format("Failed to open {0}. Error: {1}\n{2}", file,  ("0x"+hr.ToString("X")), MessageHelper.Msg(hr)));
+				throw new Exception(String.Format("Failed to open {0}. Error: {1}\n{2}", file,  ("0x" + hr.ToString("X")), MessageHelper.Msg(hr)));
 
 			IEnumSTATSTG enumStat;
 			root.EnumElements(0, IntPtr.Zero, 0, out enumStat);
@@ -322,7 +333,7 @@ public class Chm {
 			Marshal.ReleaseComObject(root);
 
 			return urls;
-		}
+		}	
 
 		// NOTE: not working: tries to open CHM via Structured Storage (StgOpenStorage)
 		public static List<string> Urls_fragile(string file) {

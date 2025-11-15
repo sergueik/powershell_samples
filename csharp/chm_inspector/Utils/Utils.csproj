@@ -52,6 +52,7 @@
     <Compile Include="Mover.cs" />
     <Compile Include="DataDumper.cs" />
     <Compile Include="Chm.cs" />
+    <Compile Include="Security.cs" />
     <Compile Include="MessageHelper.cs" />
     <Compile Include="SingleInstanceController.cs" />
   </ItemGroup>
