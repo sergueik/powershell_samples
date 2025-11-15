@@ -220,6 +220,68 @@ public class Chm {
 			return null;
 		}
 
+		public static List<string> urls_structured(string filePath) {
+							
+			Nullable<int> zone = Security.PeekMotwZone(filePath);
+			if (zone.HasValue) {
+			    Console.WriteLine("File is blocked, ZoneId=" + zone.Value);
+				Security.RemoveMotw(filePath);
+			} else
+			    Console.WriteLine("File is safe");
+
+		    var urls = new List<string>();
+		
+		    object obj = null;
+		    IITStorage iit = null;
+		    IStorage storage = null;
+		    IEnumSTATSTG enumStat = null;
+		
+		    try {
+		        obj = Activator.CreateInstance(
+		            Type.GetTypeFromCLSID(CLSID_ITStorage, true)
+		        );
+		        iit = (IITStorage)obj;
+		
+		        HRESULT hr = iit.StgOpenStorage( filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),  IntPtr.Zero, 0, out storage );
+		
+		        if (hr != 0 || storage == null) {
+		        	throw new Exception(String.Format("Failed to open {0}. Error: {1}\n{2}", filePath, ("0x" + hr.ToString("X")), MessageHelper.Msg(hr)));
+		        }
+		
+		        // Enumerate structured storage elements
+		        hr = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+		        if (hr != HRESULT.S_OK || enumStat == null){
+		         	throw new Exception(String.Format("Failed to enum elements. Error: {0}\n{1}", ("0x" + hr.ToString("X")), MessageHelper.Msg(hr)));
+		        }
+		        
+		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+		        uint fetched = 0;
+		
+		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+		            if (stat[0].type == (int)STGTY.STGTY_STREAM)
+		            {
+		                string name = stat[0].pwcsName;
+		                if (name != null) {
+		                    string lower = name.ToLowerInvariant();
+		                    if (lower.EndsWith(".html") || lower.EndsWith(".htm")) {
+		                        urls.Add(name.Replace("\\", "/"));
+		                    }
+		                }
+		            }
+		        }
+		    } catch {
+		        // swallow and return empty so your wrapper can fallback to 7zip
+		    } finally {
+		        // Clean up COM objects
+		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+		        if (storage != null) Marshal.ReleaseComObject(storage);
+		        if (iit != null) Marshal.ReleaseComObject(iit);
+		        if (obj != null) Marshal.ReleaseComObject(obj);
+		    }
+		
+		    return urls;
+		}
+
 		public static List<string> urls_7zip(string filePath) {
 		    var urls = new List<string>();
 		
@@ -255,117 +317,6 @@ public class Chm {
 		    return urls;
 		}
 
-		public static List<string> urls_structured(string file) {
-						
-			Nullable<int> zone = Security.PeekMotwZone(file);
-			if (zone.HasValue) {
-			    Console.WriteLine("File is blocked, ZoneId=" + zone.Value);
-				Security.RemoveMotw(file);
-			} else
-			    Console.WriteLine("File is safe");
 
-
-
-			var urls = new List<string>();
-
-			IStorage root;
-			uint grfMode = (uint)(STGM.STGM_READ | STGM.STGM_SHARE_DENY_NONE);
-			int hr = Ole32.StgOpenStorage(
-				          file,
-				          null,
-				          grfMode,
-				          IntPtr.Zero,
-				          0,
-				          out root
-			          );
-
-			if (hr != 0 || root == null) 
-				throw new Exception(String.Format("Failed to open {0}. Error: {1}\n{2}", file,  ("0x" + hr.ToString("X")), MessageHelper.Msg(hr)));
-
-			IEnumSTATSTG enumStat;
-			root.EnumElements(0, IntPtr.Zero, 0, out enumStat);
-
-			var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-			uint fetched;
-
-			while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
-				string name = stat[0].pwcsName;
-
-				// #URLSTRxxxx streams contain URLs
-				if (!name.StartsWith("#URLSTR", StringComparison.OrdinalIgnoreCase))
-					continue;
-
-				// Open stream
-				IStream stm;
-				hr = (int)root.OpenStream(
-					name,
-					IntPtr.Zero,
-					(uint)(STGM.STGM_READ | STGM.STGM_SHARE_DENY_NONE),
-					0,
-					out stm
-				);
-
-				if (hr != 0 || stm == null)
-					continue;
-
-				// Read the entire stream into a buffer
-				ulong size = (ulong)stat[0].cbSize;
-				byte[] buf = new byte[size];
-
-				int toRead = (int)size;
-				IntPtr readPtr = Marshal.AllocCoTaskMem(4);
-				stm.Read(buf, toRead, readPtr);
-				Marshal.FreeCoTaskMem(readPtr);
-
-				// Decode as ANSI (CHM internal URLs are ANSI)
-				string url = System.Text.Encoding.Default.GetString(buf);
-
-				// Clean up nulls
-				url = url.TrimEnd('\0');
-
-				if (!string.IsNullOrWhiteSpace(url))
-					urls.Add(url);
-
-				Marshal.ReleaseComObject(stm);
-			}
-
-			Marshal.ReleaseComObject(enumStat);
-			Marshal.ReleaseComObject(root);
-
-			return urls;
-		}	
-
-		// NOTE: not working: tries to open CHM via Structured Storage (StgOpenStorage)
-		public static List<string> Urls_fragile(string file) {
-			var urls = new List<string>();
-			IStorage storage;
-
-			var iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
-			var sections = iniFile.GetSectionNames();
-			// TODO: check if API method name configuration is present
-			uint grfMode = IniExpressionParser.ParseEnumFlags<STGM>(iniFile["List"]["grfMode"]);
-			int hr = Ole32.StgOpenStorage(file, null, grfMode, IntPtr.Zero, 0, out storage);
-			if (hr != 0 ||
-			    storage == null)
-				throw new Exception(String.Format("Failed to open {0}. Error: {1}", file, MessageHelper.Msg(hr)));
-			IEnumSTATSTG enumStg = null;
-			storage.EnumElements(0, IntPtr.Zero, 0, out enumStg);
-
-			var statArray = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-			uint fetched;
-
-			while (enumStg.Next(1, statArray, out fetched) == HRESULT.S_OK && fetched == 1) {
-				var st = statArray[0];
-				// Only include streams (files), skip sub-storages
-				if (st.type == (int)STGTY.STGTY_STREAM) {
-					urls.Add(st.pwcsName);
-				}
-			}
-
-			Marshal.ReleaseComObject(enumStg);
-			Marshal.ReleaseComObject(storage);
-
-			return urls;
-		}
 	}
 }

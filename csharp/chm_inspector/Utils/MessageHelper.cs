@@ -19,7 +19,9 @@ namespace Utils {
 
 		[DllImport("kernel32.dll")]
 		private static extern IntPtr LocalFree(IntPtr hMem);
-
+		public static string Msg(HRESULT hr) {
+			return Msg((int) hr);
+		}
 		public static string Msg(int hr) {
 			IntPtr lpMsgBuf;
 			int ret = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
