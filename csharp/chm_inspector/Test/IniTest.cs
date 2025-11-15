@@ -48,7 +48,7 @@ name=host22
 			Assert.AreEqual("", verificationErrors.ToString());
 		}
 
-		[Ignore]
+		// [Ignore]
 		[Test] 
 		// http://www.java2s.com/Tutorials/CSharp/System.IO/StringReader/C_StringReader_StringReader.htm
 		public void test1() {
@@ -63,7 +63,7 @@ name=host22
 			}
 		}
 
-		[Ignore]
+		// [Ignore]
 		[Test] 
 		public void test2() {
 			var sections = iniFile.GetSectionNames();

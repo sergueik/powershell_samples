@@ -116,7 +116,7 @@ namespace Utils {
 
 		public List<IniFileValue> ReadSectionValues() {
 			List<IniFileElement> elements = ReadSection();
-			List<IniFileValue> ret = new List<IniFileValue>();
+			var ret = new List<IniFileValue>();
 			for (int i = 0; i < elements.Count; i++)
 				if (elements[i] is IniFileValue)
 					ret.Add((IniFileValue)elements[i]);
@@ -591,7 +591,7 @@ namespace Utils {
 		}
 
 		public System.Collections.ObjectModel.ReadOnlyCollection<string> GetKeys() {
-			List<string> list = new List<string>(elements.Count);
+			var list = new List<string>(elements.Count);
 			for (int i = 0; i < elements.Count; i++) {
 				if (elements[i] is IniFileValue) {
 					list.Add(((IniFileValue)elements[i]).Key);
@@ -1063,7 +1063,7 @@ namespace Utils {
 			get { return Line.Length / Environment.NewLine.Length + 1; }
 			set {
 				if (value < 1)
-					throw new ArgumentOutOfRangeException("Cannot set Amount to less than 1.");
+					throw new ArgumentOutOfRangeException(@"Cannot set Amount to less than 1.");
 				var build = new StringBuilder();
 				for (int i = 1; i < value; i++)
 					build.Append(Environment.NewLine);

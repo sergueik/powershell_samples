@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
@@ -33,6 +34,7 @@ namespace Program {
 		private const string versionString = "0.5.0";
 		private const string initialDirectory = @"C:\";
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
+		
 		private DataGridTableStyle tableStyle;
 
 		[STAThread]
@@ -51,6 +53,11 @@ namespace Program {
 		private void InitializeComponent() {
 			SuspendLayout();
 
+			var iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
+		string fileName = iniFile["CHM"]["FileName"];
+		if (fileName==null) fileName  = "PowerCollections.chm";
+		file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName );
+			
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			openFileDialog1.InitialDirectory = initialDirectory;
 			openFileDialog1.RestoreDirectory = true;
@@ -170,6 +177,7 @@ namespace Program {
 			if (dr == System.Windows.Forms.DialogResult.OK) {
 				foreach (String fileName in openFileDialog1.FileNames)
 					textBox1.Text = fileName;
+					file= textBox1.Text;
 			}
 
 		}
