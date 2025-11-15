@@ -86,8 +86,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Tests.cs" />
-    <None Include="config.ini">
+    <Compile Include="ChmTest.cs" />
+    <Compile Include="IniTest.cs" />
+    <None Include="PowerCollections.chm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

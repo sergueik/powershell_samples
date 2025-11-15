@@ -23,6 +23,38 @@ Notably, [7-Zip](https://www.7-zip.org) can unpack/extract CHM files (listed as 
 ![wip3](screenshots/app3.jpg)
 
 ---
+### Testing
+
+
+Minimal dummy CHM generation using official, free [HTML Help Workshop](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/htmlhelp/microsoft-html-help-downloads)
+
+
+Steps:
+
+  * Add 2–3 HTML files (topic1.htm, topic2.htm)
+  
+  
+  * Create `dummy.hhp` project file with:
+```ini
+[OPTIONS]
+Title=Dummy CHM
+Default Topic=topic1.htm
+
+[FILES]
+topic1.htm
+topic2.htm
+```
+
+
+* Compile with 
+```cmd
+hhc.exe dummy.hhp
+```
+
+this produces `dummy.chm` with __Titles__ in `#STRINGS` and __URL__ list in `#URLSTR`
+
+
+---
 
 ### TODO
 
@@ -49,7 +81,7 @@ The CHM internal structure requires cross-referencing several internal streams t
 * Partial implementation of `itss.dll` in [Wine](https://bugs.winehq.org/show_bug.cgi?id=7517)  
 * `IStorage` compound file implementation (`StgOpenStorageEx` / `StgCreateStorageEx`) — [MSDN](https://learn.microsoft.com/en-us/windows/win32/stg/istorage-compound-file-implementation)
 * Wine [source tree](https://gitlab.winehq.org/skitt/wine/-/tree/master/dlls/itss) for `itss` implementation
-
+* sample [chm file](https://submain.com/ghostdoc/samples/PowerCollections/CHM/PowerCollectionsCHM.zip) from PowerCollections 
 ---
 
 ### Author
