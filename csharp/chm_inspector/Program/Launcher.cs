@@ -7,7 +7,10 @@ using System.Collections.Generic;
 
 using Utils;
 
-// based on: https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title
+/**
+ * Copyright 2025 Serguei Kouzmine
+ */
+ 
 namespace Program {
 
 	public partial class Control : Form {
@@ -196,10 +199,8 @@ namespace Program {
 
 		private void button2_Click(object sender, EventArgs eventArgs) {
 			String title = Chm.title(file);
-			// TODO: sender
 			if (title != null)
 				MessageBox.Show("Title = " + title, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
 		}
 
 		private void button3_Click(object sender, EventArgs eventArgs) {

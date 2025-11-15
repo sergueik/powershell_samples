@@ -28,7 +28,7 @@ namespace Tests {
                 Assert.NotNull(urls, "Urls() returned null.");
                 Console.WriteLine("Found {0} entries", urls.Count);
                 Assert.Greater(urls.Count,0,"Expect at least one file");
-            } catch (Exception e) {
+ 0           } catch (Exception e) {
                 Assert.Fail("Exception thrown: " + e.Message);
             }
         }

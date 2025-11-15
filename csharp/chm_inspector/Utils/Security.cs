@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Utils {
 
-	// MOTW, or Mark-of-the-Web, is a security feature in Windows - 
+	// Mark-of-the-Web (MOTW), is a security feature in Windows - 
 	// implemented through com.apple.quarantine extended attribute on MacOS
 	public class Security {
 		
@@ -14,12 +14,12 @@ namespace Utils {
 
             if (!File.Exists(filePath))
                 return null;
-
+			
             string motwPath = filePath + ":Zone.Identifier";
 
             if (!File.Exists(motwPath))
                 return null;
-
+			//  open alternate data streams
             try {
                 using (var reader = new StreamReader(motwPath)) {
                     string line;

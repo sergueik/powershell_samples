@@ -6,6 +6,11 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices;
 //  using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
 
+/**
+ * Copyright 2025 Serguei Kouzmine
+ */
+
+
 namespace Utils {
 
 	public enum HRESULT : int {
@@ -47,18 +52,6 @@ namespace Utils {
 	    STGTY_STREAM = 2,
 	    STGTY_ILOCKBYTES = 3,
 	    STGTY_ROOT = 4
-	}
-
-	public static class Ole32 {
-		[DllImport("ole32.dll", CharSet = CharSet.Unicode)]
-		public static extern int StgOpenStorage(
-			string pwcsName,
-			IStorage pstgPriority,
-			uint grfMode,
-			IntPtr snbExclude,
-			uint reserved,
-			out IStorage ppstgOpen
-		);
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -150,9 +143,11 @@ namespace Utils {
 	    STGM_NOSCRATCH = 0x00100000
 	}
 
+// based on: https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title
 
 public class Chm {
 
+		// Microsoft InfoTech IStorage System (MSITFS) COM server
 		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
 		
 		public static string title(string filePath) {
@@ -247,7 +242,7 @@ public class Chm {
 
 		public static List<string> urls_structured(string filePath) {
 		
-		    // MOTW
+		    // check MOTW alternative stream (ATS)
 			Nullable<int> zone = Security.PeekMotwZone(filePath);
 				if (zone.HasValue) {
 				    Console.WriteLine("File is blocked, ZoneId=" + zone.Value);
