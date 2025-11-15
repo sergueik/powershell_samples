@@ -16,6 +16,18 @@ namespace Tests {
                 var urls = Chm.urls_7zip(file);
                 Assert.NotNull(urls, "Urls() returned null.");
                 Console.WriteLine("Found {0} entries", urls.Count);
+                Assert.Greater(urls.Count,0,"Expect at least one file");
+            } catch (Exception e) {
+                Assert.Fail("Exception thrown: " + e.Message);
+            }
+        }
+        [Test]
+        public void test2() {
+            try {
+                var urls = Chm.urls_structured(file);
+                Assert.NotNull(urls, "Urls() returned null.");
+                Console.WriteLine("Found {0} entries", urls.Count);
+                Assert.Greater(urls.Count,0,"Expect at least one file");
             } catch (Exception e) {
                 Assert.Fail("Exception thrown: " + e.Message);
             }

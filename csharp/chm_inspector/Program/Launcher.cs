@@ -27,7 +27,7 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.4.0";
+		private const string versionString = "0.5.0";
 		private const string initialDirectory = @"C:\";
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 		private DataGridTableStyle tableStyle;
@@ -203,20 +203,18 @@ namespace Program {
 		}
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
-				List<string> files = new List<string>();
+			List<string> files = new List<string>();
 
-			try {
-				
-        files  = Chm.urls_structured(file);
+			try {		
+		        files  = Chm.urls_structured(file);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-}
-        if (files.Count == 0) {
-files  = Chm.urls_7zip(file);
-		}
+			}
+	        if (files.Count == 0) {
+				files  = Chm.urls_7zip(file);
+			}
 				
-				if (files.Count > 0) {
+			if (files.Count > 0) {
 				MakeDataSet(files);
 			}
 		}
@@ -300,49 +298,44 @@ files  = Chm.urls_7zip(file);
     	}
 	    
 	    protected override Size GetPreferredSize(Graphics g, object value) {
-        return new Size(20, 20);
-    }
-
-    protected override int GetMinimumHeight() {
-        return 20;
-    }
-
-    protected override int GetPreferredHeight(Graphics g, object value) {
-        return 20;
-    }
-
-    protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source,
-                                  int rowNum, bool alignToRight) {
-        Paint(graphics, bounds, source, rowNum, Brushes.White, Brushes.Black, alignToRight);
-    }
-    protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source,
-                                  int rowNum) {
-        Paint(graphics, bounds, source, rowNum, Brushes.White, Brushes.Black, false);
-    }
-    protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source,
-                                  int rowNum, Brush backBrush, Brush foreBrush,
-                                  bool alignToRight) {
-        // Clear background
-        graphics.FillRectangle(backBrush, bounds);
-
-        object val = this.GetColumnValueAtRow(source, rowNum);
-        bool isChecked = false;
-
-        if (val is bool)
-            isChecked = (bool)val;
-
-        // Draw checkbox
-        var checkboxRectangle = new Rectangle(bounds.X + 4, bounds.Y + 2, 14, 14);
-        ControlPaint.DrawCheckBox(graphics, checkboxRectangle,
-            isChecked ? ButtonState.Checked : ButtonState.Normal);
-    }
-    
-	    public void PaintHeader(Graphics graphics, Rectangle bounds) {
-	        ControlPaint.DrawCheckBox(
-	            graphics,
-	            new Rectangle(bounds.X + 2, bounds.Y + 2, 12, 12),
-	            selectAllChecked ? ButtonState.Checked : ButtonState.Normal);
+	        return new Size(20, 20);
 	    }
+
+		protected override int GetMinimumHeight() {
+	        return 20;
+	    }
+	
+	    protected override int GetPreferredHeight(Graphics g, object value) {
+	        return 20;
+	    }
+	
+		protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source, int rowNum, bool alignToRight) {
+	        Paint(graphics, bounds, source, rowNum, Brushes.White, Brushes.Black, alignToRight);
+	    }
+	    protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source, int rowNum) {
+	        Paint(graphics, bounds, source, rowNum, Brushes.White, Brushes.Black, false);
+	    }
+	    protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight) {
+	        graphics.FillRectangle(backBrush, bounds);
+	
+	        object val = this.GetColumnValueAtRow(source, rowNum);
+	        bool isChecked = false;
+	
+	        if (val is bool)
+	            isChecked = (bool)val;
+	
+	        // Draw checkbox
+	        var checkboxRectangle = new Rectangle(bounds.X + 4, bounds.Y + 2, 14, 14);
+	        ControlPaint.DrawCheckBox(graphics, checkboxRectangle,
+	            isChecked ? ButtonState.Checked : ButtonState.Normal);
+	    }
+	    
+	    public void PaintHeader(Graphics graphics, Rectangle bounds) {
+		        ControlPaint.DrawCheckBox(
+		            graphics,
+		            new Rectangle(bounds.X + 2, bounds.Y + 2, 12, 12),
+			            selectAllChecked ? ButtonState.Checked : ButtonState.Normal);
+		}
 			
 		public void ToggleSelectAll(DataTable table) {
 		    selectAllChecked = !selectAllChecked;

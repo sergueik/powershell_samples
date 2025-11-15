@@ -264,8 +264,7 @@ public class Chm {
 		    IEnumSTATSTG enumStat = null;
 		
 		    try {
-		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true)
-		        );
+		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true) );
 		        iit = (IITStorage)obj;
 		
 		        HRESULT hresult = iit.StgOpenStorage( filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
