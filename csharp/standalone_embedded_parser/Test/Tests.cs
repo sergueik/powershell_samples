@@ -75,7 +75,7 @@ namespace Tests {
 				printElement(element1);
 			}
 		}
-
+		
 		[Test]
 		public void test5() {
 			elements = htmlDocument.GetElementsByTagName("table");
@@ -92,9 +92,56 @@ namespace Tests {
 				}
 			}
 		}
+	
+		[Test]
+		public void test6() {
+			IEnumerator<HtmlNode> enumerator = null;
+			elements = htmlDocument.GetElementsByTagName("table");
+			enumerator = elements.GetEnumerator();
+			enumerator.MoveNext();
+			element = enumerator.Current;
+			Assert.NotNull(element); 
+
+			elements = element.QuerySelectorAll("#idp13365488");			
+			enumerator.MoveNext();
+			element = enumerator.Current;
+			Assert.NotNull(element); 
+
+			elements = element.QuerySelectorAll("table[summary]");			
+			enumerator.MoveNext();
+			element = enumerator.Current;
+			Assert.NotNull(element); 
+
+			elements = htmlDocument.DocumentElement.Children[0].QuerySelectorAll("table");
+			enumerator = elements.GetEnumerator();
+			enumerator.MoveNext();
+			element = enumerator.Current;
+			Assert.NotNull(element);
+			
+			elements = htmlDocument.QuerySelectorAll("table[summary]");
+			enumerator = elements.GetEnumerator();
+			enumerator.MoveNext();
+			element = enumerator.Current;
+			Assert.NotNull(element);
+
+
+		}
+		[Test]
+		public void test7() {
+			Console.WriteLine(String.Format("DocumentElement Children: {0} \"{1}\"",
+			                                htmlDocument.DocumentElement.Children.Count,
+			                                htmlDocument.DocumentElement.Children[0].TagName
+			                               ));
+		}
 
 		private void printElement(HtmlNode element) {
-			Console.WriteLine(String.Format("element tag name: \"{0}\" innerText: \"{1}\" class: \"{2}\"", element.TagName, element.Children[0].InnerText, element.GetAttribute("class")));
+			Console.WriteLine(String.Format("element tag name: \"{0}\" " + 
+			                                " innerText: \"{1}\"  " +  
+			                                " innerText: \"{2}\"  " +  
+			                                "class: \"{3}\"", element.TagName, 
+			                                element.Children[0].InnerText,
+											element.InnerText,			                                
+			                                element.GetAttribute("class")));
 		}
 	}
 }

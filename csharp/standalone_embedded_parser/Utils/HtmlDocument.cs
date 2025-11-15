@@ -1,453 +1,261 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Utils {
-    public class HtmlDocument {
-        public HtmlNode DocumentElement;
+	public class HtmlDocument {
+		private string _text;
+		private int _pos;
+		private HtmlNode _documentElement;
 
-        public HtmlDocument() {
-            DocumentElement = new HtmlNode("document");
-        }
-
-        public void LoadHtml(string html) {
-            var parser = new HtmlParser();
-            // Console.Error.WriteLine("{0}", "LoadHtml"); 
-            
-            DocumentElement = parser.Parse(html);
-        }
-
-        public IEnumerable<HtmlNode> GetElementsByTagName(string tag) {
-            return DocumentElement.GetElementsByTagName(tag);
-        }
-    }
-
-    public class HtmlNode
-    {
-        public string TagName;
-        public string InnerText = "";
-        public Dictionary<string, string> Attributes = new Dictionary<string, string>();
-        public List<HtmlNode> Children = new List<HtmlNode>();
-        public HtmlNode Parent;
-
-        public HtmlNode(string tag)
-        {
-            TagName = tag;
-        }
-
-        public void AddChild(HtmlNode child)
-        {
-            child.Parent = this;
-            Children.Add(child);
-        }
-
-        public string GetAttribute(string name)
-        {
-            string v;
-            return Attributes.TryGetValue(name, out v) ? v : null;
-        }
-
-        public IEnumerable<HtmlNode> GetElementsByTagName(string tag)
-        {
-            for (int i = 0; i < Children.Count; i++)
-            {
-                var c = Children[i];
-                // Console.Error.WriteLine("{0}", c.TagName ); 
-                if (string.Compare(c.TagName, tag, true) == 0)
-                    yield return c;
-
-                foreach (var sub in c.GetElementsByTagName(tag))
-                    yield return sub;
-            }
-        }
-    
-	    public IEnumerable<HtmlNode> QuerySelectorAll(string selector){
-		    return CssSelectorEngine.Select(this, selector);
+		public HtmlNode DocumentElement {
+			get { return _documentElement; }
 		}
 
-    }
+		public void LoadHtml(string html) {
+			_text = html ?? "";
+			_pos = 0;
+			_documentElement = new HtmlNode("root");
+			while (!EndOfText) {
+				ParseNode(_documentElement);
+			}
+		}
 
-    internal class HtmlParser
-    {
-        private string _text;
-        private int _pos;
-        private int _length;
+		private void ParseNode(HtmlNode parent) {
+			SkipWhitespace();
 
-        public HtmlNode Parse(string html)
-        {
-            _text = html ?? "";
-            _pos = 0;
-            _length = _text.Length;
+			if (LookAhead("<!--")) {
+				SkipComment();
+				return;
+			}
 
-            HtmlNode root = new HtmlNode("document");
-                // Console.Error.WriteLine("root");
+			if (CurrentChar == '<') {
+				HtmlNode elem = ParseElement();
+				if (elem != null)
+					parent.Children.Add(elem);
+			} else {
+				string text = ParseText();
+				if (!string.IsNullOrEmpty(text)) {
+					// #text child
+					HtmlNode textNode = new HtmlNode("#text");
+					textNode.InnerText = text;
+					parent.Children.Add(textNode);
 
-            while (_pos < _length)
-            {
-                // Console.Error.WriteLine("parsing at {0}", _pos);
-                var node = ParseNode();
-                if (node != null)
-                    root.AddChild(node);
-            }
+					// Merge into parent's InnerText
+					parent.InnerText += text;
+				}
+			}
+		}
 
-            return root;
-        }
+		private HtmlNode ParseElement() {
+			if (CurrentChar != '<')
+				return null;
 
-        private HtmlNode ParseNode() {
-            SkipWhitespace();
+			Advance(1); // skip '<'
+			string tag = ParseTagName();
+			var node = new HtmlNode(tag);
 
-            if (_pos >= _length) return null;
-// Console.Error.WriteLine("ParseNode {0}", _text[_pos]);
+			// Parse attributes
+			while (!EndOfText && CurrentChar != '>' && CurrentChar != '/') {
+				SkipWhitespace();
+				if (CurrentChar == '>' || CurrentChar == '/')
+					break;
+				ParseAttribute(node);
+			}
 
-            if (_text[_pos] == '<') {
-                // Tag
-                return ParseElement();
-            } else {
-                // Text
-                var text = ParseText();
-                HtmlNode tn = new HtmlNode("#text");
-                tn.InnerText = text;
-                return tn;
-            }
-        }
+			// Self-closing
+			if (LookAhead("/>")) {
+				Advance(2);
+				return node;
+			}
 
-        private HtmlNode ParseElement()
-        {
-        	
+			if (CurrentChar == '>') {
+				Advance(1);
+				// Parse children recursively
+				while (!EndOfText && !LookAhead("</" + tag)) {
+					ParseNode(node);
+				}
+				// Skip closing tag
+				if (LookAhead("</" + tag)) {
+					Advance(2 + tag.Length);
+					SkipUntil('>');
+					Advance(1);
+				}
+			}
 
-            if (_text[_pos] != '<') return null;
+			return node;
+		}
 
-            _pos++; // skip <
-            string tag = ReadTagName();
+		private void ParseAttribute(HtmlNode node) {
+			string name = ParseAttributeName();
+			string value = "";
 
-        	// // Console.Error.WriteLine("ParseElement \"{0}\"", tag);
-            HtmlNode node = new HtmlNode(tag);
+			SkipWhitespace();
+			if (CurrentChar == '=') {
+				Advance(1);
+				SkipWhitespace();
+				value = ParseAttributeValue();
+			}
 
-            // Attributes
-            while (true)
-            {
-                SkipWhitespace();
-                if (_pos >= _length) break;
+			node.Attributes[name] = value;
+		}
 
-                if (_text[_pos] == '>' || _text[_pos] == '/')
-                    break;
+		private void SkipComment() {
+			Advance(4); // skip "<!--"
+			while (!EndOfText) {
+				if (LookAhead("-->")) {
+					Advance(3);
+					return;
+				}
+				Advance(1);
+			}
+			throw new Exception("Unterminated HTML comment");
+		}
 
-                var attr = ReadAttribute();
-                if (attr != null)
-                    node.Attributes[attr.Item1] = attr.Item2;
-            }
+		private string ParseText() {
+			int start = _pos;
+			while (!EndOfText && CurrentChar != '<')
+				Advance(1);
+			return _text.Substring(start, _pos - start).Trim();
+		}
 
-            // Self closing?
-            if (Match("/>"))
-            {
-                _pos += 2;
-                return node;
-            }
+		private string ParseTagName() {
+			int start = _pos;
+			while (!EndOfText && !Char.IsWhiteSpace(CurrentChar) && CurrentChar != '>' && CurrentChar != '/')
+				Advance(1);
+			return _text.Substring(start, _pos - start).ToLower();
+		}
 
-            // Normal end of start tag
-            if (Match(">"))
-                _pos++;
+		private string ParseAttributeName() {
+			int start = _pos;
+			while (!EndOfText && !Char.IsWhiteSpace(CurrentChar) && CurrentChar != '=' && CurrentChar != '>' && CurrentChar != '/')
+				Advance(1);
+			return _text.Substring(start, _pos - start).ToLower();
+		}
 
-            // Parse children until closing tag
-            while (!Match("</" + tag, StringComparison.OrdinalIgnoreCase))
-            {
-                if (_pos >= _length) break;
+		private string ParseAttributeValue() {
+			if (CurrentChar == '"' || CurrentChar == '\'') {
+				char quote = CurrentChar;
+				Advance(1);
+				int start = _pos;
+				while (!EndOfText && CurrentChar != quote)
+					Advance(1);
+				string val = _text.Substring(start, _pos - start);
+				if (CurrentChar == quote)
+					Advance(1);
+				return val;
+			} else {
+				int start = _pos;
+				while (!EndOfText && !Char.IsWhiteSpace(CurrentChar) && CurrentChar != '>')
+					Advance(1);
+				return _text.Substring(start, _pos - start);
+			}
+		}
 
-                var child = ParseNode();
-                if (child == null) break;
+		private void SkipUntil(char c) {
+			while (!EndOfText && CurrentChar != c)
+				Advance(1);
+		}
 
-                node.AddChild(child);
-            }
+		private void SkipWhitespace() {
+			while (!EndOfText && Char.IsWhiteSpace(CurrentChar))
+				Advance(1);
+		}
 
-            // Skip the closing tag
-            if (Match("</"))
-            {
-                _pos += 2;
-                ReadTagName();
-                SkipUntil('>');
-                if (_pos < _length) _pos++;
-            }
+		private bool LookAhead(string s) {
+			if (_pos + s.Length > _text.Length)
+				return false;
+			for (int i = 0; i < s.Length; i++)
+				if (_text[_pos + i] != s[i])
+					return false;
+			return true;
+		}
 
-            return node;
-        }
+		private void Advance(int n) {
+			_pos += n;
+		}
 
-        private string ParseText()
-        {
-            int start = _pos;
-            while (_pos < _length && _text[_pos] != '<')
-                _pos++;
+		private char CurrentChar {
+			get { return _text[_pos]; }
+		}
 
-            return _text.Substring(start, _pos - start).Trim();
-        }
+		private bool EndOfText {
+			get { return _pos >= _text.Length; }
+		}
 
-        private string ReadTagName()
-        {
-            SkipWhitespace();
-            int start = _pos;
 
-            while (_pos < _length)
-            {
-                char c = _text[_pos];
-                if (char.IsLetterOrDigit(c) || c == '-' || c == ':' || c == '_')
-                {
-                    _pos++;
-                }
-                else break;
-            }
+		public IEnumerable<HtmlNode> GetElementsByTagName(string tagName) {
+			return Traverse(_documentElement, tagName.ToLower());
+		}
 
-            return _text.Substring(start, _pos - start);
-        }
+		private IEnumerable<HtmlNode> Traverse(HtmlNode node, string tag) {
+			if (node.TagName == tag)
+				yield return node;
 
-        private Tuple<string, string> ReadAttribute()
-        {
-            SkipWhitespace();
+			foreach (var child in node.Children) {
+				foreach (var c in Traverse(child, tag))
+					yield return c;
+			}
+		}
 
-            string name = ReadTagName();
-            if (name == "") return null;
-
-            SkipWhitespace();
-
-            string value = "";
-
-            if (Match("="))
-            {
-                _pos++;
-                SkipWhitespace();
-                value = ReadAttributeValue();
-            }
-
-            return Tuple.Create(name, value);
-        }
-
-        private string ReadAttributeValue()
-        {
-            if (_pos >= _length) return "";
-
-            if (_text[_pos] == '"' || _text[_pos] == '\'')
-            {
-                char quote = _text[_pos];
-                _pos++;
-
-                int start = _pos;
-                while (_pos < _length && _text[_pos] != quote)
-                    _pos++;
-
-                string v = _text.Substring(start, _pos - start);
-                if (_pos < _length) _pos++;
-                return v;
-            }
-
-            // Unquoted
-            int s = _pos;
-            while (_pos < _length && !Char.IsWhiteSpace(_text[_pos]) &&
-                   _text[_pos] != '>' && _text[_pos] != '/')
-            {
-                _pos++;
-            }
-
-            return _text.Substring(s, _pos - s);
-        }
-
-        private void SkipWhitespace()
-        {
-            while (_pos < _length && Char.IsWhiteSpace(_text[_pos]))
-                _pos++;
-        }
-
-        private bool Match(string s)
-        {
-            if (_pos + s.Length > _length) return false;
-
-            for (int i = 0; i < s.Length; i++)
-                if (_text[_pos + i] != s[i]) return false;
-
-            return true;
-        }
-
-        private bool Match(string s, StringComparison cmp)
-        {
-            if (_pos + s.Length > _length) return false;
-
-            return string.Compare(_text, _pos, s, 0, s.Length, cmp) == 0;
-        }
-
-        private void SkipUntil(char c)
-        {
-            while (_pos < _length && _text[_pos] != c)
-                _pos++;
-        }
-    }
+		public IEnumerable<HtmlNode> QuerySelectorAll(string selector) {
+			return _documentElement.Children[0].QuerySelectorAll(selector);
+		}
+	
+	}
     
-    internal static class CssSelectorEngine
-{
-    public static IEnumerable<HtmlNode> Select(HtmlNode root, string selector)
-    {
-        selector = selector.Trim();
+	public class HtmlNode {
+		public string TagName;
+		public string InnerText = "";
+		public List<HtmlNode> Children = new List<HtmlNode>();
+		public Dictionary<string,string> Attributes = new Dictionary<string,string>();
 
-        // Descendant selector: "div span"
-        int space = selector.IndexOf(' ');
-        if (space > 0)
-        {
-            string first = selector.Substring(0, space).Trim();
-            string rest = selector.Substring(space + 1).Trim();
+		public HtmlNode(string tagName) {
+			this.TagName = tagName;
+		}
 
-            foreach (var node in Select(root, first))
-            {
-                foreach (var n in Select(node, rest))
-                    yield return n;
-            }
-            yield break;
-        }
+		public string GetAttribute(string name) {
+			string val;
+			if (Attributes.TryGetValue(name.ToLower(), out val))
+				return val;
+			return null;
+		}
 
-        // Simple selectors (tag, #id, .class, tag.class, tag#id)
-        string tag = null;
-        string id = null;
-        string cls = null;
-        string attrName = null;
-        string attrEquals = null;
-        string attrContains = null;
+		// QuerySelectorAll stays here
+		public IEnumerable<HtmlNode> QuerySelectorAll(string selector) {
+			if (string.IsNullOrEmpty(selector))
+				yield break;
 
-        // Parse tag
-        int pos = 0;
-        while (pos < selector.Length &&
-               (char.IsLetterOrDigit(selector[pos]) || selector[pos] == '-' || selector[pos] == '_'))
-        {
-            pos++;
-        }
-        if (pos > 0)
-            tag = selector.Substring(0, pos);
+			selector = selector.Trim();
+			foreach (HtmlNode node in Traverse("*")) {
+				if (selector.StartsWith(".")) {
+					string cls = selector.Substring(1);
+					string val;
+					if (node.Attributes.TryGetValue("class", out val) && val.Split(' ').Contains(cls))
+						yield return node;
+				} else if (selector.StartsWith("#")) {
+					string id = selector.Substring(1);
+					string val;
+					if (node.Attributes.TryGetValue("id", out val) && val == id)
+						yield return node;
+				} else {
+					if (node.TagName == selector.ToLower())
+						yield return node;
+				}
+			}
+		}
 
-        // Parse the remainder: .class, #id, [attr]
-        while (pos < selector.Length)
-        {
-            if (selector[pos] == '#')
-            {
-                pos++;
-                int s = pos;
-                while (pos < selector.Length && selector[pos] != '.' && selector[pos] != '[')
-                    pos++;
-                id = selector.Substring(s, pos - s);
-            }
-            else if (selector[pos] == '.')
-            {
-                pos++;
-                int s = pos;
-                while (pos < selector.Length && selector[pos] != '#' && selector[pos] != '[')
-                    pos++;
-                cls = selector.Substring(s, pos - s);
-            }
-            else if (selector[pos] == '[')
-            {
-                pos++;
-                int s = pos;
-                while (pos < selector.Length && selector[pos] != '=' && selector[pos] != ']' && selector[pos] != '~')
-                    pos++;
-                attrName = selector.Substring(s, pos - s);
+		// Helper: traverse subtree
+		private IEnumerable<HtmlNode> Traverse(string tag) {
+			if (tag == "*" || this.TagName == tag)
+				yield return this;
 
-                if (pos < selector.Length && selector[pos] == '=')
-                {
-                    pos++;
-                    int v = pos;
-                    while (pos < selector.Length && selector[pos] != ']')
-                        pos++;
-                    attrEquals = selector.Substring(v, pos - v).Trim('"');
-                }
-                else if (pos < selector.Length && selector[pos] == '~')
-                {
-                    pos++;
-                    if (pos < selector.Length && selector[pos] == '=')
-                    {
-                        pos++;
-                        int v = pos;
-                        while (pos < selector.Length && selector[pos] != ']')
-                            pos++;
-                        attrContains = selector.Substring(v, pos - v).Trim('"');
-                    }
-                }
-
-                if (pos < selector.Length && selector[pos] == ']')
-                    pos++;
-            }
-            else
-            {
-                pos++;
-            }
-        }
-
-        // Walk the tree manually (no LINQ)
-        var stack = new Stack<HtmlNode>();
-        stack.Push(root);
-
-        while (stack.Count > 0)
-        {
-            HtmlNode node = stack.Pop();
-
-            // Check match:
-            if (Matches(node, tag, id, cls, attrName, attrEquals, attrContains))
-                yield return node;
-
-            // Add children to stack
-            for (int i = 0; i < node.Children.Count; i++)
-                stack.Push(node.Children[i]);
-        }
-    }
-
-    private static bool Matches(HtmlNode node, string tag, string id, string cls,
-                                string attrName, string attrEquals, string attrContains)
-    {
-        // Tag match
-        if (tag != null && !Same(node.TagName, tag))
-            return false;
-
-        // ID match
-        if (id != null)
-        {
-            string v = node.GetAttribute("id");
-            if (v == null || v != id)
-                return false;
-        }
-
-        // Class match
-        if (cls != null)
-        {
-            string v = node.GetAttribute("class");
-            if (v == null) return false;
-
-            // class token contains
-            if (!ContainsToken(v, cls))
-                return false;
-        }
-
-        if (attrName != null)
-        {
-            string v = node.GetAttribute(attrName);
-            if (v == null)
-                return false;
-
-            if (attrEquals != null && v != attrEquals)
-                return false;
-
-            if (attrContains != null && !ContainsToken(v, attrContains))
-                return false;
-        }
-
-        return true;
-    }
-
-    private static bool ContainsToken(string list, string token)
-    {
-        string[] parts = list.Split(' ');
-        for (int i = 0; i < parts.Length; i++)
-            if (Same(parts[i], token))
-                return true;
-        return false;
-    }
-
-    private static bool Same(string a, string b)
-    {
-        return string.Compare(a, b, true) == 0;
-    }
+			foreach (HtmlNode child in Children) {
+				foreach (HtmlNode c in child.Traverse(tag))
+					yield return c;
+			}
+		}
+	}
 }
-
-}
-
