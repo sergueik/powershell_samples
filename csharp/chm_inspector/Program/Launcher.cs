@@ -31,8 +31,9 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.5.0";
+		private const string versionString = "0.6.0";
 		private const string initialDirectory = @"C:\";
+		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 		
 		private DataGridTableStyle tableStyle;
@@ -50,13 +51,25 @@ namespace Program {
 			InitializeComponent();
 		}
 
+		private string readValue(string section, string key, string defaultValue) {
+			var	value = defaultValue;
+			try {
+				value = iniFile[section][key];
+				if (value == null)
+					value = defaultValue;
+			} catch (Exception e) {
+				// ignore
+			}
+			return value;
+		}
+		
+
 		private void InitializeComponent() {
 			SuspendLayout();
 
-			var iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
-		string fileName = iniFile["CHM"]["FileName"];
-		if (fileName==null) fileName  = "PowerCollections.chm";
-		file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName );
+			string fileName = readValue("CHM","FileName","PowerCollections.chm");
+			string astBrowseDir  = readValue("CHM","LastBrowseDir",AppDomain.CurrentDomain.BaseDirectory);			
+			file = Path.Combine(astBrowseDir, fileName );
 			
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			openFileDialog1.InitialDirectory = initialDirectory;
