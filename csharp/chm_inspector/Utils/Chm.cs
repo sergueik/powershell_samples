@@ -154,81 +154,108 @@ namespace Utils {
 public class Chm {
 
 		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
-
-		public static string title(string file) {
-
-			object oIITStorage = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
-			var pITStorage = (IITStorage)oIITStorage;
-			if (pITStorage != null) {
-				IStorage pStorage;
-				HRESULT hr = pITStorage.StgOpenStorage(file, null, (uint) (STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out pStorage);
-				if (hr == HRESULT.S_OK) {
-					IEnumSTATSTG pEnum;
-					pStorage.EnumElements(0, IntPtr.Zero, 0, out pEnum);
-					var ss = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-					uint c;
-					while (HRESULT.S_OK == pEnum.Next(1, ss, out c)) {
-						if (ss[0].pwcsName == "#SYSTEM") {
-							string title = null;
-							IStream pStream = null;
-							pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out pStream);
-							hr = pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out pStream);
-							if (hr == HRESULT.S_OK) {
-								uint nSize = 4;
-								var pBuffer = new byte[nSize];
-								IntPtr pcbRead = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(uint)));
-								pStream.Read(pBuffer, (int)nSize, pcbRead);
-								int nRead = Marshal.ReadInt32(pcbRead);
-								Marshal.FreeCoTaskMem(pcbRead);
-								while (true) {
-									nSize = 2;
-									pBuffer = new byte[nSize];
-									pcbRead = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(uint)));
-									pStream.Read(pBuffer, (int)nSize, pcbRead);
-									nRead = Marshal.ReadInt32(pcbRead);
-									Marshal.FreeCoTaskMem(pcbRead);
-									if (nRead == 0)
-										break;
-									int nCode = pBuffer[0];
-
-									pBuffer = new byte[nSize];
-									pcbRead = IntPtr.Zero;
-									pStream.Read(pBuffer, (int)nSize, pcbRead);
-
-									nSize = pBuffer[0];
-									pBuffer = new byte[nSize];
-									pcbRead = IntPtr.Zero;
-									pStream.Read(pBuffer, (int)nSize, pcbRead);
-									if (nCode == (int) STGTY.STGTY_ILOCKBYTES) { 
-										IntPtr pBytesPtr = Marshal.AllocHGlobal(pBuffer.Length);
-										Marshal.Copy(pBuffer, 0, pBytesPtr, pBuffer.Length);
-										title = Marshal.PtrToStringAnsi(pBytesPtr);
-										Marshal.FreeHGlobal(pBytesPtr);
-										break;
-									}
-								}
-								if (title != null)
-									return title;
-								Marshal.ReleaseComObject(pStream);
-							}
-						}
-					}
-					Marshal.ReleaseComObject(pStorage);
-				}
-				Marshal.ReleaseComObject(pITStorage);
-			}
-			return null;
+		
+		public static string title(string filePath) {
+		
+		    object obj = null;
+		    IITStorage iit = null;
+		    IStorage storage = null;
+		    IEnumSTATSTG enumStat = null;
+		    IStream stream = null;
+		
+		    string result = null;
+		
+		    try {
+		        obj = Activator.CreateInstance( Type.GetTypeFromCLSID(CLSID_ITStorage, true) );
+		        iit = (IITStorage)obj;
+		
+		        HRESULT hresult = iit.StgOpenStorage( filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage );
+		
+		        if (hresult != HRESULT.S_OK || storage == null) {
+		            throw new Exception(String.Format( "Failed to open CHM: {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult) ));
+		        }
+				
+		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+		        if (hresult != HRESULT.S_OK || enumStat == null) {
+		            throw new Exception(String.Format( "Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult) ));
+		        }
+		
+		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+		        uint fetched = 0;
+		
+		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+		
+		            if (stat[0].pwcsName == "#SYSTEM") {
+		
+		                HRESULT hresult2 = storage.OpenStream( "#SYSTEM", IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
+		
+		                if (hresult2 != HRESULT.S_OK || stream == null) {
+		                    throw new Exception(String.Format("Failed to open #SYSTEM stream: 0x{0}\n{1}", hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
+		                }
+		
+		                // first skip 4-byte header
+		                byte[] buf = new byte[4];
+		                IntPtr pcb = Marshal.AllocCoTaskMem(4);
+		                stream.Read(buf, 4, pcb);
+		                Marshal.FreeCoTaskMem(pcb);
+		
+		                // now read segments until we find STGTY_ILOCKBYTES
+		                while (true) {
+		                    buf = new byte[2];
+		                    pcb = Marshal.AllocCoTaskMem(4);
+		                    stream.Read(buf, 2, pcb);
+		                    int nRead = Marshal.ReadInt32(pcb);
+		                    Marshal.FreeCoTaskMem(pcb);
+		
+		                    if (nRead == 0)
+		                        break;
+		
+		                    int typeCode = buf[0];
+		
+		                    // length prefix
+		                    buf = new byte[2];
+		                    stream.Read(buf, 2, IntPtr.Zero);
+		
+		                    int len = buf[0];
+		                    if (len <= 0) continue;
+		
+		                    byte[] data = new byte[len];
+		                    stream.Read(data, len, IntPtr.Zero);
+		
+		                    if (typeCode == (int)STGTY.STGTY_ILOCKBYTES) {
+		                        IntPtr ptr = Marshal.AllocHGlobal(len);
+		                        Marshal.Copy(data, 0, ptr, len);
+		                        result = Marshal.PtrToStringAnsi(ptr);
+		                        Marshal.FreeHGlobal(ptr);
+		                        break;
+		                    }
+		                }
+		                break; // we are done with #SYSTEM
+		            }
+		        }
+		
+		    } finally {
+		        if (stream != null) Marshal.ReleaseComObject(stream);
+		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+		        if (storage != null) Marshal.ReleaseComObject(storage);
+		        if (iit != null) Marshal.ReleaseComObject(iit);
+		        if (obj != null) Marshal.ReleaseComObject(obj);
+		    }
+		
+		    return result;
 		}
 
 		public static List<string> urls_structured(string filePath) {
-							
+		
+		    // MOTW
 			Nullable<int> zone = Security.PeekMotwZone(filePath);
-			if (zone.HasValue) {
-			    Console.WriteLine("File is blocked, ZoneId=" + zone.Value);
-				Security.RemoveMotw(filePath);
-			} else
-			    Console.WriteLine("File is safe");
+				if (zone.HasValue) {
+				    Console.WriteLine("File is blocked, ZoneId=" + zone.Value);
+					Security.RemoveMotw(filePath);
+				} else
+				    Console.WriteLine("File is safe");
 
+		
 		    var urls = new List<string>();
 		
 		    object obj = null;
@@ -237,29 +264,26 @@ public class Chm {
 		    IEnumSTATSTG enumStat = null;
 		
 		    try {
-		        obj = Activator.CreateInstance(
-		            Type.GetTypeFromCLSID(CLSID_ITStorage, true)
+		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true)
 		        );
 		        iit = (IITStorage)obj;
 		
-		        HRESULT hr = iit.StgOpenStorage( filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),  IntPtr.Zero, 0, out storage );
+		        HRESULT hresult = iit.StgOpenStorage( filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
 		
-		        if (hr != 0 || storage == null) {
-		        	throw new Exception(String.Format("Failed to open {0}. Error: {1}\n{2}", filePath, ("0x" + hr.ToString("X")), MessageHelper.Msg(hr)));
+		        if (hresult != HRESULT.S_OK || storage == null) {
+		            throw new Exception(String.Format( "Failed to open CHM: {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult) ));
 		        }
 		
-		        // Enumerate structured storage elements
-		        hr = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
-		        if (hr != HRESULT.S_OK || enumStat == null){
-		         	throw new Exception(String.Format("Failed to enum elements. Error: {0}\n{1}", ("0x" + hr.ToString("X")), MessageHelper.Msg(hr)));
+		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+		        if (hresult != HRESULT.S_OK || enumStat == null) {
+		            throw new Exception(String.Format( "Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult) ));
 		        }
-		        
+		
 		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 		        uint fetched = 0;
 		
 		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
-		            if (stat[0].type == (int)STGTY.STGTY_STREAM)
-		            {
+		            if (stat[0].type == (int)STGTY.STGTY_STREAM) {
 		                string name = stat[0].pwcsName;
 		                if (name != null) {
 		                    string lower = name.ToLowerInvariant();
@@ -269,16 +293,14 @@ public class Chm {
 		                }
 		            }
 		        }
-		    } catch {
-		        // swallow and return empty so your wrapper can fallback to 7zip
+		
 		    } finally {
-		        // Clean up COM objects
 		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
 		        if (storage != null) Marshal.ReleaseComObject(storage);
 		        if (iit != null) Marshal.ReleaseComObject(iit);
 		        if (obj != null) Marshal.ReleaseComObject(obj);
 		    }
-		
+
 		    return urls;
 		}
 
