@@ -1,3 +1,26 @@
+param(
+    [string]$file = 'ch09s33.html'
+)
+
+
+function printElement{
+   param (
+     [Utils.HtmlNode]$element 
+   )
+  write-output ('tagname: {0} class: {1} Inner text: {2}' -f $element.TagName,
+     $element.GetAttribute('class'),
+     $element.Children.Item(0).InnerText )
+<#
+NOTE: a more robust way of extraction InnerText is:
+$element.Children
+    | Where-Object { $_.NodeType -eq 'element' }
+    | Select-Object -First 1
+    | ForEach-Object { $_.InnerText }
+#>
+
+}
+# git show 63b842cc71625d5a1f1c95dafe9ed6b1b01fb6a:csharp/standalone_embedded_parser/Utils/HtmlDocument.cs
+$source = @'
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -203,9 +226,9 @@ namespace Utils {
 		public IEnumerable<HtmlNode> QuerySelectorAll(string selector) {
 			return _documentElement.Children[0].QuerySelectorAll(selector);
 		}
-	
+
 	}
-    
+
 	public class HtmlNode {
 		public string TagName;
 		public string InnerText = "";
@@ -225,15 +248,15 @@ namespace Utils {
 
 		public IEnumerable<HtmlNode> QuerySelectorAll(string selector) {
 		    if (string.IsNullOrEmpty(selector)) yield break;
-		
+
 		    selector = selector.Trim();
 		    string tag = null;
 		    string attrName = null;
 		    string attrValue = null;
-		
+
 		    int startBracket = selector.IndexOf('[');
 		    int endBracket = selector.IndexOf(']');
-		
+
 		    if (startBracket >= 0 && endBracket > startBracket) {
 		        tag = selector.Substring(0, startBracket).Trim().ToLower();
 		        string inside = selector.Substring(startBracket + 1, endBracket - startBracket - 1);
@@ -247,7 +270,7 @@ namespace Utils {
 		    } else {
 		        tag = selector.ToLower();
 		    }
-		
+
 		    foreach (HtmlNode node in Traverse("*")) {
 		        if (!string.IsNullOrEmpty(tag) && tag != "*" && node.TagName != tag) continue;
 		        if (!string.IsNullOrEmpty(attrName)) {
@@ -258,7 +281,7 @@ namespace Utils {
 		        yield return node;
 		    }
 		}
-		
+
 		private IEnumerable<HtmlNode> Traverse(string tag) {
 		    if (tag == "*" || this.TagName == tag) yield return this;
 		    foreach (var child in Children)
@@ -266,4 +289,28 @@ namespace Utils {
 		            yield return c;
 		}
 	}
+}	
+'@
+
+add-type -typedefinition $source -language CSharp
+[Utils.HtmlDocument] $h = new-object Utils.HtmlDocument
+$h.LoadHtml([System.IO.File]::ReadAllText($file))
+write-output ('innerText:' + $h.DocumentElement.InnerText )
+$elements = $h.GetElementsByTagName('code')
+$elements | foreach-object {
+  $element1 = $_
+  printElement -element $element1
 }
+$elements = $h.GetElementsByTagName('table')
+$elements | foreach-object {
+  $element1 = $_
+  printElement -element $element1
+  
+  $elements2 = $element1.QuerySelectorAll('td')
+  $elements2 | foreach-object {
+    $element2 = $_
+    printElement -element $element2
+  
+  } 
+}
+

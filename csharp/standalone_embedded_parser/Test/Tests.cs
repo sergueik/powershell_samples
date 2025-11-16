@@ -107,7 +107,7 @@ namespace Tests {
 			element = enumerator.Current;
 			Assert.NotNull(element); 
 
-			elements = element.QuerySelectorAll("table[summary]");			
+			elements = element.QuerySelectorAll("table[summary=\"PC speaker configuration options\"]");			
 			enumerator.MoveNext();
 			element = enumerator.Current;
 			Assert.NotNull(element); 
@@ -123,9 +123,15 @@ namespace Tests {
 			enumerator.MoveNext();
 			element = enumerator.Current;
 			Assert.NotNull(element);
-
+	
+			elements = element.QuerySelectorAll("table[summary=\"PC speaker configuration options\"] .computeroutput");			
+			enumerator.MoveNext();
+			element = enumerator.Current;
+			Assert.NotNull(element);
+			printElement(element);
 
 		}
+
 		[Test]
 		public void test7() {
 			Console.WriteLine(String.Format("DocumentElement Children: {0} \"{1}\"",
