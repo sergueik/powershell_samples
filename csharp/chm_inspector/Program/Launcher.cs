@@ -57,7 +57,7 @@ namespace Program {
 				value = iniFile[section][key];
 				if (value == null)
 					value = defaultValue;
-			} catch (Exception e) {
+			} catch (Exception) {
 				// ignore
 			}
 			return value;

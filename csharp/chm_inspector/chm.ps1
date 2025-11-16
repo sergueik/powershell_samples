@@ -1,14 +1,17 @@
 param(
     [string]$file = 'C:\Program Files\Oracle\VirtualBox\VirtualBox.chm'
 )
-
-# git show 163b842cc71625d5a1f1c95dafe9ed6b1b01fb6a:csharp/chm_inspector/Utils/Chm.cs
-# git show 163b842cc71625d5a1f1c95dafe9ed6b1b01fb6a:csharp/chm_inspector/Utils/Chm.cs
-# git show 163b842cc71625d5a1f1c95dafe9ed6b1b01fb6a:csharp/chm_inspector/Utils/Chm.cs
 # Generate a random class name
-$guid = [guid]::NewGuid().ToString("N")
+$guid = [guid]::NewGuid().ToString('N')
 $className = "Chm_$guid"
 <# 
+
+to updte the embedded code
+
+  git show 264a1f0b3ec860:csharp/chm_inspector/Utils/Chm.cs
+  git show 264a1f0b3ec860:csharp/chm_inspector/Utils/MessageHelper.cs
+  git show 264a1f0b3ec860:csharp/chm_inspector/Utils/Security.cs
+
 after updating the embedded source,
 replace the class name
 	public class Chm {

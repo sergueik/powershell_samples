@@ -18,7 +18,6 @@ namespace TestUtils {
 			}
 			return value;
 		}
-		// NOTE: Extension method must be defined in a non-generic static class (CS1106) 
 		
 		public static bool hasFlag(this uint val, Utils.STGM flag) {
 			return (val & (uint)flag) == (uint)flag;

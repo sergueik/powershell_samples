@@ -56,6 +56,62 @@ this produces `dummy.chm` with __Titles__ in `#STRINGS` and __URL__ list in `#UR
 
 ---
 
+### TOC
+
+Information about the topics covered in individual files is stored in the file named `toc.hhc` as a set of objects:
+
+```html
+<OBJECT type="text/sitemap">
+  <param name="Name" value="Starting a new VM for the first time">
+  <param name="Local" value="ch01s09.html#idp8051664">
+</OBJECT>
+
+The toc.hhc is a plain HTML-like file inside the CHM (MS ITSS) archive. For a selection helper grid, the relevant attributes are Name and Local.
+
+#### Extracting toc.hhc with `7-Zip`
+
+```cmd
+7z.exe e ${chm_file} toc.hhc -o${output_folder}
+```
+
+#### Reading `toc.hhc` via MSITFS COM Server
+
+Using the **COM** **API** allows reading the file directly from the `CHM` archive without extracting:
+```c#
+IStorage storage;
+HRESULT hr = StgOpenStorage(
+    "myfile.chm",
+    null,
+    STGM_READ | STGM_SHARE_EXCLUSIVE,
+    IntPtr.Zero,
+    0,
+    out storage
+);
+
+```
+This is the same approach used internally by **MS HTML Help Workshop** or libraries such as **ChmLib**.
+
+#### Parsing `toc.hhc`
+
+
+`OBJECT` nodes can be parsed using a lightweight DOM parser (e.g., standalone [embedded DOM parser]() ) or even a simple regex:
+
+```c#
+var matches = Regex.Matches(
+    tocContent,
+    @"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">.*?<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
+    RegexOptions.Singleline
+);
+
+foreach(Match match in matches) {
+    string name = match.Groups[1].Value;
+    string local = match.Groups[2].Value;
+    // add to Dictionary<string, string> or a List<TocEntry> for the grid datasource
+}
+
+```
+This regex approach avoids **DOM** parsing overhead, which is typically unnecessary since `toc.hhc` is usually very small.
+
 ### TODO
 
 For full CHM introspection (beyond listing HTML filenames), `#URLSTR` alone is insufficient.  
