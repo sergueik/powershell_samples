@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Utils;
 using TestUtils;
 
-namespace Test {
+namespace Tests {
 
 	[TestFixture]
 	public class IniTest {
@@ -40,10 +40,6 @@ lastBrowseDir=
 			iniFileReader = new IniFileReader(new MemoryStream(Encoding.UTF8.GetBytes(data)), Encoding.UTF8);
 			iniFile = IniFile.FromStream(iniFileReader);
 
-			// NOTE: fragile with respect to encoding etc.:
-			// System.ArgumentException : String passed to the ParseLine method cannot contain more than one line
-
-			// iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		}
 
 		[TearDown]
@@ -83,18 +79,12 @@ lastBrowseDir=
 		}
 		[Test]	
 		public void test4() {
-			string expr = readValue("List", "grfMode", "STGM_READ | STGM_SHARE_DENY_NONE");
+			string expr = iniFile.readValue("List", "grfMode", "STGM_READ | STGM_SHARE_DENY_NONE");
 
 			// Sample: convert to enum flags (adjust to your STGM enum)
 			uint flags = IniExpressionParser.ParseEnumFlags<STGM>(expr); 
-			// Assert.IsTrue((flags & (uint)STGM.STGM_READ) == (uint)STGM.STGM_READ);
-			// Assert.IsTrue((flags & (uint)STGM.STGM_SHARE_EXCLUSIVE) == (uint)STGM.STGM_SHARE_EXCLUSIVE);
-			
-			Assert.IsTrue(hasFlag(flags, STGM.STGM_READ));
-            Assert.IsTrue(hasFlag(flags, STGM.STGM_SHARE_EXCLUSIVE));
-            
-			// Assert.IsTrue(flags.hasFlag(STGM.STGM_READ));
-            // Assert.IsTrue(flags.hasFlag(STGM.STGM_SHARE_EXCLUSIVE));
+			Assert.IsTrue(flags.hasFlag(Utils.STGM.STGM_READ));
+			Assert.IsTrue(flags.hasFlag(Utils.STGM.STGM_SHARE_EXCLUSIVE));
 		}
 		[Test]
 		public void test5() {
@@ -119,32 +109,23 @@ lastBrowseDir=
 
 		[Test]
 		public void test8() {
-			string ops = readValue("Operations", "values", "List,Title");
+			// 'Utils.IniFile' does not contain a definition for 'readValue' and 
+			// no extension method 'readValue' accepting a first argument of type 'Utils.IniFile' could be found (are you missing a using directive or an assembly reference?) (CS1061)
+			string ops = iniFile.readValue("Operations", "values", "List,Title");
 			var list = ops.Split(',').Select(s => s.Trim()).ToArray();
 			Assert.Contains("List", list);
 			Assert.Contains("Title", list);
 		}
 		
-		private string readValue(string section, string key, string defaultValue) {
-			var	value = defaultValue;
-			try {
-				value = iniFile[section][key];
-				if (value == null)
-					value = defaultValue;
-			} catch (Exception e) {
-				// ignore
-			}
-			return value;
-		}
-		// NOTE: Extension method must be defined in a non-generic static class (CS1106) 
-		/*
-		public static bool hasFlag(this uint val, STGM flag) {
-			return (val & (uint)flag) == (uint)flag;
-		}
-		*/
-		public static bool hasFlag(uint val, STGM flag) {
-			return (val & (uint)flag) == (uint)flag;
-		}
+		[Test]
+		public void test9() {
+			// NOTE: fragile with respect to encoding line ending etc.
+			// System.ArgumentException : String passed to the ParseLine method cannot contain more than one line
+
+			iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
+			Assert.NotNull(iniFile);
+			Assert.GreaterOrEqual(iniFile.GetSectionNames().Length, 1, "Eepect at least one section");
+		}		
 	}
 
 	// Dummy enum for demonstration

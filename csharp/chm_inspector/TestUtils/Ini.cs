@@ -7,7 +7,7 @@ namespace TestUtils {
 
 	public static class Ini {
 		
-		private static string readValue(this IniFile iniFile, string section, string key, string defaultValue) {
+		public static string readValue(this IniFile iniFile, string section, string key, string defaultValue) {
 			var	value = defaultValue;
 			try {
 				value = iniFile[section][key];

@@ -1,25 +1,35 @@
 param(
-    [string]$file
+    [string]$file = 'C:\Program Files\Oracle\VirtualBox\VirtualBox.chm'
 )
 
 # git show 163b842cc71625d5a1f1c95dafe9ed6b1b01fb6a:csharp/chm_inspector/Utils/Chm.cs
+# git show 163b842cc71625d5a1f1c95dafe9ed6b1b01fb6a:csharp/chm_inspector/Utils/Chm.cs
+# git show 163b842cc71625d5a1f1c95dafe9ed6b1b01fb6a:csharp/chm_inspector/Utils/Chm.cs
 # Generate a random class name
 $guid = [guid]::NewGuid().ToString("N")
-$csClassName = "Chm_$guid"
-
+$className = "Chm_$guid"
+<# 
+after updating the embedded source,
+replace the class name
+	public class Chm {
+with		
+	public class $className {
+#>
 
 #
 $source = @"
 using System;
-using System.Diagnostics;
-using System.Collections;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
+using System.Diagnostics;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices;
 //  using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
+
+/**
+ * Copyright 2025 Serguei Kouzmine
+ */
+
 
 namespace Utils {
 
@@ -55,17 +65,13 @@ namespace Utils {
 		[FieldOffset(0)]
 		public long QuadPart;
 	}
-	
-	public static class Ole32 {
-		[DllImport("ole32.dll", CharSet = CharSet.Unicode)]
-		public static extern int StgOpenStorage(
-			string pwcsName,
-			IStorage pstgPriority,
-			uint grfMode,
-			IntPtr snbExclude,
-			uint reserved,
-			out IStorage ppstgOpen
-		);
+
+	// https://www.pinvoke.net/default.aspx/Enums.STGty
+	public enum STGTY : int {
+	    STGTY_STORAGE = 1,
+	    STGTY_STREAM = 2,
+	    STGTY_ILOCKBYTES = 3,
+	    STGTY_ROOT = 4
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -143,138 +149,212 @@ namespace Utils {
 		HRESULT Compact(string pwcsName, ECompactionLev iLev);
 	}
 
-	public class $csClassName {
-		// https://www.pinvoke.net/default.aspx/Enums.STGty
-		public enum STGTY : uint {
-		    STGTY_STORAGE = 1,
-		    STGTY_STREAM = 2,
-		    STGTY_ILOCKBYTES = 3,
-		    STGTY_ROOT = 4
-		}
-
-		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
-
-		/* Storage instantiation modes */
-		public const int STGM_DIRECT = 0x00000000;
-		public const int STGM_TRANSACTED = 0x00010000;
-		public const int STGM_SIMPLE = 0x08000000;
-
-		public const int STGM_READ = 0x00000000;
-		public const int STGM_WRITE = 0x00000001;
-		public const int STGM_READWRITE = 0x00000002;
-
-		public const int STGM_SHARE_DENY_NONE = 0x00000040;
-		public const int STGM_SHARE_DENY_READ = 0x00000030;
-		public const int STGM_SHARE_DENY_WRITE = 0x00000020;
-		public const int STGM_SHARE_EXCLUSIVE = 0x00000010;
-
-		public const int STGM_PRIORITY = 0x00040000;
-		public const int STGM_DELETEONRELEASE = 0x04000000;
-
-		public const int STGM_NOSCRATCH = 0x00100000;
-
-		public const int STGM_CREATE = 0x00001000;
-		public const int STGM_CONVERT = 0x00020000;
-		public const int STGM_FAILIFTHERE = 0x00000000;
-
-		public const int STGM_NOSNAPSHOT = 0x00200000;
-
-		public const int STGM_DIRECT_SWMR = 0x00400000;
-
-		public static string title(string file) {
-
-			object oIITStorage = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
-			var pITStorage = (IITStorage)oIITStorage;
-			if (pITStorage != null) {
-				IStorage pStorage;
-				HRESULT hr = pITStorage.StgOpenStorage(file, null, STGM_SHARE_EXCLUSIVE | STGM_READ, IntPtr.Zero, 0, out pStorage);
-				if (hr == HRESULT.S_OK) {
-					IEnumSTATSTG pEnum;
-					pStorage.EnumElements(0, IntPtr.Zero, 0, out pEnum);
-					System.Runtime.InteropServices.ComTypes.STATSTG[] ss = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-					uint c;
-					while (HRESULT.S_OK == pEnum.Next(1, ss, out c)) {
-						if (ss[0].pwcsName == "#SYSTEM") {
-							string title = null;
-							IStream pStream = null;
-							pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, STGM_SHARE_EXCLUSIVE | STGM_READ, 0, out pStream);
-							hr = pStorage.OpenStream(ss[0].pwcsName, IntPtr.Zero, STGM_SHARE_EXCLUSIVE | STGM_READ, 0, out pStream);
-							if (hr == HRESULT.S_OK) {
-								uint nSize = 4;
-								var pBuffer = new byte[nSize];
-								IntPtr pcbRead = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(uint)));
-								pStream.Read(pBuffer, (int)nSize, pcbRead);
-								int nRead = Marshal.ReadInt32(pcbRead);
-								Marshal.FreeCoTaskMem(pcbRead);
-								while (true) {
-									nSize = 2;
-									pBuffer = new byte[nSize];
-									pcbRead = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(uint)));
-									pStream.Read(pBuffer, (int)nSize, pcbRead);
-									nRead = Marshal.ReadInt32(pcbRead);
-									Marshal.FreeCoTaskMem(pcbRead);
-									if (nRead == 0)
-										break;
-									int nCode = pBuffer[0];
-
-									pBuffer = new byte[nSize];
-									pcbRead = IntPtr.Zero;
-									pStream.Read(pBuffer, (int)nSize, pcbRead);
-
-									nSize = pBuffer[0];
-									pBuffer = new byte[nSize];
-									pcbRead = IntPtr.Zero;
-									pStream.Read(pBuffer, (int)nSize, pcbRead);
-									if (nCode == (int) STGTY.STGTY_ILOCKBYTES) {
-										IntPtr pBytesPtr = Marshal.AllocHGlobal(pBuffer.Length);
-										Marshal.Copy(pBuffer, 0, pBytesPtr, pBuffer.Length);
-										title = Marshal.PtrToStringAnsi(pBytesPtr);
-										Marshal.FreeHGlobal(pBytesPtr);
-										break;
-									}
-								}
-								if (title != null)
-									return title;
-								Marshal.ReleaseComObject(pStream);
-							}
-						}
-					}
-					Marshal.ReleaseComObject(pStorage);
-				}
-				Marshal.ReleaseComObject(pITStorage);
-			}
-			return null;
-		}
-
-		public static List<string> Urls(string file) {
-			var urls = new List<string>();
-			IStorage storage;
-			const uint grfMode = STGM_READ | STGM_SHARE_DENY_NONE ; /* STGM_READ | STGM_SHARE_EXCLUSIVE  */
-			int hr = Ole32.StgOpenStorage(file, null, grfMode, IntPtr.Zero, 0, out storage);
-			if (hr != 0 ||
-			    storage == null)
-				throw new Exception(String.Format("Failed to open {0}. Error: {1}", file, MessageHelper.Msg(hr)));
-			IEnumSTATSTG enumStg = null;
-			storage.EnumElements(0, IntPtr.Zero, 0, out enumStg);
-
-			System.Runtime.InteropServices.ComTypes.STATSTG[] statArray = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-			uint fetched;
-
-			while (enumStg.Next(1, statArray, out fetched) == HRESULT.S_OK && fetched == 1) {
-				var st = statArray[0];
-				// Only include streams (files), skip sub-storages
-				if (st.type == (int) STGTY.STGTY_STREAM) {
-					urls.Add(st.pwcsName);
-				}
-			}
-
-			Marshal.ReleaseComObject(enumStg);
-			Marshal.ReleaseComObject(storage);
-
-			return urls;
-		}
+	[Flags]
+	public enum STGM : uint {
+	    STGM_READ = 0x00000000,
+	    STGM_WRITE = 0x00000001,
+	    STGM_READWRITE = 0x00000002,
+	    STGM_SHARE_DENY_NONE = 0x00000040,
+	    STGM_SHARE_DENY_READ = 0x00000030,
+	    STGM_SHARE_DENY_WRITE = 0x00000020,
+	    STGM_SHARE_EXCLUSIVE = 0x00000010,
+	    STGM_PRIORITY = 0x00040000,
+	    STGM_DELETEONRELEASE = 0x04000000,
+	    STGM_NOSCRATCH = 0x00100000
 	}
 
+	// based on: https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title
+
+	public class $className {
+
+		// Microsoft InfoTech IStorage System (MSITFS) COM server
+		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
+		
+		public static string title(string filePath) {
+		
+		    object obj = null;
+		    IITStorage iit = null;
+		    IStorage storage = null;
+		    IEnumSTATSTG enumStat = null;
+		    IStream stream = null;
+		
+		    string result = null;
+		
+		    try {
+		        obj = Activator.CreateInstance( Type.GetTypeFromCLSID(CLSID_ITStorage, true) );
+		        iit = (IITStorage)obj;
+		
+		        HRESULT hresult = iit.StgOpenStorage( filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage );
+		
+		        if (hresult != HRESULT.S_OK || storage == null) {
+		            throw new Exception(String.Format( "Failed to open CHM: {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult) ));
+		        }
+				
+		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+		        if (hresult != HRESULT.S_OK || enumStat == null) {
+		            throw new Exception(String.Format( "Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult) ));
+		        }
+		
+		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+		        uint fetched = 0;
+		
+		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+		
+		            if (stat[0].pwcsName == "#SYSTEM") {
+		
+		                HRESULT hresult2 = storage.OpenStream( "#SYSTEM", IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
+		
+		                if (hresult2 != HRESULT.S_OK || stream == null) {
+		                    throw new Exception(String.Format("Failed to open #SYSTEM stream: 0x{0}\n{1}", hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
+		                }
+		
+		                // first skip 4-byte header
+		                byte[] buf = new byte[4];
+		                IntPtr pcb = Marshal.AllocCoTaskMem(4);
+		                stream.Read(buf, 4, pcb);
+		                Marshal.FreeCoTaskMem(pcb);
+		
+		                // now read segments until we find STGTY_ILOCKBYTES
+		                while (true) {
+		                    buf = new byte[2];
+		                    pcb = Marshal.AllocCoTaskMem(4);
+		                    stream.Read(buf, 2, pcb);
+		                    int nRead = Marshal.ReadInt32(pcb);
+		                    Marshal.FreeCoTaskMem(pcb);
+		
+		                    if (nRead == 0)
+		                        break;
+		
+		                    int typeCode = buf[0];
+		
+		                    // length prefix
+		                    buf = new byte[2];
+		                    stream.Read(buf, 2, IntPtr.Zero);
+		
+		                    int len = buf[0];
+		                    if (len <= 0) continue;
+		
+		                    byte[] data = new byte[len];
+		                    stream.Read(data, len, IntPtr.Zero);
+		
+		                    if (typeCode == (int)STGTY.STGTY_ILOCKBYTES) {
+		                        IntPtr ptr = Marshal.AllocHGlobal(len);
+		                        Marshal.Copy(data, 0, ptr, len);
+		                        result = Marshal.PtrToStringAnsi(ptr);
+		                        Marshal.FreeHGlobal(ptr);
+		                        break;
+		                    }
+		                }
+		                break; // we are done with #SYSTEM
+		            }
+		        }
+		
+		    } finally {
+		        if (stream != null) Marshal.ReleaseComObject(stream);
+		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+		        if (storage != null) Marshal.ReleaseComObject(storage);
+		        if (iit != null) Marshal.ReleaseComObject(iit);
+		        if (obj != null) Marshal.ReleaseComObject(obj);
+		    }
+		
+		    return result;
+		}
+
+		public static List<string> urls_structured(string filePath) {
+		
+		    // check MOTW alternative stream (ATS)
+			Nullable<int> zone = Security.PeekMotwZone(filePath);
+				if (zone.HasValue) {
+				    Console.WriteLine("File is blocked, ZoneId=" + zone.Value);
+					Security.RemoveMotw(filePath);
+				} else
+				    Console.WriteLine("File is safe");
+
+		
+		    var urls = new List<string>();
+		
+		    object obj = null;
+		    IITStorage iit = null;
+		    IStorage storage = null;
+		    IEnumSTATSTG enumStat = null;
+		
+		    try {
+		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true) );
+		        iit = (IITStorage)obj;
+		
+		        HRESULT hresult = iit.StgOpenStorage( filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
+		
+		        if (hresult != HRESULT.S_OK || storage == null) {
+		            throw new Exception(String.Format( "Failed to open CHM: {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult) ));
+		        }
+		
+		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+		        if (hresult != HRESULT.S_OK || enumStat == null) {
+		            throw new Exception(String.Format( "Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult) ));
+		        }
+		
+		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+		        uint fetched = 0;
+		
+		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+		            if (stat[0].type == (int)STGTY.STGTY_STREAM) {
+		                string name = stat[0].pwcsName;
+		                if (name != null) {
+		                    string lower = name.ToLowerInvariant();
+		                    if (lower.EndsWith(".html") || lower.EndsWith(".htm")) {
+		                        urls.Add(name.Replace("\\", "/"));
+		                    }
+		                }
+		            }
+		        }
+		
+		    } finally {
+		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+		        if (storage != null) Marshal.ReleaseComObject(storage);
+		        if (iit != null) Marshal.ReleaseComObject(iit);
+		        if (obj != null) Marshal.ReleaseComObject(obj);
+		    }
+
+		    return urls;
+		}
+
+		public static List<string> urls_7zip(string filePath) {
+		    var urls = new List<string>();
+		
+		    var processStartInfo = new ProcessStartInfo {
+		        FileName = @"c:\Program Files\7-zip\7z.exe",
+		        Arguments = String.Format("l -slt \"{0}\"", filePath),
+		        RedirectStandardOutput = true,
+		        RedirectStandardError = true,
+		        UseShellExecute = false,
+		        CreateNoWindow = true
+		    };
+		
+		    using (var process = Process.Start(processStartInfo)) {
+		        var output = process.StandardOutput;
+		        string line;
+		        string currentPath;
+		
+		        while ((line = output.ReadLine()) != null) {
+		            if (line.StartsWith("Path = ")) {
+		                currentPath = line.Substring("Path = ".Length);
+		
+		                string lower = currentPath.ToLowerInvariant();
+		                if (lower.EndsWith(".html") || lower.EndsWith(".htm")) {
+		                    urls.Add(currentPath.Replace("\\", "/"));
+		                }
+		            }
+		        }
+		        process.WaitForExit(10000);
+		        if (process.ExitCode != 0)
+		            throw new Exception("7-Zip failed with exit code " + process.ExitCode);
+		    }
+		
+		    return urls;
+		}
+
+
+	}
 
 	public static class MessageHelper {
 		private const int FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x100;
@@ -282,42 +362,84 @@ namespace Utils {
 		private const int FORMAT_MESSAGE_IGNORE_INSERTS = 0x200;
 
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-		private static extern int FormatMessage(
-			int dwFlags,
-			IntPtr lpSource,
-			int dwMessageId,
-			int dwLanguageId,
-			out IntPtr lpBuffer,
-			int nSize,
-			IntPtr Arguments);
+		private static extern int FormatMessage( int dwFlags, IntPtr lpSource, int dwMessageId, int dwLanguageId, out IntPtr lpBuffer, int nSize, IntPtr Arguments);
 
 		[DllImport("kernel32.dll")]
 		private static extern IntPtr LocalFree(IntPtr hMem);
-
-		public static string Msg(int hr) {
+		public static string Msg(HRESULT hresult) { return Msg((int) hresult); }
+		public static string Msg(int code) {
 			IntPtr lpMsgBuf;
-			int ret = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-				               IntPtr.Zero, hr, 0, out lpMsgBuf, 0, IntPtr.Zero);
+			int ret = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, IntPtr.Zero, code, 0, out lpMsgBuf, 0, IntPtr.Zero);
 			if (ret == 0)
-				return String.Format("Unknown HRESULT 0x{0:X8}", hr);
+				return String.Format("Unknown HRESULT 0x{0:X8}", code);
 			string message = Marshal.PtrToStringAuto(lpMsgBuf);
 			LocalFree(lpMsgBuf);
 			return message.Trim();
 		}
 	}
 
+	// Mark-of-the-Web (MOTW), is a security feature in Windows -
+	// implemented through com.apple.quarantine extended attribute on MacOS
+	public class Security {
+
+        public static Nullable<int> PeekMotwZone(string filePath) {
+
+            if (string.IsNullOrEmpty(filePath))
+                throw new ArgumentNullException("filePath");
+
+            if (!File.Exists(filePath))
+                return null;
+
+            string motwPath = filePath + ":Zone.Identifier";
+
+            if (!File.Exists(motwPath))
+                return null;
+			//  open alternate data streams
+            try {
+                using (var reader = new StreamReader(motwPath)) {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)  {
+                        line = line.Trim();
+                        if (line.StartsWith("ZoneId=", StringComparison.OrdinalIgnoreCase)) {
+                            string value = line.Substring("ZoneId=".Length);
+                            int zone;
+                            if (Int32.TryParse(value, out zone))
+                                return new Nullable<int>(zone);
+                        }
+                    }
+                }
+            } catch {
+                // Unable to read stream, silently return null
+            }
+            return null;
+        }
+
+        public static void RemoveMotw(string filePath) {
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            string motwPath = filePath + ":Zone.Identifier";
+
+            if (!File.Exists(motwPath))
+                return;
+
+            try {
+                File.Delete(motwPath);
+            } catch {
+                // Ignore errors; can't remove stream
+            }
+        }
+	}
+
 }
 "@
 
-Add-Type -TypeDefinition $source -Language CSharp
-$urls = ([Type]("Utils.$csClassName")).GetMethod("Urls").Invoke($null, @($file))
+add-type -typedefinition $source -language CSharp
+$methodName = 'urls_structured'
+$packageName = 'Utils'
+write-host ('Launching {0} from {1}' -f $methodName, "${packageName}.${className}")
+$urls = ([Type]("$packageName.$className")).GetMethod($methodName).Invoke($null, @($file))
 
-<#
- .\chm.ps1 "C:\Program Files\Oracle\VirtualBox\VirtualBox.chm"
-Exception calling "Invoke" with "2" argument(s): "Failed to open C:\Program
-Files\Oracle\VirtualBox\VirtualBox.chm. Error: Invalid flag error."
-
-#>
 $urls | foreach-object { 
-  write-host $_ 
+  write-output $_ 
 }
