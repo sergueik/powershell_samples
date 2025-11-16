@@ -12,7 +12,7 @@ namespace Tests {
 
 	[TestFixture]
 	public class IniTest {
-		private StringBuilder verificationErrors = new StringBuilder();
+
 		private const string data = @"
 [Operations]
 values=List,Title
@@ -40,11 +40,6 @@ lastBrowseDir=
 			iniFileReader = new IniFileReader(new MemoryStream(Encoding.UTF8.GetBytes(data)), Encoding.UTF8);
 			iniFile = IniFile.FromStream(iniFileReader);
 
-		}
-
-		[TearDown]
-		public void TearDown() {
-			Assert.AreEqual("", verificationErrors.ToString());
 		}
 
 		// [Ignore]
@@ -94,31 +89,36 @@ lastBrowseDir=
 		}
 
 		[Test]
-		public void test6()
-		{
-			string hex = "0xZZ";
+		public void test6() {
+			string hex = "0xINVALID_HEX";
 			Assert.Throws<FormatException>(() => IniExpressionParser.ParseEnumFlags<STGM>(hex));
 		}
 
 		[Test]
-		public void test7()
+		public void test7() {
+			string hex = "0x10";
+			uint val = IniExpressionParser.ParseEnumFlags<STGM>(hex);
+			Assert.AreEqual(16, val);
+		}
+
+		
+		[Test]
+		public void test8()
 		{
 			string expr = "STGM_READ | INVALID_FLAG";
 			Assert.Throws<ArgumentException>(() => IniExpressionParser.ParseEnumFlags<STGM>(expr));
 		}
 
 		[Test]
-		public void test8() {
-			// 'Utils.IniFile' does not contain a definition for 'readValue' and 
-			// no extension method 'readValue' accepting a first argument of type 'Utils.IniFile' could be found (are you missing a using directive or an assembly reference?) (CS1061)
+		public void test9() {
 			string ops = iniFile.readValue("Operations", "values", "List,Title");
-			var list = ops.Split(',').Select(s => s.Trim()).ToArray();
-			Assert.Contains("List", list);
-			Assert.Contains("Title", list);
+			var values = ops.Split(',').Select(s => s.Trim()).ToArray();
+			Assert.Contains("List", values);
+			Assert.Contains("Title", values);
 		}
 		
 		[Test]
-		public void test9() {
+		public void test10() {
 			// NOTE: fragile with respect to encoding line ending etc.
 			// System.ArgumentException : String passed to the ParseLine method cannot contain more than one line
 
@@ -128,7 +128,6 @@ lastBrowseDir=
 		}		
 	}
 
-	// Dummy enum for demonstration
 	[Flags]
 	public enum STGM {
 		STGM_READ = 0x00000000,

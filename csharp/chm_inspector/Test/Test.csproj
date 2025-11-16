@@ -80,6 +80,8 @@
   <ItemGroup>
     <Compile Include="ChmTest.cs" />
     <Compile Include="IniTest.cs" />
+    <Compile Include="MessageHelperTest.cs" />
+    <Compile Include="IniExpressionParserTest.cs" />
     <None Include="PowerCollections.chm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
