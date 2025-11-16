@@ -74,7 +74,13 @@ namespace Tests {
             Assert.AreEqual("Hello", Helper.extractInnerText(node));
         }
 
-       private HtmlNode loadSingleNode(string html, string selector = "*") {
+        [Test]
+        public void test11( ){
+            node = loadSingleNode("<div><span><b>One</b><span><b>Two</b></span></span></div>", "div");
+            Assert.AreEqual("One Two", Helper.extractInnerTextAccumulating(node));
+        }
+
+        private HtmlNode loadSingleNode(string html, string selector = "*") {
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
