@@ -3,18 +3,30 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using System.Linq;
 using Utils;
-using Serilog;
+using NLog;
 
 namespace Tests {
 	[TestFixture]
 	public class TocReaderTests {
 		private const string file = @"C:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
+		private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
-		[Test]
-		public void test1()
-		{
+	    [TestFixtureSetUp]   // NUnit 2.x attribute
+	    public void Setup() {
+	    	var config = new NLog.Config.LoggingConfiguration();
+	    	var fileTarget = new NLog.Targets.FileTarget();
+	 	  	fileTarget.Name = "logfile"; // optional but helpful
+		    // set filename: use ${basedir} so it's next to exe; create logs/ subfolder if you like
+		    fileTarget.FileName = "${basedir}/logs/chm_inspector.log";
+		    fileTarget.Layout = "${longdate}|${level}|${logger}|${message}";    
+	        config.AddTarget("logfile", fileTarget);
+	        config.LoggingRules.Add(new NLog.Config.LoggingRule("*", NLog.LogLevel.Debug, fileTarget));
+	        LogManager.Configuration = config;
+	    }
+
+	    [Test]
+		public void test1() {
 			var entries = Chm.toc_structured(file);
-			Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Seq("http://localhost:5341", apiKey: null).CreateLogger();
 	
             // Assert
             Assert.IsNotNull(entries, "The entries list should not be null");

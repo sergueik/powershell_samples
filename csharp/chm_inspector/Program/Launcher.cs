@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Collections.Generic;
-using Serilog;
+using NLog;
 
 using Utils;
 
@@ -38,6 +38,7 @@ namespace Program {
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 		
 		private DataGridTableStyle tableStyle;
+		private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
 		[STAThread]
 		public static void Main() {
@@ -45,15 +46,23 @@ namespace Program {
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			Application.EnableVisualStyles();
+			// initialize Nlog once at app start
+			
+	        var config = new NLog.Config.LoggingConfiguration();
+
+	        var fileTarget = new NLog.Targets.FileTarget();			
+			fileTarget.Name = "logfile"; // optional but helpful
+			// set filename: use ${basedir} so it's next to exe; create logs/ subfolder if you like
+			fileTarget.FileName = "${basedir}/logs/chm_inspector.log";
+			fileTarget.Layout = "${longdate}|${level}|${logger}|${message}";			
+			config.AddTarget("logfile", fileTarget);			
+			config.LoggingRules.Add(new NLog.Config.LoggingRule("*", NLog.LogLevel.Debug, fileTarget));			
+			LogManager.Configuration = config;
+
 			Application.Run(new Control());
 		}
 
-		public Control() {
-			
-			
-		// initialize Serilog once at app start
-		Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Seq("http://localhost:5341", apiKey: null).CreateLogger();
-		
+		public Control() {		
 			InitializeComponent();
 		}
 
