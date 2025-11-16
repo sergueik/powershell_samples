@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using System.Linq;
 using Utils;
+using Serilog;
 
 namespace Tests {
 	[TestFixture]
@@ -13,7 +14,8 @@ namespace Tests {
 		public void test1()
 		{
 			var entries = Chm.toc_structured(file);
-
+			Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Seq("http://localhost:5341", apiKey: null).CreateLogger();
+	
             // Assert
             Assert.IsNotNull(entries, "The entries list should not be null");
             Assert.IsNotEmpty(entries, "The entries list should not be empty");

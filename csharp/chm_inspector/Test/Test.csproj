@@ -70,9 +70,14 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog">
+      <HintPath>..\packages\Serilog.4.1.0\lib\net471\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Seq">
+      <HintPath>..\packages\Serilog.Sinks.Seq.1.5.36\lib\net45\Serilog.Sinks.Seq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Dynamic" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -84,9 +89,6 @@
     <Compile Include="IniExpressionParserTest.cs" />
     <Compile Include="TocReaderTests.cs" />
     <None Include="PowerCollections.chm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\Program\config.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

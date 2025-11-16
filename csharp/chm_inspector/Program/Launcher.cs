@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Collections.Generic;
+using Serilog;
 
 using Utils;
 
@@ -48,6 +49,11 @@ namespace Program {
 		}
 
 		public Control() {
+			
+			
+		// initialize Serilog once at app start
+		Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Seq("http://localhost:5341", apiKey: null).CreateLogger();
+		
 			InitializeComponent();
 		}
 
