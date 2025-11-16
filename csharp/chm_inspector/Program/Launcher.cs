@@ -67,8 +67,8 @@ namespace Program {
 		private void InitializeComponent() {
 			SuspendLayout();
 
-			string fileName = readValue("CHM","FileName","PowerCollections.chm");
-			string astBrowseDir  = readValue("CHM","LastBrowseDir",AppDomain.CurrentDomain.BaseDirectory);			
+			string fileName = readValue("CHM", "fileName", "PowerCollections.chm");
+			string astBrowseDir  = readValue("CHM","lastBrowseDir",AppDomain.CurrentDomain.BaseDirectory);			
 			file = Path.Combine(astBrowseDir, fileName );
 			
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();

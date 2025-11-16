@@ -24,7 +24,7 @@ namespace Utils {
                 } else if (UInt32.TryParse(token, out numeric)) {
                     result |= numeric;
                 } else {
-                    throw new FormatException("Unknown flag: " + token);
+                    throw new ArgumentException("Unknown flag: " + token);
                 }
             }
             return result;
