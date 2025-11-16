@@ -344,66 +344,92 @@ namespace Utils {
 		
 			return urls;
 		}
-		
-	public static List<TocEntry> toc_structured(string filePath) {
+		public static List<TocEntry> toc_structured(string filePath)
+{
+    List<TocEntry> result = new List<TocEntry>();
+
     object obj = null;
     IITStorage iit = null;
     IStorage storage = null;
     IEnumSTATSTG enumStat = null;
     IStream stream = null;
 
-    var result = new List<TocEntry>();
-
     try {
         obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
         iit = (IITStorage)obj;
 
-        HRESULT hresult = iit.StgOpenStorage(filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
-        if (hresult != HRESULT.S_OK || storage == null)
-				throw new Exception(String.Format("Failed to open CHM file\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+        HRESULT hresult = iit.StgOpenStorage(
+            filePath, 
+            null,
+            (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),
+            IntPtr.Zero,
+            0,
+            out storage
+        );
 
+        if (hresult != HRESULT.S_OK || storage == null)
+            throw new Exception(String.Format("Failed to open CHM file {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+        // Enumerate CHM root directory
         hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
-        if (hresult != HRESULT.S_OK || enumStat == null)
-				throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+        if (hresult != HRESULT.S_OK)
+          throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
 
         var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-        uint fetched;
+        uint fetched = 0;
 
         while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
-            // We are looking for "toc.hhc"
-            if (string.Equals(stat[0].pwcsName, "toc.hhc", StringComparison.OrdinalIgnoreCase)) {
-                hresult = storage.OpenStream(stat[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
-                if (hresult != HRESULT.S_OK || stream == null)
-                	throw new Exception(String.Format("Failed to open toc.hhc stream,\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+            if (String.Compare(stat[0].pwcsName, "toc.hhc", StringComparison.OrdinalIgnoreCase) == 0) {
+                // Open toc.hhc as stream
+                HRESULT hresult2 = storage.OpenStream(
+                    "toc.hhc",
+                    IntPtr.Zero,
+                    (uint)(STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE),
+                    0,
+                    out stream
+                );
 
-                // Read full stream
-                MemoryStream ms = new MemoryStream();
-                byte[] buffer = new byte[4096];
-                IntPtr pcb = IntPtr.Zero;
+                if (hresult2 != HRESULT.S_OK || stream == null)
+                	throw new Exception(String.Format("Failed to open toc.hhc stream,\nError: 0x{0}\n{1}", hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
 
-                while (true) {
-                    stream.Read(buffer, buffer.Length, pcb);
-                    // Assume buffer fully read; could refine with actual bytes read
-                    ms.Write(buffer, 0, buffer.Length);
-                    // For simplicity, break when less than buffer size (optional refinement)
-                    if (buffer.Length < 4096) break;
+                // Memory-conservative read loop
+                using (MemoryStream ms = new MemoryStream()) {
+                    byte[] buffer = new byte[4096];
+                    IntPtr bytesReadPtr = Marshal.AllocCoTaskMem(sizeof(int));
+
+                    try {
+                        while (true) {
+                            stream.Read(buffer, buffer.Length, bytesReadPtr);
+                            int bytesRead = Marshal.ReadInt32(bytesReadPtr);
+
+                            if (bytesRead == 0)
+                                break;
+
+                            ms.Write(buffer, 0, bytesRead);
+                        }
+                    } finally {
+                        Marshal.FreeCoTaskMem(bytesReadPtr);
+                    }
+
+                    string tocContent = Encoding.UTF8.GetString(ms.ToArray());
+
+                    // Extract OBJECT PARAM Name/Local
+                    var matches = Regex.Matches(
+                        tocContent,
+                        @"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"".*?<param name=""Local"" value=""(.*?)"".*?</OBJECT>",
+                        RegexOptions.Singleline | RegexOptions.IgnoreCase
+                    );
+
+                    foreach (Match m in matches) {
+                        result.Add(new TocEntry {
+                            Name = m.Groups[1].Value,
+                            Local = m.Groups[2].Value
+                        });
+                    }
                 }
 
-                string tocContent = Encoding.UTF8.GetString(ms.ToArray());
-
-                // Regex parse OBJECT nodes
-                var matches = Regex.Matches(tocContent,
-                    @"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">.*?<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
-                    RegexOptions.Singleline);
-
-                foreach (Match m in matches) {
-                    result.Add(new TocEntry {
-                        Name = m.Groups[1].Value,
-                        Local = m.Groups[2].Value
-                    });
-                }
-
-                break; // done with toc.hhc
+                break; // Done with toc.hhc
             }
         }
     } finally {
@@ -415,8 +441,8 @@ namespace Utils {
     }
 
     return result;
+}
 
-    }
     
 	public static  Dictionary<String,String> parseToc(String payload) { 
 			var result = new Dictionary<string, string>();

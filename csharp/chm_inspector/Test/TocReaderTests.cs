@@ -10,17 +10,17 @@ namespace Tests {
 		private const string file = @"C:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 
 		[Test]
-		public void test1()
-		{
-			var entries = Chm.toc_structured(file);
+		public void test1() {
+			var toclist = Chm.toc_structured(file);
 
             // Assert
-            Assert.IsNotNull(entries, "The entries list should not be null");
-            Assert.IsNotEmpty(entries, "The entries list should not be empty");
+            Assert.IsNotNull(toclist, "The toclist list should not be null");
+            Assert.IsNotEmpty(toclist, "The toclist list should not be empty");
 
-            foreach (var entry in entries) {
+            foreach (var entry in toclist) {
                 Assert.IsFalse(string.IsNullOrEmpty(entry.Name), "Entry Name should not be null or empty");
                 Assert.IsFalse(string.IsNullOrEmpty(entry.Local), "Entry Local should not be null or empty");
+                Console.Error.WriteLine("{0}: {1}", entry.Name, entry.Local);
             }
 		}
 
@@ -32,10 +32,10 @@ namespace Tests {
             Assert.IsNotNull(toc, "The dictionary should not be null");
             Assert.IsNotEmpty(toc, "The dictionary should not be empty");
 
-            foreach (var kvp in toc) {
-                Assert.IsFalse(string.IsNullOrEmpty(kvp.Key), "Key (Name) should not be null or empty");
-                Assert.IsFalse(string.IsNullOrEmpty(kvp.Value), "Value (Local) should not be null or empty");
-                Console.Error.WriteLine("{0}: {1}", kvp.Key, kvp.Value);
+            foreach (var keyValuePair in toc) {
+                Assert.IsFalse(string.IsNullOrEmpty(keyValuePair.Key), "Key (Name) should not be null or empty");
+                Assert.IsFalse(string.IsNullOrEmpty(keyValuePair.Value), "Value (Local) should not be null or empty");
+                Console.Error.WriteLine("{0}: {1}", keyValuePair.Key, keyValuePair.Value);
             }		
 		}
 	}
