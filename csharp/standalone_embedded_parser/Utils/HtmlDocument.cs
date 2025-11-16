@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Utils {
 	public class HtmlDocument {
@@ -39,7 +37,7 @@ namespace Utils {
 				string text = ParseText();
 				if (!string.IsNullOrEmpty(text)) {
 					// #text child
-					HtmlNode textNode = new HtmlNode("#text");
+					var textNode = new HtmlNode("#text");
 					textNode.InnerText = text;
 					parent.Children.Add(textNode);
 
