@@ -31,7 +31,7 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.6.0";
+		private const string versionString = "0.7.0";
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
@@ -67,8 +67,8 @@ namespace Program {
 		private void InitializeComponent() {
 			SuspendLayout();
 
-			string fileName = readValue("CHM", "fileName", "PowerCollections.chm");
-			string astBrowseDir  = readValue("CHM","lastBrowseDir",AppDomain.CurrentDomain.BaseDirectory);			
+			string fileName = readValue("CHM", "fileName", "api.chm");
+			string astBrowseDir  = readValue("CHM","lastBrowseDir", AppDomain.CurrentDomain.BaseDirectory);			
 			file = Path.Combine(astBrowseDir, fileName );
 			
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -157,14 +157,14 @@ namespace Program {
 			dataGridTableStyle.GridColumnStyles.AddRange(new DataGridColumnStyle[] { checkCol, textCol });
 
 			dataGridTableStyle.HeaderForeColor = SystemColors.ControlText;
-			dataGridTableStyle.MappingName = "Hosts";
+			dataGridTableStyle.MappingName = "files";
 			tableStyle = new DataGridTableStyle();
-		    tableStyle.MappingName = "Hosts";   // MUST MATCH DataTable.TableName
+		    tableStyle.MappingName = "files";   // MUST MATCH DataTable.TableName
 
 			textCol.Format = "";
 			textCol.FormatInfo = null;
-			textCol.HeaderText = "hostname";
-			textCol.MappingName = "hostname";
+			textCol.HeaderText = "filename";
+			textCol.MappingName = "filename";
 			textCol.Width = 300;
 			// dataGrid.MouseDown += new MouseEventHandler(this.dataGrid_MouseDown);
 			Controls.Add(dataGrid);
@@ -198,24 +198,55 @@ namespace Program {
 		private void MakeDataSet(List<string> files) {
 
 			dataSet = new DataSet("DataSet");
-			dataTable = new DataTable("Hosts");
+			dataTable = new DataTable("files");
 
 			var selected = new DataColumn("selected", typeof(bool));
 			selected.DefaultValue = false;
 			dataTable.Columns.Add(selected);
-			dataTable.Columns.Add(new DataColumn("HostId", typeof(int)));
-			dataTable.Columns.Add(new DataColumn("hostname"));
+
+			dataTable.Columns.Add(new DataColumn("id", typeof(int)));
+			dataTable.Columns.Add(new DataColumn("filename"));
 			dataSet.Tables.Add(dataTable);
 
 			DataRow newRow;
 
 			for (int index = 1; index < files.Count ; index++) {
 				newRow = dataTable.NewRow();
-				newRow["HostId"] = index;
-				newRow["hostname"] = files[index];
+				newRow["id"] = index;
+				newRow["filename"] = files[index];
 				dataTable.Rows.Add(newRow);
 			}
 			dataGrid.DataSource = dataTable;
+		}
+
+		private void MakeDataSet(Dictionary<String,String> files) {
+		}
+
+		private void MakeDataSet(List<TocEntry> files){
+		    if (files == null) return;
+		
+			dataSet = new DataSet("DataSet");
+			dataTable = new DataTable("files");
+		
+		    // Columns: one visible, one hidden
+		    dataTable.Columns.Add("title", typeof(string));
+		    dataTable.Columns.Add("filename", typeof(string));
+		
+			var selected = new DataColumn("selected", typeof(bool));
+			selected.DefaultValue = false;
+			dataTable.Columns.Add(selected);
+		
+			foreach (var entry in files) {
+		        var row = dataTable.NewRow();
+		        row["title"] = entry.Name;
+		        row["filename"] = entry.Name;// entry.Local;
+		        dataTable.Rows.Add(row);
+		    }
+		
+		    dataSet.Tables.Add(dataTable);		
+			// dataGrid.DataSource = dataSet.Tables[0];
+			dataGrid.DataSource = dataTable;
+ 
 		}
 
 		private void button2_Click(object sender, EventArgs eventArgs) {
@@ -225,20 +256,25 @@ namespace Program {
 		}
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
-			List<string> files = new List<string>();
-
+			var tokens = new List<TocEntry>();
+			
 			try {		
-		        files  = Chm.urls_structured(file);
+		        tokens  = Chm.toc_structured(file);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
-	        if (files.Count == 0) {
-				files  = Chm.urls_7zip(file);
+	        if (tokens.Count == 0) {
+				try {		
+					tokens  = Chm.toc_7zip(file);
+				} catch( Exception e) {
+					MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
 			}
 				
-			if (files.Count > 0) {
-				MakeDataSet(files);
+			if (tokens.Count > 0) {
+				MakeDataSet(tokens);
 			}
+
 		}
 
 		private void dataGrid_Paint(object sender, PaintEventArgs e){
@@ -272,8 +308,8 @@ namespace Program {
 		     // Draw the "Select All" text to the right of the checkbox
 		    string headerText = "Select All";
 		    using (Brush textBrush = new SolidBrush(dataGridTableStyle.HeaderForeColor)) {
-		        Rectangle textRect = new Rectangle(cbRect.Right + 2, rect.Y, rect.Width - cbRect.Right - 2, rect.Height);
-		        StringFormat stringFormat = new StringFormat  {
+		        var textRect = new Rectangle(cbRect.Right + 2, rect.Y, rect.Width - cbRect.Right - 2, rect.Height);
+		        var stringFormat = new StringFormat  {
 		            LineAlignment = StringAlignment.Center,
 		            Alignment = StringAlignment.Near
 		        };

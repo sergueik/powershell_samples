@@ -26,7 +26,7 @@ namespace Tests {
 
 		[Test]
 		public void test2() {
-			Dictionary<string,string> toc = Chm.toc_7zip(file);
+			Dictionary<string,string> toc = Chm.tocdict_7zip(file);
 
 			// Assert
             Assert.IsNotNull(toc, "The dictionary should not be null");
@@ -37,6 +37,20 @@ namespace Tests {
                 Assert.IsFalse(string.IsNullOrEmpty(keyValuePair.Value), "Value (Local) should not be null or empty");
                 Console.Error.WriteLine("{0}: {1}", keyValuePair.Key, keyValuePair.Value);
             }		
+		}
+		[Test]
+		public void test3() {
+			var toclist = Chm.toc_7zip(file);
+
+            // Assert
+            Assert.IsNotNull(toclist, "The toclist list should not be null");
+            Assert.IsNotEmpty(toclist, "The toclist list should not be empty");
+
+            foreach (var entry in toclist) {
+                Assert.IsFalse(string.IsNullOrEmpty(entry.Name), "Entry Name should not be null or empty");
+                Assert.IsFalse(string.IsNullOrEmpty(entry.Local), "Entry Local should not be null or empty");
+                Console.Error.WriteLine("{0}: {1}", entry.Name, entry.Local);
+            }
 		}
 	}
 }

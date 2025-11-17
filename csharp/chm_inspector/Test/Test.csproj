@@ -83,7 +83,7 @@
     <Compile Include="MessageHelperTest.cs" />
     <Compile Include="IniExpressionParserTest.cs" />
     <Compile Include="TocReaderTests.cs" />
-    <None Include="PowerCollections.chm">
+    <None Include="api.chm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\Program\config.ini">

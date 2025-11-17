@@ -21,6 +21,9 @@ Notably, [7-Zip](https://www.7-zip.org) can unpack/extract CHM files (listed as 
 ![wip1](screenshots/app1.jpg)
 ![wip2](screenshots/app2.jpg)
 ![wip3](screenshots/app3.jpg)
+![wip4](screenshots/app4.jpg)
+![wip5](screenshots/app5.jpg)
+![wip6](screenshots/app6.jpg)
 
 ---
 ### Testing
@@ -138,6 +141,9 @@ The CHM internal structure requires cross-referencing several internal streams t
 * `IStorage` compound file implementation (`StgOpenStorageEx` / `StgCreateStorageEx`) — [MSDN](https://learn.microsoft.com/en-us/windows/win32/stg/istorage-compound-file-implementation)
 * Wine [source tree](https://gitlab.winehq.org/skitt/wine/-/tree/master/dlls/itss) for `itss` implementation
 * sample [chm file](https://submain.com/ghostdoc/samples/PowerCollections/CHM/PowerCollectionsCHM.zip) from PowerCollections 
+* [download](http://web.archive.org/web/20160201063255/http://download.microsoft.com/download/0/A/9/0A939EF6-E31C-430F-A3DF-DFAE7960D564/htmlhelp.exe) `htmlhelp.exe`
+* [download](http://web.archive.org/web/20160314043751/http://download.microsoft.com/download/0/A/9/0A939EF6-E31C-430F-A3DF-DFAE7960D564/helpdocs.zip) `helpdocs.zip`
+
 ---
 
 ### Author
