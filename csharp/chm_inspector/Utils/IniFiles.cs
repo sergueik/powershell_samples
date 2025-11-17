@@ -6,7 +6,7 @@ using System.IO;
 
 // origin: https://www.codeproject.com/Articles/20120/INI-Files
 // see also: https://www.codeproject.com/Articles/318783/Simplified-INI-Handling
-// NOTE: p/invoke methods covered in 
+// NOTE: p/invoke methods covered in
 // https://www.codeproject.com/Articles/1966/An-INI-file-handling-class-using-C
 // lacks ability to read sections
 namespace Utils {
@@ -16,7 +16,7 @@ namespace Utils {
 		public IniFileReader(Stream str, Encoding enc) : base(str, enc) { }
 		public IniFileReader(string path) : base(path) { }
 		public IniFileReader(string path, Encoding enc) : base(path, enc) { }
-		
+
 		public static IniFileElement ParseLine(string line) {
 			if (line == null)
 				return null;
@@ -141,7 +141,7 @@ namespace Utils {
 				}
 				if (!searchWholeFile && IniFileSectionStart.IsLineValid(str.Trim()))
 					return null;
-				
+
 			}
 		}
 	}
@@ -211,7 +211,7 @@ namespace Utils {
 					return sections[i];
 			return null;
 		}
-		
+
 		public string[] GetSectionNames() {
 			var ret = new string[sections.Count];
 			for (int i = 0; i < sections.Count; i++)
@@ -259,7 +259,7 @@ namespace Utils {
 			}
 			return ret;
 		}
-		
+
 		public static IniFile FromStream(IniFileReader reader) {
 			return FromElements(reader.ReadElementsToEnd());
 		}
@@ -357,7 +357,7 @@ namespace Utils {
 							elements.RemoveAt(0);
 					} else
 						((IniFileCommentary)elements[0]).Comment = value;
-				} else if (value != "") {					
+				} else if (value != "") {
 					if ((elements.Count == 0 || !(elements[0] is IniFileBlankLine)) && IniFileSettings.SeparateHeader)
 						elements.Insert(0, new IniFileBlankLine(1));
 					elements.Insert(0, IniFileCommentary.FromComment(value));
@@ -509,7 +509,7 @@ namespace Utils {
 			parent.elements.Remove(v);
 			elements.Remove(v);
 		}
-		
+
 		public string this[string key] {
 			get {
 				IniFileValue v = getValue(key);
@@ -540,11 +540,11 @@ namespace Utils {
 			}
 			set { this[key] = value; }
 		}
-		
+
 		private void setValue(string key, string value) {
 			IniFileValue ret = null;
 			IniFileValue prev = lastValue();
-			
+
 			if (IniFileSettings.PreserveFormatting) {
 				if (prev != null && prev.Intendation.Length >= sectionStart.Intendation.Length)
 					ret = prev.CreateNew(key, value);
@@ -581,7 +581,7 @@ namespace Utils {
 			}
 			return null;
 		}
-		
+
 		internal IniFileValue firstValue() {
 			for (int i = 0; i < elements.Count; i++) {
 				if (elements[i] is IniFileValue)
@@ -598,13 +598,13 @@ namespace Utils {
 				}
 			}
 			return new System.Collections.ObjectModel.ReadOnlyCollection<string>(list);
-			
+
 		}
 
 		public override string ToString() {
 			return sectionStart.ToString() + " (" + elements.Count.ToString() + " elements)";
 		}
-		
+
 		public void Format(bool preserveIntendation) {
 			IniFileElement el;
 			string lastIntend;
@@ -804,7 +804,7 @@ namespace Utils {
 			str = (str.Length > i) ? str.Substring(i) : "";
 			return ret.ToString();
 		}
-		
+
 		internal static string trimRight(ref string str) {
 			int i = str.Length - 1;
 			var build = new StringBuilder();
@@ -819,7 +819,7 @@ namespace Utils {
 				str = str.Substring(0, i + 1): "";
 			return reversed.ToString();
 		}
-		
+
 		internal static string startsWith(string line, string[] array) {
 			if (array == null)
 				return null;
@@ -847,7 +847,7 @@ namespace Utils {
 			}
 			return new indexOfAnyResult(-1, null);
 		}
-		
+
 		internal static string ofAny(int index, string text, string[] array) {
 			for (int i = 0; i < array.Length; i++) {
 				if (text.Length - index >= array[i].Length && text.Substring(index, array[i].Length) == array[i]) {
@@ -891,7 +891,7 @@ namespace Utils {
 				line = value + line.TrimStart();
 			}
 		}
-		
+
 		public string Content {
 			get { return line.TrimStart(); }
 			protected set { line = value; }
@@ -965,7 +965,7 @@ namespace Utils {
 				inlineComment = value; Format();
 			}
 		}
-		
+
 		public static bool IsLineValid(string testString) {
 			return testString.StartsWith(IniFileSettings.SectionOpenBracket) && testString.EndsWith(IniFileSettings.SectionCloseBracket);
 		}
@@ -1160,7 +1160,7 @@ namespace Utils {
 			string split1 = split.Length >= 1 ?
 				split[1].Trim()
 				: "";
-			
+
 			if (split0.Length > 0) {
 				if (IniFileSettings.AllowInlineComments) {
 					IniFileSettings.indexOfAnyResult result = IniFileSettings.indexOfAny(split1, IniFileSettings.CommentChars);
@@ -1279,7 +1279,7 @@ namespace Utils {
 		public void Format() {
 			Format(formatting);
 		}
-		
+
 		public void Format(string formatting) {
 			char currC;
 			var build = new StringBuilder();

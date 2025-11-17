@@ -35,8 +35,8 @@ Minimal dummy CHM generation using official, free [HTML Help Workshop](https://l
 Steps:
 
   * Add 2–3 HTML files (topic1.htm, topic2.htm)
-  
-  
+
+
   * Create `dummy.hhp` project file with:
 ```ini
 [OPTIONS]
@@ -49,7 +49,7 @@ topic2.htm
 ```
 
 
-* Compile with 
+* Compile with
 ```cmd
 hhc.exe dummy.hhp
 ```
@@ -117,7 +117,7 @@ This regex approach avoids **DOM** parsing overhead, which is typically unnecess
 
 ### TODO
 
-For full CHM introspection (beyond listing HTML filenames), `#URLSTR` alone is insufficient.  
+For full CHM introspection (beyond listing HTML filenames), `#URLSTR` alone is insufficient.
 The CHM internal structure requires cross-referencing several internal streams to reconstruct:
 
 * Topic filenames
@@ -137,10 +137,10 @@ The CHM internal structure requires cross-referencing several internal streams t
 * [StackOverflow discussion](https://stackoverflow.com/questions/9391424/how-to-get-a-list-of-topics-from-a-chm-file-in-c-sharp)
 * [MSDN: IStorage and the compound file (structured storage) model](https://learn.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-istorage)
 * [Open-source CHM spec and practical decompiler examples](https://www.nongnu.org/chmspec/latest/Miscellaneous.html) — CHM is a compound/LZX/LIT-style archive containing HTML/MHT, LZX compression, and index structures
-* Partial implementation of `itss.dll` in [Wine](https://bugs.winehq.org/show_bug.cgi?id=7517)  
+* Partial implementation of `itss.dll` in [Wine](https://bugs.winehq.org/show_bug.cgi?id=7517)
 * `IStorage` compound file implementation (`StgOpenStorageEx` / `StgCreateStorageEx`) — [MSDN](https://learn.microsoft.com/en-us/windows/win32/stg/istorage-compound-file-implementation)
 * Wine [source tree](https://gitlab.winehq.org/skitt/wine/-/tree/master/dlls/itss) for `itss` implementation
-* sample [chm file](https://submain.com/ghostdoc/samples/PowerCollections/CHM/PowerCollectionsCHM.zip) from PowerCollections 
+* sample [chm file](https://submain.com/ghostdoc/samples/PowerCollections/CHM/PowerCollectionsCHM.zip) from PowerCollections
 * [download](http://web.archive.org/web/20160201063255/http://download.microsoft.com/download/0/A/9/0A939EF6-E31C-430F-A3DF-DFAE7960D564/htmlhelp.exe) `htmlhelp.exe`
 * [download](http://web.archive.org/web/20160314043751/http://download.microsoft.com/download/0/A/9/0A939EF6-E31C-430F-A3DF-DFAE7960D564/helpdocs.zip) `helpdocs.zip`
 

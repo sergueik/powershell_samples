@@ -13,7 +13,7 @@ namespace Utils {
 		static extern IntPtr FindWindow(IntPtr classname, string title);
 
 		[DllImport("user32.dll")]
-		static extern void MoveWindow(IntPtr hwnd, int X, int Y, 
+		static extern void MoveWindow(IntPtr hwnd, int X, int Y,
 			int nWidth, int nHeight, bool rePaint);
 
 		[DllImport("user32.dll")]
@@ -34,6 +34,6 @@ namespace Utils {
 				MoveWindow(hwnd, x, y, rectangle.Width - rectangle.X, rectangle.Height - rectangle.Y, repaint);
 			});
 			thread.Start();
-		}				
+		}
 	}
 }

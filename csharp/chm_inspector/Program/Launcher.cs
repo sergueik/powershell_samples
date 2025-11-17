@@ -11,7 +11,7 @@ using Utils;
 /**
  * Copyright 2025 Serguei Kouzmine
  */
- 
+
 namespace Program {
 
 	public partial class Control : Form {
@@ -35,7 +35,7 @@ namespace Program {
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
-		
+
 		private DataGridTableStyle tableStyle;
 
 		[STAThread]
@@ -62,15 +62,15 @@ namespace Program {
 			}
 			return value;
 		}
-		
+
 
 		private void InitializeComponent() {
 			SuspendLayout();
 
 			string fileName = readValue("CHM", "fileName", "api.chm");
-			string astBrowseDir  = readValue("CHM","lastBrowseDir", AppDomain.CurrentDomain.BaseDirectory);			
+			string astBrowseDir  = readValue("CHM","lastBrowseDir", AppDomain.CurrentDomain.BaseDirectory);
 			file = Path.Combine(astBrowseDir, fileName );
-			
+
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			openFileDialog1.InitialDirectory = initialDirectory;
 			openFileDialog1.RestoreDirectory = true;
@@ -143,12 +143,12 @@ namespace Program {
 			checkCol.MappingName = "selected";
 			checkCol.Width = 50;
 			checkCol.HeaderText = "";
-			
+
 			checkHeaderCol = new CheckBoxDataGridColumn();
 
 			dataGrid.MouseDown += dataGrid_MouseDown;
     		dataGrid.Paint += dataGrid_Paint;
-    		
+
 			   // ---- checkbox column ----
 		    checkHeaderCol = new CheckBoxDataGridColumn();
 		    checkHeaderCol.MappingName = "IsSelected";
@@ -180,7 +180,7 @@ namespace Program {
 			AutoScaleDimensions = new SizeF(8F, 16F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(348, 429);
-	
+
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
@@ -224,29 +224,29 @@ namespace Program {
 
 		private void MakeDataSet(List<TocEntry> files){
 		    if (files == null) return;
-		
+
 			dataSet = new DataSet("DataSet");
 			dataTable = new DataTable("files");
-		
+
 		    // Columns: one visible, one hidden
 		    dataTable.Columns.Add("title", typeof(string));
 		    dataTable.Columns.Add("filename", typeof(string));
-		
+
 			var selected = new DataColumn("selected", typeof(bool));
 			selected.DefaultValue = false;
 			dataTable.Columns.Add(selected);
-		
+
 			foreach (var entry in files) {
 		        var row = dataTable.NewRow();
 		        row["title"] = entry.Name;
 		        row["filename"] = entry.Name;// entry.Local;
 		        dataTable.Rows.Add(row);
 		    }
-		
-		    dataSet.Tables.Add(dataTable);		
+
+		    dataSet.Tables.Add(dataTable);
 			// dataGrid.DataSource = dataSet.Tables[0];
 			dataGrid.DataSource = dataTable;
- 
+
 		}
 
 		private void button2_Click(object sender, EventArgs eventArgs) {
@@ -257,35 +257,31 @@ namespace Program {
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
 			var tokens = new List<TocEntry>();
-			
-			try {		
+			try {
 		        tokens  = Chm.toc_structured(file);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 	        if (tokens.Count == 0) {
-				try {		
+				try {
 					tokens  = Chm.toc_7zip(file);
 				} catch( Exception e) {
 					MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 			}
-				
 			if (tokens.Count > 0) {
 				MakeDataSet(tokens);
 			}
-
 		}
 
 		private void dataGrid_Paint(object sender, PaintEventArgs e){
 		    // Ensure we have a table and at least one column
 		    if (dataGrid.DataSource == null || dataGridTableStyle.GridColumnStyles.Count == 0)
 		        return;
-		
+
 		    // Ensure column index 0 exists in the style
 		    if (dataGridTableStyle.GridColumnStyles.Count <= 0)
 		        return;
-		
 		    Rectangle rect;
 		    try {
 		        // For header, row = -1, column = 0 (first column)
@@ -294,17 +290,17 @@ namespace Program {
 		        // Safe fallback: do nothing if bounds cannot be retrieved
 		        return;
 		    }
-		
+
 		    if (rect.Width <= 0 || rect.Height <= 0)
 		        return;
-		
+
 		    Rectangle cbRect = new Rectangle(rect.X + 4, rect.Y + 3, 14, 14);
 		    ControlPaint.DrawCheckBox(
 		        e.Graphics,
 		        cbRect,
 		        selectAll ? ButtonState.Checked : ButtonState.Normal
 		    );
-		    
+
 		     // Draw the "Select All" text to the right of the checkbox
 		    string headerText = "Select All";
 		    using (Brush textBrush = new SolidBrush(dataGridTableStyle.HeaderForeColor)) {
@@ -315,46 +311,46 @@ namespace Program {
 		        };
 		        e.Graphics.DrawString(headerText, dataGrid.Font, textBrush, textRect, stringFormat);
 		    }
-		    
+
 		}
-	
+
 		private void dataGrid_MouseDown(object sender, MouseEventArgs mouseEventArgs) {
 		    DataGrid.HitTestInfo hit = dataGrid.HitTest(mouseEventArgs.X, mouseEventArgs.Y);
-		
+
 		    if (hit.Type == DataGrid.HitTestType.ColumnHeader && hit.Column == 0) {
 		        selectAll = !selectAll;
-		
+
 		        foreach (DataRow row in dataTable.Rows) {
 		            row["selected"] = selectAll;  // use your existing column
 		        }
-		
+
 		        dataGrid.Invalidate();
 		    }
 		}
-		
+
 	}
-	
+
 
 	// customization od DataGrid
-	
+
 	public class CheckBoxDataGridColumn : DataGridColumnStyle {
 	    private bool selectAllChecked = false;
 	    private readonly Bitmap checkedBitmap = SystemIcons.Shield.ToBitmap();
 	    private readonly Bitmap uncheckedBitmap = SystemIcons.Application.ToBitmap();
-	
+
 	    public event EventHandler SelectAllChanged;
-	
+
 	    protected override void Abort(int rowNum) {
     	}
-    	
+
 	    protected override bool Commit(CurrencyManager dataSource, int rowNum) {
         	return true;
     	}
-	    
+
 	    protected override void Edit(CurrencyManager source, int rowNum, Rectangle bounds,
                                  bool readOnly, string instantText, bool cellIsVisible) {
     	}
-	    
+
 	    protected override Size GetPreferredSize(Graphics g, object value) {
 	        return new Size(20, 20);
 	    }
@@ -362,11 +358,11 @@ namespace Program {
 		protected override int GetMinimumHeight() {
 	        return 20;
 	    }
-	
+
 	    protected override int GetPreferredHeight(Graphics g, object value) {
 	        return 20;
 	    }
-	
+
 		protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source, int rowNum, bool alignToRight) {
 	        Paint(graphics, bounds, source, rowNum, Brushes.White, Brushes.Black, alignToRight);
 	    }
@@ -375,33 +371,33 @@ namespace Program {
 	    }
 	    protected override void Paint(Graphics graphics, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight) {
 	        graphics.FillRectangle(backBrush, bounds);
-	
+
 	        object val = this.GetColumnValueAtRow(source, rowNum);
 	        bool isChecked = false;
-	
+
 	        if (val is bool)
 	            isChecked = (bool)val;
-	
+
 	        // Draw checkbox
 	        var checkboxRectangle = new Rectangle(bounds.X + 4, bounds.Y + 2, 14, 14);
 	        ControlPaint.DrawCheckBox(graphics, checkboxRectangle,
 	            isChecked ? ButtonState.Checked : ButtonState.Normal);
 	    }
-	    
+
 	    public void PaintHeader(Graphics graphics, Rectangle bounds) {
 		        ControlPaint.DrawCheckBox(
 		            graphics,
 		            new Rectangle(bounds.X + 2, bounds.Y + 2, 12, 12),
 			            selectAllChecked ? ButtonState.Checked : ButtonState.Normal);
 		}
-			
+
 		public void ToggleSelectAll(DataTable table) {
 		    selectAllChecked = !selectAllChecked;
-		
+
 		    foreach (DataRow row in table.Rows) {
 		        row[this.MappingName] = selectAllChecked;
 		    }
-		
+
 		    if (SelectAllChanged != null) {
 		        SelectAllChanged(this, EventArgs.Empty);
 		    }

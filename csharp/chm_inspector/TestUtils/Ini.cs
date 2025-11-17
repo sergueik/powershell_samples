@@ -6,7 +6,7 @@ using Utils;
 namespace TestUtils {
 
 	public static class Ini {
-		
+
 		public static string readValue(this IniFile iniFile, string section, string key, string defaultValue) {
 			var	value = defaultValue;
 			try {
@@ -18,7 +18,7 @@ namespace TestUtils {
 			}
 			return value;
 		}
-		
+
 		public static bool hasFlag(this uint val, Utils.STGM flag) {
 			return (val & (uint)flag) == (uint)flag;
 		}

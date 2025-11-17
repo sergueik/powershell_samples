@@ -24,7 +24,7 @@ namespace Utils {
 		{
 			WritePrivateProfileString(Section, Key, Value, this.path);
 		}
-		
+
 		// see also: https://www.pinvoke.net/default.aspx/kernel32.getprivateprofilestring
 		public string ReadValue(string Section, string Key) {
 			var sb = new StringBuilder(500);
@@ -32,17 +32,17 @@ namespace Utils {
 			String result = sb.ToString();
 			return result;
 		}
-		
+
 		// https://www.pinvoke.net/default.aspx/kernel32.getprivateprofilesectionnames
 		[DllImport("kernel32.dll")]
 		static extern uint GetPrivateProfileSectionNames(IntPtr lpszReturnBuffer,
 			uint nSize, string lpFileName);
-	
+
 		// http://pinvoke.net/default.aspx/kernel32/GetPrivateProfileSection.html?diff=y
 		[DllImport("kernel32.dll")]
 		static extern uint GetPrivateProfileSection(string lpAppName, IntPtr lpszReturnBuffer,
 			uint nSize, string lpFileName);
-		
+
 		public string[] SectionNames() {
 			uint MAX_BUFFER = 32767;
 			IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
@@ -56,9 +56,9 @@ namespace Utils {
 		}
 		// based on https://stackoverflow.com/questions/7090053/read-all-ini-file-values-with-getprivateprofilestring
 		public List<string> GetKeys(string category) {
-			
+
 			uint MAX_BUFFER = 32767;
-			IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);			
+			IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
 			uint bytesReturned = GetPrivateProfileSection(category, pReturnedString, MAX_BUFFER, this.path);
 			if (bytesReturned == 0)
 				return null;

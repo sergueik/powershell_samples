@@ -15,7 +15,7 @@ namespace Tests {
 	public class TocMatchesTest {
 		private List<TocEntry> tokens = new List<TocEntry>();
 		private String payload;
-		private string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "toc.hhc");  
+		private string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "toc.hhc");
 
 		[Test]
 		[Timeout(120000)]
@@ -25,7 +25,7 @@ namespace Tests {
 			// Open the text file using a StreamReader
 	        using (var reader = new StreamReader(filePath)) {
             	// Read the entire stream as a string
-	            payload = reader.ReadToEnd();	
+	            payload = reader.ReadToEnd();
 	        }
 			tokens = Chm.parseToc( payload);
 			Assert.NotNull(tokens);

@@ -9,7 +9,7 @@ namespace Tests {
     public class ChmTests  {
     	private const string fileName ="api.chm";
     	private string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName );
-			
+
         // NOTE: uncommenting the attribute break the little “green/red bullet” visual indicator in the SharpDevelop IDE.
         // [TestCase(TestName = "Urls should not throw exception")]
         [Test]

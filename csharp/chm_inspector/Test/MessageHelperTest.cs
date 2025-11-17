@@ -19,23 +19,23 @@ namespace Tests {
 		// NOTE: EBMs appear like but are not lambdas
 		private static HRESULT toHRESULT(uint value) {
    			return (HRESULT)unchecked((int)value);
-		}		
+		}
 		private HRESULT hresult;
 		private string message;
-		
-		[Test] 
+
+		[Test]
 		public void test1() {
 			hresult = toHRESULT(0x80041318);
 			message = MessageHelper.Msg(hresult);
 			StringAssert.Contains("XML", message, "Expect an incorrectly formatted XML message");
 		}
 
-		[Test] 
+		[Test]
 		public void test2() {
 			hresult = toHRESULT(0x8003000F);
 			message = MessageHelper.Msg(hresult);
 			StringAssert.Contains("Unknown HRESULT", message, "Expect an Unknown HRESULT message");
-	
+
 		}
 	}
 }

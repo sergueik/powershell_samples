@@ -33,7 +33,7 @@ lastBrowseDir=
 		StringReader stringReader = null;
 		IniFile iniFile;
 		IniFileReader iniFileReader = null;
-		
+
 		[SetUp]
 		public void SetUp() {
 			stringReader = new StringReader(data);
@@ -43,7 +43,7 @@ lastBrowseDir=
 		}
 
 		// [Ignore]
-		[Test] 
+		[Test]
 		// http://www.java2s.com/Tutorials/CSharp/System.IO/StringReader/C_StringReader_StringReader.htm
 		public void test1() {
 			line = null;
@@ -58,11 +58,11 @@ lastBrowseDir=
 		}
 
 		// [Ignore]
-		[Test] 
+		[Test]
 		public void test2() {
 			var sections = iniFile.GetSectionNames();
 			// NOTE: does not handle whitespace after the comma as section separator
-			foreach (var section in sections) {			
+			foreach (var section in sections) {
 				Console.Error.WriteLine(String.Format("Section: {0}", section));
 			}
 			var environments = iniFile["Environments"]["values"];
@@ -72,12 +72,12 @@ lastBrowseDir=
 				}
 			}
 		}
-		[Test]	
+		[Test]
 		public void test4() {
 			string expr = iniFile.readValue("List", "grfMode", "STGM_READ | STGM_SHARE_DENY_NONE");
 
 			// Sample: convert to enum flags (adjust to your STGM enum)
-			uint flags = IniExpressionParser.ParseEnumFlags<STGM>(expr); 
+			uint flags = IniExpressionParser.ParseEnumFlags<STGM>(expr);
 			Assert.IsTrue(flags.hasFlag(Utils.STGM.STGM_READ));
 			Assert.IsTrue(flags.hasFlag(Utils.STGM.STGM_SHARE_EXCLUSIVE));
 		}
@@ -101,7 +101,7 @@ lastBrowseDir=
 			Assert.AreEqual(16, val);
 		}
 
-		
+
 		[Test]
 		public void test8()
 		{
@@ -116,7 +116,7 @@ lastBrowseDir=
 			Assert.Contains("List", values);
 			Assert.Contains("Title", values);
 		}
-		
+
 		[Test]
 		public void test10() {
 			// NOTE: fragile with respect to encoding line ending etc.
@@ -125,7 +125,7 @@ lastBrowseDir=
 			iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 			Assert.NotNull(iniFile);
 			Assert.GreaterOrEqual(iniFile.GetSectionNames().Length, 1, "Eepect at least one section");
-		}		
+		}
 	}
 
 	[Flags]

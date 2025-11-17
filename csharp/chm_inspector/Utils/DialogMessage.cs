@@ -29,7 +29,7 @@ namespace Utils {
 			YesNo = 2
 		}
 
-		
+
 		public static DialogResult ShowMessage(string _windowTitle, string _mainInstruction, MsgButtons _msgButtons, MsgIcons _msgIcons = MsgIcons.None, string _content = "", bool debug = false, string clipboardText = "") {
 			var main = new DialogMessage();
 			main.ClipboardText = clipboardText;
@@ -120,7 +120,7 @@ namespace Utils {
 			}
 			return main.ShowDialog();
 		}
-		
+
 		private bool debug;
 				public bool Debug {
 			get { return debug; }
@@ -261,7 +261,7 @@ namespace Utils {
 			((System.ComponentModel.ISupportInitialize)(msgIcon)).EndInit();
 			ResumeLayout(false);
 		}
-		
+
 		private void button2_Click(object sender, EventArgs args) {
 			if (debug) {
 				MessageBox.Show("You clicked the button 2 and debug was set");
@@ -277,7 +277,7 @@ namespace Utils {
 				if (this.clipboardText.Trim(new char[] { '\r', '\n' }) != "") {
 					try {
 						Clipboard.SetDataObject(this.clipboardText, true);
-					} catch (Exception e) {					
+					} catch (Exception e) {
 						MessageBox.Show(e.ToString(), "Excepion", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					}
 				}

@@ -26,7 +26,7 @@ namespace Utils {
 			get { return new ReadOnlyCollection<Type>(new List<Type>(new[] { typeof(object) })); }
 		}
 	}
-	
+
 	public class DynamicConsoleWriter : DynamicObject {
 		protected string first = "";
 		protected string last = "";
@@ -227,7 +227,7 @@ namespace Utils {
 
 		public DynamicJsonObject(IDictionary<string, object> dictionary = null){
 			mDictionary = (dictionary == null) ?
-            	new Dictionary<string, object>() : dictionary;            
+            	new Dictionary<string, object>() : dictionary;
 		}
 
         public IDictionary<string, object> Dictionary {

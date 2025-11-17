@@ -4,7 +4,7 @@ param(
 # Generate a random class name
 $guid = [guid]::NewGuid().ToString('N')
 $className = "Chm_$guid"
-<# 
+<#
 
 to updte the embedded code
 
@@ -15,7 +15,7 @@ to updte the embedded code
 after updating the embedded source,
 replace the class name
 	public class Chm {
-with		
+with
 	public class $className {
 #>
 
@@ -172,51 +172,51 @@ namespace Utils {
 
 		// Microsoft InfoTech IStorage System (MSITFS) COM server
 		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
-		
+
 		public static string title(string filePath) {
-		
+
 		    object obj = null;
 		    IITStorage iit = null;
 		    IStorage storage = null;
 		    IEnumSTATSTG enumStat = null;
 		    IStream stream = null;
-		
+
 		    string result = null;
-		
+
 		    try {
 		        obj = Activator.CreateInstance( Type.GetTypeFromCLSID(CLSID_ITStorage, true) );
 		        iit = (IITStorage)obj;
-		
+
 		        HRESULT hresult = iit.StgOpenStorage( filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage );
-		
+
 		        if (hresult != HRESULT.S_OK || storage == null) {
 		            throw new Exception(String.Format( "Failed to open CHM: {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult) ));
 		        }
-				
+
 		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
 		        if (hresult != HRESULT.S_OK || enumStat == null) {
 		            throw new Exception(String.Format( "Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult) ));
 		        }
-		
+
 		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 		        uint fetched = 0;
-		
+
 		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
-		
+
 		            if (stat[0].pwcsName == "#SYSTEM") {
-		
+
 		                HRESULT hresult2 = storage.OpenStream( "#SYSTEM", IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
-		
+
 		                if (hresult2 != HRESULT.S_OK || stream == null) {
 		                    throw new Exception(String.Format("Failed to open #SYSTEM stream: 0x{0}\n{1}", hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
 		                }
-		
+
 		                // first skip 4-byte header
 		                byte[] buf = new byte[4];
 		                IntPtr pcb = Marshal.AllocCoTaskMem(4);
 		                stream.Read(buf, 4, pcb);
 		                Marshal.FreeCoTaskMem(pcb);
-		
+
 		                // now read segments until we find STGTY_ILOCKBYTES
 		                while (true) {
 		                    buf = new byte[2];
@@ -224,22 +224,22 @@ namespace Utils {
 		                    stream.Read(buf, 2, pcb);
 		                    int nRead = Marshal.ReadInt32(pcb);
 		                    Marshal.FreeCoTaskMem(pcb);
-		
+
 		                    if (nRead == 0)
 		                        break;
-		
+
 		                    int typeCode = buf[0];
-		
+
 		                    // length prefix
 		                    buf = new byte[2];
 		                    stream.Read(buf, 2, IntPtr.Zero);
-		
+
 		                    int len = buf[0];
 		                    if (len <= 0) continue;
-		
+
 		                    byte[] data = new byte[len];
 		                    stream.Read(data, len, IntPtr.Zero);
-		
+
 		                    if (typeCode == (int)STGTY.STGTY_ILOCKBYTES) {
 		                        IntPtr ptr = Marshal.AllocHGlobal(len);
 		                        Marshal.Copy(data, 0, ptr, len);
@@ -251,7 +251,7 @@ namespace Utils {
 		                break; // we are done with #SYSTEM
 		            }
 		        }
-		
+
 		    } finally {
 		        if (stream != null) Marshal.ReleaseComObject(stream);
 		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
@@ -259,12 +259,12 @@ namespace Utils {
 		        if (iit != null) Marshal.ReleaseComObject(iit);
 		        if (obj != null) Marshal.ReleaseComObject(obj);
 		    }
-		
+
 		    return result;
 		}
 
 		public static List<string> urls_structured(string filePath) {
-		
+
 		    // check MOTW alternative stream (ATS)
 			Nullable<int> zone = Security.PeekMotwZone(filePath);
 				if (zone.HasValue) {
@@ -273,32 +273,32 @@ namespace Utils {
 				} else
 				    Console.WriteLine("File is safe");
 
-		
+
 		    var urls = new List<string>();
-		
+
 		    object obj = null;
 		    IITStorage iit = null;
 		    IStorage storage = null;
 		    IEnumSTATSTG enumStat = null;
-		
+
 		    try {
 		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true) );
 		        iit = (IITStorage)obj;
-		
+
 		        HRESULT hresult = iit.StgOpenStorage( filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
-		
+
 		        if (hresult != HRESULT.S_OK || storage == null) {
 		            throw new Exception(String.Format( "Failed to open CHM: {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult) ));
 		        }
-		
+
 		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
 		        if (hresult != HRESULT.S_OK || enumStat == null) {
 		            throw new Exception(String.Format( "Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult) ));
 		        }
-		
+
 		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 		        uint fetched = 0;
-		
+
 		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
 		            if (stat[0].type == (int)STGTY.STGTY_STREAM) {
 		                string name = stat[0].pwcsName;
@@ -310,7 +310,7 @@ namespace Utils {
 		                }
 		            }
 		        }
-		
+
 		    } finally {
 		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
 		        if (storage != null) Marshal.ReleaseComObject(storage);
@@ -323,7 +323,7 @@ namespace Utils {
 
 		public static List<string> urls_7zip(string filePath) {
 		    var urls = new List<string>();
-		
+
 		    var processStartInfo = new ProcessStartInfo {
 		        FileName = @"c:\Program Files\7-zip\7z.exe",
 		        Arguments = String.Format("l -slt \"{0}\"", filePath),
@@ -332,16 +332,16 @@ namespace Utils {
 		        UseShellExecute = false,
 		        CreateNoWindow = true
 		    };
-		
+
 		    using (var process = Process.Start(processStartInfo)) {
 		        var output = process.StandardOutput;
 		        string line;
 		        string currentPath;
-		
+
 		        while ((line = output.ReadLine()) != null) {
 		            if (line.StartsWith("Path = ")) {
 		                currentPath = line.Substring("Path = ".Length);
-		
+
 		                string lower = currentPath.ToLowerInvariant();
 		                if (lower.EndsWith(".html") || lower.EndsWith(".htm")) {
 		                    urls.Add(currentPath.Replace("\\", "/"));
@@ -352,7 +352,7 @@ namespace Utils {
 		        if (process.ExitCode != 0)
 		            throw new Exception("7-Zip failed with exit code " + process.ExitCode);
 		    }
-		
+
 		    return urls;
 		}
 
@@ -443,6 +443,6 @@ $packageName = 'Utils'
 write-host ('Launching {0} from {1}' -f $methodName, "${packageName}.${className}")
 $urls = ([Type]("$packageName.$className")).GetMethod($methodName).Invoke($null, @($file))
 
-$urls | foreach-object { 
-  write-output $_ 
+$urls | foreach-object {
+  write-output $_
 }
