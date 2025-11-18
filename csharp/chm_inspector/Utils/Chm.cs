@@ -6,7 +6,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices;
-using NLog;
+using Serilog;
+
 //  using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
 
 /**
@@ -149,8 +150,6 @@ namespace Utils {
 	// based on: https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title
 
 	public class Chm {
-
-		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		// Microsoft InfoTech IStorage System (MSITFS) COM server
 		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
@@ -350,7 +349,6 @@ namespace Utils {
 		
 	
 	public static List<TocEntry> toc_structured(string filePath) {
-		logger.Info("toc_structured: starting");
 	    object obj = null;
 	    IITStorage iit = null;
 	    IStorage storage = null;
@@ -358,7 +356,25 @@ namespace Utils {
 	    IStream stream = null;
 	
 	    var result = new List<TocEntry>();
-	
+
+	    
+        
+		        // Initialize Seq logger (adjust URL and API key if needed)
+		        /*
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.Seq("http://localhost:5341")
+                    .CreateLogger();
+                    */
+                   // The type 'System.Object' is defined in an assembly that is not referenced. You must add a reference to assembly 'System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'. (CS0012)
+                   // The type 'System.Enum' is defined in an assembly that is not referenced. You must add a reference to assembly 'System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'. (CS0012)
+				Log.Logger = new LoggerConfiguration()
+	                .WriteTo.ColoredConsole()
+	                .WriteTo.RollingFile(@"logs/log-{Date}.txt")
+	                .WriteTo.Seq("http://localhost:5341")
+	                .CreateLogger();
+                Log.Information("Starting toc_structured for file {FilePath}", filePath);
+
 	    try {
 	        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
 	        iit = (IITStorage)obj;
@@ -391,7 +407,8 @@ namespace Utils {
 	                    stream.Read(buffer, buffer.Length, pcb);
 	                    loopCounter++;	                    
     					if (loopCounter % 500 == 0)
-	                    	logger.Info(String.Format( "Memory {0} MB", GC.GetTotalMemory(false) / (1024 * 1024)));
+    						
+						Log.Information("Memory {MemoryMb} MB", GC.GetTotalMemory(false) / (1024 * 1024));
 	                    // Assume buffer fully read; could refine with actual bytes read
 	                    ms.Write(buffer, 0, buffer.Length);
 	                    // For simplicity, break when less than buffer size (optional refinement)
