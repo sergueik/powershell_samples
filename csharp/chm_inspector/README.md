@@ -53,6 +53,146 @@ hhc.exe dummy.hhp
 
 this produces `dummy.chm` with __Titles__ in `#STRINGS` and __URL__ list in `#URLSTR`
 
+---
+
+
+### Out Of Memory Exception
+
+
+The stream-reading logic for extracting data from Structured Storage had an implementation flaw in an earlier revision, resulting in an
+__OutOfMemoryException__ at
+[Chm.cs#L391]	(https://github.com/sergueik/powershell_samples/blob/debug-oom/csharp/chm_inspector/Utils/Chm.cs#L391) 
+This happened because the code attempted to read the entire storage stream into memory using a fixed-size buffer without checking how many bytes were actually read, causing the loop to repeatedly append unbounded data to the `MemoryStream` until the process exhausted its available contiguous virtual memory segment.
+
+```c#
+public static List<TocEntry> toc_structured(string filePath) {
+  logger.Info("toc_structured: starting");
+    object obj = null;
+    IITStorage iit = null;
+    IStorage storage = null;
+    IEnumSTATSTG enumStat = null;
+    IStream stream = null;
+
+    var result = new List<TocEntry>();
+
+    try {
+        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
+        iit = (IITStorage)obj;
+
+        HRESULT hresult = iit.StgOpenStorage(filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
+        if (hresult != HRESULT.S_OK || storage == null)
+        throw new Exception(String.Format("Failed to open CHM file\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+        if (hresult != HRESULT.S_OK || enumStat == null)
+        throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+        uint fetched;
+
+        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+            // We are looking for "toc.hhc"
+            if (string.Equals(stat[0].pwcsName, "toc.hhc", StringComparison.OrdinalIgnoreCase)) {
+                hresult = storage.OpenStream(stat[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
+                if (hresult != HRESULT.S_OK || stream == null)
+                  throw new Exception(String.Format("Failed to open toc.hhc stream,\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+                // Read full stream
+                MemoryStream ms = new MemoryStream();
+                byte[] buffer = new byte[4096];
+                IntPtr pcb = IntPtr.Zero;
+        // NOTE: do not be logging every iteration of the read loop
+        int loopCounter = 0;
+                while (true) {
+                    stream.Read(buffer, buffer.Length, pcb);
+                    loopCounter++;	                    
+            if (loopCounter % 500 == 0)
+                      logger.Info(String.Format( "Memory {0} MB", GC.GetTotalMemory(false) / (1024 * 1024)));
+                    // Assume buffer fully read; could refine with actual bytes read
+                    ms.Write(buffer, 0, buffer.Length);
+                    // For simplicity, break when less than buffer size (optional refinement)
+                    if (buffer.Length < 4096) break;
+                }
+
+                string tocContent = Encoding.UTF8.GetString(ms.ToArray());
+
+                // Regex parse OBJECT nodes
+                var matches = Regex.Matches(tocContent,
+                    @"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">.*?<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
+                    RegexOptions.Singleline);
+
+                foreach (Match m in matches) {
+                    result.Add(new TocEntry {
+                        Name = m.Groups[1].Value,
+                        Local = m.Groups[2].Value
+                    });
+                }
+
+                break; // done with toc.hhc
+            }
+        }
+    } finally {
+        if (stream != null) Marshal.ReleaseComObject(stream);
+        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+        if (storage != null) Marshal.ReleaseComObject(storage);
+        if (iit != null) Marshal.ReleaseComObject(iit);
+        if (obj != null) Marshal.ReleaseComObject(obj);
+    }
+
+    return result;
+
+  }
+```
+
+A more resilient approach (achieved in the commit [37fa6dbfe](https://github.com/sergueik/powershell_samples/commit/37fa6dbfe44d94856ec0fa8c35aed558a10f01b6))involves:
+
+  * Checking the exact number of bytes returned by `IStream.Read`,
+  * Stopping when fewer than `buffer.Length` bytes are read,
+  * processing the stream incrementally to avoid building a full in-memory copy.
+
+
+Memory allocation and segmentation ensure that your process only receives a limited, contiguous block of usable RAM/virtual memory, and an `OutOfMemoryException` simply means the system could not reserve a sufficiently large continuous segment for your in-memory buffer—even if total free memory still existed.
+
+#### Telemetry and Log Collection
+
+The sample includes optional instrumentation (e.g., periodic `GC.GetTotalMemory()`  [metric](https://learn.microsoft.com/en-us/dotnet/api/system.gc.gettotalmemory?view=netframework-4.5) logging) that can be forwarded to a 
+log collector such as [Seq](https://datalust.co/), or to telemetry stacks such as [Prometheus](https://prometheus.io/download/)/ [Grafana](https://grafana.com/grafana/download) to observe memory pressure and stream read behavior 
+
+The sample includes optional instrumentation (e.g., periodic GC.GetTotalMemory() logging) that can be forwarded to a log collector such as Seq, Prometheus, or Grafana to observe memory pressure and stream read behavior.
+
+
+By examining this metric, whose values typically spike sharply just before failure, 
+
+
+```c#
+logger.Info(String.Format( "Memory {0} MB", GC.GetTotalMemory(false) / (1024 * 1024)));
+```
+![oom2](screenshots/oom2.jpg)
+
+
+![metric](screenshots/metric1.jpg)
+
+
+one can clearly visualize heap exhaustion and the conditions leading up to an impending `OutOfMemoryException`	.
+
+
+NOTE: Seq is primarily a lightweight 
+fine-grained, application-level log collection and indexing platform, 
+not a telemetry indicator or metrics system, and it does not provide 
+built-in capabilities for transforming log message content.
+![wip3](screenshots/seq2.jpg)
+
+In an ideal setup for collecting and rendering application telemetry, the Seq event stream—received via a Serilog sink—would be forwarded to Grafana for visualization.
+The other option is to use [ECS Logging .NET](https://www.elastic.co/docs/reference/ecs/logging/dotnet/setup)
+This, however, requires a compatible Seq-JSON data source or 
+Grafana plugin, which is still under investigation and not yet fully supported.
+
+Another viable option is to integrate the ELK stack, 
+using the `Serilog.Sinks.Elasticsearch` 
+[NuGet package](https://www.nuget.org/packages/Serilog.Sinks.Elasticsearch) for .NET, or 
+the [Logback ECS Encoder](https://mvnrepository.com/artifact/co.elastic.logging/logback-ecs-encoder)/[Logstash Logback Encoder](https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder)
+dependencies for Java, allowing log events 
+to be indexed directly into Elasticsearch and transformed and visualized through Kibana.
 
 ---
 
@@ -143,3 +283,4 @@ The CHM internal structure requires cross-referencing several internal streams t
 ### Author
 
 [Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)
+[
