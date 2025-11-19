@@ -1,10 +1,12 @@
 ### Info
 
-Program to examine the contents of a compiled help file (CHM) without fully extracting it, based on the [Get CHM Title](https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title) snippet by *Castorix31*.
+This program examines the contents of a compiled help file (CHM) without fully extracting it, based on the [Get CHM Title](https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title) snippet by *Castorix31*.
 
-Uses the **Microsoft InfoTech IStorage System** COM server `{5D02926A-212E-11D0-9DF9-00A0C922E6EC}` to read storage directly without extracting the compiled HTML archive. **MSITFS** is the HTML Help/CHM runtime’s storage implementation (`itss.dll`).
+It uses the **Microsoft InfoTech IStorage System** COM server `{5D02926A-212E-11D0-9DF9-00A0C922E6EC}` to read storage directly without extracting the compiled HTML archive. **MSITFS** is the HTML Help/CHM runtime’s storage implementation (`itss.dll`).
 
-Notably, [7-Zip](https://www.7-zip.org) can unpack/extract CHM files (listed as an “unpacking only” format). 7-Zip does **not** provide CHM creation or repacking functionality. Source code and downloads are available from the official 7-Zip site.
+![server](screenshots/server.jpg)
+
+Free tool like [7-Zip](https://www.7-zip.org) can unpack/extract CHM files (listed as an “unpacking only” format). 7-Zip can  create or repack CHM files.
 
 ---
 
@@ -12,11 +14,12 @@ Notably, [7-Zip](https://www.7-zip.org) can unpack/extract CHM files (listed as 
 
 * **Implemented**
   * Reading the title of the compiled help file and listing component HTML files via `StgOpenStorage` and `7z.exe` commands
-  * Loading the file list into a `DataGrid` for selection of files to extract
+  * Loading the file list into a `DataGrid` for selection of files to extract   
+  * Reading the CHM *table of contents* (`toc.hhc' by default) and building a title–filename map. This is crucial for enterprise-grade help files containing  many thousands of documents
+
 
 * **Work in progress**
   * Extracting selected files
-  * Peeking for additional metadata to help select files — useful for large business-grade help files with tens of thousands of component documents
 
 ![wip1](screenshots/app1.jpg)
 ![wip2](screenshots/app2.jpg)
@@ -26,42 +29,156 @@ Notably, [7-Zip](https://www.7-zip.org) can unpack/extract CHM files (listed as 
 ![wip6](screenshots/app6.jpg)
 
 ---
-### Testing
+
+### Out Of Memory Exception
 
 
-Minimal dummy CHM generation using official, free [HTML Help Workshop](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/htmlhelp/microsoft-html-help-downloads)
+Earlier revision [f261436](https://github.com/sergueik/powershell_samples/commit/f261436579455ba52c05872e0a086287fb077b8e) of the server has been throwing exception during 
 
+extraction of data from Structured Storage, due to unsafe implementation of the method `toc_structured` 
 
-Steps:
+attempting to read an entire storage stream into memory without checking the number of bytes actually returned.
 
-  * Add 2–3 HTML files (topic1.htm, topic2.htm)
+This led to `OutOfMemoryException`
+ at
+[Chm.cs#L391](https://github.com/sergueik/powershell_samples/blob/debug-oom/csharp/chm_inspector/Utils/Chm.cs#L391)
+This happened because the code attempted to read the entire storage stream into memory using a fixed-size buffer without checking how many bytes were actually read, causing the loop to repeatedly append unbounded data to the `MemoryStream` until the process exhausted its available contiguous virtual memory segment.
 
+```c#
+public static List<TocEntry> toc_structured(string filePath) {
+  logger.Info("toc_structured: starting");
+    object obj = null;
+    IITStorage iit = null;
+    IStorage storage = null;
+    IEnumSTATSTG enumStat = null;
+    IStream stream = null;
 
-  * Create `dummy.hhp` project file with:
-```ini
-[OPTIONS]
-Title=Dummy CHM
-Default Topic=topic1.htm
+    var result = new List<TocEntry>();
 
-[FILES]
-topic1.htm
-topic2.htm
+    try {
+        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
+        iit = (IITStorage)obj;
+
+        HRESULT hresult = iit.StgOpenStorage(filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
+        if (hresult != HRESULT.S_OK || storage == null)
+        throw new Exception(String.Format("Failed to open CHM file\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+        if (hresult != HRESULT.S_OK || enumStat == null)
+        throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+        uint fetched;
+
+        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+            // We are looking for "toc.hhc"
+            if (string.Equals(stat[0].pwcsName, "toc.hhc", StringComparison.OrdinalIgnoreCase)) {
+                hresult = storage.OpenStream(stat[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
+                if (hresult != HRESULT.S_OK || stream == null)
+                  throw new Exception(String.Format("Failed to open toc.hhc stream,\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+                // Read full stream
+                MemoryStream ms = new MemoryStream();
+                byte[] buffer = new byte[4096];
+                IntPtr pcb = IntPtr.Zero;
+        // NOTE: do not be logging every iteration of the read loop
+        int loopCounter = 0;
+                while (true) {
+                    stream.Read(buffer, buffer.Length, pcb);
+                    loopCounter++;
+            if (loopCounter % 500 == 0)
+                      logger.Info(String.Format( "Memory {0} MB", GC.GetTotalMemory(false) / (1024 * 1024)));
+                    // Assume buffer fully read; could refine with actual bytes read
+                    ms.Write(buffer, 0, buffer.Length);
+                    // For simplicity, break when less than buffer size (optional refinement)
+                    if (buffer.Length < 4096) break;
+                }
+
+                string tocContent = Encoding.UTF8.GetString(ms.ToArray());
+
+                // Regex parse OBJECT nodes
+                var matches = Regex.Matches(tocContent,
+                    @"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">.*?<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
+                    RegexOptions.Singleline);
+
+                foreach (Match m in matches) {
+                    result.Add(new TocEntry {
+                        Name = m.Groups[1].Value,
+                        Local = m.Groups[2].Value
+                    });
+                }
+
+                break; // done with toc.hhc
+            }
+        }
+    } finally {
+        if (stream != null) Marshal.ReleaseComObject(stream);
+        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+        if (storage != null) Marshal.ReleaseComObject(storage);
+        if (iit != null) Marshal.ReleaseComObject(iit);
+        if (obj != null) Marshal.ReleaseComObject(obj);
+    }
+
+    return result;
+
+  }
 ```
+Note: Although the MemoryStream appeared to grow without bounds, we cannot conclusively prove an actual global memory shortage occurred. 
+The failure is consistent with a *segmentation-related* allocation failure — meaning the runtime could not obtain a sufficiently large contiguous block of virtual memory — rather than true exhaustion of total system RAM.
+
+A more resilient approach achieved in the commit [37fa6dbfe](https://github.com/sergueik/powershell_samples/commit/37fa6dbfe44d94856ec0fa8c35aed558a10f01b6) involves:
+
+  * Checking the exact number of bytes returned by `IStream.Read`,
+  * Stopping when fewer than `buffer.Length` bytes are read,
+  * processing the stream incrementally to avoid building a full in-memory copy.
 
 
-* Compile with
-```cmd
-hhc.exe dummy.hhp
+Memory allocation and segmentation ensure that your process only receives a limited, contiguous block of usable RAM/virtual memory, and an `OutOfMemoryException` simply means the system could not reserve a sufficiently large continuous segment for your in-memory buffer—even if total free memory still existed.
+
+#### Telemetry and Log Collection
+
+The sample includes optional instrumentation through
+periodic `GC.GetTotalMemory()`
+[metric](https://learn.microsoft.com/en-us/dotnet/api/system.gc.gettotalmemory?view=netframework-4.5) logging that is highly configurable
+and can be forwarded to a
+log collector such as [Seq](https://datalust.co/), and eventually to telemetry stacks such as [Prometheus](https://prometheus.io/download/)/ [Grafana](https://grafana.com/grafana/download) to observe memory pressure and stream read behavior
+
+By examining this metric, whose values typically spike sharply just before failure,
+
+```c#
+logger.Info(String.Format( "Memory {0} MB", GC.GetTotalMemory(false) / (1024 * 1024)));
 ```
+![oom2](screenshots/oom2.jpg)
 
-this produces `dummy.chm` with __Titles__ in `#STRINGS` and __URL__ list in `#URLSTR`
+
+![metric](screenshots/metric1.jpg)
+
+one can clearly visualize heap exhaustion and the conditions leading up to an impending `OutOfMemoryException`	.
+
+NOTE: Seq is primarily a lightweight
+fine-grained, application-level log collection and indexing platform,
+not a telemetry indicator or metrics system, and it does not provide
+built-in capabilities for transforming log message content.
+![wip3](screenshots/seq2.jpg)
+
+In an ideal setup for collecting and rendering application telemetry, the Seq event stream—received via a __Serilog__ sink—would be forwarded to __Grafana__ for visualization.
+The other option is to use [ECS Logging .NET](https://www.elastic.co/docs/reference/ecs/logging/dotnet/setup)
+This, however, requires a compatible Seq-JSON data source or
+Grafana plugin, which is still under investigation and not yet fully supported.
+
+Another viable option is to integrate the ELK stack,
+using the `Serilog.Sinks.Elasticsearch`
+[NuGet package](https://www.nuget.org/packages/Serilog.Sinks.Elasticsearch) for .NET, or
+the [Logback ECS Encoder](https://mvnrepository.com/artifact/co.elastic.logging/logback-ecs-encoder)/[Logstash Logback Encoder](https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder)
+dependencies for Java, allowing log events
+to be indexed directly into Elasticsearch and transformed and visualized through Kibana.
 
 
 ---
 
 ### TOC
 
-Information about the topics covered in individual files is stored in the file named `toc.hhc` as a set of objects:
+Information about the topics covered in individual files is stored in the table of contents  file named `toc.hhc` as a set of `<OBJECT>` objects:
 
 ```html
 <OBJECT type="text/sitemap">
@@ -69,17 +186,18 @@ Information about the topics covered in individual files is stored in the file n
   <param name="Local" value="ch01s09.html#idp8051664">
 </OBJECT>
 
-The toc.hhc is a plain HTML-like file inside the CHM (MS ITSS) archive. For a selection helper grid, the relevant attributes are Name and Local.
+The table of content index (named by default `toc.hhc`) is a plain HTML file inside the CHM (MS ITSS) archive. For a selection helper grid, the relevant attributes to extract are `Name` and `Local`.
 
-#### Extracting toc.hhc with `7-Zip`
+### Processing `toc.hhc` 
+#### Using `7-Zip`
 
 ```cmd
 7z.exe e ${chm_file} toc.hhc -o${output_folder}
 ```
 
-#### Reading `toc.hhc` via MSITFS COM Server
+#### Via MSITFS COM Server COM API
 
-Using the **COM** **API** allows reading the file directly from the `CHM` archive without extracting:
+Using the **COM** **API** allows accessing the file directly from within the `CHM` archive without extracting:
 ```c#
 IStorage storage;
 HRESULT hr = StgOpenStorage(
@@ -97,7 +215,8 @@ This is the same approach used internally by **MS HTML Help Workshop** or librar
 #### Parsing `toc.hhc`
 
 
-`OBJECT` nodes can be parsed using a lightweight DOM parser (e.g., standalone [embedded DOM parser]() ) or even a simple regex:
+`OBJECT` nodes can be parsed using a lightweight DOM parser, e.g., standalone [embedded DOM parser](https://github.com/sergueik/powershell_samples/tree/master/csharp/standalone_embedded_parser)
+or even a plain regex:
 
 ```c#
 var matches = Regex.Matches(
@@ -113,20 +232,8 @@ foreach(Match match in matches) {
 }
 
 ```
-This regex approach avoids **DOM** parsing overhead, which is typically unnecessary since `toc.hhc` is usually very small.
+This regex approach avoids **DOM** parsing overhead, and can be used for small `toc.hhc`. However it does not scale and extracting a few hundreds of items from the `toc.hhc` may take a minute. The realistic help files, e.g. describing legacy Mainframe model bank teller screens, may easily contain tens of thousands of component files.
 
-### TODO
-
-For full CHM introspection (beyond listing HTML filenames), `#URLSTR` alone is insufficient.
-The CHM internal structure requires cross-referencing several internal streams to reconstruct:
-
-* Topic filenames
-* Topic numeric IDs
-* Topic titles
-* Table of Contents (TOC)
-* Index associations
-* “Home” page
-* Window definitions
 
 ---
 
