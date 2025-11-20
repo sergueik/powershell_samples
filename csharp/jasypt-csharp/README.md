@@ -175,6 +175,12 @@ Currently we cover `PBEWithMD5AndDES` algorithm. This is the same encryption use
 
 ### Porting to .Net Core
 
+  * restore core build scripts
+```sh
+git checkout 41335c4 -- jasypt-csharp.sln Program/Program.csproj Test/Test.csproj Utils/Utils.csproj
+git checkout master -- jasypt-csharp.sln Program/Program.csproj Test/Test.csproj Utils/Utils.csproj
+
+```
   * navigate to `https://dotnet.microsoft.com/en-us/download/dotnet/6.0` to download the SDK archive, pick per Linux platform / CPU
 
 ![downloads](https://github.com/sergueik/powershell_samples/blob/master/csharp/jasypt-csharp/screenshots/downloads.png)
