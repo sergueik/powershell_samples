@@ -25,27 +25,18 @@ namespace Tests
 		LoggerConfiguration loggerConfiguration = null;
 
 		[SetUp]
-		public void  setup() {
-			// based on: https://github.com/serilog-contrib/serilog-sinks-elasticsearch#elasticsearch-sinks
-			// loggerConfiguration = new LoggerConfiguration().WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200")));
-
-			// based on: 
-			// https://github.com/serilog-contrib/serilog-sinks-elasticsearch#disable-detection-of-elasticsearch-server-version
-
-			ElasticsearchSinkOptions elasticsearchSinkOptions = new ElasticsearchSinkOptions(new Uri("http://localhost:9200"));
+		// [TestFixtureSetUp]   // NUnit 2.x compatible attribute
+	    public void Setup() {
+			var elasticsearchSinkOptions = new ElasticsearchSinkOptions(new Uri("http://localhost:9200"));
 			elasticsearchSinkOptions.DetectElasticsearchVersion = false;
 			elasticsearchSinkOptions.AutoRegisterTemplate = true;
 			elasticsearchSinkOptions.AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6;
-			loggerConfiguration = new LoggerConfiguration().WriteTo.Elasticsearch(elasticsearchSinkOptions);
-		}
-		[Test]
-		public void test4( ){
+			loggerConfiguration = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Elasticsearch(elasticsearchSinkOptions);
 
-		Log.Logger = loggerConfiguration.MinimumLevel.Debug()
-			.WriteTo.Console().WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200")))
-                .CreateLogger();
-		 Log.Information("Hello, world!");
-		}
+	    	Log.Logger = loggerConfiguration.CreateLogger();
+	
+	    }
+			    
 		[Test]
 		public void test1() {
 			var toclist = Chm.toc_structured(file);
@@ -91,5 +82,11 @@ namespace Tests
 				Console.Error.WriteLine("{0}: {1}", entry.Name, entry.Local);
 			}
 		}
+
+		[Test]
+		public void test4( ){
+			 Log.Information("Hello, world!");
+		}
+		
 	}
 }
