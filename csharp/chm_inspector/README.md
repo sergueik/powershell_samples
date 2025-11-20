@@ -167,7 +167,7 @@ This, however, requires a compatible Seq-JSON data source or
 Grafana plugin, which is still under investigation and not yet fully supported.
 
 Another viable option is to integrate the ELK stack,
-using the `Serilog.Sinks.Elasticsearch`
+using the [Elastic.Serilog.Sinks](https://www.nuget.org/packages/Elastic.Serilog.Sinks/8.11.0) (the ackage is compatible with downplatform .NET Framework __4.6.1__) or the legacy `Serilog.Sinks.Elasticsearch`
 [NuGet package](https://www.nuget.org/packages/Serilog.Sinks.Elasticsearch) for .NET, or
 the [Logback ECS Encoder](https://mvnrepository.com/artifact/co.elastic.logging/logback-ecs-encoder)/[Logstash Logback Encoder](https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder)
 dependencies for Java, allowing log events
@@ -239,6 +239,71 @@ This regex approach avoids **DOM** parsing overhead, and can be used for small `
 
 ### See Also
 
+---
+### Elastic Search
+
+Adding ElasticSearh packages through `packages.config` for .Net Framework __4.5__ 
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+
+<packages>
+  <package id="NUnit" version="2.6.4" targetFramework="net45" />
+	<!-- NOTE: old versions chosen to make install through SharpDevelop 5.1 embeddd nuget possible -->
+	<package id="Serilog.Sinks.Elasticsearch" version="8.0.0" targetFramework="net45" />
+	<package id="Elasticsearch.Net" version="7.0.0" targetFramework="net45" />
+	<package id="Serilog.Sinks.File" version="3.1.1" targetFramework="net45" />
+	<package id="Serilog.Sinks.Console" version="2.0.0" targetFramework="net45" />
+		<!--
+ have to install manually extracting the Serilog 2.0.0 nuget package -->
+	<!--
+	<package id="Serilog" version="2.0.0" targetFramework="net452" /> -->
+  <package id="FluentAssertions" version="4.4.0" targetFramework="net45" />
+  <package id="Newtonsoft.Json" version="6.0.6" targetFramework="net45" />
+</packages>
+
+```
+leads to compilation error:
+```text
+The type 'System.Object' is defined in an assembly that is not referenced.
+You must add a reference to assembly 'System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'. (CS0012)
+
+```
+switching to older .Net Framework version __4.0__ 
+leads to compilation error:
+```text
+Assembly 'Serilog.Sinks.Elasticsearch, Version=4.1.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10' uses 'Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10' which has a higher version than referenced assembly 'Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10' (CS1705)
+```
+installing `Serilog 2.0.0` via ShareDevelop __5.1__ embedded nuget leads to  an error with **Restore Packages** step:
+```text
+	Installing 'Serilog 2.0.0'.
+	'Serilog' already has a dependency defined for 'Microsoft.CSharp'.
+	Exited with code: 1
+```
+```sh
+curl -sO ~/Downloads/serilog.2.0.0.nupkg https://www.nuget.org/api/v2/package/Serilog/2.0.0
+mkdir -p packages/serilog.2.0.0
+unzip ~/Downloads/serilog.2.0.0.nupkg -d packages/serilog.2.0.0
+```
+and
+
+similar for  `Serilog.Sinks.PeriodicBatching`:
+
+```sh
+curl -sO ~/Downloads/serilog.sinks.periodicbatching.2.0.0 https://www.nuget.org/api/v2/package/Serilog.Sinks.Console/2.0.0
+mkdir -p packages/serilog.sinks.periodicbatching.2.0.0
+unzip ~/Downloads/serilog.sinks.periodicbatching.2.0.0.nupkg -d packages/serilog.sinks.periodicbatching.2.0.0
+
+```
+and manually updating c# project files with the reference
+
+
+There are still errors thrown in runtime:
+```text
+SetUp : System.MissingMethodException : Method not found: 'Void Serilog.Sinks.PeriodicBatching.PeriodicBatchingSink..ctor(Int32, System.TimeSpan, Int32)'.
+```
+---
+
+### See Also
 * [Original snippet](https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title)
 * [CodeProject example](https://www.codeproject.com/articles/Decompiling-CHM-help-files-with-C-) of decompiling CHM files with C# by [Yuriy Maksymenko](https://forum.codeproject.com/user/yuriy-maksymenko) (source code appears to be missing). Possible LinkedIn profile: [Yuriy Maksymenko](https://www.linkedin.com/in/yuri-canada/?originalSubdomain=ca)
 * [StackOverflow discussion](https://stackoverflow.com/questions/9391424/how-to-get-a-list-of-topics-from-a-chm-file-in-c-sharp)
@@ -250,7 +315,7 @@ This regex approach avoids **DOM** parsing overhead, and can be used for small `
 * sample [chm file](https://submain.com/ghostdoc/samples/PowerCollections/CHM/PowerCollectionsCHM.zip) from PowerCollections
 * [download](http://web.archive.org/web/20160201063255/http://download.microsoft.com/download/0/A/9/0A939EF6-E31C-430F-A3DF-DFAE7960D564/htmlhelp.exe) `htmlhelp.exe`
 * [download](http://web.archive.org/web/20160314043751/http://download.microsoft.com/download/0/A/9/0A939EF6-E31C-430F-A3DF-DFAE7960D564/helpdocs.zip) `helpdocs.zip`
-
+* Serilog sink [repository](https://github.com/serilog-contrib/serilog-sinks-elasticsearch)   - writes events to Elasticsearch
 ---
 
 ### Author
