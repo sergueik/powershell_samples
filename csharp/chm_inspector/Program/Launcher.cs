@@ -6,6 +6,16 @@ using System.Drawing;
 using System.Data;
 using System.Collections.Generic;
 
+using Serilog;
+using Serilog.Core;
+// using Serilog.Sinks.Console;
+using Serilog.Debugging;
+using Serilog.Sinks.Elasticsearch;
+using Serilog.Formatting.Json;
+using Serilog.Sinks.File;
+
+using Elasticsearch;
+
 using Utils;
 
 /**
@@ -35,8 +45,9 @@ namespace Program {
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
-
+		private static LoggerConfiguration loggerConfiguration = null;
 		private DataGridTableStyle tableStyle;
+		
 
 		[STAThread]
 		public static void Main() {
@@ -44,6 +55,15 @@ namespace Program {
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			Application.EnableVisualStyles();
+			var elasticsearchSinkOptions = new ElasticsearchSinkOptions(new Uri("http://localhost:9200"));
+			elasticsearchSinkOptions.DetectElasticsearchVersion = false;
+			elasticsearchSinkOptions.AutoRegisterTemplate = true;
+			elasticsearchSinkOptions.AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6;
+			loggerConfiguration = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Elasticsearch(elasticsearchSinkOptions);
+
+	    	Log.Logger = loggerConfiguration.CreateLogger();
+	
+
 			Application.Run(new Control());
 		}
 
