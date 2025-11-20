@@ -1,0 +1,809 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<OBJECT type="text/site properties">
+	<param name="Type" value="Reference">
+	<param name="TypeDesc" value="Reference topics">
+	<param name="Type" value="Design">
+	<param name="TypeDesc" value="Topics that explain how to design a help system">
+	<param name="Type" value="Overview">
+	<param name="TypeDesc" value="Topics that contain conceptual overview information">
+	<param name="Type" value="Procedure">
+	<param name="TypeDesc" value="Topics that contain step-by-step procedures">
+	<param name="Type" value="Web">
+	<param name="TypeDesc" value="Topics located on the Internet">
+</OBJECT>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Introducing HTML Help">
+		<param name="Type" value="Overview">
+		<param name="Local" value="1hh.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="New features in this release">
+			<param name="Local" value="new.htm">
+			<param name="ImageNumber" value="12">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Converting existing help projects">
+			<param name="Type" value="Reference">
+			<param name="Local" value="WinHelp.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The HTML Help Components">
+			<param name="Type" value="Overview">
+			<param name="Local" value="whatis.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The HTML Help Web page">
+			<param name="Local" value="http://msdn.microsoft.com/library/en-us/htmlhelp/html/vsconHH1Start.asp">
+			<param name="WindowName" value="Web topics">
+			<param name="ImageNumber" value="15">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Designing a Help System">
+		<param name="Type" value="Design">
+		<param name="Type" value="Overview">
+		<param name="Local" value="design.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Your help system: the big picture">
+			<param name="Type" value="Overview">
+			<param name="Local" value="overbig.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Making your help system accessible">
+			<param name="Type" value="Overview">
+			<param name="Local" value="access.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Start a Help System Design">
+			<param name="Type" value="Design">
+			<param name="Type" value="Overview">
+			<param name="Local" value="DSstart.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Designing help topics">
+				<param name="Type" value="Design">
+				<param name="Local" value="dsht.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Planning an index">
+				<param name="Type" value="Design">
+				<param name="Local" value="dsidx.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Planning a table of contents">
+				<param name="Type" value="Design">
+				<param name="Local" value="dscnt.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Making topic or Web page connections">
+				<param name="Type" value="Design">
+				<param name="Local" value="dscon.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Designing a topic template">
+				<param name="Type" value="Design">
+				<param name="Local" value="dstemp.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Designing a style sheet">
+				<param name="Type" value="Design">
+				<param name="Local" value="dsstyle.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Design Help">
+			<param name="Type" value="Design">
+			<param name="Type" value="Overview">
+			<param name="Local" value="dsdisk.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Using the Help Viewer for topics">
+				<param name="Type" value="Design">
+				<param name="Local" value="tripane.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Designing help windows">
+				<param name="Type" value="Design">
+				<param name="Local" value="dswin.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Designing context-sensitive help">
+				<param name="Type" value="Design">
+				<param name="Local" value="dscxt.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Designing training card help">
+				<param name="Type" value="Design">
+				<param name="Local" value="dstrain.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Design for a Web site">
+			<param name="Type" value="Design">
+			<param name="Type" value="Overview">
+			<param name="Local" value="dsweb.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Distributing topics over the Internet">
+				<param name="Type" value="Design">
+				<param name="Local" value="wbdist.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Registering a Web site with search engines">
+				<param name="Type" value="Design">
+				<param name="Local" value="dssearch.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Updating and managing a Web site">
+				<param name="Type" value="Design">
+				<param name="Local" value="dswbudt.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Creating Help">
+		<param name="Type" value="Overview">
+		<param name="Local" value="overauth.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Create a Help Project">
+			<param name="Type" value="Overview">
+			<param name="Local" value="prjfile.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Creating a project file">
+				<param name="Type" value="Overview">
+				<param name="Local" value="prjed.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Adding index, contents, and image locations">
+				<param name="Type" value="Overview">
+				<param name="Local" value="prjadd.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Editing project options">
+				<param name="Type" value="Overview">
+				<param name="Local" value="prjopt.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Setting Help Workshop preferences for projects">
+				<param name="Type" value="Overview">
+				<param name="Local" value="prjpref.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create HTML Topic  Files">
+				<param name="Type" value="Overview">
+				<param name="Local" value="overht.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating HTML files">
+					<param name="Type" value="Overview">
+					<param name="Local" value="HTfile.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Converting existing help projects">
+					<param name="Type" value="Overview">
+					<param name="Local" value="prjcnvt.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Viewing HTML files">
+					<param name="Type" value="Overview">
+					<param name="Local" value="HTview.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Adding HTML tags and other elements to files">
+					<param name="Type" value="Overview">
+					<param name="Local" value="HTtag.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Inserting the HTML Help ActiveX control into a file">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="HTAXin.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Inserting the HTML Help Java Applet">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="htjain.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Use Topic Templates">
+					<param name="Type" value="Overview">
+					<param name="Local" value="overtemp.htm">
+					</OBJECT>
+				<UL>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Creating a topic template">
+						<param name="Type" value="Overview">
+						<param name="Local" value="httemp.htm">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Example: topic templates">
+						<param name="Type" value="Overview">
+						<param name="Local" value="httempex.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+				</UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Use Cascading Style Sheets">
+					<param name="Type" value="Overview">
+					<param name="Local" value="htcss.htm">
+					</OBJECT>
+				<UL>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Creating a cascading style sheet">
+						<param name="Type" value="Overview">
+						<param name="Local" value="htcss1.htm">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Example: cascading style sheet">
+						<param name="Type" value="Overview">
+						<param name="Local" value="htcss4.htm">
+						<param name="ImageNumber" value="11">
+						</OBJECT>
+				</UL>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Work With Links">
+				<param name="Type" value="Overview">
+				<param name="Local" value="HTlink.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating text links">
+					<param name="Type" value="Overview">
+					<param name="Local" value="HThyp.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating links to other help files">
+					<param name="Type" value="Overview">
+					<param name="Local" value="htlink2.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Working with bookmarks">
+					<param name="Type" value="Overview">
+					<param name="Local" value="HTbook.htm">
+					<param name="New" value="1">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Working with KLinks">
+					<param name="Type" value="Overview">
+					<param name="Local" value="htklink.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Working with ALinks">
+					<param name="Type" value="Overview">
+					<param name="Local" value="htalink.htm">
+					<param name="New" value="1">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Example: Create an ALink using a text link">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="htalink4.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create a Table of Contents File">
+				<param name="Type" value="Overview">
+				<param name="Local" value="overcnt.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating a contents file">
+					<param name="Type" value="Overview">
+					<param name="Local" value="cntcr.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating links to the Web">
+					<param name="Type" value="Overview">
+					<param name="Local" value="infoloc.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Customizing a table of contents">
+					<param name="Type" value="Overview">
+					<param name="Local" value="cntcust.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating links from one contents file to another">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="merge3.htm">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create an Index File">
+				<param name="Type" value="Overview">
+				<param name="Local" value="overidx.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating an index file">
+					<param name="Type" value="Overview">
+					<param name="Local" value="idxnew.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating links to the Web">
+					<param name="Type" value="Overview">
+					<param name="Local" value="infoloc.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating a keyword">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="idxent.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating a keyword with multiple targets">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="idxmlp.htm">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Assign Information Types">
+				<param name="Type" value="Overview">
+				<param name="Local" value="overit.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating information types">
+					<param name="Type" value="Overview">
+					<param name="Local" value="infocr.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating categories for information types">
+					<param name="Type" value="Overview">
+					<param name="Local" value="infocat.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Example: using information types">
+					<param name="Type" value="Overview">
+					<param name="Local" value="infoex.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Customize Help">
+			<param name="Type" value="Overview">
+			<param name="Local" value="overcust.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Customize the Help Viewer">
+				<param name="Type" value="Overview">
+				<param name="Local" value="wincust.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Adding a Search tab">
+					<param name="Type" value="Overview">
+					<param name="Local" value="ftsover.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Adding a Favorites tab">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="favs.htm">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create Help Windows">
+				<param name="Type" value="Overview">
+				<param name="Local" value="win.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating secondary windows">
+					<param name="Type" value="Overview">
+					<param name="Local" value="winsec.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating a pop-up window">
+					<param name="Type" value="Overview">
+					<param name="Local" value="popwin.htm">
+					<param name="New" value="1">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating embedded help windows">
+					<param name="Type" value="Overview">
+					<param name="Local" value="winebed.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Adding buttons to a help window">
+					<param name="Type" value="Overview">
+					<param name="Local" value="butlist.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Compile and Test Help">
+			<param name="Type" value="Overview">
+			<param name="Local" value="overcompile.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Compile a Help Project">
+				<param name="Type" value="Overview">
+				<param name="Local" value="prjcmp.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Compiler messages">
+					<param name="Type" value="Overview">
+					<param name="Local" value="compmes.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="File compression">
+					<param name="Type" value="Overview">
+					<param name="Local" value="compres.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Authoring assistance">
+					<param name="Type" value="Overview">
+					<param name="Local" value="helpauthoringfeatures_ovr.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="HTML markup and the compiler">
+					<param name="Type" value="Overview">
+					<param name="Local" value="comptime.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Viewing compiled help file information">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="cmpinfo.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Decompiling a help file">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="decomp.htm">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Test a Help System">
+				<param name="Type" value="Overview">
+				<param name="Local" value="testovr.htm">
+				<param name="URL" value="testovr.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating a process for testing">
+					<param name="Local" value="testovr1.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Testing help files">
+					<param name="Type" value="Overview">
+					<param name="Local" value="prjtest.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Monitoring help messages">
+					<param name="Type" value="Overview">
+					<param name="Local" value="helpmes.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Using command line switches">
+					<param name="Local" value="switch.htm">
+					<param name="ImageNumber" value="11">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Hook up Help to a Program">
+			<param name="Type" value="Overview">
+			<param name="Local" value="overhook.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Example: creating a shortcut">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="shortcut.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create Context-Sensitive Help">
+				<param name="Type" value="Overview">
+				<param name="Local" value="cxtover.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Example: creating context-sensitive pop-up help">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="cxt_p_tasks.htm">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create Training Card Help">
+				<param name="Type" value="Overview">
+				<param name="Local" value="ovrtrain.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating a training card">
+					<param name="Type" value="Procedure">
+					<param name="Local" value="train.htm">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Manage Large Document Sets">
+			<param name="Type" value="Overview">
+			<param name="Local" value="overlrg.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Merging help files at run time">
+				<param name="Type" value="Overview">
+				<param name="Local" value="merge.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Linking between merged help files">
+				<param name="Type" value="Overview">
+				<param name="Local" value="linkmerge.htm">
+				<param name="ImageNumber" value="9">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Managing merged index files">
+				<param name="Type" value="Overview">
+				<param name="Local" value="idxman.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Using HTML Help on the Web">
+		<param name="Type" value="Overview">
+		<param name="Local" value="overhtmlweb.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Create a Help Web Site">
+			<param name="Type" value="Overview">
+			<param name="Local" value="overweb.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Creating HTML files">
+				<param name="Type" value="Overview">
+				<param name="Local" value="htfile.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Creating a table of contents for a Web site">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="cntweb.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Creating an index for a Web site">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="idxweb.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Inserting the HTML Help ActiveX control">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="htaxin.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Inserting the HTML Help Java Applet">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="htjain.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Running a compiled help file from the Web">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="chmweb.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Create a Frameset">
+			<param name="Type" value="Overview">
+			<param name="Local" value="overfr.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Example: a two-frame frameset">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="frcr.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Creating a link to close a frameset">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="fr_close.htm">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="HTML Help References">
+		<param name="Type" value="Reference">
+		<param name="Type" value="Overview">
+		<param name="Local" value="helpref.htm">
+		<param name="ImageNumber" value="2">
+		</OBJECT>
+	<OBJECT type="text/sitemap">
+		<param name="Merge" value="hhaxref.chm::/HHOCX_c.hhc">
+
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="HTML Help API Reference">
+			<param name="Type" value="Reference">
+			<param name="Type" value="Overview">
+			<param name="Local" value="apiref.htm">
+			<param name="ImageNumber" value="2">
+			</OBJECT>
+		<OBJECT type="text/sitemap">
+			<param name="Merge" value="api.chm::/api.hhc">
+
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="HTML Tag Reference">
+			<param name="Type" value="Design">
+			<param name="Local" value="tagref.htm">
+			<param name="ImageNumber" value="2">
+			</OBJECT>
+		<OBJECT type="text/sitemap">
+			<param name="Merge" value="htmlhelp.chm::/htmlref.hhc">
+
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Script and DHTML examples">
+			<param name="Type" value="Reference">
+			<param name="Type" value="Design">
+			<param name="Type" value="Overview">
+			<param name="Local" value="ocx_scripts.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create a pop-up window">
+				<param name="Type" value="Reference">
+				<param name="Type" value="Design">
+				<param name="Type" value="Overview">
+				<param name="Local" value="ocx_scripts_popup.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Store pop-up topics in a text file">
+				<param name="Type" value="Reference">
+				<param name="Type" value="Design">
+				<param name="Type" value="Overview">
+				<param name="Local" value="ocx_scripts_popup_js.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Add text pop-ups to an image">
+				<param name="Type" value="Reference">
+				<param name="Type" value="Design">
+				<param name="Type" value="Overview">
+				<param name="Local" value="ocx_scripts_imagepopup.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create a new window using JavaScript">
+				<param name="Type" value="Reference">
+				<param name="Type" value="Design">
+				<param name="Type" value="Overview">
+				<param name="Local" value="ocx_scripts_thumbnail.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Link to a file outside of your help system">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="ocx_scripts_linkchm.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create a global script file">
+				<param name="Type" value="Procedure">
+				<param name="Local" value="ocx_scripts_globaljs.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create expandable sections with DHTML">
+				<param name="Type" value="Reference">
+				<param name="Type" value="Design">
+				<param name="Type" value="Overview">
+				<param name="Local" value="ocx_dhtml_sidebars.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Create dynamic elements with DHTML">
+				<param name="Type" value="Reference">
+				<param name="Type" value="Design">
+				<param name="Type" value="Overview">
+				<param name="Local" value="ocx_dhtml_minispan.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="System policies for Shortcut and WinHelp Commands">
+			<param name="Type" value="Web">
+			<param name="Local" value="SystemPoliciesForShortcutWinHelpCommands.htm">
+			<param name="New" value="1">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Restrict potentially unsafe HTML Help functions to specified folders">
+				<param name="Local" value="RestrictPotentiallyUnsafeHTMLHelpFunctionsToSpecifiedFolders.htm">
+				<param name="New" value="1">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Restrict these programs from being launched from Help">
+				<param name="Local" value="RestrictTheseProgramsFromBeingLaunchedFromHelp.htm">
+				<param name="New" value="1">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Troubleshooting HTML Help Shortcut Issues">
+				<param name="Local" value="TroubleshootingHTMLHelpShortcutIssues.htm">
+				<param name="New" value="1">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="HTML Help Viewer topics">
+			<param name="Type" value="Reference">
+			<param name="Type" value="Design">
+			<param name="Type" value="Overview">
+			<param name="Local" value="viewer.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="MSDN scripting references">
+			<param name="Type" value="Reference">
+			<param name="Type" value="Overview">
+			<param name="Local" value="msdn.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+	</UL>
+</UL>
+</BODY></HTML>
