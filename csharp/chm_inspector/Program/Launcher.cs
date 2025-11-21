@@ -5,17 +5,10 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Collections.Generic;
-
+	
 using Serilog;
-using Serilog.Core;
-// using Serilog.Sinks.Console;
-using Serilog.Debugging;
 using Serilog.Sinks.Elasticsearch;
-using Serilog.Formatting.Json;
-using Serilog.Sinks.File;
-
-using Elasticsearch;
-
+using Elasticsearch.Net;
 using Utils;
 
 /**
@@ -55,18 +48,31 @@ namespace Program {
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			Application.EnableVisualStyles();
-			var elasticsearchSinkOptions = new ElasticsearchSinkOptions(new Uri("http://localhost:9200"));
-			elasticsearchSinkOptions.DetectElasticsearchVersion = false;
-			elasticsearchSinkOptions.AutoRegisterTemplate = true;
-			elasticsearchSinkOptions.AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6;
-			loggerConfiguration = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Elasticsearch(elasticsearchSinkOptions);
-
-	    	Log.Logger = loggerConfiguration.CreateLogger();
-	
-
-			Application.Run(new Control());
+			ConfigureLogging();
+        	Telemetry.init();
+        	Log.Information("Application started.");			
+ 	       Application.Run(new Control());
 		}
 
+	    static void ConfigureLogging() {
+        var options = new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+        {
+            DetectElasticsearchVersion = false,
+            AutoRegisterTemplate = true,
+            AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+            IndexFormat = "serilog-app",
+            BatchPostingLimit = 1,
+            QueueSizeLimit = 1000
+        };
+
+        // Optional
+        // options.ModifyConnectionSettings = conn => conn.BasicAuthentication("elastic", "5mOz5+0BJKzXNyxHcZ*D");
+  
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Elasticsearch(options)
+            .CreateLogger();
+    }
 		public Control() {
 			InitializeComponent();
 		}
@@ -105,7 +111,7 @@ namespace Program {
 			button1 = new Button();
 			button1.Location = new Point(30, 34);
 			button1.Name = "button1";
-			button1.Size = new Size(90, 23);
+			button1.Size = new System.Drawing.Size(90, 23);
 			button1.TabIndex = 1;
 			button1.Text = "Open";
 			button1.Click += button1_Click;
@@ -114,7 +120,7 @@ namespace Program {
 			button2 = new Button();
 			button2.Location = new Point(130, 34);
 			button2.Name = "button2";
-			button2.Size = new Size(90, 23);
+			button2.Size = new System.Drawing.Size(90, 23);
 			button2.TabIndex = 2;
 			button2.Text = "Title";
 			button2.Click += button2_Click;
@@ -123,7 +129,7 @@ namespace Program {
 			button3 = new Button();
 			button3.Location = new Point(230, 34);
 			button3.Name = "button3";
-			button3.Size = new Size(90, 23);
+			button3.Size = new System.Drawing.Size(90, 23);
 			button3.TabIndex = 1;
 			button3.Text = "List";
 			button3.Click += button3_Click;
@@ -137,7 +143,7 @@ namespace Program {
 			textBox1.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 			Controls.Add(textBox1);
 
-			textBox1.Size = new Size(200, 23);
+			textBox1.Size = new System.Drawing.Size(200, 23);
 			textBox1.TabIndex = 3;
 			textBox1.Text = "";
 
@@ -151,7 +157,7 @@ namespace Program {
 			dataGrid.Location = new Point(8, 58);
 			dataGrid.Margin = new Padding(4);
 			dataGrid.Name = "dataGrid";
-			dataGrid.Size = new Size(333, 332);
+			dataGrid.Size = new System.Drawing.Size(333, 332);
 			dataGrid.TabIndex = 1;
 			dataGrid.TableStyles.AddRange(new DataGridTableStyle[] {
 			dataGridTableStyle});
@@ -193,13 +199,13 @@ namespace Program {
 			versionLabel.BorderStyle = BorderStyle.None;
 			versionLabel.Location = new Point(236, 399);
 			versionLabel.Name = "versionLabel";
-			versionLabel.Size = new Size(105, 23);
+			versionLabel.Size = new System.Drawing.Size(105, 23);
 			versionLabel.Text = String.Format("Version: {0}",versionString);
 			Controls.Add(versionLabel);
 
 			AutoScaleDimensions = new SizeF(8F, 16F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(348, 429);
+			ClientSize = new System.Drawing.Size(348, 429);
 
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -371,8 +377,8 @@ namespace Program {
                                  bool readOnly, string instantText, bool cellIsVisible) {
     	}
 
-	    protected override Size GetPreferredSize(Graphics g, object value) {
-	        return new Size(20, 20);
+	    protected override System.Drawing.Size GetPreferredSize(Graphics g, object value) {
+	        return new System.Drawing.Size(20, 20);
 	    }
 
 		protected override int GetMinimumHeight() {

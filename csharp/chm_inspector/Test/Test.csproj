@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Build">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -13,7 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile/>
     <NoWin32Manifest>False</NoWin32Manifest>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
@@ -91,35 +91,33 @@
     <Reference Include="Serilog.Sinks.PeriodicBatching">
       <HintPath>..\packages\serilog.sinks.periodicbatching.2.3.0\lib\net45\Serilog.Sinks.PeriodicBatching.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
+    <Reference Include="System"/>
     <Reference Include="System.Buffers">
       <HintPath>..\packages\system.buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
-    <Reference Include="System.Collections.Concurrent" />
-    <Reference Include="System.Data" />
+    <Reference Include="System.Collections.Concurrent"/>
+    <Reference Include="System.Data"/>
     <Reference Include="System.Diagnostics.DiagnosticSource">
       <HintPath>..\packages\system.diagnostics.diagnosticSource\4.7.1\lib\net45\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
-    <Reference Include="System.Dynamic" />
+    <Reference Include="System.Dynamic"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config"/>
   </ItemGroup>
   <ItemGroup>
-  <None Include="app.config">
-    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-  </None>
-</ItemGroup>
-
+    <None Include="app.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChmTest.cs" />
-    <Compile Include="IniTest.cs" />
-    <Compile Include="TelemetryTests.cs" />
-    <Compile Include="Telemetry.cs" />
-    <Compile Include="MessageHelperTest.cs" />
-    <Compile Include="IniExpressionParserTest.cs" />
-    <Compile Include="TocReaderTests.cs" />
-    <Compile Include="TocMatchesTest.cs" />
+    <Compile Include="ChmTest.cs"/>
+    <Compile Include="IniTest.cs"/>
+    <Compile Include="TelemetryTests.cs"/>
+    <Compile Include="MessageHelperTest.cs"/>
+    <Compile Include="IniExpressionParserTest.cs"/>
+    <Compile Include="TocReaderTests.cs"/>
+    <Compile Include="TocMatchesTest.cs"/>
     <None Include="api.chm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -140,8 +138,8 @@
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')"/>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

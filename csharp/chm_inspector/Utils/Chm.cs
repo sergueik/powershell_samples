@@ -7,6 +7,16 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices;
 //  using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
+using Serilog;
+using Serilog.Core;
+// using Serilog.Sinks.Console;
+using Serilog.Debugging;
+using Serilog.Sinks.Elasticsearch;
+using Serilog.Formatting.Json;
+using Serilog.Sinks.File;
+
+using Elasticsearch;
+
 
 /**
  * Copyright 2025 Serguei Kouzmine
@@ -404,6 +414,16 @@ namespace Utils {
 		                            if (bytesRead == 0)
 		                                break;
 		                            ms.Write(buffer, 0, bytesRead);
+		                            long mem = GC.GetTotalMemory(false);
+		                            var doc = new {
+					                        timestamp = DateTime.UtcNow,
+					                        message = "OOM imminent",
+					                        mem
+		                            };
+		                            // NOTE: no need to flush timing with Serilog when the process may OOM at any moment
+		                            // Telemetry through Telemetry.sendEvent() is already flushed instantly and is safe for OOM scenarios
+				                    var resp = Telemetry.sendEvent("oom-events", doc);
+				                    Log.Information(String.Format("OOM telemetry sent: status {0}", resp.HttpStatusCode));
 		                        }
 		                    } finally {
 		                        Marshal.FreeCoTaskMem(bytesReadPtr);

@@ -12,8 +12,10 @@ using Serilog.Formatting.Json;
 using Serilog.Sinks.File;
 
 using Elasticsearch;
+using Utils;
 
 namespace Tests {
+
 	[TestFixture]
 	public class TelemetryTest {
 		// see also https://github.com/serilog-contrib/serilog-sinks-elasticsearch/blob/dev/sample/Serilog.Sinks.Elasticsearch.Sample/Program.cs
@@ -46,5 +48,20 @@ namespace Tests {
 			 Log.CloseAndFlush(); 
 		}
 		
+		[Test]
+		public void test2( ){
+	        var doc = new {
+	            timestamp = DateTime.UtcNow,
+	            message = "OOM imminent",
+	            mem = GC.GetTotalMemory(false)
+	        };
+	        Telemetry.init();
+	        // Send to index "oom-events"
+	        var response = Telemetry.sendEvent("oom-events", doc);
+	        // verify via 
+	        // curl -X GET "http://localhost:9200/oom-events/_search?pretty"
+	        Assert.AreEqual(201, response.HttpStatusCode);
+	        Console.WriteLine(String.Format("Status: {0}", response.HttpStatusCode));
+		}
 	}
 }

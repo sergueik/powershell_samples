@@ -1055,10 +1055,10 @@ update the code to use http.
 run the test, it must pass.
 check the data:
  ```sh
+ curl -k http://localhost:9200/serilog-test/_search?pretty
  ```
 it will return
 ```json
- curl -k http://localhost:9200/serilog-test/_search?pretty
 {
   "took" : 36,
   "timed_out" : false,
