@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -320,6 +321,7 @@ namespace Utils {
 			return urls;
 		}
 
+		
 		public static List<string> urls_7zip(string filePath) {
 			var urls = new List<string>();
 
@@ -352,6 +354,41 @@ namespace Utils {
 					throw new Exception("7-Zip failed with exit code " + process.ExitCode);
 			}
 
+			return urls;
+		}
+
+		public static List<string> urls_7zip_alt(string filePath) {
+			var urls = new List<string>();
+			string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDir);
+			try {
+				// NOTE: whitespace sensitive
+				String arguments = String.Format("x \"{0}\" -o\"{1}\"", filePath,  tempDir);
+				// Console.Error.WriteLine("{0} {1}", "\"c:\\Program Files\\7-zip\\7z.exe\"", arguments);
+				var processStartInfo = new ProcessStartInfo /*(@"c:\Program Files\7-zip\7z.exe", arguments) */ {
+					FileName = @"c:\Program Files\7-zip\7z.exe",
+					UseShellExecute = false,
+					Arguments = arguments,
+					WorkingDirectory = tempDir,
+					CreateNoWindow = true
+				};
+				const int waitForExit = 10000;
+				var process = Process.Start(processStartInfo);
+				process.WaitForExit(waitForExit);
+				if (process.ExitCode != 0)
+            		throw new Exception("7-Zip failed with exit code " + process.ExitCode);
+				string[] searchPatterns = { "*.html", "*.htm" };
+				var allMatchingFiles = new List<string>();
+				foreach (string pattern in searchPatterns) {
+					var filesForPattern = Directory.GetFiles(tempDir, pattern, SearchOption.AllDirectories);
+					allMatchingFiles.AddRange(filesForPattern);
+				}
+				foreach (var file in allMatchingFiles)
+					urls.Add(file.Substring(tempDir.Length + 1).Replace("\\", "/"));
+			} finally {
+				// optionally clean up
+				Directory.Delete(tempDir, true);
+			}
 			return urls;
 		}
 
@@ -590,6 +627,54 @@ namespace Utils {
 		    return result;
 		}
 
+		public static List<string> extract_7zip(string filePath, List<string> files) {
+			var filesArg = buildArgument(files);
+			var urls = new List<string>();
+			string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDir);
+			try {
+				// NOTE: whitespace sensitive
+				String arguments = String.Format("x \"{0}\" {1} -o\"{2}\"", filePath, filesArg,  tempDir);
+				// Console.Error.WriteLine("{0} {1}", "\"c:\\Program Files\\7-zip\\7z.exe\"", arguments);
+				var processStartInfo = new ProcessStartInfo /*(@"c:\Program Files\7-zip\7z.exe", arguments) */ {
+					FileName = @"c:\Program Files\7-zip\7z.exe",
+					UseShellExecute = false,
+					Arguments = arguments,
+					WorkingDirectory = tempDir,
+					CreateNoWindow = true
+				};
+				const int waitForExit = 10000;
+				var process = Process.Start(processStartInfo);
+				process.WaitForExit(waitForExit);
+				if (process.ExitCode != 0)
+            		throw new Exception("7-Zip failed with exit code " + process.ExitCode);
+				string[] searchPatterns = { "*.html", "*.htm" };
+				var allMatchingFiles = new List<string>();
+				foreach (string pattern in searchPatterns) {
+					var filesForPattern = Directory.GetFiles(tempDir, pattern, SearchOption.AllDirectories);
+					allMatchingFiles.AddRange(filesForPattern);
+				}
+				foreach (var file in allMatchingFiles)
+					urls.Add(file.Substring(tempDir.Length + 1).Replace("\\", "/"));
+			} finally {
+				// optionally clean up
+				Directory.Delete(tempDir, true);
+			}
+			return urls;
+		}
+
+
+		public static string buildArgument(List<string> files) {
+		    string arg = string.Join(" ", files.Select(path => String.Format("\"{0}\"",path)));
+		
+		    if (arg.Length > 28000) {
+		        string listFile = Path.GetTempFileName();
+		        File.WriteAllLines(listFile, files);
+		
+		        return "@{listFile}";
+		    } else
+		   	 return arg;
+		}
 	}
 
 	public class TocEntry {
