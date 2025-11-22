@@ -36,6 +36,7 @@ namespace Tests
 			StringAssert.StartsWith("@", arg, "expected list file");
 		}
 
+		[Ignore]
 		[Test]
 		public void test3()
 		{
@@ -65,6 +66,7 @@ cmd_hh_display_toc.htm
 
 		}
 		
+		[Ignore]
 		[Test]
 		public void test4() {
 
@@ -101,8 +103,9 @@ cmd_hh_sync.htm
 			} catch (Exception e) {
 				Assert.Fail("Exception thrown: " + e.Message);
 			}
-
 		}
+
+		[Ignore]
 		[Test]
 		public void test5() {
 

@@ -163,6 +163,9 @@ namespace Utils {
 		// Microsoft InfoTech IStorage System (MSITFS) COM server
 		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
 
+		private static string tocFilename = "toc.hhc"; // "api.hhc"
+		// default seems to be "toc.hhc"
+
 		public static string title(string filePath) {
 
 			object obj = null;
@@ -392,9 +395,6 @@ namespace Utils {
 			return urls;
 		}
 
-		private static string tocFilename = "toc.hhc" ; // "api.hhc";
-		// default seems to be "toc.hhc"
-
 		public static List<TocEntry> toc_structured(string filePath){
 			var result = new List<TocEntry>();
 
@@ -505,33 +505,6 @@ namespace Utils {
 			return result;
 		}
 
-		public static Dictionary<String,String> parseTocDict(String payload) {
-			var result = new Dictionary<string, string>();
-			var matches = Regex.Matches(
-				payload,
-				@"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">" +
-				@".*? " +
-				@"<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
-				RegexOptions.Singleline
-			);
-
-			foreach (Match match in matches) {
-				string name = match.Groups[1].Value;
-				string local = match.Groups[2].Value;
-				try {
-					result.Add(name, local);
-				} catch (ArgumentException e) {
-					Console.Error.WriteLine(e.ToString());
-					Console.Error.WriteLine("{0}: {1}", name, local);
-					// ignore:
-					// An item with the same key has already been added
-				}
-				// alternatively push to a List<TocEntry>
-			}
-			return result;
-		}
-
-
 		public static List<TocEntry> toc_7zip(string filePath) {
 			var result = new List<TocEntry>();
 
@@ -572,54 +545,6 @@ namespace Utils {
 
 				string payload = File.ReadAllText(tocFilePath, Encoding.UTF8);
 				result = parseToc(payload);
-
-			} finally {
-				// Clean up temp directory
-				try { Directory.Delete(tempDir, true); } catch { /* ignore */ }
-			}
-
-			return result;
-		}
-
-		public static Dictionary<String,String> tocdict_7zip(string filePath) {
-			var result = new Dictionary<string, string>();
-
-			string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
-			Directory.CreateDirectory(tempDir);
-
-			try {
-				// NOTE: whitespace sensitive
-				string arguments = string.Format("x \"{0}\" {1} -o\"{2}\"", tocFilename, filePath, tempDir);
-
-				var processStartInfo = new ProcessStartInfo {
-					FileName = @"c:\Program Files\7-zip\7z.exe",
-					UseShellExecute = false,
-					Arguments = arguments,
-					WorkingDirectory = tempDir,
-					CreateNoWindow = true,
-					RedirectStandardOutput = true,
-					RedirectStandardError = true
-				};
-
-				using (var process = Process.Start(processStartInfo)) {
-					const int waitForExit = 10000;
-					if (!process.WaitForExit(waitForExit)) {
-						process.Kill();
-						throw new Exception("7-Zip process timed out");
-					}
-
-					if (process.ExitCode != 0) {
-						string error = process.StandardError.ReadToEnd();
-						throw new Exception(String.Format("7-Zip failed with exit code {0}: {1}", process.ExitCode , error));
-					}
-				}
-
-				// Read the extracted toc.hhc
-				string tocFilePath = Path.Combine(tempDir, tocFilename);
-				if (!File.Exists(tocFilePath))
-					throw new FileNotFoundException(String.Format("table of contents {0} not found after extraction: {1}\n{2} {3}", tocFilename, tocFilePath, processStartInfo.FileName , processStartInfo.Arguments));
-				string payload = File.ReadAllText(tocFilePath, Encoding.UTF8);
-				result = parseTocDict(payload);
 
 			} finally {
 				// Clean up temp directory
