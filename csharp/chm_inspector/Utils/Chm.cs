@@ -596,7 +596,7 @@ namespace Utils {
 			if (arg.Length > 28000) {
 				string listFile = Path.GetTempFileName();
 				File.WriteAllLines(listFile, files);
-				return "@{listFile}";
+				return String.Format("@{0}",listFile);
 			} else
 				return arg;
 		}

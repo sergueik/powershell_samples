@@ -15,8 +15,8 @@ namespace Tests
 		private string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
 		[Test]
-		public void test1()
-		{
+		public void test1() {
+			files.Clear();
 			files.AddRange(new string[]{ "file1", "file2", "file3" });
 			var arg = Chm.buildArgument(files);
     
@@ -26,9 +26,9 @@ namespace Tests
 		}
   
 		[Test]
-		public void test2()
-		{
+		public void test2() {
 
+			files.Clear();
 			files.AddRange(Enumerable.Repeat("filename", 100000)); 
 			var arg = Chm.buildArgument(files);
     
@@ -36,11 +36,9 @@ namespace Tests
 			StringAssert.StartsWith("@", arg, "expected list file");
 		}
 
-		[Ignore]
 		[Test]
-		public void test3()
-		{
-
+		public void test3() {
+			files.Clear();
 			files.AddRange(@"
 				cmd_hh_alink_lookup.htm
 cmd_hh_close_all.htm
@@ -66,10 +64,9 @@ cmd_hh_display_toc.htm
 
 		}
 		
-		[Ignore]
 		[Test]
 		public void test4() {
-
+			files.Clear();
 			files.AddRange(@"
 			cmd_hh_alink_lookup.htm
 cmd_hh_close_all.htm
@@ -105,10 +102,9 @@ cmd_hh_sync.htm
 			}
 		}
 
-		[Ignore]
 		[Test]
 		public void test5() {
-
+			files.Clear();
 			files.AddRange(new string[]{ "nonexistent.htm"} );
 			try {
 				var result = Chm.extract_7zip(file, files);
@@ -121,7 +117,7 @@ cmd_hh_sync.htm
 
 		[Test]
 		public void test6() {
-
+			files.Clear();
 			files.Add("");
 			var e = Assert.Throws<Exception>(() => Chm.extract_7zip(file, files));
 			// https://documentation.help/7-Zip/exit_codes.htm

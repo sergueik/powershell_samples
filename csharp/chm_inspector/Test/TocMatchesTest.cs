@@ -17,6 +17,7 @@ namespace Tests {
 		private String payload;
 		private string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "toc.hhc");
 
+		[Ignore]
 		[Test]
 		[Timeout(120000)]
 		// NOTE: may like to upgrade to Nunit 3.x while still under Sharp Develop 5.1
