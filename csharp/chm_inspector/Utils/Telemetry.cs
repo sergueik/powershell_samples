@@ -4,7 +4,7 @@ using System;
 namespace Utils {
 	public class Telemetry {
 		static ElasticLowLevelClient client;
-		private const string endpoint = "http://192.168.99.100:9200"; 
+		private const string endpoint = "http://192.168.99.100:9200";
 		// docker-machine ip
 		// "http://localhost:9200" if installed locally
 

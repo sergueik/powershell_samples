@@ -10,7 +10,7 @@ namespace Tests {
 	public class TocReaderTests {
 		private const string file = @"C:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 		// see also https://github.com/serilog-contrib/serilog-sinks-elasticsearch/blob/dev/sample/Serilog.Sinks.Elasticsearch.Sample/Program.cs
-		    
+
 		[Test]
 		public void test1() {
 			var toclist = Chm.toc_structured(file);

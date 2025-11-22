@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Utils;
 
-namespace Tests
-{
+namespace Tests {
+
 	[TestFixture]
-	public class ExtractTest
-	{
+	public class ExtractTest {
+
 		private  List<string> files = new List<string>();
 		private const string fileName = "api.chm";
 		private string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
@@ -19,19 +19,18 @@ namespace Tests
 			files.Clear();
 			files.AddRange(new string[]{ "file1", "file2", "file3" });
 			var arg = Chm.buildArgument(files);
-    
+
 			Assert.NotNull(arg, "build7zFileSelectionArgument() returned null.");
 			StringAssert.Contains(@"""file1""", arg, "expected filenames");
 			StringAssert.Contains(" ", arg, "expected space separator between filenames");
 		}
-  
+
 		[Test]
 		public void test2() {
-
 			files.Clear();
-			files.AddRange(Enumerable.Repeat("filename", 100000)); 
+			files.AddRange(Enumerable.Repeat("filename", 100000));
 			var arg = Chm.buildArgument(files);
-    
+
 			Assert.NotNull(arg, "build7zFileSelectionArgument() returned null.");
 			StringAssert.StartsWith("@", arg, "expected list file");
 		}
@@ -55,7 +54,7 @@ cmd_hh_display_toc.htm
 				Assert.NotNull(result, "extract_7zip() returned null.");
 				// Assert.Equals(files.Count, result.Count);
 				Assert.AreEqual(files.Count, result.Count, "expected all file");
-				// The Equals method throws an AssertionException. 
+				// The Equals method throws an AssertionException.
 				// This is done to make sure there is no mistake by calling this function
 				Console.WriteLine("Found {0} entries", result.Count);
 			} catch (Exception e) {
@@ -63,7 +62,7 @@ cmd_hh_display_toc.htm
 			}
 
 		}
-		
+
 		[Test]
 		public void test4() {
 			files.Clear();
@@ -94,7 +93,7 @@ cmd_hh_sync.htm
 				Assert.NotNull(result, "extract_7zip() returned null.");
 				// Assert.Equals(files.Count, result.Count);
 				Assert.AreEqual(files.Count, result.Count, "expected all file");
-				// The Equals method throws an AssertionException. 
+				// The Equals method throws an AssertionException.
 				// This is done to make sure there is no mistake by calling this function
 				Console.WriteLine("Found {0} entries", result.Count);
 			} catch (Exception e) {
@@ -123,7 +122,7 @@ cmd_hh_sync.htm
 			// https://documentation.help/7-Zip/exit_codes.htm
 			Assert.That(e.Message, Is.EqualTo("7-Zip failed with exit code 7"));
 		}
-		
+
 	}
 
 }

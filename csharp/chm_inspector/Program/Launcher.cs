@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Collections.Generic;
-	
+
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using Elasticsearch.Net;
@@ -56,7 +56,7 @@ namespace Program {
 
 			Application.Run(new Control());
 		}
-		
+
 	    static void ConfigureLogging() {
         var options = new ElasticsearchSinkOptions(new Uri(endpoint)) {
             DetectElasticsearchVersion = false,
@@ -68,11 +68,11 @@ namespace Program {
         };
 
         // options.ModifyConnectionSettings = conn => conn.BasicAuthentication("elastic", "5mOz5+0BJKzXNyxHcZ*D");
-        // NOTE: OptionalSystem.TypeInitializationException: 
-        // The type initializer for 'Elasticsearch.Net.DiagnosticsSerializerProxy' threw an exception. 
-        // ---> System.IO.FileLoadException: Could not load file or assembly 'System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51' or one of its dependencies. 
+        // NOTE: OptionalSystem.TypeInitializationException:
+        // The type initializer for 'Elasticsearch.Net.DiagnosticsSerializerProxy' threw an exception.
+        // ---> System.IO.FileLoadException: Could not load file or assembly 'System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51' or one of its dependencies.
         // The located assembly's manifest definition does not match the assembly reference.
-        
+
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Elasticsearch(options)
@@ -231,7 +231,7 @@ namespace Program {
 				var z =	x.Current;
 				bool isSelected = drv["selected"] != DBNull.Value &&
 				                  (bool)drv["selected"];
-  
+
 				if (isSelected) {
 					// This row is checked
 					var Name = drv["filename"];
@@ -242,7 +242,7 @@ namespace Program {
 			*/
 			var currencyManager = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
 			var dataView = (DataView)currencyManager.List;
-			
+
 			foreach (DataRowView dataRowView in dataView) {
 				// bool isSelected = dataRowView["selected"] is bool b && b;
 			bool selected = dataRowView["selected"] != DBNull.Value &&
@@ -250,10 +250,10 @@ namespace Program {
 			    if (selected) {
 			        string name  = Convert.ToString(dataRowView["filename"]);
 			        string local = Convert.ToString(dataRowView["title"]);
-			
+
 			        // do something with the checked row
 			    }
-			}	
+			}
 			//---
 			var dr = this.openFileDialog1.ShowDialog();
 			if (dr == System.Windows.Forms.DialogResult.OK) {
@@ -324,7 +324,8 @@ namespace Program {
 		private void button3_Click(object sender, EventArgs eventArgs) {
 			var tokens = new List<TocEntry>();
 			try {
-		        tokens  = Chm.toc_structured(file);
+				tokens = Chm.toc_structured_oom(file);
+		        // tokens = Chm.toc_structured(file);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
