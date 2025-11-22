@@ -40,6 +40,8 @@ namespace Program {
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 		private static LoggerConfiguration loggerConfiguration = null;
 		private DataGridTableStyle tableStyle;
+		private const string endpoint = "http://192.168.99.100:9200"; // "http://localhost:9200"
+		// docker-machine ip
 
 		[STAThread]
 		public static void Main() {
@@ -54,9 +56,9 @@ namespace Program {
 
 			Application.Run(new Control());
 		}
-
+		
 	    static void ConfigureLogging() {
-        var options = new ElasticsearchSinkOptions(new Uri("http://localhost:9200")) {
+        var options = new ElasticsearchSinkOptions(new Uri(endpoint)) {
             DetectElasticsearchVersion = false,
             AutoRegisterTemplate = true,
             AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,

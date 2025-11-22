@@ -1251,8 +1251,30 @@ docker inspect --format='{{json .State.Health}}' kibana |jq
     }
   ]
 }
+```
+runn the telemetry test class in IDE
+verify explicitly
+```sh
+ curl -sX POST "http://192.168.99.100:9200/oom-events/_doc" -H "Content-Type: application/json" -d '{"timestamp":"2025-11-22T14:00:00Z","message":"test"}' |jq
+`
 
-
+curl -X POST "http://192.168.99.100:9200/oom-events/_doc" -H "Content-Type: application/json" -d { "_index": "oom-events", "_type": "_doc", "_id": "VYARrJoBkc2_cSWUxiro", "_version": 1, "result": "created", "_shards": { "total": 2, "successful": 1, "failed": 0 }, "_seq_no": 2, "_primary_term": 1 }
+```
+```json
+{
+  "_index": "oom-events",
+  "_type": "_doc",
+  "_id": "04AWrJoBkc2_cSWUxyq7",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 3,
+  "_primary_term": 1
+}
 
 ```
 
@@ -1273,7 +1295,9 @@ tasklist.exe | findstr -i 11768
 ```text
 java.exe 11768 Console 1 256,672 K 
 ```
-wmic path win32_process where (processid = 11768) get commandline``` 
+```cmd
+wmic path win32_process where (processid = 11768) get commandline
+``` 
 ```text
 "c:\java\elasticsearch-7.9.1\jdk\bin\java.exe" -Des.networkaddress.cache.ttl=60 -Des.networkaddress.cache.negative.ttl=10 -XX:+AlwaysPreTouch -Xss1m -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djna.nosys=true -XX:-OmitStackTraceInFastThrow -XX:+ShowCodeDetailsInExceptionMessages -Dio.netty.noUnsafe=true -Dio.netty.noKeySetOptimization=true -Dio.netty.recycler.maxCapacityPerThread=0 -Dio.netty.allocator.numDirectArenas=0 -Dlog4j.shutdownHookEnabled=false -Dlog4j2.disable.jmx=true -Djava.locale.providers=SPI,COMPAT -Xms1g -Xmx1g -XX:+UseG1GC -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -Djava.io.tmpdir=C:\Users\kouzm\AppData\Local\Temp\elasticsearch -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=data -XX:ErrorFile=logs/hs_err_pid%p.log -Xlog:gc*,gc+age=trace,safepoint:file=logs/gc.log:utctime,pid,tags:filecount=32,filesize=64m -XX:MaxDirectMemorySize=536870912 -Delasticsearch -Des.path.home="c:\java\elasticsearch-7.9.1" -Des.path.conf="c:\java\elasticsearch-7.9.1\config" -Des.distribution.flavor="default" -Des.distribution.type="zip" -Des.bundled_jdk="true" -cp "c:\java\elasticsearch-7.9.1\lib\*" "org.elasticsearch.bootstrap.Elasticsearch"
 
