@@ -20,17 +20,20 @@ namespace Tests {
 	public class TelemetryTest {
 		// see also https://github.com/serilog-contrib/serilog-sinks-elasticsearch/blob/dev/sample/Serilog.Sinks.Elasticsearch.Sample/Program.cs
 
-		LoggerConfiguration loggerConfiguration = null;
+		private LoggerConfiguration loggerConfiguration = null;
+		// docker-machine ip
+		private const string endpoint = "http://192.168.99.100:9200";
 
 		// [SetUp]  // NUnit 2.x compatible attribute
 		[TestFixtureSetUp] 
 		public void Setup() {
-			var elasticsearchSinkOptions = new ElasticsearchSinkOptions(new Uri("http://localhost:9200"));
+			var elasticsearchSinkOptions = new ElasticsearchSinkOptions(new Uri(endpoint));
 			elasticsearchSinkOptions.DetectElasticsearchVersion = false;			
 			elasticsearchSinkOptions.AutoRegisterTemplate = true;
 			elasticsearchSinkOptions.AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7;
 			elasticsearchSinkOptions.IndexFormat = "serilog-test";
-			elasticsearchSinkOptions.ModifyConnectionSettings = conn => conn.BasicAuthentication("elastic", "5mOz5+0BJKzXNyxHcZ*D");
+			// NOTE: Elasticsearch 7.9.1 don’t have any credentials, security is disabled by default and the "elastic" user does not exist
+			// elasticsearchSinkOptions.ModifyConnectionSettings = conn => conn.BasicAuthentication("elastic", "5mOz5+0BJKzXNyxHcZ*D");
 			elasticsearchSinkOptions.BatchPostingLimit = 1;
 			elasticsearchSinkOptions.QueueSizeLimit = 10; 
  

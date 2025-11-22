@@ -1129,8 +1129,175 @@ public static class Influx
 
 ```
 ---
+### Docker
+
+```sh
+docker image pull docker.elastic.co/kibana/kibana:7.9.1
+docker image pull docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+```
+```sh
+docker exec -it elasticsearch \
+  bin/elasticsearch-setup-passwords auto | tee a.txt
+```
+collect the new password from
+```text
+Changed password for user elastic
+PASSWORD elastic = wN3lQh7VKG9kRuMDG0kB
+```
+```sh
+grep "PASSWORD elastic" a.txt | awk '{print $4}'
+
+```
+
+wait while
+```sh
+docker-compose ps
+```
+output
+```text
+NAME                COMMAND                  SERVICE             STATUS
+      PORTS
+elasticsearch       "/tini -- /usr/local…"   elasticsearch       running (starting)   0.0.0.0:9200->9200/tcp, 9300/tcp
+kibana              "/usr/local/bin/dumb…"   kibana              created
+
+```
+
+to become
+```txt
+```
+and the `docker-compose` console to show
+
+```
+NAME                COMMAND                  SERVICE             STATUS
+     PORTS
+elasticsearch       "/tini -- /usr/local…"   elasticsearch       running (healthy)   0.0.0.0:9200->9200/tcp, 9300/tcp
+kibana              "/usr/local/bin/dumb…"   kibana              running (healthy)   0.0.0.0:5601->5601/tcp
+
+```
+
+if observe instead 
+```txt
+NAME                COMMAND                  SERVICE             STATUS
+       PORTS
+elasticsearch       "/tini -- /usr/local…"   elasticsearch       running (healthy)     0.0.0.0:9200->9200/tcp, 9300/tcp
+kibana              "/usr/local/bin/dumb…"   kibana              running (unhealthy)   0.0.0.0:5601->5601/tcp
 
 
+```
+perform a manual recheck:
+```sh
+docker inspect --format='{{json .State.Health}}' kibana |jq
+```
+this command specifically
+  * Shows Status: healthy / unhealthy
+  * Shows Log of last attempt
+
+when healthy it will show
+```json
+{
+  "Status": "healthy",
+  "FailingStreak": 0,
+  "Log": [
+    {
+      "Start": "2025-11-22T14:00:40.692108783Z",
+      "End": "2025-11-22T14:00:40.944612871Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time
+   Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100  2497  100  2497    0     0  88823      0 --:--:-- --:--:-- --:--:-- 92481\n"
+    },
+    {
+      "Start": "2025-11-22T14:00:50.96451635Z",
+      "End": "2025-11-22T14:00:51.186497761Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100  2497  100  2497    0     0  75147      0 --:--:-- --:--:-- --:--:-- 75666\n"
+    },
+    {
+      "Start": "2025-11-22T14:01:01.20130209Z",
+      "End": "2025-11-22T14:01:01.45849209Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100  2496  100  2496    0     0  64718      0 --:--:-- --:--:-- --:--:-- 65684\n"
+    },
+    {
+      "Start": "2025-11-22T14:01:11.477593486Z",
+      "End": "2025-11-22T14:01:11.71594389Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100  2498  100  2498    0     0  74078      0 --:--:-- --:--:-- --:--:-- 75696\n"
+    },
+    {
+      "Start": "2025-11-22T14:01:21.732925953Z",
+      "End": "2025-11-22T14:01:22.017454566Z",
+      "ExitCode": 0,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100  2497  100  2497    0     0  56835      0 --:--:-- --:--:-- --:--:-- 58069\n"
+    }
+  ]
+}
+
+
+
+```
+when just starting it will show
+
+```json
+docker inspect --format='{{json .State.Health}}' kibana |jq
+{
+  "Status": "starting",
+  "FailingStreak": 0,
+  "Log": [
+    {
+      "Start": "2025-11-22T14:42:53.635944225Z",
+      "End": "2025-11-22T14:42:53.865481234Z",
+      "ExitCode": 1,
+      "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (7) Failed to connect to ::1: Cannot assign requested address\n"
+    }
+  ]
+}
+
+
+
+```
+
+###  Cleanup of Locally Installed ElasticSearch
+to terminate elasticsearch zip-installed locally earlier
+```cmd
+netstat -ano |  findstr -i 9200
+```
+```txt
+  TCP    127.0.0.1:9200         0.0.0.0:0              LISTENING       11768
+  TCP    [::1]:9200             [::]:0                 LISTENING       11768
+```
+use the process id  in the following commands
+
+```cmd
+tasklist.exe | findstr -i 11768 
+```
+```text
+java.exe 11768 Console 1 256,672 K 
+```
+wmic path win32_process where (processid = 11768) get commandline``` 
+```text
+"c:\java\elasticsearch-7.9.1\jdk\bin\java.exe" -Des.networkaddress.cache.ttl=60 -Des.networkaddress.cache.negative.ttl=10 -XX:+AlwaysPreTouch -Xss1m -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djna.nosys=true -XX:-OmitStackTraceInFastThrow -XX:+ShowCodeDetailsInExceptionMessages -Dio.netty.noUnsafe=true -Dio.netty.noKeySetOptimization=true -Dio.netty.recycler.maxCapacityPerThread=0 -Dio.netty.allocator.numDirectArenas=0 -Dlog4j.shutdownHookEnabled=false -Dlog4j2.disable.jmx=true -Djava.locale.providers=SPI,COMPAT -Xms1g -Xmx1g -XX:+UseG1GC -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -Djava.io.tmpdir=C:\Users\kouzm\AppData\Local\Temp\elasticsearch -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=data -XX:ErrorFile=logs/hs_err_pid%p.log -Xlog:gc*,gc+age=trace,safepoint:file=logs/gc.log:utctime,pid,tags:filecount=32,filesize=64m -XX:MaxDirectMemorySize=536870912 -Delasticsearch -Des.path.home="c:\java\elasticsearch-7.9.1" -Des.path.conf="c:\java\elasticsearch-7.9.1\config" -Des.distribution.flavor="default" -Des.distribution.type="zip" -Des.bundled_jdk="true" -cp "c:\java\elasticsearch-7.9.1\lib\*" "org.elasticsearch.bootstrap.Elasticsearch"
+
+```
+```cmd
+taskkill.exe /PID 11768 /F
+```
+alternatively in one shot
+```ps
+get-process -Name java | Where-Object { $_.Path -like "*elasticsearch*" } | Stop-Process -Force
+
+```
+or a paranoid version
+```ps
+# Find the process listening on TCP 9200, show PID and name, then terminate it
+get-nettcpconnection -localport 9200 | foreach-object {
+    $pid = $_.OwningProcess
+    $proc = get-process -Id $pid
+    write-host "Terminating process $($proc.ProcessName) with PID $pid listening on port 9200"
+    stop-process -id $pid -force
+}
+
+```
 ### Author
+
 
 [Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)
