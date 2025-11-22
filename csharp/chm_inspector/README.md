@@ -25,7 +25,7 @@ Free tool like [7-Zip](https://www.7-zip.org) can unpack/extract CHM files (list
 ![wip2](screenshots/app2.jpg)
 ![wip3](screenshots/app3.jpg)
 ![wip4](screenshots/app4.jpg)
-![wip5](screenshots/app5.jpg)
+![wip5](screenshots/app8.jpg)
 ![wip6](screenshots/app6.jpg)
 
 ---

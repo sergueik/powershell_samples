@@ -392,6 +392,9 @@ namespace Utils {
 			return urls;
 		}
 
+		private static string tocFilename = "toc.hhc" ; // "api.hhc";
+		// default seems to be "toc.hhc"
+
 		public static List<TocEntry> toc_structured(string filePath){
 			var result = new List<TocEntry>();
 
@@ -427,10 +430,10 @@ namespace Utils {
 				uint fetched = 0;
 
 				while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
-					if (String.Compare(stat[0].pwcsName, "toc.hhc", StringComparison.OrdinalIgnoreCase) == 0) {
+					if (String.Compare(stat[0].pwcsName, tocFilename, StringComparison.OrdinalIgnoreCase) == 0) {
 						// Open toc.hhc as stream
 						HRESULT hresult2 = storage.OpenStream(
-							"toc.hhc",
+							tocFilename,
 							IntPtr.Zero,
 							(uint)(STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE),
 							0,
@@ -438,7 +441,7 @@ namespace Utils {
 						);
 
 						if (hresult2 != HRESULT.S_OK || stream == null)
-							throw new Exception(String.Format("Failed to open toc.hhc stream,\nError: 0x{0}\n{1}", hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
+							throw new Exception(String.Format("Failed to open stream {0},\nError: 0x{1}\n{2}", tocFilename, hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
 
 						// Memory-conservative read loop
 						using (var ms = new MemoryStream()) {
@@ -537,7 +540,7 @@ namespace Utils {
 
 			try {
 				// NOTE: whitespace sensitive
-				string arguments = string.Format("x \"{0}\" toc.hhc -o\"{1}\"", filePath, tempDir);
+				string arguments = string.Format("x \"{0}\" {1} -o\"{2}\"", filePath, tocFilename, tempDir);
 
 				var processStartInfo = new ProcessStartInfo {
 					FileName = @"c:\Program Files\7-zip\7z.exe",
@@ -563,11 +566,11 @@ namespace Utils {
 				}
 
 				// Read the extracted toc.hhc
-				string tocFile = Path.Combine(tempDir, "toc.hhc");
-				if (!File.Exists(tocFile))
-					throw new FileNotFoundException("toc.hhc not found after extraction", tocFile);
+				string tocFilePath = Path.Combine(tempDir, tocFilename);
+				if (!File.Exists(tocFilePath))
+					throw new FileNotFoundException(String.Format("table of contents {0} not found after extraction: {1}\n{2} {3}", tocFilename, tocFilePath, processStartInfo.FileName , processStartInfo.Arguments));
 
-				string payload = File.ReadAllText(tocFile, Encoding.UTF8);
+				string payload = File.ReadAllText(tocFilePath, Encoding.UTF8);
 				result = parseToc(payload);
 
 			} finally {
@@ -586,7 +589,7 @@ namespace Utils {
 
 			try {
 				// NOTE: whitespace sensitive
-				string arguments = string.Format("x \"{0}\" toc.hhc -o\"{1}\"", filePath, tempDir);
+				string arguments = string.Format("x \"{0}\" {1} -o\"{2}\"", tocFilename, filePath, tempDir);
 
 				var processStartInfo = new ProcessStartInfo {
 					FileName = @"c:\Program Files\7-zip\7z.exe",
@@ -612,11 +615,10 @@ namespace Utils {
 				}
 
 				// Read the extracted toc.hhc
-				string tocFile = Path.Combine(tempDir, "toc.hhc");
-				if (!File.Exists(tocFile))
-					throw new FileNotFoundException("toc.hhc not found after extraction", tocFile);
-
-				string payload = File.ReadAllText(tocFile, Encoding.UTF8);
+				string tocFilePath = Path.Combine(tempDir, tocFilename);
+				if (!File.Exists(tocFilePath))
+					throw new FileNotFoundException(String.Format("table of contents {0} not found after extraction: {1}\n{2} {3}", tocFilename, tocFilePath, processStartInfo.FileName , processStartInfo.Arguments));
+				string payload = File.ReadAllText(tocFilePath, Encoding.UTF8);
 				result = parseTocDict(payload);
 
 			} finally {
