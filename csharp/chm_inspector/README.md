@@ -1278,6 +1278,62 @@ curl -X POST "http://192.168.99.100:9200/oom-events/_doc" -H "Content-Type: appl
 
 ```
 
+### Kibana
+
+Do __not__ try to explore Kibana UI. It is complex.
+
+One can bypass the UI maze entirely by using direct urls:
+
+![kibana2](screenshots/kibana2.jpg)
+
+__Stack Management__  __Index Patterns__: `http://192.168.99.100:5601/app/management/kibana/indexPatterns`. Note, help tab on the right hides the `Create index pattern` button.
+
+![kibana3](screenshots/kibana3.jpg)
+Since we have already indexed few sources, the Kibana UI will suggest to select one of those
+
+Enter `oom-events` into  index pattern name input and click `Next step`.
+Select `timestamp` time field and click the create button.
+
+![kibana4](screenshots/kibana4.jpg)
+Observe the fields on the **oom-events** index match the indexed `doc` data type defined in the application:
+
+```c#
+var doc = new {
+    timestamp = DateTime.UtcNow,
+    message = "OOM imminent",
+    mem = GC.GetTotalMemory(false)
+};
+```
+
+__Discover__ (to view logs): `http://192.168.99.100:5601/app/discover` - on a vanlla install, redirects to the above with the message:
+`http://192.168.99.100:5601/app/management/kibana/indexPatterns?bannerMessage=In%20order%20to%20visualize%20and%20explore%20data%20in%20Kibana,%20you%27ll%20need%20to%20create%20an%20index%20pattern%20to%20retrieve%20data%20from%20Elasticsearch.`
+
+
+![kibana5](screenshots/kibana5.jpg)
+If index was created, the discover page will allow reading it.
+Switch from the default time-based “document count” bars to health indicator visualization.
+
+__Kibana__ lets one create a visualization from a numeric field like `mem` instead of just showing log counts.
+
+Go to __Visualize__ Library: `http://192.168.99.100:5601/app/visualize`
+and click `Create new visualization` button
+
+
+select `oom-events` and
+
+Set Y-axis → Aggregation:
+
+Average → Field: mem
+
+
+X-axis → Aggregation: Date Histogram
+
+Field: timestamp
+
+Interval: auto 
+
+save and run. Merge with/cherry pick the OOM broken commit to produce dramatic result
+
 ###  Cleanup of Locally Installed ElasticSearch
 to terminate elasticsearch zip-installed locally earlier
 ```cmd
