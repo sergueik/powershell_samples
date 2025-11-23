@@ -1,4 +1,4 @@
-#Copyright (c) 2020,2021 Serguei Kouzmine
+#Copyright (c) 2020,2021,2025 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -156,7 +156,7 @@ function PromptPassword {
     else { return }
     $f.Close()
   })
-
+  write-debug ('Launching dialog with {0}'-f $caller.Handle)
   [void]$f.ShowDialog([System.Windows.Forms.IWin32Window]($caller))
   $f.Dispose()
 }
@@ -165,34 +165,43 @@ $caller_class = 'Win32Window_2'
 Add-Type -TypeDefinition @"
 using System;
 using System.Windows.Forms;
-public class ${caller_class}: IWin32Window
-{
+using System.Runtime.InteropServices;
+public class ${caller_class}: IWin32Window {
+
+    [DllImport("kernel32.dll")]
+    public static extern IntPtr GetConsoleWindow();
+
     private IntPtr _hWnd;
     private int _data;
     private string _txtUser;
     private string _txtPassword;
 
-    public int Data
-    {
+    public int Data {
         get { return _data; }
         set { _data = value; }
     }
 
 
-    public string TxtUser
-    {
+    public string TxtUser {
         get { return _txtUser; }
         set { _txtUser = value; }
     }
-    public string TxtPassword
-    {
+
+    public string TxtPassword {
         get { return _txtPassword; }
         set { _txtPassword = value; }
     }
 
-    public ${caller_class}(IntPtr handle)
-    {
-        _hWnd = handle;
+    public ${caller_class}() {
+        _hWnd = GetConsoleWindow();
+    }
+
+    public ${caller_class}(IntPtr handle) {
+	if (handle == IntPtr.Zero ) {
+		_hWnd = GetConsoleWindow();
+	} else {
+		_hWnd = handle;
+	}
     }
 
     public IntPtr Handle
@@ -233,11 +242,15 @@ if ($window_handle -eq 0) {
   $processid = [System.Diagnostics.Process]::GetCurrentProcess().Id
   $parent_process_id = get-wmiobject win32_process | where-object {$_.processid -eq  $processid } | select-object -expandproperty parentprocessid
 
-  $window_handle = get-process -id $parent_process_id | select-object -expandproperty MainWindowHandle
+  $window_handle = get-process -id $parent_process_id -erroraction silentlycontinue| select-object -expandproperty MainWindowHandle
   write-output ('Using current process parent process {0} handle {1}' -f $parent_process_id, $window_handle)
 }
+if ($window_handle -eq '' -or $window_handle -eq $null){
+  $window_handle = 0
+}
+write-debug ('creating caller with handle: "{0}"' -f $window_handle ) 
 
-$caller = new-object $caller_class -ArgumentList ($window_handle)
+$caller = new-object $caller_class -ArgumentList (([int]$window_handle))
 PromptPassword -Title $title -user $user -caller $caller
 if ($debug){
   write-output ('Result is : {0} ({1})' -f $Readable.Item($caller.Data),$caller.Data)

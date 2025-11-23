@@ -1,4 +1,4 @@
-#Copyright (c) 2020 Serguei Kouzmine
+#Copyright (c) 2020,2925 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -38,16 +38,16 @@ if (($env:SHARED_ASSEMBLIES_PATH -ne $null) -and ($env:SHARED_ASSEMBLIES_PATH -n
 }
 
 try {
-  pushd $shared_assemblies_path -erroraction  'Stop' 
+  pushd $shared_assemblies_path -erroraction 'Stop'
 } catch [System.Management.Automation.ItemNotFoundException] {
 
-# no shared assemblies 
+# no shared assemblies
 throw
 return
 
 } catch [Exception]  {
 # possibly System.Management.Automation.ItemNotFoundException
-write-output ("Unexpected exception {0}`n{1}" -f  ( $_.Exception.GetType() ) , ( $_.Exception.Message) ) 
+write-output ("Unexpected exception {0}`n{1}" -f $_.Exception.GetType(), $_.Exception.Message)
 
 }
 
@@ -66,8 +66,7 @@ popd
 # http://poshcode.org/2887
 # http://stackoverflow.com/questions/8343767/how-to-get-the-current-directory-of-the-cmdlet-being-executed
 # https://msdn.microsoft.com/en-us/library/system.management.automation.invocationinfo.pscommandpath%28v=vs.85%29.aspx
-function Get-ScriptDirectory
-{
+function Get-ScriptDirectory {
   [string]$scriptDirectory = $null
 
   if ($host.Version.Major -gt 2) {
@@ -122,12 +121,12 @@ namespace DialogMessageInline {
       // Button2 is the right button
 
         case MsgButtons.OK:
-                    
+
           main.Button1.Visible = false;
           // https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.dialogresult
           main.Button2.DialogResult = System.Windows.Forms.DialogResult.OK;
           main.Button2.Text = "OK";
-          main.AcceptButton = main.Button2; 
+          main.AcceptButton = main.Button2;
           main.Button2.TabIndex = 0;
           main.ActiveControl = main.Button2;
 
@@ -139,7 +138,7 @@ namespace DialogMessageInline {
           main.Button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
           main.Button1.Text = "OK";
           main.Button2.Text = "Cancel";
-          main.AcceptButton = main.Button2; 
+          main.AcceptButton = main.Button2;
           main.Button1.TabIndex = 1;
           main.Button2.TabIndex = 0;
           main.ActiveControl = main.Button2;
@@ -152,7 +151,7 @@ namespace DialogMessageInline {
           main.Button2.DialogResult = System.Windows.Forms.DialogResult.No;
           main.Button1.Text = "Yes";
           main.Button2.Text = "No";
-          main.AcceptButton = main.Button2; 
+          main.AcceptButton = main.Button2;
           main.Button1.TabIndex = 1;
           main.Button2.TabIndex = 0;
           main.ActiveControl = main.Button2;
@@ -417,20 +416,20 @@ namespace DialogMessageInline {
 "@  -ReferencedAssemblies @( 'System.Windows.Forms.dll',`
      'System.Drawing.dll',`
      'System.Data.dll',`
-     'System.Xml.dll') 
+     'System.Xml.dll')
 
 
 $button = [DialogMessageInline.DMessage]::setMsgButton('YesNo')
-if ($button -ne $null) { 
+if ($button -ne $null) {
   write-output ('[DialogMessage.DMessage]::MsgButtons.YesNo={0}' -f $button)
-} else { 
+} else {
   write-output 'Cannot access [DialogMessage.DMessage]::MsgButtons enum'
 }
 
 $icon = [DialogMessageInline.DMessage]::setMsgIcon('Shield')
-if ($icon -ne $null) { 
+if ($icon -ne $null) {
   write-output ('[DialogMessage.DMessage]::MsgIcons.Shield={0}' -f $icon)
-} else { 
+} else {
   write-output 'Cannot access [DialogMessage.DMessage]::MsgIcons enum'
 }
 

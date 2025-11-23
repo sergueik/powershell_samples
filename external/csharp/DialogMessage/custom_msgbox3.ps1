@@ -1,4 +1,4 @@
-#Copyright (c) 2020,2022 Serguei Kouzmine
+#Copyright (c) 2020,2022,2025 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ param (
   [switch]$store,
   [switch]$debug
 )
+
 $RESULT_OK = 0
 $RESULT_CANCEL = 2
 
@@ -199,13 +200,22 @@ function DialogMessage{
   $tl.ResumeLayout($false)
   # ((System.ComponentModel.ISupportInitialize)($icon)).EndInit()
   $f.ResumeLayout($false)
-
-  [void]$f.ShowDialog([win32window]($caller))
+  write-debug ('caller = {0}' -f $caller.Handle)
+  <#
+NOTE: on Windows 11:
+Exception calling "ShowDialog" with "1" argument(s): "Error creating window handle."
+Exception calling "ShowDialog" with "1" argument(s): "Form that is already displayed modally cannot be displayed as a modal dialog box. Close the form before calling showDialog."
+#>
+  [void]$f.ShowDialog([System.Windows.Forms.IWin32Window]($caller))
 
   $f.Dispose()
 
 }
-
+  if ($debug){
+    $DebugPreference = 'Continue'
+  } else {
+    $DebugPreference = 'SilentlyContinue'
+  }
 $shared_assemblies = @(
   'nunit.core.dll',
   'nunit.framework.dll'
@@ -223,33 +233,52 @@ try {
   pushd $shared_assemblies_path -erroraction  'Stop'
 } catch [System.Management.Automation.ItemNotFoundException] {
 
-# no shared assemblies
+# no shared assemblies path
 throw
 return
 
 } catch [Exception]  {
   # possibly System.Management.Automation.ItemNotFoundException
-  write-output ("Unexpected exception {0}`n{1}" -f  ( $_.Exception.GetType() ) , ( $_.Exception.Message) )
+  write-output ("Unexpected exception {0}`n{1}" -f $_.Exception.GetType(), $_.Exception.Message )
 }
 
 $shared_assemblies | ForEach-Object {
   $assembly = $_
-
+  Write-Debug ('About to load ' + $assembly )
+  if ( -not (test-path -path $assembly )){
+     write-Debug ('Not found shared assembly: ' + $assembly )
+     # NOTE: 'continue' leaves the script ?
+     # continue
+     return
+  }
   if ($host.Version.Major -gt 2) {
     Unblock-File -Path $assembly
   }
   Add-Type -Path $assembly
   Write-Debug $assembly
 }
+write-Debug 'done loading dependencies'
 popd
+
+
+[void][System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
+[void][System.Reflection.Assembly]::LoadWithPartialName('System.Drawing')
+
 
 Add-Type -TypeDefinition @'
 using System;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 public class Win32Window : IWin32Window {
+    [DllImport("kernel32.dll")]
+    public static extern IntPtr GetConsoleWindow();
     private IntPtr _hWnd;
     public Win32Window(IntPtr handle) {
-        _hWnd = handle;
+	if (handle == (IntPtr) 0 ) {
+		_hWnd = GetConsoleWindow();
+	} else {
+		_hWnd = handle;
+	}
     }
 
     public IntPtr Handle {
@@ -259,23 +288,21 @@ public class Win32Window : IWin32Window {
 
 '@ -ReferencedAssemblies 'System.Windows.Forms.dll'
 
-
-
-[void][System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
-[void][System.Reflection.Assembly]::LoadWithPartialName('System.Drawing')
-
-
-$panelindow_handle = [System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle
-write-debug ('Using current process handle {0}' -f $panelindow_handle)
-if ($panelindow_handle -eq 0) {
+$window_handle = [System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle
+if ($window_handle -eq 0) {
   $processid = [System.Diagnostics.Process]::GetCurrentProcess().Id
   $parent_process_id = get-wmiobject win32_process | where-object {$_.processid -eq  $processid } | select-object -expandproperty parentprocessid
 
-  $panelindow_handle = get-process -id $parent_process_id | select-object -expandproperty MainWindowHandle
-  write-debug ('Using current process parent process {0} handle {1}' -f $parent_process_id, $panelindow_handle)
+  $window_handle = get-process -id $parent_process_id -erroraction silentlycontinue| select-object -expandproperty MainWindowHandle
+  write-debug ('Using current process parent process {0} handle {1}' -f $parent_process_id, $window_handle)
+} else {
+  write-debug ('Using current process handle {0}' -f $window_handle)
 }
 
-$caller = new-object Win32Window -ArgumentList ($panelindow_handle)
-
-
+if ($window_handle -eq '' -or $window_handle -eq $null){
+  $window_handle = 0
+}
+write-debug ('Creating caller with handle: ' + $window_handle )
+$caller = new-object Win32Window -ArgumentList ($window_handle)
+write-debug ('caller.handle = {0}' -f $caller.Handle)
 dialogMessage -caller $caller -systemicon $systemicon -mainInstruction $mainInstruction -detailedInstruction $detailedInstruction
