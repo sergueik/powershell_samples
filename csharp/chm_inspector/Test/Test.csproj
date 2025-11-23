@@ -113,6 +113,7 @@
   <ItemGroup>
     <Compile Include="ChmTest.cs"/>
     <Compile Include="IniTest.cs"/>
+    <Compile Include="ExtractTest.cs"/>
     <Compile Include="TelemetryTests.cs"/>
     <Compile Include="MessageHelperTest.cs"/>
     <Compile Include="IniExpressionParserTest.cs"/>

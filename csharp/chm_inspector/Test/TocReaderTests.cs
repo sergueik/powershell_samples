@@ -10,7 +10,7 @@ namespace Tests {
 	public class TocReaderTests {
 		private const string file = @"C:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 		// see also https://github.com/serilog-contrib/serilog-sinks-elasticsearch/blob/dev/sample/Serilog.Sinks.Elasticsearch.Sample/Program.cs
-		    
+
 		[Test]
 		public void test1() {
 			var toclist = Chm.toc_structured(file);
@@ -28,20 +28,6 @@ namespace Tests {
 
 		[Test]
 		public void test2() {
-			Dictionary<string,string> toc = Chm.tocdict_7zip(file);
-
-			// Assert
-			Assert.IsNotNull(toc, "The dictionary should not be null");
-			Assert.IsNotEmpty(toc, "The dictionary should not be empty");
-
-			foreach (var keyValuePair in toc) {
-				Assert.IsFalse(string.IsNullOrEmpty(keyValuePair.Key), "Key (Name) should not be null or empty");
-				Assert.IsFalse(string.IsNullOrEmpty(keyValuePair.Value), "Value (Local) should not be null or empty");
-				Console.Error.WriteLine("{0}: {1}", keyValuePair.Key, keyValuePair.Value);
-			}
-		}
-		[Test]
-		public void test3() {
 			var toclist = Chm.toc_7zip(file);
 
 			// Assert

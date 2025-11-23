@@ -6,7 +6,7 @@ using Utils;
 
 namespace Tests {
     [TestFixture]
-    public class ChmTests  {
+    public class ChmTest  {
     	private const string fileName ="api.chm";
     	private string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName );
 
@@ -17,19 +17,32 @@ namespace Tests {
             try {
                 var urls = Chm.urls_7zip(file);
                 Assert.NotNull(urls, "Urls() returned null.");
-                Console.WriteLine("Found {0} entries", urls.Count);
                 Assert.Greater(urls.Count,0,"Expect at least one file");
+                Console.WriteLine("Found {0} entries", urls.Count);
             } catch (Exception e) {
                 Assert.Fail("Exception thrown: " + e.Message);
             }
         }
-        [Test]
+
+		[Test]
         public void test2() {
+            try {
+                var urls = Chm.urls_7zip_alt(file);
+                Assert.NotNull(urls, "Urls() returned null.");
+                Assert.Greater(urls.Count,0,"Expect at least one file");
+                Console.WriteLine("Found {0} entries", urls.Count);
+            } catch (Exception e) {
+                Assert.Fail("Exception thrown: " + e.Message);
+            }
+        }
+
+        [Test]
+        public void test3() {
             try {
                 var urls = Chm.urls_structured(file);
                 Assert.NotNull(urls, "Urls() returned null.");
-                Console.WriteLine("Found {0} entries", urls.Count);
                 Assert.Greater(urls.Count,0,"Expect at least one file");
+                Console.WriteLine("Found {0} entries", urls.Count);
             } catch (Exception e) {
                 Assert.Fail("Exception thrown: " + e.Message);
             }

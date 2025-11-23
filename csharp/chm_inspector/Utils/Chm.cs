@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -117,7 +118,7 @@ namespace Utils {
 		HRESULT DestroyElement(string pwcsName);
 		HRESULT RenameElement(string pwcsOldName, string pwcsNewName);
 		HRESULT SetElementTimes(string pwcsName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime,
-			System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
+		                        System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
 
 		HRESULT SetClass(Guid clsid);
 		HRESULT SetStateBits(uint grfStateBits, uint grfMask);
@@ -134,7 +135,7 @@ namespace Utils {
 		HRESULT StgIsStorageILockBytes(IntPtr/*ILockBytes*/ plkbyt);
 		HRESULT StgOpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
 		HRESULT StgOpenStorageOnILockBytes(IntPtr/*ILockBytes*/ plkbyt, IStorage pStgPriority, uint grfMode,
-			IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
+		                                   IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
 		HRESULT StgSetTimes(string lpszName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime, System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
 		HRESULT SetControlData(ITS_Control_Data pControlData);
 		HRESULT DefaultControlData(out ITS_Control_Data ppControlData);
@@ -161,6 +162,9 @@ namespace Utils {
 
 		// Microsoft InfoTech IStorage System (MSITFS) COM server
 		public static Guid CLSID_ITStorage = new Guid("5d02926a-212e-11d0-9df9-00a0c922e6ec");
+
+		private static string tocFilename = "toc.hhc"; // "api.hhc"
+		// default seems to be "toc.hhc"
 
 		public static string title(string filePath) {
 
@@ -320,6 +324,7 @@ namespace Utils {
 			return urls;
 		}
 
+
 		public static List<string> urls_7zip(string filePath) {
 			var urls = new List<string>();
 
@@ -355,241 +360,336 @@ namespace Utils {
 			return urls;
 		}
 
+		public static List<string> urls_7zip_alt(string filePath) {
+			var urls = new List<string>();
+			string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDir);
+			try {
+				// NOTE: whitespace sensitive
+				String arguments = String.Format("x \"{0}\" -o\"{1}\"", filePath,  tempDir);
+				// Console.Error.WriteLine("{0} {1}", "\"c:\\Program Files\\7-zip\\7z.exe\"", arguments);
+				var processStartInfo = new ProcessStartInfo /*(@"c:\Program Files\7-zip\7z.exe", arguments) */ {
+					FileName = @"c:\Program Files\7-zip\7z.exe",
+					UseShellExecute = false,
+					Arguments = arguments,
+					WorkingDirectory = tempDir,
+					CreateNoWindow = true
+				};
+				const int waitForExit = 10000;
+				var process = Process.Start(processStartInfo);
+				process.WaitForExit(waitForExit);
+				if (process.ExitCode != 0)
+					throw new Exception("7-Zip failed with exit code " + process.ExitCode);
+				string[] searchPatterns = { "*.html", "*.htm" };
+				var allMatchingFiles = new List<string>();
+				foreach (string pattern in searchPatterns) {
+					var filesForPattern = Directory.GetFiles(tempDir, pattern, SearchOption.AllDirectories);
+					allMatchingFiles.AddRange(filesForPattern);
+				}
+				foreach (var file in allMatchingFiles)
+					urls.Add(file.Substring(tempDir.Length + 1).Replace("\\", "/"));
+			} finally {
+				// optionally clean up
+				Directory.Delete(tempDir, true);
+			}
+			return urls;
+		}
+
+	public static List<TocEntry> toc_structured_oom(string filePath) {
+	    object obj = null;
+	    IITStorage iit = null;
+	    IStorage storage = null;
+	    IEnumSTATSTG enumStat = null;
+	    IStream stream = null;
+
+	    var result = new List<TocEntry>();
+
+
+        Log.Information("Starting toc_structured for file {FilePath}", filePath);
+
+	    try {
+	        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
+	        iit = (IITStorage)obj;
+
+	        HRESULT hresult = iit.StgOpenStorage(filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
+	        if (hresult != HRESULT.S_OK || storage == null)
+					throw new Exception(String.Format("Failed to open CHM file {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+	        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+	        if (hresult != HRESULT.S_OK || enumStat == null)
+					throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+	        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+	        uint fetched;
+
+	        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+	            // We are looking for tocFilename
+	            if (string.Equals(stat[0].pwcsName, tocFilename, StringComparison.OrdinalIgnoreCase)) {
+	                hresult = storage.OpenStream(stat[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
+	                if (hresult != HRESULT.S_OK || stream == null)
+	                	throw new Exception(String.Format("Failed to open table of content stream {0},\nError: 0x{1}\n{2}", tocFilename, hresult.ToString("X"), MessageHelper.Msg(hresult)));
+
+	                // Read full stream
+	                MemoryStream ms = new MemoryStream();
+	                byte[] buffer = new byte[4096];
+	                IntPtr pcb = IntPtr.Zero;
+					// NOTE: do not be logging every iteration of the read loop
+					int loopCounter = 0;
+	                while (true) {
+	                    stream.Read(buffer, buffer.Length, pcb);
+	                    loopCounter++;
+    					if (loopCounter % 20 == 0){
+							long mem = GC.GetTotalMemory(false);
+							var doc = new {
+								timestamp = DateTime.UtcNow,
+								message = "OOM imminent",
+								mem
+							};
+							var resp = Telemetry.sendEvent("oom-events", doc);
+							Log.Information(String.Format("OOM telemetry sent: status {0}", resp.HttpStatusCode));
+              }
+
+	                    // Assume buffer fully read; could refine with actual bytes read
+	                    ms.Write(buffer, 0, buffer.Length);
+	                    // For simplicity, break when less than buffer size (optional refinement)
+	                    if (buffer.Length < 4096) break;
+	                }
+
+	                string tocContent = Encoding.UTF8.GetString(ms.ToArray());
+
+	                // Regex parse OBJECT nodes
+	                var matches = Regex.Matches(tocContent,
+	                    @"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">.*?<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
+	                    RegexOptions.Singleline);
+
+	                foreach (Match m in matches) {
+	                    result.Add(new TocEntry {
+	                        Name = m.Groups[1].Value,
+	                        Local = m.Groups[2].Value
+	                    });
+	                }
+
+	                break; // done with tocFilename
+	            }
+	        }
+	    } finally {
+	        if (stream != null) Marshal.ReleaseComObject(stream);
+	        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+	        if (storage != null) Marshal.ReleaseComObject(storage);
+	        if (iit != null) Marshal.ReleaseComObject(iit);
+	        if (obj != null) Marshal.ReleaseComObject(obj);
+	    }
+
+	    return result;
+
+    }
+
+
 		public static List<TocEntry> toc_structured(string filePath){
-		    var result = new List<TocEntry>();
+			var result = new List<TocEntry>();
 
-		    object obj = null;
-		    IITStorage iit = null;
-		    IStorage storage = null;
-		    IEnumSTATSTG enumStat = null;
-		    IStream stream = null;
+			object obj = null;
+			IITStorage iit = null;
+			IStorage storage = null;
+			IEnumSTATSTG enumStat = null;
+			IStream stream = null;
 
-		    try {
-		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
-		        iit = (IITStorage)obj;
+			try {
+				obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
+				iit = (IITStorage)obj;
 
-		        HRESULT hresult = iit.StgOpenStorage(
-		            filePath,
-		            null,
-		            (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),
-		            IntPtr.Zero,
-		            0,
-		            out storage
-		        );
+				HRESULT hresult = iit.StgOpenStorage(
+					filePath,
+					null,
+					(uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),
+					IntPtr.Zero,
+					0,
+					out storage
+				);
 
-		        if (hresult != HRESULT.S_OK || storage == null)
-		            throw new Exception(String.Format("Failed to open CHM file {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
+				if (hresult != HRESULT.S_OK || storage == null)
+					throw new Exception(String.Format("Failed to open CHM file {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
 
-		        // Enumerate CHM root directory
-		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
-		        if (hresult != HRESULT.S_OK)
-		          throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+				// Enumerate CHM root directory
+				hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+				if (hresult != HRESULT.S_OK)
+					throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
 
 
-		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-		        uint fetched = 0;
+				var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+				uint fetched = 0;
 
-		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
-		            if (String.Compare(stat[0].pwcsName, "toc.hhc", StringComparison.OrdinalIgnoreCase) == 0) {
-		                // Open toc.hhc as stream
-		                HRESULT hresult2 = storage.OpenStream(
-		                    "toc.hhc",
-		                    IntPtr.Zero,
-		                    (uint)(STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE),
-		                    0,
-		                    out stream
-		                );
+				while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+					if (String.Compare(stat[0].pwcsName, tocFilename, StringComparison.OrdinalIgnoreCase) == 0) {
+						// Open toc.hhc as stream
+						HRESULT hresult2 = storage.OpenStream(
+							tocFilename,
+							IntPtr.Zero,
+							(uint)(STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE),
+							0,
+							out stream
+						);
 
-		                if (hresult2 != HRESULT.S_OK || stream == null)
-		                	throw new Exception(String.Format("Failed to open toc.hhc stream,\nError: 0x{0}\n{1}", hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
+						if (hresult2 != HRESULT.S_OK || stream == null)
+							throw new Exception(String.Format("Failed to open stream {0},\nError: 0x{1}\n{2}", tocFilename, hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
 
-		                // Memory-conservative read loop
-		                using (var ms = new MemoryStream()) {
-		                    var buffer = new byte[4096];
-		                    IntPtr bytesReadPtr = Marshal.AllocCoTaskMem(sizeof(int));
-		                    try {
-		                        while (true) {
-		                            stream.Read(buffer, buffer.Length, bytesReadPtr);
-		                            int bytesRead = Marshal.ReadInt32(bytesReadPtr);
-		                            if (bytesRead == 0)
-		                                break;
-		                            ms.Write(buffer, 0, bytesRead);
-		                            long mem = GC.GetTotalMemory(false);
-		                            var doc = new {
-					                        timestamp = DateTime.UtcNow,
-					                        message = "OOM imminent",
-					                        mem
-		                            };
-		                            // NOTE: no need to flush timing with Serilog when the process may OOM at any moment
-		                            // Telemetry through Telemetry.sendEvent() is already flushed instantly and is safe for OOM scenarios
-				                    var resp = Telemetry.sendEvent("oom-events", doc);
-				                    Log.Information(String.Format("OOM telemetry sent: status {0}", resp.HttpStatusCode));
-		                        }
-		                    } finally {
-		                        Marshal.FreeCoTaskMem(bytesReadPtr);
-		                    }
-		                    string payload = Encoding.UTF8.GetString(ms.ToArray());
-		                    result = parseToc(payload);
-		                }
-		                break; // Done with toc.hhc
-		            }
-		        }
-		    } finally {
-		        if (stream != null) Marshal.ReleaseComObject(stream);
-		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
-		        if (storage != null) Marshal.ReleaseComObject(storage);
-		        if (iit != null) Marshal.ReleaseComObject(iit);
-		        if (obj != null) Marshal.ReleaseComObject(obj);
-		    }
+						// Memory-conservative read loop
+						using (var ms = new MemoryStream()) {
+							var buffer = new byte[4096];
+							IntPtr bytesReadPtr = Marshal.AllocCoTaskMem(sizeof(int));
+							try {
+								while (true) {
+									stream.Read(buffer, buffer.Length, bytesReadPtr);
+									int bytesRead = Marshal.ReadInt32(bytesReadPtr);
+									if (bytesRead == 0)
+										break;
+									ms.Write(buffer, 0, bytesRead);
+									long mem = GC.GetTotalMemory(false);
+									var doc = new {
+										timestamp = DateTime.UtcNow,
+										message = "OOM imminent",
+										mem
+									};
+									// NOTE: no need to flush timing with Serilog when the process may OOM at any moment
+									// Telemetry through Telemetry.sendEvent() is already flushed instantly and is safe for OOM scenarios
+									var resp = Telemetry.sendEvent("oom-events", doc);
+									Log.Information(String.Format("OOM telemetry sent: status {0}", resp.HttpStatusCode));
+								}
+							} finally {
+								Marshal.FreeCoTaskMem(bytesReadPtr);
+							}
+							string payload = Encoding.UTF8.GetString(ms.ToArray());
+							result = parseToc(payload);
+						}
+						break; // Done with toc.hhc
+					}
+				}
+			} finally {
+				if (stream != null) Marshal.ReleaseComObject(stream);
+				if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+				if (storage != null) Marshal.ReleaseComObject(storage);
+				if (iit != null) Marshal.ReleaseComObject(iit);
+				if (obj != null) Marshal.ReleaseComObject(obj);
+			}
 
-		    return result;
+			return result;
 		}
 
 
 		public static List<TocEntry> parseToc(String payload) {
 			var result = new List<TocEntry>();
-            // Extract OBJECT PARAM Name/Local
+			// Extract OBJECT PARAM Name/Local
 			var matches = Regex.Matches(
-				              payload,
-				              @"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">" +
-				              @".*? " +
-				              @"<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
-				              RegexOptions.Singleline
-			              );
- 			foreach (Match match in matches) {
-                result.Add(new TocEntry {
-                    Name = match.Groups[1].Value,
-                    Local = match.Groups[2].Value
-                });
-			}
-			return result;
-		}
-
-		public static Dictionary<String,String> parseTocDict(String payload) {
-			var result = new Dictionary<string, string>();
-			var matches = Regex.Matches(
-				              payload,
-				              @"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">" +
-				              @".*? " +
-				              @"<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
-				              RegexOptions.Singleline
-			              );
-
+				payload,
+				@"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">" +
+				@".*? " +
+				@"<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
+				RegexOptions.Singleline
+			);
 			foreach (Match match in matches) {
-				string name = match.Groups[1].Value;
-				string local = match.Groups[2].Value;
-				try {
-					result.Add(name, local);
-				} catch (ArgumentException e) {
-					Console.Error.WriteLine(e.ToString());
-					Console.Error.WriteLine("{0}: {1}", name, local);
-					// ignore:
-					// An item with the same key has already been added
-				}
-				// alternatively push to a List<TocEntry>
+				result.Add(new TocEntry {
+				           	Name = match.Groups[1].Value,
+				           	Local = match.Groups[2].Value
+				           });
 			}
 			return result;
 		}
-
 
 		public static List<TocEntry> toc_7zip(string filePath) {
-		    var result = new List<TocEntry>();
+			var result = new List<TocEntry>();
 
-		    string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
-		    Directory.CreateDirectory(tempDir);
+			string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDir);
 
-		    try {
-		        // NOTE: whitespace sensitive
-		        string arguments = string.Format("x \"{0}\" toc.hhc -o\"{1}\"", filePath, tempDir);
+			try {
+				// NOTE: whitespace sensitive
+				string arguments = string.Format("x \"{0}\" {1} -o\"{2}\"", filePath, tocFilename, tempDir);
 
-		        var processStartInfo = new ProcessStartInfo {
-		            FileName = @"c:\Program Files\7-zip\7z.exe",
-		            UseShellExecute = false,
-		            Arguments = arguments,
-		            WorkingDirectory = tempDir,
-		            CreateNoWindow = true,
-		            RedirectStandardOutput = true,
-		            RedirectStandardError = true
-		        };
+				var processStartInfo = new ProcessStartInfo {
+					FileName = @"c:\Program Files\7-zip\7z.exe",
+					UseShellExecute = false,
+					Arguments = arguments,
+					WorkingDirectory = tempDir,
+					CreateNoWindow = true,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true
+				};
 
-		        using (var process = Process.Start(processStartInfo)) {
-		            const int waitForExit = 10000;
-		            if (!process.WaitForExit(waitForExit)) {
-		                process.Kill();
-		                throw new Exception("7-Zip process timed out");
-		            }
+				using (var process = Process.Start(processStartInfo)) {
+					const int waitForExit = 10000;
+					if (!process.WaitForExit(waitForExit)) {
+						process.Kill();
+						throw new Exception("7-Zip process timed out");
+					}
 
-		            if (process.ExitCode != 0) {
-		                string error = process.StandardError.ReadToEnd();
-		                throw new Exception(String.Format("7-Zip failed with exit code {0}: {1}", process.ExitCode , error));
-		            }
-		        }
+					if (process.ExitCode != 0) {
+						string error = process.StandardError.ReadToEnd();
+						throw new Exception(String.Format("7-Zip failed with exit code {0}: {1}", process.ExitCode , error));
+					}
+				}
 
-		        // Read the extracted toc.hhc
-		        string tocFile = Path.Combine(tempDir, "toc.hhc");
-		        if (!File.Exists(tocFile))
-		            throw new FileNotFoundException("toc.hhc not found after extraction", tocFile);
+				// Read the extracted toc.hhc
+				string tocFilePath = Path.Combine(tempDir, tocFilename);
+				if (!File.Exists(tocFilePath))
+					throw new FileNotFoundException(String.Format("table of contents {0} not found after extraction: {1}\n{2} {3}", tocFilename, tocFilePath, processStartInfo.FileName , processStartInfo.Arguments));
 
-		        string payload = File.ReadAllText(tocFile, Encoding.UTF8);
-		        result = parseToc(payload);
+				string payload = File.ReadAllText(tocFilePath, Encoding.UTF8);
+				result = parseToc(payload);
 
-		    } finally {
-		        // Clean up temp directory
-		        try { Directory.Delete(tempDir, true); } catch { /* ignore */ }
-		    }
+			} finally {
+				// Clean up temp directory
+				try { Directory.Delete(tempDir, true); } catch { /* ignore */ }
+			}
 
-		    return result;
+			return result;
 		}
 
-		public static Dictionary<String,String> tocdict_7zip(string filePath) {
-		    var result = new Dictionary<string, string>();
-
-		    string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
-		    Directory.CreateDirectory(tempDir);
-
-		    try {
-		        // NOTE: whitespace sensitive
-		        string arguments = string.Format("x \"{0}\" toc.hhc -o\"{1}\"", filePath, tempDir);
-
-		        var processStartInfo = new ProcessStartInfo {
-		            FileName = @"c:\Program Files\7-zip\7z.exe",
-		            UseShellExecute = false,
-		            Arguments = arguments,
-		            WorkingDirectory = tempDir,
-		            CreateNoWindow = true,
-		            RedirectStandardOutput = true,
-		            RedirectStandardError = true
-		        };
-
-		        using (var process = Process.Start(processStartInfo)) {
-		            const int waitForExit = 10000;
-		            if (!process.WaitForExit(waitForExit)) {
-		                process.Kill();
-		                throw new Exception("7-Zip process timed out");
-		            }
-
-		            if (process.ExitCode != 0) {
-		                string error = process.StandardError.ReadToEnd();
-		                throw new Exception(String.Format("7-Zip failed with exit code {0}: {1}", process.ExitCode , error));
-		            }
-		        }
-
-		        // Read the extracted toc.hhc
-		        string tocFile = Path.Combine(tempDir, "toc.hhc");
-		        if (!File.Exists(tocFile))
-		            throw new FileNotFoundException("toc.hhc not found after extraction", tocFile);
-
-		        string payload = File.ReadAllText(tocFile, Encoding.UTF8);
-		        result = parseTocDict(payload);
-
-		    } finally {
-		        // Clean up temp directory
-		        try { Directory.Delete(tempDir, true); } catch { /* ignore */ }
-		    }
-
-		    return result;
+		public static List<string> extract_7zip(string filePath, List<string> files) {
+			var filesArg = buildArgument(files);
+			var urls = new List<string>();
+			string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDir);
+			try {
+				// NOTE: whitespace sensitive
+				String arguments = String.Format("x \"{0}\" {1} -o\"{2}\"", filePath, filesArg,  tempDir);
+				Console.Error.WriteLine("{0} {1}", "\"c:\\Program Files\\7-zip\\7z.exe\"", arguments);
+				var processStartInfo = new ProcessStartInfo /*(@"c:\Program Files\7-zip\7z.exe", arguments) */ {
+					FileName = @"c:\Program Files\7-zip\7z.exe",
+					UseShellExecute = false,
+					Arguments = arguments,
+					WorkingDirectory = tempDir,
+					CreateNoWindow = true
+				};
+				const int waitForExit = 10000;
+				var process = Process.Start(processStartInfo);
+				process.WaitForExit(waitForExit);
+				if (process.ExitCode != 0)
+					throw new Exception("7-Zip failed with exit code " + process.ExitCode);
+				var allMatchingFiles = new List<string>();
+				foreach (string pattern in files) {
+					var filesForPattern = Directory.GetFiles(tempDir, pattern, SearchOption.AllDirectories);
+					allMatchingFiles.AddRange(filesForPattern);
+				}
+				foreach (var file in allMatchingFiles)
+					urls.Add(file.Substring(tempDir.Length + 1).Replace("\\", "/"));
+			} finally {
+				// optionally clean up
+				Directory.Delete(tempDir, true);
+			}
+			return urls;
 		}
 
+
+		public static string buildArgument(List<string> files) {
+			string arg = string.Join(" ", files.Select(path => String.Format("\"{0}\"",path)));
+
+			if (arg.Length > 28000) {
+				string listFile = Path.GetTempFileName();
+				File.WriteAllLines(listFile, files);
+				return String.Format("@{0}",listFile);
+			} else
+				return arg;
+		}
 	}
 
 	public class TocEntry {

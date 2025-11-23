@@ -1,0 +1,48 @@
+version: "3.2"
+
+services:
+  elasticsearch:
+    build: elasticsearch
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - "9200:9200"
+    healthcheck:
+      # waits until ES responds with HTTP 200
+      # NOTE:
+      # CMD - executes the test as a direct exec call
+      # cannot pipe, redirect, wildcard, combining commands
+      # test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      test:
+        [
+            "CMD-SHELL",
+            "curl -sf http://localhost:9200 | grep -q 'You Know, for Search'",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  kibana:
+    build: kibana
+    container_name: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    # no volumes
+    healthcheck:
+      test:
+        [
+            "CMD-SHELL",
+            "curl http://localhost:5601/api/status | jq -r '.status.overall.state' | grep -q 'green'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 50
+      start_period: 60s

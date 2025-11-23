@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Collections.Generic;
-	
+
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using Elasticsearch.Net;
@@ -34,29 +34,31 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.7.0";
+		private const string versionString = "0.10.1";
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
 		private static LoggerConfiguration loggerConfiguration = null;
 		private DataGridTableStyle tableStyle;
-		
+		private const string endpoint = "http://192.168.99.100:9200"; // "http://localhost:9200"
+		// docker-machine ip
 
 		[STAThread]
 		public static void Main() {
 			// use GDI
 			Application.SetCompatibleTextRenderingDefault(false);
-
 			Application.EnableVisualStyles();
+
 			ConfigureLogging();
-        	Telemetry.init();
-        	Log.Information("Application started.");			
- 	       Application.Run(new Control());
+			Telemetry.init();
+
+			Log.Information("Application started.");
+
+			Application.Run(new Control());
 		}
 
 	    static void ConfigureLogging() {
-        var options = new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
-        {
+        var options = new ElasticsearchSinkOptions(new Uri(endpoint)) {
             DetectElasticsearchVersion = false,
             AutoRegisterTemplate = true,
             AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
@@ -65,9 +67,12 @@ namespace Program {
             QueueSizeLimit = 1000
         };
 
-        // Optional
         // options.ModifyConnectionSettings = conn => conn.BasicAuthentication("elastic", "5mOz5+0BJKzXNyxHcZ*D");
-  
+        // NOTE: OptionalSystem.TypeInitializationException:
+        // The type initializer for 'Elasticsearch.Net.DiagnosticsSerializerProxy' threw an exception.
+        // ---> System.IO.FileLoadException: Could not load file or assembly 'System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51' or one of its dependencies.
+        // The located assembly's manifest definition does not match the assembly reference.
+
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Elasticsearch(options)
@@ -94,8 +99,10 @@ namespace Program {
 			SuspendLayout();
 
 			string fileName = readValue("CHM", "fileName", "api.chm");
-			string astBrowseDir  = readValue("CHM","lastBrowseDir", AppDomain.CurrentDomain.BaseDirectory);
-			file = Path.Combine(astBrowseDir, fileName );
+			string lastBrowseDir  = readValue("CHM","lastBrowseDir", "");
+			if (lastBrowseDir.Equals(""))
+				lastBrowseDir = AppDomain.CurrentDomain.BaseDirectory;
+			file = Path.Combine(lastBrowseDir, fileName );
 
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			openFileDialog1.InitialDirectory = initialDirectory;
@@ -163,7 +170,6 @@ namespace Program {
 			dataGridTableStyle});
 			dataGridTableStyle.AlternatingBackColor = Color.LightGray;
 			dataGridTableStyle.DataGrid = dataGrid;
-
 			checkCol = new DataGridBoolColumn();
     		checkCol.HeaderText = "Select";
 			checkCol.MappingName = "selected";
@@ -212,11 +218,48 @@ namespace Program {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
+			/*
+			var cm = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
+			var view = (DataView)cm.List;
+
+			foreach (DataRowView drv in view) {
+				var row = drv.Row;
+				var table = row.Table;
+				var columns = table.Columns;
+				var x = columns.GetEnumerator();
+				x.MoveNext();
+				var z =	x.Current;
+				bool isSelected = drv["selected"] != DBNull.Value &&
+				                  (bool)drv["selected"];
+
+				if (isSelected) {
+					// This row is checked
+					var Name = drv["filename"];
+					// Console.Error.WriteLine(filename);
+					var Local = drv["title"];
+				}
+			}
+			*/
+			var currencyManager = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
+			var dataView = (DataView)currencyManager.List;
+
+			foreach (DataRowView dataRowView in dataView) {
+				// bool isSelected = dataRowView["selected"] is bool b && b;
+			bool selected = dataRowView["selected"] != DBNull.Value &&
+							                  (bool)dataRowView["selected"];
+			    if (selected) {
+			        string name  = Convert.ToString(dataRowView["filename"]);
+			        string local = Convert.ToString(dataRowView["title"]);
+
+			        // do something with the checked row
+			    }
+			}
+			//---
 			var dr = this.openFileDialog1.ShowDialog();
 			if (dr == System.Windows.Forms.DialogResult.OK) {
 				foreach (String fileName in openFileDialog1.FileNames)
 					textBox1.Text = fileName;
-					file= textBox1.Text;
+				file = textBox1.Text;
 			}
 
 		}
@@ -245,9 +288,6 @@ namespace Program {
 			dataGrid.DataSource = dataTable;
 		}
 
-		private void MakeDataSet(Dictionary<String,String> files) {
-		}
-
 		private void MakeDataSet(List<TocEntry> files){
 		    if (files == null) return;
 
@@ -264,7 +304,7 @@ namespace Program {
 
 			foreach (var entry in files) {
 		        var row = dataTable.NewRow();
-		        row["title"] = entry.Name;
+		        row["title"] = entry.Local;
 		        row["filename"] = entry.Name;// entry.Local;
 		        dataTable.Rows.Add(row);
 		    }
@@ -284,7 +324,8 @@ namespace Program {
 		private void button3_Click(object sender, EventArgs eventArgs) {
 			var tokens = new List<TocEntry>();
 			try {
-		        tokens  = Chm.toc_structured(file);
+				tokens = Chm.toc_structured_oom(file);
+		        // tokens = Chm.toc_structured(file);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
