@@ -324,8 +324,7 @@ namespace Program {
 		private void button3_Click(object sender, EventArgs eventArgs) {
 			var tokens = new List<TocEntry>();
 			try {
-				tokens = Chm.toc_structured_oom(file);
-		        // tokens = Chm.toc_structured(file);
+				tokens = Chm.toc_structured(file);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}

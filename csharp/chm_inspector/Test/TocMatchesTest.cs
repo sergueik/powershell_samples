@@ -17,6 +17,16 @@ namespace Tests {
 		private String payload;
 		private string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "toc.hhc");
 
+		[Test]
+		public void test2() {
+					// Check for <OBJECT type="text/sitemap"> to confirm it’s a TOC.
+
+	        using (var reader = new StreamReader(filePath)) {
+            	// Read the entire stream as a string
+	            payload = reader.ReadToEnd();
+	        }
+					StringAssert.Contains(@"<OBJECT type=""text/sitemap"">", payload, "Expect tag to to confirm it’s a TOC");
+		}
 		[Ignore]
 		[Test]
 		[Timeout(120000)]

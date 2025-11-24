@@ -47,6 +47,18 @@ namespace Tests {
                 Assert.Fail("Exception thrown: " + e.Message);
             }
         }
+
+        [Test]
+        public void test4() {
+            try {
+                var title = Chm.title(file);
+                Assert.NotNull(title, "title() should not be returning null.");
+                // Assert.Greater(urls.Count,0,"Expect at least one file");
+                Console.WriteLine("Found title: {0}", title);
+            } catch (Exception e) {
+                Assert.Fail("Exception thrown: " + e.Message);
+            }
+        }
     }
 }
 

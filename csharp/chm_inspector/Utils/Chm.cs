@@ -26,136 +26,6 @@ using Elasticsearch;
 
 namespace Utils {
 
-	public enum HRESULT : int {
-		S_OK = 0,
-		S_FALSE = 1,
-		E_NOTIMPL = unchecked((int)0x80004001),
-		E_NOINTERFACE = unchecked((int)0x80004002),
-		E_POINTER = unchecked((int)0x80004003),
-		E_FAIL = unchecked((int)0x80004005),
-		E_UNEXPECTED = unchecked((int)0x8000FFFF),
-		E_OUTOFMEMORY = unchecked((int)0x8007000E),
-	};
-
-	[StructLayout(LayoutKind.Sequential)]
-	public struct ITS_Control_Data {
-		public uint cdwControlData;
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
-		public uint[] adwControlData;
-	}
-
-	public enum ECompactionLev {
-		COMPACT_DATA = 0,
-		COMPACT_DATA_AND_PATH
-	}
-
-	[StructLayout(LayoutKind.Explicit)]
-	public struct LARGE_INTEGER {
-		[FieldOffset(0)]
-		public uint LowPart;
-		[FieldOffset(4)]
-		public uint HighPart;
-		[FieldOffset(0)]
-		public long QuadPart;
-	}
-
-	// https://www.pinvoke.net/default.aspx/Enums.STGty
-	public enum STGTY : int {
-		STGTY_STORAGE = 1,
-		STGTY_STREAM = 2,
-		STGTY_ILOCKBYTES = 3,
-		STGTY_ROOT = 4
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	public struct FILETIME {
-		public uint DateTimeLow;
-		public uint DateTimeHigh;
-	}
-
-	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-	public struct STATSTG {
-		public string pwcsName;
-		public uint type;
-		// STGTY_ enum
-		public ulong cbSize;
-		public FILETIME mtime;
-		public FILETIME ctime;
-		public FILETIME atime;
-		public uint grfMode;
-		public uint grfLocksSupported;
-		public Guid clsid;
-		public uint grfStateBits;
-		public uint reserved;
-	}
-
-	[ComImport]
-	[Guid("0000000d-0000-0000-C000-000000000046")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IEnumSTATSTG {
-		// The user needs to allocate an STATSTG array whose size is celt.
-		[PreserveSig]
-		HRESULT Next(uint celt, [MarshalAs(UnmanagedType.LPArray), Out] System.Runtime.InteropServices.ComTypes.STATSTG[] rgelt, out uint pceltFetched);
-		HRESULT Skip(uint celt);
-		HRESULT Reset();
-		[return: MarshalAs(UnmanagedType.Interface)]
-		IEnumSTATSTG Clone();
-	}
-
-	[ComImport]
-	[Guid("0000000b-0000-0000-C000-000000000046")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IStorage {
-		HRESULT CreateStream(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStream ppstm);
-		HRESULT OpenStream(string pwcsName, IntPtr reserved1, uint grfMode, uint reserved2, out IStream ppstm);
-		HRESULT CreateStorage(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStorage ppstg);
-		HRESULT OpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstg);
-		HRESULT CopyTo(uint ciidExclude, Guid rgiidExclude, IntPtr snbExclude, IStorage pstgDest);
-		HRESULT MoveElementTo(string pwcsName, IStorage pstgDest, string pwcsNewName, uint grfFlags);
-		HRESULT Commit(uint grfCommitFlags);
-		HRESULT Revert();
-		HRESULT EnumElements(uint reserved1, IntPtr reserved2, uint reserved3, out IEnumSTATSTG ppenum);
-		HRESULT DestroyElement(string pwcsName);
-		HRESULT RenameElement(string pwcsOldName, string pwcsNewName);
-		HRESULT SetElementTimes(string pwcsName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime,
-		                        System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
-
-		HRESULT SetClass(Guid clsid);
-		HRESULT SetStateBits(uint grfStateBits, uint grfMask);
-		HRESULT Stat(out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, uint grfStatFlag);
-	}
-
-	[ComImport]
-	[Guid("88CC31DE-27AB-11D0-9DF9-00A0C922E6EC")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IITStorage {
-		HRESULT StgCreateDocfile(string pwcsName, uint grfMode, uint reserved, out IStorage ppstgOpen);
-		HRESULT StgCreateDocfileOnILockBytes(IntPtr/*ILockBytes*/ plkbyt, uint grfMode, uint reserved, out IStorage ppstgOpen);
-		HRESULT StgIsStorageFile(string pwcsName);
-		HRESULT StgIsStorageILockBytes(IntPtr/*ILockBytes*/ plkbyt);
-		HRESULT StgOpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
-		HRESULT StgOpenStorageOnILockBytes(IntPtr/*ILockBytes*/ plkbyt, IStorage pStgPriority, uint grfMode,
-		                                   IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
-		HRESULT StgSetTimes(string lpszName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime, System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
-		HRESULT SetControlData(ITS_Control_Data pControlData);
-		HRESULT DefaultControlData(out ITS_Control_Data ppControlData);
-		HRESULT Compact(string pwcsName, ECompactionLev iLev);
-	}
-
-	[Flags]
-	public enum STGM : uint {
-		STGM_READ = 0x00000000,
-		STGM_WRITE = 0x00000001,
-		STGM_READWRITE = 0x00000002,
-		STGM_SHARE_DENY_NONE = 0x00000040,
-		STGM_SHARE_DENY_READ = 0x00000030,
-		STGM_SHARE_DENY_WRITE = 0x00000020,
-		STGM_SHARE_EXCLUSIVE = 0x00000010,
-		STGM_PRIORITY = 0x00040000,
-		STGM_DELETEONRELEASE = 0x04000000,
-		STGM_NOSCRATCH = 0x00100000
-	}
-
 	// based on: https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title
 
 	public class Chm {
@@ -165,6 +35,7 @@ namespace Utils {
 
 		private static string tocFilename = "toc.hhc"; // "api.hhc"
 		// default seems to be "toc.hhc"
+		private	const int CHUNK_SIZE = 4096;
 
 		public static string title(string filePath) {
 
@@ -325,6 +196,89 @@ namespace Utils {
 		}
 
 
+		// #URLSTR always contains exactly one table of contents (TOC) file name
+		// CHM may contain additional .hhc files 
+		// but only the one referenced from #URLSTR is the real TOC.
+		public static string tocfilename_structured(string filePath) {
+
+		    object obj = null;
+		    IITStorage iit = null;
+		    IStorage storage = null;
+		    IStream stream = null;
+		
+		    try {
+		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
+		        iit = (IITStorage)obj;
+		
+		        HRESULT hresult = iit.StgOpenStorage(filePath, null,
+		            (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),
+		            IntPtr.Zero, 0, out storage);
+		
+		        if (hresult != HRESULT.S_OK || storage == null)
+		            return null;
+		
+		        hresult = storage.OpenStream("#URLSTR", IntPtr.Zero,
+		            (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),
+		            0, out stream);
+		
+		        if (hresult != HRESULT.S_OK || stream == null)
+		            return null;
+		
+		        var data = devour(stream);
+		
+		        var text = Encoding.Default.GetString(data);
+		        var parts = text.Split('\0');
+		
+		        foreach (var p in parts) {
+		            if (p.EndsWith(".hhc", StringComparison.OrdinalIgnoreCase))
+		                return p.Replace("\\", "/");
+		        }
+		    }
+		    finally {
+		        if (stream != null) Marshal.ReleaseComObject(stream);
+		        if (storage != null) Marshal.ReleaseComObject(storage);
+		        if (iit != null) Marshal.ReleaseComObject(iit);
+		        if (obj != null) Marshal.ReleaseComObject(obj);
+		    }
+		    return null;
+		}
+
+		private static byte[] devour(IStream stream) {
+			Log.Information("Starting devour");
+		    var ms = new MemoryStream();
+		    IntPtr bytesReadPtr = IntPtr.Zero;
+		    try {
+		        bytesReadPtr = Marshal.AllocCoTaskMem(sizeof(int));
+		        var buffer = new byte[CHUNK_SIZE];
+				// NOTE: do not be logging every iteration of the read loop
+				int loopCounter = 0;
+	
+		        while (true) {
+		            // Read returns HRESULT; number of bytes read is returned via bytesReadPtr
+		            stream.Read(buffer, buffer.Length, bytesReadPtr);
+		            int bytesRead = Marshal.ReadInt32(bytesReadPtr);
+		            if (bytesRead <= 0) break;
+		            ms.Write(buffer, 0, bytesRead);
+		            
+                    loopCounter++;
+					if (loopCounter % 20 == 0){
+						long mem = GC.GetTotalMemory(false);
+						var doc = new {
+							timestamp = DateTime.UtcNow,
+							message = "OOM imminent",
+							mem
+						};
+						var resp = Telemetry.sendEvent("oom-events", doc);
+						Log.Information(String.Format("OOM telemetry sent: status {0}", resp.HttpStatusCode));
+                    }
+		        }
+		        return ms.ToArray();
+		    } finally {
+		        if (bytesReadPtr != IntPtr.Zero) Marshal.FreeCoTaskMem(bytesReadPtr);
+		    }
+		}
+		
+	
 		public static List<string> urls_7zip(string filePath) {
 			var urls = new List<string>();
 
@@ -395,96 +349,6 @@ namespace Utils {
 			return urls;
 		}
 
-	public static List<TocEntry> toc_structured_oom(string filePath) {
-	    object obj = null;
-	    IITStorage iit = null;
-	    IStorage storage = null;
-	    IEnumSTATSTG enumStat = null;
-	    IStream stream = null;
-
-	    var result = new List<TocEntry>();
-
-
-        Log.Information("Starting toc_structured for file {FilePath}", filePath);
-
-	    try {
-	        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
-	        iit = (IITStorage)obj;
-
-	        HRESULT hresult = iit.StgOpenStorage(filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
-	        if (hresult != HRESULT.S_OK || storage == null)
-					throw new Exception(String.Format("Failed to open CHM file {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
-
-	        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
-	        if (hresult != HRESULT.S_OK || enumStat == null)
-					throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
-
-	        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-	        uint fetched;
-
-	        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
-	            // We are looking for tocFilename
-	            if (string.Equals(stat[0].pwcsName, tocFilename, StringComparison.OrdinalIgnoreCase)) {
-	                hresult = storage.OpenStream(stat[0].pwcsName, IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
-	                if (hresult != HRESULT.S_OK || stream == null)
-	                	throw new Exception(String.Format("Failed to open table of content stream {0},\nError: 0x{1}\n{2}", tocFilename, hresult.ToString("X"), MessageHelper.Msg(hresult)));
-
-	                // Read full stream
-	                MemoryStream ms = new MemoryStream();
-	                byte[] buffer = new byte[4096];
-	                IntPtr pcb = IntPtr.Zero;
-					// NOTE: do not be logging every iteration of the read loop
-					int loopCounter = 0;
-	                while (true) {
-	                    stream.Read(buffer, buffer.Length, pcb);
-	                    loopCounter++;
-    					if (loopCounter % 20 == 0){
-							long mem = GC.GetTotalMemory(false);
-							var doc = new {
-								timestamp = DateTime.UtcNow,
-								message = "OOM imminent",
-								mem
-							};
-							var resp = Telemetry.sendEvent("oom-events", doc);
-							Log.Information(String.Format("OOM telemetry sent: status {0}", resp.HttpStatusCode));
-              }
-
-	                    // Assume buffer fully read; could refine with actual bytes read
-	                    ms.Write(buffer, 0, buffer.Length);
-	                    // For simplicity, break when less than buffer size (optional refinement)
-	                    if (buffer.Length < 4096) break;
-	                }
-
-	                string tocContent = Encoding.UTF8.GetString(ms.ToArray());
-
-	                // Regex parse OBJECT nodes
-	                var matches = Regex.Matches(tocContent,
-	                    @"<OBJECT[^>]*>.*?<param name=""Name"" value=""(.*?)"">.*?<param name=""Local"" value=""(.*?)"">.*?</OBJECT>",
-	                    RegexOptions.Singleline);
-
-	                foreach (Match m in matches) {
-	                    result.Add(new TocEntry {
-	                        Name = m.Groups[1].Value,
-	                        Local = m.Groups[2].Value
-	                    });
-	                }
-
-	                break; // done with tocFilename
-	            }
-	        }
-	    } finally {
-	        if (stream != null) Marshal.ReleaseComObject(stream);
-	        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
-	        if (storage != null) Marshal.ReleaseComObject(storage);
-	        if (iit != null) Marshal.ReleaseComObject(iit);
-	        if (obj != null) Marshal.ReleaseComObject(obj);
-	    }
-
-	    return result;
-
-    }
-
-
 		public static List<TocEntry> toc_structured(string filePath){
 			var result = new List<TocEntry>();
 
@@ -535,7 +399,7 @@ namespace Utils {
 
 						// Memory-conservative read loop
 						using (var ms = new MemoryStream()) {
-							var buffer = new byte[4096];
+							var buffer = new byte[CHUNK_SIZE];
 							IntPtr bytesReadPtr = Marshal.AllocCoTaskMem(sizeof(int));
 							try {
 								while (true) {
@@ -696,4 +560,133 @@ namespace Utils {
 		public string Name { get; set; }
 		public string Local { get; set; }
 	}
+	public enum HRESULT : int {
+		S_OK = 0,
+		S_FALSE = 1,
+		E_NOTIMPL = unchecked((int)0x80004001),
+		E_NOINTERFACE = unchecked((int)0x80004002),
+		E_POINTER = unchecked((int)0x80004003),
+		E_FAIL = unchecked((int)0x80004005),
+		E_UNEXPECTED = unchecked((int)0x8000FFFF),
+		E_OUTOFMEMORY = unchecked((int)0x8007000E),
+	};
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct ITS_Control_Data {
+		public uint cdwControlData;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+		public uint[] adwControlData;
+	}
+
+	public enum ECompactionLev {
+		COMPACT_DATA = 0,
+		COMPACT_DATA_AND_PATH
+	}
+
+	[StructLayout(LayoutKind.Explicit)]
+	public struct LARGE_INTEGER {
+		[FieldOffset(0)]
+		public uint LowPart;
+		[FieldOffset(4)]
+		public uint HighPart;
+		[FieldOffset(0)]
+		public long QuadPart;
+	}
+
+	// https://www.pinvoke.net/default.aspx/Enums.STGty
+	public enum STGTY : int {
+		STGTY_STORAGE = 1,
+		STGTY_STREAM = 2,
+		STGTY_ILOCKBYTES = 3,
+		STGTY_ROOT = 4
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct FILETIME {
+		public uint DateTimeLow;
+		public uint DateTimeHigh;
+	}
+
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+	public struct STATSTG {
+		public string pwcsName;
+		public uint type;
+		// STGTY_ enum
+		public ulong cbSize;
+		public FILETIME mtime;
+		public FILETIME ctime;
+		public FILETIME atime;
+		public uint grfMode;
+		public uint grfLocksSupported;
+		public Guid clsid;
+		public uint grfStateBits;
+		public uint reserved;
+	}
+
+	[ComImport]
+	[Guid("0000000d-0000-0000-C000-000000000046")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IEnumSTATSTG {
+		// The user needs to allocate an STATSTG array whose size is celt.
+		[PreserveSig]
+		HRESULT Next(uint celt, [MarshalAs(UnmanagedType.LPArray), Out] System.Runtime.InteropServices.ComTypes.STATSTG[] rgelt, out uint pceltFetched);
+		HRESULT Skip(uint celt);
+		HRESULT Reset();
+		[return: MarshalAs(UnmanagedType.Interface)]
+		IEnumSTATSTG Clone();
+	}
+
+	[ComImport]
+	[Guid("0000000b-0000-0000-C000-000000000046")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IStorage {
+		HRESULT CreateStream(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStream ppstm);
+		HRESULT OpenStream(string pwcsName, IntPtr reserved1, uint grfMode, uint reserved2, out IStream ppstm);
+		HRESULT CreateStorage(string pwcsName, uint grfMode, uint reserved1, uint reserved2, out IStorage ppstg);
+		HRESULT OpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstg);
+		HRESULT CopyTo(uint ciidExclude, Guid rgiidExclude, IntPtr snbExclude, IStorage pstgDest);
+		HRESULT MoveElementTo(string pwcsName, IStorage pstgDest, string pwcsNewName, uint grfFlags);
+		HRESULT Commit(uint grfCommitFlags);
+		HRESULT Revert();
+		HRESULT EnumElements(uint reserved1, IntPtr reserved2, uint reserved3, out IEnumSTATSTG ppenum);
+		HRESULT DestroyElement(string pwcsName);
+		HRESULT RenameElement(string pwcsOldName, string pwcsNewName);
+		HRESULT SetElementTimes(string pwcsName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime,
+		                        System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
+
+		HRESULT SetClass(Guid clsid);
+		HRESULT SetStateBits(uint grfStateBits, uint grfMask);
+		HRESULT Stat(out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, uint grfStatFlag);
+	}
+
+	[ComImport]
+	[Guid("88CC31DE-27AB-11D0-9DF9-00A0C922E6EC")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IITStorage {
+		HRESULT StgCreateDocfile(string pwcsName, uint grfMode, uint reserved, out IStorage ppstgOpen);
+		HRESULT StgCreateDocfileOnILockBytes(IntPtr/*ILockBytes*/ plkbyt, uint grfMode, uint reserved, out IStorage ppstgOpen);
+		HRESULT StgIsStorageFile(string pwcsName);
+		HRESULT StgIsStorageILockBytes(IntPtr/*ILockBytes*/ plkbyt);
+		HRESULT StgOpenStorage(string pwcsName, IStorage pstgPriority, uint grfMode, IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
+		HRESULT StgOpenStorageOnILockBytes(IntPtr/*ILockBytes*/ plkbyt, IStorage pStgPriority, uint grfMode,
+		                                   IntPtr snbExclude, uint reserved, out IStorage ppstgOpen);
+		HRESULT StgSetTimes(string lpszName, System.Runtime.InteropServices.ComTypes.FILETIME pctime, System.Runtime.InteropServices.ComTypes.FILETIME patime, System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
+		HRESULT SetControlData(ITS_Control_Data pControlData);
+		HRESULT DefaultControlData(out ITS_Control_Data ppControlData);
+		HRESULT Compact(string pwcsName, ECompactionLev iLev);
+	}
+
+	[Flags]
+	public enum STGM : uint {
+		STGM_READ = 0x00000000,
+		STGM_WRITE = 0x00000001,
+		STGM_READWRITE = 0x00000002,
+		STGM_SHARE_DENY_NONE = 0x00000040,
+		STGM_SHARE_DENY_READ = 0x00000030,
+		STGM_SHARE_DENY_WRITE = 0x00000020,
+		STGM_SHARE_EXCLUSIVE = 0x00000010,
+		STGM_PRIORITY = 0x00040000,
+		STGM_DELETEONRELEASE = 0x04000000,
+		STGM_NOSCRATCH = 0x00100000
+	}	
 }
