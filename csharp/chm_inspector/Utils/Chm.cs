@@ -278,7 +278,61 @@ namespace Utils {
 		    }
 		}
 		
-	
+		public static String tocfilename_7zip(string filePath) {
+			string result = null;
+			string resourceFilename = "#URLSTR";
+			string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDir);
+
+			try {
+				// NOTE: whitespace sensitive
+				string arguments = string.Format("x \"{0}\" {1} -o\"{2}\"", filePath, resourceFilename, tempDir);
+
+				var processStartInfo = new ProcessStartInfo {
+					FileName = @"c:\Program Files\7-zip\7z.exe",
+					UseShellExecute = false,
+					Arguments = arguments,
+					WorkingDirectory = tempDir,
+					CreateNoWindow = true,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true
+				};
+
+				using (var process = Process.Start(processStartInfo)) {
+					const int waitForExit = 10000;
+					if (!process.WaitForExit(waitForExit)) {
+						process.Kill();
+						throw new Exception("7-Zip process timed out");
+					}
+
+					if (process.ExitCode != 0) {
+						string error = process.StandardError.ReadToEnd();
+						throw new Exception(String.Format("7-Zip failed with exit code {0}: {1}", process.ExitCode , error));
+					}
+				}
+
+				// Read the extracted ""
+				string resourceFilePath = Path.Combine(tempDir, resourceFilename);
+				if (!File.Exists(resourceFilePath))
+					throw new FileNotFoundException(String.Format("file {0} not found after extraction: {1}\n{2} {3}", resourceFilename, resourceFilePath, processStartInfo.FileName, processStartInfo.Arguments));
+				string payload = File.ReadAllText(resourceFilePath, Encoding.UTF8);
+        
+		        var parts = payload.Split('\0');
+		
+		        foreach (var p in parts) {
+		            if (p.EndsWith(".hhc", StringComparison.OrdinalIgnoreCase))
+		                result = p.Replace("\\", "/");
+		        }
+
+
+			} finally {
+				// Clean up temp directory
+				try { Directory.Delete(tempDir, true); } catch { /* ignore */ }
+			}
+
+			return result;
+		}
+
 		public static List<string> urls_7zip(string filePath) {
 			var urls = new List<string>();
 
@@ -494,9 +548,12 @@ namespace Utils {
 
 				// Read the extracted toc.hhc
 				string tocFilePath = Path.Combine(tempDir, tocFilename);
-				if (!File.Exists(tocFilePath))
-					throw new FileNotFoundException(String.Format("table of contents {0} not found after extraction: {1}\n{2} {3}", tocFilename, tocFilePath, processStartInfo.FileName , processStartInfo.Arguments));
+				// NOTE: acidentally removing the following line
+				// leads to compiler error:
+				// Embedded statement cannot be a declaration or labeled statement (CS1023)
 
+				if (!File.Exists(tocFilePath))
+                   throw new FileNotFoundException(String.Format("table of contents {0} not found after extraction: {1}\n{2} {3}", tocFilename, tocFilePath, processStartInfo.FileName , processStartInfo.Arguments));					
 				string payload = File.ReadAllText(tocFilePath, Encoding.UTF8);
 				result = parseToc(payload);
 
