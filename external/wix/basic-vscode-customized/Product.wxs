@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="VSCode Config Package" Language="1033" Manufacturer="MyCompany" Version="1.0.0.0" UpgradeCode="f77000f3-fe50-49b9-a36b-3c01e638f226">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine"/>
+    <Media Id="1" Cabinet="data1.cab" EmbedCab="yes"/>
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER"/>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="VSCodeConfig">
+          <!-- VS Code installer -->
+          <Component Id="VSCodeInstallerEXE" Guid="3215509e-163e-46a7-b93b-31a1020d4804">
+            <File Id="VSCodeInstallerFile" Source="Files\vscode-installer.exe" KeyPath="yes"/>
+          </Component>
+          <!-- VSIX -->
+          <Component Id="VSIXComponent" Guid="c5c463b8-a775-41dd-8b5a-372ec4aa3997">
+            <File Id="VSIXFile" Source="Files\CodeRunner.vsix" KeyPath="yes"/>
+          </Component>
+        </Directory>
+      </Directory>
+      <!-- user config -->
+      <Directory Id="AppDataFolder">
+        <Directory Id="CodeDir" Name="Code">
+          <Directory Id="CodeUserDir" Name="User">
+            <Component Id="VSCodeSettingsComponent" Guid="e21c9816-0098-43eb-b58f-613aaf869bdf">
+              <File Id="SettingsFile" Source="Files\settings.json" KeyPath="yes"/>
+              <File Id="KeybindingsFile" Source="Files\keybindings.json"/>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+    <Feature Id="MainFeature" Title="VS Code Configuration" Level="1">
+      <ComponentRef Id="VSCodeInstallerEXE"/>
+      <ComponentRef Id="VSIXComponent"/>
+      <ComponentRef Id="VSCodeSettingsComponent"/>
+    </Feature>
+    <!-- Install VS Code silently -->
+    <CustomAction Id="RunVSCodeInstaller" FileKey="VSCodeInstallerFile" ExeCommand="/VERYSILENT /MERGETASKS=!runcode" Execute="deferred" Impersonate="no" Return="check"/>
+    <!-- Install extension: code.exe must exist after VSCodeInstaller -->
+    <CustomAction Id="InstallVSIX" Directory="INSTALLFOLDER" ExeCommand="&quot;[ProgramFilesFolder]Microsoft VS Code\bin\code.exe&quot; --install-extension &quot;[INSTALLFOLDER]\myextension.vsix&quot; --force" Execute="deferred" Impersonate="no" Return="check"/>
+    <InstallExecuteSequence>
+      <Custom Action="RunVSCodeInstaller" After="InstallFiles">
+        NOT Installed
+      </Custom>
+      <!-- VSIX must be installed AFTER VS Code is installed -->
+      <Custom Action="InstallVSIX" After="RunVSCodeInstaller">
+        NOT Installed
+      </Custom>
+    </InstallExecuteSequence>
+  </Product>
+</Wix>
