@@ -46,7 +46,7 @@ cmd_hh_display_search.htm
 cmd_hh_display_text_popup.htm
 cmd_hh_display_toc.htm
 
- 			              ".Split(new[] { Environment.NewLine },
+ 			              ".Replace("\n", Environment.NewLine).Split(new[] { Environment.NewLine },
 				StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)).ToList());
 			try {
 				var result = Chm.extract_7zip(file, files);
@@ -85,7 +85,7 @@ cmd_hh_safe_display_topic.htm
 cmd_hh_set_win_type.htm
 cmd_hh_sync.htm
 
- 			              ".Split(new[] { Environment.NewLine },
+ 			              ".Replace("\n", Environment.NewLine).Split(new[] { Environment.NewLine },
 				StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)).ToList());
 			try {
 				var result = Chm.extract_7zip(file, files);

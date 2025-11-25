@@ -36,8 +36,9 @@ lastBrowseDir=
 
 		[SetUp]
 		public void SetUp() {
-			stringReader = new StringReader(data);
-			iniFileReader = new IniFileReader(new MemoryStream(Encoding.UTF8.GetBytes(data)), Encoding.UTF8);
+			// NOTE: ReplaceLineEndings(Environment.NewLine) is recommended for .NET 5+
+			stringReader = new StringReader(data.Replace("\n", Environment.NewLine));
+			iniFileReader = new IniFileReader(new MemoryStream(Encoding.UTF8.GetBytes(data.Replace("\n", Environment.NewLine))), Encoding.UTF8);
 			iniFile = IniFile.FromStream(iniFileReader);
 
 		}
