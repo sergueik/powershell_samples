@@ -38,99 +38,88 @@ namespace Utils {
 		private	const int CHUNK_SIZE = 4096;
 
 		public static string title(string filePath) {
-
-			object obj = null;
-			IITStorage iit = null;
-			IStorage storage = null;
-			IEnumSTATSTG enumStat = null;
-			IStream stream = null;
-
-			string result = null;
-
-			try {
-				obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
-				iit = (IITStorage)obj;
-
-				HRESULT hresult = iit.StgOpenStorage(filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
-
-				if (hresult != HRESULT.S_OK || storage == null) {
-					throw new Exception(String.Format("Failed to open CHM: {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
-				}
-
-				hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
-				if (hresult != HRESULT.S_OK || enumStat == null) {
-					throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
-				}
-
-				var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-				uint fetched = 0;
-
-				while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
-
-					if (stat[0].pwcsName == "#SYSTEM") {
-
-						HRESULT hresult2 = storage.OpenStream("#SYSTEM", IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
-
-						if (hresult2 != HRESULT.S_OK || stream == null) {
-							throw new Exception(String.Format("Failed to open #SYSTEM stream: 0x{0}\n{1}", hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
-						}
-
-						// first skip 4-byte header
-						byte[] buf = new byte[4];
-						IntPtr pcb = Marshal.AllocCoTaskMem(4);
-						stream.Read(buf, 4, pcb);
-						Marshal.FreeCoTaskMem(pcb);
-
-						// now read segments until we find STGTY_ILOCKBYTES
-						while (true) {
-							buf = new byte[2];
-							pcb = Marshal.AllocCoTaskMem(4);
-							stream.Read(buf, 2, pcb);
-							int nRead = Marshal.ReadInt32(pcb);
-							Marshal.FreeCoTaskMem(pcb);
-
-							if (nRead == 0)
-								break;
-
-							int typeCode = buf[0];
-
-							// length prefix
-							buf = new byte[2];
-							stream.Read(buf, 2, IntPtr.Zero);
-
-							int len = buf[0];
-							if (len <= 0)
-								continue;
-
-							byte[] data = new byte[len];
-							stream.Read(data, len, IntPtr.Zero);
-
-							if (typeCode == (int)STGTY.STGTY_ILOCKBYTES) {
-								IntPtr ptr = Marshal.AllocHGlobal(len);
-								Marshal.Copy(data, 0, ptr, len);
-								result = Marshal.PtrToStringAnsi(ptr);
-								Marshal.FreeHGlobal(ptr);
-								break;
-							}
-						}
-						break; // we are done with #SYSTEM
-					}
-				}
-
-			} finally {
-				if (stream != null)
-					Marshal.ReleaseComObject(stream);
-				if (enumStat != null)
-					Marshal.ReleaseComObject(enumStat);
-				if (storage != null)
-					Marshal.ReleaseComObject(storage);
-				if (iit != null)
-					Marshal.ReleaseComObject(iit);
-				if (obj != null)
-					Marshal.ReleaseComObject(obj);
-			}
-
-			return result;
+		    object obj = null;
+		    IITStorage iit = null;
+		    IStorage storage = null;
+		    IEnumSTATSTG enumStat = null;
+		    IStream stream = null;
+		    string result = null;
+		
+		    try {
+		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
+		        iit = (IITStorage)obj;
+		
+		        HRESULT hresult = iit.StgOpenStorage(filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
+		        if (hresult != HRESULT.S_OK || storage == null)
+							throw new Exception(String.Format("Failed to open CHM: {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
+		
+		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+		        if (hresult != HRESULT.S_OK || enumStat == null)
+		 					throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+		
+		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+		        uint fetched;
+		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+		            string name = stat[0].pwcsName;
+		            if (string.Equals(name, "#SYSTEM", StringComparison.OrdinalIgnoreCase)) {
+		                hresult = storage.OpenStream("#SYSTEM", IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
+		                if (hresult != HRESULT.S_OK || stream == null)
+		                	throw new Exception(String.Format("Failed to open #SYSTEM stream: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+		
+		
+		                // Read entire #SYSTEM into bytes
+		                byte[] systemData = devour(stream);
+		
+		                // Parse #SYSTEM: the layout is a sequence of records; we look for entries with type STGTY_ILOCKBYTES (value 3)
+		                // The exact layout depends on the CHM; we'll scan bytes for (type, length, data) pairs.
+		                // This code assumes the pattern you used: one-byte type, one-byte reserved, 2-byte length (or similar).
+		                // We'll implement a conservative parser that looks for ASCII NUL-terminated strings in the data blocks.
+		
+		                using (var ms = new MemoryStream(systemData)) {
+		                    var br = new BinaryReader(ms);
+		                    // Skip header (you previously skipped 4 bytes)
+		                    if (ms.Length >= 4) br.ReadBytes(4);
+		
+		                    while (ms.Position < ms.Length) {
+		                        // read type (1 byte)
+		                        int typeCode = -1;
+		                        try { typeCode = br.ReadByte(); } catch { break; }
+		                        // read next byte (often reserved)
+		                        if (ms.Position >= ms.Length) break;
+		                        br.ReadByte();
+		
+		                        // Read 2-byte length (unsigned short little-endian)
+		                        if (ms.Position + 2 > ms.Length) break;
+		                        ushort len = br.ReadUInt16();
+		
+		                        if (len == 0) continue;
+		                        if (ms.Position + len > ms.Length) break;
+		
+		                        byte[] data = br.ReadBytes(len);
+		
+		                        if (typeCode == (int)STGTY.STGTY_ILOCKBYTES) {
+		                            // the payload often contains a zero-terminated ANSI string path/name
+		                            // Use ASCII/Default encoding
+		                            int z = Array.IndexOf<byte>(data, 0);
+		                            if (z < 0) z = data.Length;
+		                            result = Encoding.Default.GetString(data, 0, z);
+		                            break;
+		                        }
+		                    }
+		                }
+		
+		                break; // done after #SYSTEM
+		            }
+		        }
+		    } finally {
+		        if (stream != null) Marshal.ReleaseComObject(stream);
+		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+		        if (storage != null) Marshal.ReleaseComObject(storage);
+		        if (iit != null) Marshal.ReleaseComObject(iit);
+		        if (obj != null) Marshal.ReleaseComObject(obj);
+		    }
+		
+		    return result;
 		}
 
 		public static List<string> urls_structured(string filePath) {
