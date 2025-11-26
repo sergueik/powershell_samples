@@ -12,10 +12,57 @@ e.g.
 
 Latest releases (64 only) can be found in `https://code.visualstudio.com/Download`
 
-Extensons are on [visualstidio mrketplae](https://marketplace.visualstudio.com/)
+Extensions are available on 
+[visual Studio Code Extension Marketplace](https://marketplace.visualstudio.com/VSCode)
+which is hosted on [Visual Stidio Marketplace](https://marketplace.visualstudio.com/)
+The [document](https://code.visualstudio.com/docs/configure/extensions/extension-marketplace)
+explains how to find the extension of interest.
 
+
+In particular, [Zowe  Explorer](https://marketplace.visualstudio.com/items?itemName=Zowe.vscode-extension-for-zowe)
+extension is used for testing the preconfigured installer 
 For testing will install `https://marketplace.visualstudio.com/items?itemName=formulahendry.CodeRunner`
-it is glorified zip file with binaries:
+it is glorified zip file with pure Javascript:
+```text
+------------------------
+extension.vsixmanifest
+extension\CHANGELOG.md
+extension\out\src\main.extension.js
+extension\out\src\runtime.extension.js
+extension\out\src\vendors.extension.js
+extension\package.json
+extension\README.md
+extension\resources\zowe-icon-color.png
+extension\resources\zowe.svg
+extension\src\webviews\dist\ag-grid-react\ag-grid-react.js
+extension\src\webviews\dist\browser\browser.js
+extension\src\webviews\dist\certificate-wizard\certificate-wizard.js
+extension\src\webviews\dist\certificate-wizard\index.html
+extension\src\webviews\dist\codicons\codicon.css
+extension\src\webviews\dist\codicons\codicon.ttf
+extension\src\webviews\dist\edit-attributes\edit-attributes.js
+extension\src\webviews\dist\edit-attributes\index.html
+extension\src\webviews\dist\edit-history\edit-history.js
+extension\src\webviews\dist\edit-history\index.html
+extension\src\webviews\dist\index\index.js
+extension\src\webviews\dist\isEqual\isEqual.js
+extension\src\webviews\dist\PersistentVSCodeAPI\PersistentVSCodeAPI.js
+extension\src\webviews\dist\release-notes\index.html
+extension\src\webviews\dist\release-notes\release-notes.js
+extension\src\webviews\dist\resources\background-img.svg
+extension\src\webviews\dist\resources\release-notes.md
+extension\src\webviews\dist\style\style.css
+extension\src\webviews\dist\table-view\index.html
+extension\src\webviews\dist\table-view\table-view.js
+extension\src\webviews\dist\troubleshoot-error\index.html
+extension\src\webviews\dist\troubleshoot-error\troubleshoot-error.js
+extension\src\webviews\dist\utils\utils.js
+extension\src\webviews\dist\zos-console\index.html
+extension\src\webviews\dist\zos-console\zos-console.js
+```
+
+NOTE: the classic Visual Studio extensions e.g. [Code Runner](https://marketplace.visualstudio.com/items?itemName=DanielAtherton.vs-code-coderunner)
+will likely contain native binaries:
 ```
    Date      Time    Attr         Size   Compressed  Name
 ------------------- ----- ------------ ------------  ------------------------
@@ -30,7 +77,12 @@ it is glorified zip file with binaries:
 2021-08-19 21:58:12 .....          923          435  catalog.json
 ------------------- ----- ------------ ------------  ------------------------
 ```
-ZOWE extensions can be found on `https://www.zowe.org/download`
+
+to download extension explore its documentation
+```sh
+VERSION=3.3.1
+curl -klo vscode-extension-for-zowe.vsix https://github.com/zowe/zowe-explorer-vscode/releases/download/v$VERSION/vscode-extension-for-zowe-$VERSION.vsix
+```
 ### 
 ```powerhsll
 [guid]::NewGuid()

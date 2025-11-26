@@ -38,7 +38,7 @@
     <DirectoryRef Id="VSIXFolder">
       <Component Id="VSIXComponent" Guid="9c2b2aa2-2a4b-4fa2-b59b-9d1a8a3d1234">
         <!-- Place VSIX in a temp subfolder so code.cmd can access it during install -->
-        <File Id="MyExtensionVsix" Source="Files\CodeRunner.vsix" KeyPath="yes" />
+        <File Id="MyExtensionVsix" Source="Files\vscode-extension-for-zowe.vsix" KeyPath="yes" />
       </Component>
     </DirectoryRef>
 
