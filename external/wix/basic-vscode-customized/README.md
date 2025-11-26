@@ -43,6 +43,9 @@ After install extension are copied to
 ```txt
 %LocalAppData%\Microsoft\VisualStudio\{version}\Extensions
 ```
+```sh
+msiexec /i "bin\VSCodeCustomInstaller.msi" /l*v "a.log"
+```
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 

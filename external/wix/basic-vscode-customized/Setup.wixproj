@@ -1,26 +1,30 @@
-<?xml version="1.0"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
+<Project DefaultTargets="Build"
+         ToolsVersion="4.0"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <PropertyGroup>
-	  <!-- NOTE: 32 and 64 bit version of WIX existed. 
-	  -->
-	  <!-- NOTE: trailng slash in WixToolPath -->
-    <WixToolPath>C:\Program Files\WiX Toolset v3.11\bin\</WixToolPath>
-    <OutputName>MyVSCodeInstaller</OutputName>
-    <OutputType>Package</OutputType>
+    <!-- WiX Toolset path -->
+    <WixToolPath>C:\Program Files (x86)\WiX Toolset v3.11\bin\</WixToolPath>
+    <OutputName>VSCodeCustomInstaller</OutputName>
   </PropertyGroup>
+
+  <!-- WiX source files -->
   <ItemGroup>
-    <WixSource Include="Product.wxs"/>
+    <WixSource Include="Product.wxs" />
   </ItemGroup>
+
+  <!-- Compile -->
   <Target Name="Compile">
-    <MakeDir Directories="obj"/>
-    <!--
-    <Exec Command="&quot;$(WixToolPath)candle.exe&quot; -nologo -out obj\ @(WixSource-&gt;'%(Filename).wxs', ' ') @(WixSource)"/>
-    --> 
-    <Exec Command="&quot;$(WixToolPath)candle.exe&quot; -nologo -out obj\ @(WixSource)"/>
+    <MakeDir Directories="obj" />
+    <Exec Command="&quot;$(WixToolPath)candle.exe&quot; -nologo -out obj\@(WixSource->'%(Filename).wixobj', ' ') @(WixSource)" />
   </Target>
+
+  <!-- Link -->
   <Target Name="Link" DependsOnTargets="Compile">
-    <MakeDir Directories="bin"/>
-    <Exec Command="&quot;$(WixToolPath)light.exe&quot; -nologo -ext WixUIExtension -out bin\$(OutputName).msi obj\*.wixobj"/>
+    <MakeDir Directories="bin" />
+    <Exec Command="&quot;$(WixToolPath)light.exe&quot; -nologo -ext WixUIExtension -out bin\$(OutputName).msi obj\*.wixobj" />
   </Target>
-  <Target Name="Build" DependsOnTargets="Compile;Link"/>
+
+  <Target Name="Build" DependsOnTargets="Compile;Link" />
 </Project>
+
