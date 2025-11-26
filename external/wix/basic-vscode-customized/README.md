@@ -322,7 +322,19 @@ Cons: Cannot elevate. Fails if VS Code is not yet installed or paths are wrong.
 For your scenario, Option A is more reliable, especially since VS Code may be installed in the user’s %LOCALAPPDATA% and MSI can’t guarantee the user environment during deferred execution.
 
 * Skip code.cmd in MSI entirely
+* wrap the VSIX install in a batch file or PowerShell script that waits until code.cmd exists:
+```cmd
+@echo off
+set pathToCode="%LocalAppData%\Microsoft VS Code\bin\code.cmd"
+set pathToVSIX="%~dp0\vscode-extension-for-zowe.vsix"
 
+:wait
+if not exist %pathToCode% (
+    timeout /t 2
+    goto wait
+)
+%pathToCode% --install-extension %pathToVSIX% --force
+```
 ### Docker 
 
 #### Run [VS Code Server]() in the browser

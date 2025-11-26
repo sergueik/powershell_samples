@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*" Name="VSCode Custom Installer" Language="1033" Version="1.0.0.0"
            Manufacturer="MyCompany" UpgradeCode="4f63a60c-8958-4990-9cad-af6357b8da8c">
-    
+
     <!-- Per-user MSI -->
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
     <MediaTemplate />
@@ -77,12 +77,12 @@
                   Impersonate="no"
                   Return="check" />
 
-    <CustomAction Id="InstallVSIX"
-                  Directory="VSIXFolder"
-                  ExeCommand='"[LocalAppDataFolder]Microsoft VS Code\bin\code.cmd" --install-extension "[#MyExtensionVsix]" --force'
-                  Execute="deferred"
-                  Impersonate="no"
-                  Return="check" />
+<CustomAction Id="InstallVSIX"
+              Directory="VSCodeBinDir"
+              ExeCommand='"[LocalAppDataFolder]Microsoft VS Code\bin\code.cmd" --install-extension "[#MyExtensionVsix]" --force'
+              Execute="deferred"
+              Impersonate="yes"
+              Return="check" />
 
     <InstallExecuteSequence>
       <Custom Action="RunVSCodeInstaller" After="InstallFiles">NOT Installed</Custom>
