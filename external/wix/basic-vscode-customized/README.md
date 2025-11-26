@@ -1,8 +1,13 @@
 ### Info
 
-This directory contains the setup project of a basic Windows tray app with deskt
-op shortcut using the examples:
+This directory contains the setup project of a [Visual Studio Code]() installer:
+
+
 ### Note
+MSI files are essentially stripped down SQL Server data bases stored in COM/OLE [structured storage files]()
+Due to supported database referential integrity even the minor changes in install workflow cascade 
+through dozen of tables and make it difficult to see what  has changed even to a trained eye.
+WiX is a XML storage format of MSI and also the first project open sourced by Microsoft in 2004.  
 
 Visual Studio Code no longer officially supports Windows 32-bit versions. Support for Windows 32-bit VS Code ended with the October 2023 (version 1.84) release.
 If a 32-bit system is being used, it is recommended to update to a 64-bit version of Windows to run the latest versions of Visual Studio Code.
@@ -11,18 +16,21 @@ e.g.
 `https://www.filepuma.com/download/visual_studio_code_32bit_1.43.2-25054/download/`
 
 Latest releases (64 only) can be found in `https://code.visualstudio.com/Download`
+VS Code installer supports silent installation toggled with command line options
+`SILENT` ,`VERYSILENT`, `NORESTART`, `/MERGETASKS=!addcontextmenufiles,addcontextmenufolders,runcode` etc.
+
+From MSI point of view User and System installs are very different in the impersonation, interactivity and directory management.  
 
 Extensions are available on 
 [visual Studio Code Extension Marketplace](https://marketplace.visualstudio.com/VSCode)
-which is hosted on [Visual Stidio Marketplace](https://marketplace.visualstudio.com/)
+which is hosted on [Visual Studio Marketplace](https://marketplace.visualstudio.com/)
 The [document](https://code.visualstudio.com/docs/configure/extensions/extension-marketplace)
 explains how to find the extension of interest.
 
 
-In particular, [Zowe  Explorer](https://marketplace.visualstudio.com/items?itemName=Zowe.vscode-extension-for-zowe)
+In particular, [Zowe Explorer](https://marketplace.visualstudio.com/items?itemName=Zowe.vscode-extension-for-zowe)
 extension is used for testing the preconfigured installer 
-For testing will install `https://marketplace.visualstudio.com/items?itemName=formulahendry.CodeRunner`
-it is glorified zip file with pure Javascript:
+VS Code extension is glorified zip file with pure Javascript:
 ```text
 ------------------------
 extension.vsixmanifest
@@ -81,142 +89,180 @@ will likely contain native binaries:
 to download extension explore its documentation
 ```sh
 VERSION=3.3.1
-curl -klo vscode-extension-for-zowe.vsix https://github.com/zowe/zowe-explorer-vscode/releases/download/v$VERSION/vscode-extension-for-zowe-$VERSION.vsix
-```
-### 
-```powerhsll
-[guid]::NewGuid()
+curl -kLO https://github.com/zowe/zowe-explorer-vscode/releases/download/v$VERSION/vscode-extension-for-zowe-$VERSION.vsix
+mv vscode-extension-for-zowe-$VERSION.vsix Files/vscode-extension-for-zowe.vsix 
 ```
 
+the Visual Studio Code installer appears to be Inno Setup.
+
+```powershell
+.\vscode-installer.exe %-- /SILENT /VERYSILENT /NORESTART /MERGETASKS=!runcode
+```
+
+![MSI error running Visual Studio Code Installer](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/appwiz.png)
+
+
+NOTE: the `MERGETASKS` argument do not seem to combine, e.g.
+
+```text
+/MERGETASKS=!addcontextmenufiles,addcontextmenufolders,runcode
+```
+does not really suppress install from launching __VS Code__ at the end
+```cmd
+vscode-installer.exe %/SILENT /VERYSILENT /NORESTART /MERGETASKS=!runcode
+```
+
+### Building MSI
+
+* update `*` `GUID` attributes if necessary
+```powershell
+[guid]::NewGuid()
+```
 ```powershell
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe Setup.wixproj
 ```
-After install extension are copied to
-```txt
-%LocalAppData%\Microsoft\VisualStudio\{version}\Extensions
-```
-```cmd
+### Install
+
+```powershell
 msiexec.exe  /l*v "install.log" /i bin\VSCodeCustomInstaller.msi
 ```
+```
+![MSI progress](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/msi_progess.png)
 
-![MSI fatal error](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/msi_error.png)
-```txt
-Property(S): VSCodeInstallDir = C:\Program Files\Microsoft VS Code\
-Property(S): VSIXFolder = C:\Users\sergueik\AppData\Local\Temp\VSIX\
-Property(S): CodeConfigDir = C:\Users\sergueik\AppData\Roaming\Code\User\
-Property(S): CodeUserDir = C:\Users\sergueik\AppData\Roaming\Code\
-Property(S): VSCodeBinDir = C:\Program Files\Microsoft VS Code\bin\
-Property(S): ProgramFilesFolder = C:\Program Files\
-Property(S): TARGETDIR = C:\
-Property(S): AppDataFolder = C:\Users\sergueik\AppData\Roaming\
-Property(S): TempFolder = C:\Users\sergueik\AppData\Local\Temp\
-Property(S): SourceDir = C:\developer\sergueik\powershell_samples\external\wix\basic-vscode-customized\bin\
-Property(S): ALLUSERS = 1
-Property(S): Manufacturer = MyCompany
-Property(S): ProductCode = {8793DC7C-EED2-480C-A4AE-FF16B94C413A}
-Property(S): ProductLanguage = 1033
-Property(S): ProductName = VSCode Custom Installer
-Property(S): ProductVersion = 1.0.0.0
-Property(S): UpgradeCode = {4F63A60C-8958-4990-9CAD-AF6357B8DA8C}
-Property(S): MsiLogFileLocation = C:\developer\sergueik\powershell_samples\external\wix\basic-vscode-customized\install.log
-Property(S): PackageCode = {5E2BA9D5-1762-4139-A59B-495F8DD03329}
-Property(S): ProductState = -1
-Property(S): PackagecodeChanging = 1
-Property(S): CURRENTDIRECTORY = C:\developer\sergueik\powershell_samples\external\wix\basic-vscode-customized
-Property(S): CLIENTUILEVEL = 0
-Property(S): CLIENTPROCESSID = 2224
-Property(S): USERNAME = sergueik
-Property(S): VersionDatabase = 200
-Property(S): ROOTDRIVE = C:\
-Property(S): EXECUTEACTION = INSTALL
-Property(S): ACTION = INSTALL
-Property(S): INSTALLLEVEL = 1
-Property(S): SECONDSEQUENCE = 1
-Property(S): ADDLOCAL = MainFeature
-Property(S): VersionMsi = 5.00
-Property(S): VersionNT = 601
-Property(S): WindowsBuild = 7601
-Property(S): ServicePackLevel = 1
-Property(S): ServicePackLevelMinor = 0
-Property(S): MsiNTProductType = 1
-Property(S): MsiNTSuitePersonal = 1
-Property(S): WindowsFolder = C:\Windows\
-Property(S): WindowsVolume = C:\
-Property(S): SystemFolder = C:\Windows\system32\
-Property(S): System16Folder = C:\Windows\system\
-Property(S): RemoteAdminTS = 1
-Property(S): CommonFilesFolder = C:\Program Files\Common Files\
-Property(S): FavoritesFolder = C:\Users\sergueik\Favorites\
-Property(S): NetHoodFolder = C:\Users\sergueik\AppData\Roaming\Microsoft\Windows\Network Shortcuts\
-Property(S): PersonalFolder = C:\Users\sergueik\Documents\
-Property(S): PrintHoodFolder = C:\Users\sergueik\AppData\Roaming\Microsoft\Windows\Printer Shortcuts\
-Property(S): RecentFolder = C:\Users\sergueik\AppData\Roaming\Microsoft\Windows\Recent\
-Property(S): SendToFolder = C:\Users\sergueik\AppData\Roaming\Microsoft\Windows\SendTo\
-Property(S): TemplateFolder = C:\ProgramData\Microsoft\Windows\Templates\
-Property(S): CommonAppDataFolder = C:\ProgramData\
-Property(S): LocalAppDataFolder = C:\Users\sergueik\AppData\Local\
-Property(S): MyPicturesFolder = C:\Users\sergueik\Pictures\
-Property(S): AdminToolsFolder = C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\
-Property(S): StartupFolder = C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\
-Property(S): ProgramMenuFolder = C:\ProgramData\Microsoft\Windows\Start Menu\Programs\
-Property(S): StartMenuFolder = C:\ProgramData\Microsoft\Windows\Start Menu\
-Property(S): DesktopFolder = C:\Users\Public\Desktop\
-Property(S): FontsFolder = C:\Windows\Fonts\
-Property(S): GPTSupport = 1
-Property(S): OLEAdvtSupport = 1
-Property(S): ShellAdvtSupport = 1
-Property(S): Intel = 6
-Property(S): PhysicalMemory = 3584
-Property(S): VirtualMemory = 3042
-Property(S): LogonUser = sergueik
-Property(S): UserSID = S-1-5-21-440999728-2294759910-2183037890-1000
-Property(S): UserLanguageID = 1033
-Property(S): ComputerName = SERGUEIK42
-Property(S): SystemLanguageID = 1033
-Property(S): ScreenX = 1024
-Property(S): ScreenY = 768
-Property(S): CaptionHeight = 22
-Property(S): BorderTop = 1
-Property(S): BorderSide = 1
-Property(S): TextHeight = 16
-Property(S): TextInternalLeading = 3
-Property(S): ColorBits = 32
-Property(S): TTCSupport = 1
-Property(S): Time = 5:13:14
-Property(S): Date = 11/26/2025
-Property(S): MsiNetAssemblySupport = 4.8.3761.0
-Property(S): MsiWin32AssemblySupport = 6.1.7601.17514
-Property(S): RedirectedDllSupport = 2
-Property(S): AdminUser = 1
-Property(S): MsiRunningElevated = 1
-Property(S): Privileged = 1
-Property(S): DATABASE = C:\Windows\Installer\172de6.msi
-Property(S): OriginalDatabase = C:\developer\sergueik\powershell_samples\external\wix\basic-vscode-customized\bin\VSCodeCustomInstaller.msi
-Property(S): UILevel = 5
-Property(S): Preselected = 1
-Property(S): CostingComplete = 1
-Property(S): OutOfDiskSpace = 0
-Property(S): OutOfNoRbDiskSpace = 0
-Property(S): PrimaryVolumeSpaceAvailable = 0
-Property(S): PrimaryVolumeSpaceRequired = 0
-Property(S): PrimaryVolumeSpaceRemaining = 0
-Property(S): SOURCEDIR = C:\developer\sergueik\powershell_samples\external\wix\basic-vscode-customized\bin\
-Property(S): SourcedirProduct = {8793DC7C-EED2-480C-A4AE-FF16B94C413A}
-Property(S): ProductToBeRegistered = 1
-MSI (s) (A4:E4) [05:13:14:171]: MainEngineThread is returning 1603
-MSI (s) (A4:70) [05:13:14:171]: RESTART MANAGER: Session closed.
-MSI (s) (A4:70) [05:13:14:171]: No System Restore sequence number for this installation.
-MSI (s) (A4:70) [05:13:14:171]: User policy value 'DisableRollback' is 0
-MSI (s) (A4:70) [05:13:14:171]: Machine policy value 'DisableRollback' is 0
-MSI (s) (A4:70) [05:13:14:171]: Incrementing counter to disable shutdown. Counter after increment: 0
-MSI (s) (A4:70) [05:13:14:171]: Note: 1: 1402 2: HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Installer\Rollback\Scripts 3: 2 
-MSI (s) (A4:70) [05:13:14:171]: Note: 1: 1402 2: HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Installer\Rollback\Scripts 3: 2 
+
+```text
 MSI (s) (A4:70) [05:13:14:171]: Decrementing counter to disable shutdown. If counter >= 0, shutdown will be denied.  Counter after decrement: -1
 MSI (s) (A4:70) [05:13:14:171]: Restoring environment variables
 MSI (c) (B0:B4) [05:13:14:171]: Back from server. Return value: 1603
 ```
+![MSI error running Visual Studio Code Installer](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/msi_error.png)
+
 MSI error `1603` is a generic "fatal error" that occurs during a Windows 
 Installer operation due to a variety of system-related issues, such as insufficient permissions, corrupted files, or a conflicting application
+
+The MSI  is running `vscode-installer.exe` in the background:
+```cmd
+/VERYSILENT /NORESTART /MERGETASKS=!runcode /LOG="[TempFolder]vscode_installer.log"
+```
+* read the `vscode_installer.log`:
+```cmd
+
+vi $TEMP/vscode_installer.log
+```
+
+or extract all known errors from it:
+
+```sh
+LOG=$TEMP/vscode_installer.log
+
+tail -n 500 "$LOG" | grep -Ei 'error|fatal|abort|failed|cannot|denied|exit|rollback|warning'
+```
+```sh
+LOG=$TEMP/vscode_installer.log
+grep -Ein 'error|fatal|abort|failed|cannot|denied|exit|rollback' "$LOG"  | head -n 50
+```
+
+```powershell
+msiexec.exe  /l*vx "full.log" /i bin\VSCodeCustomInstaller.msi
+
+```
+```powershell
+get-content .\full.log | where-object {$_ -match '.*vscode-installer.exe.*'}
+```
+```txt
+MSI (s) (50:A8) [09:04:53:301]: Executing op: ComponentRegister(ComponentId={D53785A0-FD10-4C7B-81B6-6C19D1D5361B},KeyPath=C:\Program Files\Microsoft VS Code\vscode-installer.exe,State=3,,Disk=1,SharedDllRefCount=0,BinaryType=0)
+MSI (s) (50:A8) [09:04:53:332]: Executing op: FileCopy(SourceName=pbu6g6-n.exe|vscode-installer.exe,SourceCabKey=VSCodeSetupExe,DestName=vscode-installer.exe,Attributes=512,FileSize=57088272,PerTick=65536,,VerifyMedia=1,,,,,CheckCRC=0,Version=1.43.2.0,Language=0,InstallMode=58982400,,,,,,,)
+MSI (s) (50:A8) [09:04:53:332]: File: C:\Program Files\Microsoft VS Code\vscode-installer.exe;	To be installed;	Won't patch;	No existing file
+MSI (s) (50:A8) [09:04:53:410]: Executing op: CustomActionSchedule(Action=RunVSCodeInstaller,ActionType=3090,Source=C:\Program Files\Microsoft VS Code\vscode-installer.exe,Target=/VERYSILENT /NORESTART /MERGETASKS=!runcode /LOG="C:\Users\sergueik\AppData\Local\Temp\vscode_installer.log",)
+MSI (s) (50:A8) [09:05:02:098]: Executing op: FileRemove(,FileName=C:\Program Files\Microsoft VS Code\vscode-installer.exe,,)
+
+```
+
+alternatively
+
+```powershell
+get-content full.log -Encoding Unicode | Set-Content full-utf8.log -Encoding UTF8
+```
+or better 
+
+```powershell
+
+$bytes = [System.IO.File]::ReadAllBytes("full.log")
+$text = [System.Text.Encoding]::Unicode.GetString($bytes)
+[System.IO.File]::WriteAllText("full-utf8.log", $text, [System.Text.Encoding]::UTF8)
+
+```
+```sh
+LOG=full-utf8.log
+grep -B 10 -A 10 "vscode-installer.exe" $LOG 
+```
+or
+
+```sh
+LOG=full-utf8.log
+grep -n "vscode-installer.exe"  $LOG
+
+sed -n "$((line-40)),$((line+40))p" full-msi.log
+```
+#### Root Cause
+
+You are trying to run a **per-user Inno Setup installer** inside an MSI in a **deferred, SYSTEM-context custom action**.
+
+This cannot work because:
+
+- SYSTEM has **no valid user profile**
+- Inno Setup requires:
+  - `%LOCALAPPDATA%`
+  - `%USERPROFILE%`
+	
+- Access to **shell folders**  
+- Access to **UI subsystem** (even in silent mode)  
+- MSI deferred custom actions **block GUI** and break elevation
+
+As a result, Inno Setup **exits immediately**, and the MSI sees a **non-zero exit code → 1603**.  
+
+This is why `vscode_installer.log` contains nothing abnormal — the installer never got far enough to fail.
+
+---
+
+Your current WiX XML uses `ProgramFilesFolder`.  
+Windows Installer blocks this in a **per-user context**.  
+
+VS Code itself installs into Program Files — but your MSI cannot.  
+**Mismatch → architecture break.**
+
+---
+
+❌ **2. Not deployable via GPO / SCCM**
+
+Per-user MSI cannot be distributed via:
+
+- Active Directory
+- Intune
+- SCCM
+- PDQ
+
+Enterprise deployment requires **per-machine installers**.
+
+---
+
+❌ **3. Elevation prompts become unpredictable**
+
+Per-user MSI:
+
+- Can prompt for elevation  
+- But **cannot guarantee elevation**  
+- Custom actions in **immediate mode** cannot elevate mid-install  
+
+→ This makes the install fragile.
+
+---
+
+❌ **4. EXE runs as the user, but rollback/logging/error codes are lost**
+
+Running EXEs in immediate mode is **explicitly discouraged by Microsoft**.  
+Rollback becomes unusable.
+
 
 ### Docker 
 
