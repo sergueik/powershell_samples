@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <!-- WiX Toolset path -->
-    <WixToolPath>C:\Program Files (x86)\WiX Toolset v3.11\bin\</WixToolPath>
+    <WixToolPath>C:\Program Files\WiX Toolset v3.11\bin\</WixToolPath>
     <OutputName>VSCodeCustomInstaller</OutputName>
   </PropertyGroup>
 
