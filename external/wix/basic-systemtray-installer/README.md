@@ -8,7 +8,7 @@ This directory contains the setup project of a basic Windows tray app with deskt
   * [chapter 5 recipe 2](https://resources.oreilly.com/examples/9781784393212/-/tree/master/chapter_5/code/recipe_2/xmlattributeinstaller/XmlAttributeInstaller) showing altering an XML application configuration file settig and attribute at install time
 
 
-The tray app is a replica of [System Tray Application skeleton project](https://github.com/sergueik/poweshell_samples/tree/master/external/csharp/form_systemtray_app)
+The tray app is a replica of [System Tray Application skeleton project](https://github.com/sergueik/powershell_samples/tree/master/external/csharp/form_systemtray_app)
 with few static files (`Manual.pdf`, `MainIcon.ico`  and applocation config deployed explicitly into the application dir.
 
 
@@ -95,7 +95,7 @@ IdentifyingNumber={015F2E2C-6B6B-4E18-B595-930635F04380}
 InstallDate=20230331
 InstallDate2=
 InstallLocation=
-InstallSource=C:\developer\sergueik\poweshell_samples\external\wix\basic-systemtray-installer\Setup\bin\Debug\
+InstallSource=C:\developer\sergueik\powershell_samples\external\wix\basic-systemtray-installer\Setup\bin\Debug\
 InstallState=5
 Language=1033
 LocalPackage=C:\Windows\Installer\17e20f3.msi
@@ -117,7 +117,7 @@ WordCount=10
 
 * Alternatively "Build" the "Solution" in  Visual Studio 2019 with Wix Toolset installed.
 
-![Visual Studio](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-visualstudio.png)
+![Visual Studio](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-visualstudio.png)
 
 * NOTE: will need to run
 ```powershell
@@ -149,18 +149,18 @@ d-----        4/25/2021   2:56 PM                C2EC438DA75EA01B28C669BDDA0E5B2
 
 The `Setup.msi` is produced. After installed, the product can be uninstalled and the App can be started from desktop shortcut and run as expected,
 
-![Application in the tray](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-application.png)
+![Application in the tray](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-application.png)
 
 the launcher is on Desktop:
 
-![Application desktop icon](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-desktop-icon.png)
+![Application desktop icon](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-desktop-icon.png)
 
-![Application New desktop icon](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-new-desktop-icon.png)
+![Application New desktop icon](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-new-desktop-icon.png)
 
 
 The application is installed under `LOCALAPPDATA` folder
 
-![Application directory](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-application-dir.png)
+![Application directory](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-application-dir.png)
 
 The install shows no UAC dialog and is possible for regular user to install or remove
 
@@ -168,19 +168,19 @@ The install shows no UAC dialog and is possible for regular user to install or r
 The launcher is on Desktop:
 
 
-![Application Launcher](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-launcher.png)
+![Application Launcher](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-launcher.png)
 
 ### Edit Configuration
 
 one can modify the application configuration file `config.ini` deployed to application directory, by using the "Config" menu. The tray application will wait for the editor to be closed:
 
 
-![modify the application configuration file](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-edit-config.png)
+![modify the application configuration file](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-edit-config.png)
 
 
 while the editor is running, the application will wait
 
-![waiting the application configuration file to be done](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-edit-config2.png)
+![waiting the application configuration file to be done](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-edit-config2.png)
 
 If configuration has been modified, it is still removed during uninstall (this is possibly a bug)
 
@@ -208,7 +208,7 @@ NOTE: if application was detected running, and reboot option was selected, the e
 
 When the executable was put (incorrectly) directly into `C:\Program Files`, there was this check resulting in warning dialog:
 
-![warning during removal](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-detect-app-running.png)
+![warning during removal](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-detect-app-running.png)
 
 * when the `Icon` element is used along with `Shortcut`,  the launcher is placed into a wrong directory (rolled back the breaking change):
 
@@ -219,12 +219,12 @@ c:\Program Files\System Tray Application.lnk
 
 the UAC dialog shows during the install and  there was occasionally a problem with uninstalling the app:
 
-![regression failure to uninstall](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-regression-problem-after-icon.png)
+![regression failure to uninstall](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-regression-problem-after-icon.png)
 
 There is no real check that app is running before uninstall.
 When the executable was put (incorrectly) directly into `C:\Program Files`, there was this check resulting in warning dialog:
 
-![task](https://github.com/sergueik/poweshell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-detect-app-running.png)
+![task](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-systemtray-installer/screenshots/capture-detect-app-running.png)
 
 The application executable is not removed during the uninstall (this is a bug)
 
