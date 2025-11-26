@@ -335,6 +335,29 @@ if not exist %pathToCode% (
 )
 %pathToCode% --install-extension %pathToVSIX% --force
 ```
+this helps debugging that
+batch is waiting for 
+```text
+Directory of C:\Users\sergueik\AppData\Local\Microsoft VS Code 
+
+vscode-installer.exe
+
+```
+but the `code.exe` is installed into 
+```
+Directory of c:\Users\sergueik\AppData\Local\Programs\Microsoft VS Code
+
+code.exe
+```
+
+![Visual Studio Code in Programs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/cmd.png)
+
+
+![Visual Studio Code in Programs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/start.png)
+
+
+![Visual Studio Code Local Install](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code_local.png)
+
 ### Docker 
 
 #### Run [VS Code Server]() in the browser

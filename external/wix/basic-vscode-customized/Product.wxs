@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*" Name="VSCode Custom Installer" Language="1033" Version="1.0.0.0"
            Manufacturer="MyCompany" UpgradeCode="4f63a60c-8958-4990-9cad-af6357b8da8c">
-
+    
     <!-- Per-user MSI -->
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
     <MediaTemplate />
@@ -32,21 +32,20 @@
     <!-- VS Code installer component -->
     <DirectoryRef Id="VSCodeInstallDir">
       <Component Id="VSCodeInstallerComponent" Guid="d53785a0-fd10-4c7b-81b6-6c19d1d5361b">
-        <!-- KeyPath must be registry for per-user ICE38 -->
         <RegistryValue Root="HKCU" Key="Software\MyCompany\VSCodeCustom"
                        Name="InstallerKey" Type="string" Value="1" KeyPath="yes" />
         <File Id="VSCodeSetupExe" Source="Files\vscode-installer.exe" />
 
-        <!-- Remove entire install tree on uninstall -->
         <RemoveFolder Id="RemoveVSCodeBinDir" Directory="VSCodeBinDir" On="uninstall" />
         <RemoveFolder Id="RemoveVSCodeInstallDir" Directory="VSCodeInstallDir" On="uninstall" />
       </Component>
     </DirectoryRef>
 
-    <!-- VSIX component -->
+    <!-- VSIX component with batch wrapper -->
     <DirectoryRef Id="VSIXFolder">
-      <Component Id="VSIXComponent" Guid="9c2b2aa2-2a4b-4fa2-b59b-9d1a8a3d1234">
-        <File Id="MyExtensionVsix" Source="Files\vscode-extension-for-zowe.vsix" KeyPath="yes" />
+      <Component Id="InstallVSIXComponent" Guid="9c2b2aa2-2a4b-4fa2-b59b-9d1a8a3d1234">
+        <File Id="InstallVSIXBat" Source="Files\InstallVSIX.bat" KeyPath="yes" />
+        <File Id="MyExtensionVsix" Source="Files\vscode-extension-for-zowe.vsix" />
       </Component>
     </DirectoryRef>
 
@@ -68,7 +67,6 @@
         <RemoveFolder Id="RemoveCodeUserDir" Directory="CodeUserDir" On="uninstall" />
       </Component>
     </DirectoryRef>
-
     <!-- CustomActions -->
     <CustomAction Id="RunVSCodeInstaller"
                   FileKey="VSCodeSetupExe"
@@ -77,12 +75,12 @@
                   Impersonate="no"
                   Return="check" />
 
-<CustomAction Id="InstallVSIX"
-              Directory="VSCodeBinDir"
-              ExeCommand='"[LocalAppDataFolder]Microsoft VS Code\bin\code.cmd" --install-extension "[#MyExtensionVsix]" --force'
-              Execute="deferred"
-              Impersonate="yes"
-              Return="check" />
+    <CustomAction Id="InstallVSIX"
+                  FileKey="InstallVSIXBat"
+									ExeCommand='cmd.exe /c "[#InstallVSIXBatFile]"'
+                  Execute="deferred"
+                  Impersonate="yes"
+                  Return="check" />
 
     <InstallExecuteSequence>
       <Custom Action="RunVSCodeInstaller" After="InstallFiles">NOT Installed</Custom>
@@ -92,7 +90,7 @@
     <!-- Feature tree -->
     <Feature Id="MainFeature" Title="VSCode Custom Installer" Level="1">
       <ComponentRef Id="VSCodeInstallerComponent" />
-      <ComponentRef Id="VSIXComponent" />
+      <ComponentRef Id="InstallVSIXComponent" />
       <ComponentRef Id="CodeConfigComponent" />
       <ComponentRef Id="CodeUserComponent" />
     </Feature>
