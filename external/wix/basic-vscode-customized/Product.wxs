@@ -2,56 +2,61 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*" Name="VSCode Custom Installer" Language="1033" Version="1.0.0.0"
            Manufacturer="MyCompany" UpgradeCode="4f63a60c-8958-4990-9cad-af6357b8da8c">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    
+    <!-- Per-user MSI -->
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
     <MediaTemplate />
 
     <!-- Directory structure -->
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
+      <!-- VS Code installation -->
+      <Directory Id="LocalAppDataFolder">
         <Directory Id="VSCodeInstallDir" Name="Microsoft VS Code">
           <Directory Id="VSCodeBinDir" Name="bin" />
         </Directory>
       </Directory>
 
+      <!-- User configuration -->
       <Directory Id="AppDataFolder">
         <Directory Id="CodeUserDir" Name="Code">
           <Directory Id="CodeConfigDir" Name="User" />
         </Directory>
       </Directory>
 
-      <!-- Temporary staging folder for VSIX (under Windows Temp during install) -->
+      <!-- Temporary staging folder for VSIX -->
       <Directory Id="TempFolder">
         <Directory Id="VSIXFolder" Name="VSIX" />
       </Directory>
     </Directory>
 
-    <!-- VS Code installer: stored as a File in the MSI (will be embedded)  -->
+    <!-- VS Code installer component -->
     <DirectoryRef Id="VSCodeInstallDir">
       <Component Id="VSCodeInstallerComponent" Guid="d53785a0-fd10-4c7b-81b6-6c19d1d5361b">
-        <!-- This embeds the installer in the MSI/CAB and copies to ProgramFiles path.
-             We will run it via FileKey custom action after files are installed. -->
-        <File Id="VSCodeSetupExe" Source="Files\vscode-installer.exe" KeyPath="yes" />
+        <!-- KeyPath must be registry for per-user ICE38 -->
+        <RegistryValue Root="HKCU" Key="Software\MyCompany\VSCodeCustom"
+                       Name="InstallerKey" Type="string" Value="1" KeyPath="yes" />
+        <File Id="VSCodeSetupExe" Source="Files\vscode-installer.exe" />
+
+        <!-- Remove entire install tree on uninstall -->
+        <RemoveFolder Id="RemoveVSCodeBinDir" Directory="VSCodeBinDir" On="uninstall" />
+        <RemoveFolder Id="RemoveVSCodeInstallDir" Directory="VSCodeInstallDir" On="uninstall" />
       </Component>
     </DirectoryRef>
 
-    <!-- VSIX file: staged under TempFolder\VSIX (component KeyPath is the file) -->
+    <!-- VSIX component -->
     <DirectoryRef Id="VSIXFolder">
       <Component Id="VSIXComponent" Guid="9c2b2aa2-2a4b-4fa2-b59b-9d1a8a3d1234">
-        <!-- Place VSIX in a temp subfolder so code.cmd can access it during install -->
         <File Id="MyExtensionVsix" Source="Files\vscode-extension-for-zowe.vsix" KeyPath="yes" />
       </Component>
     </DirectoryRef>
 
-    <!-- User settings: settings.json + keybindings.json in %APPDATA%\Code\User  -->
-    <!-- ICE38/ICE64 compliance: Registry KeyPath + RemoveFolder           -->
+    <!-- User settings component -->
     <DirectoryRef Id="CodeConfigDir">
       <Component Id="CodeConfigComponent" Guid="f485e380-3a0d-4b92-8dd6-e5e24205ff5d">
-        <!-- HKCU registry KeyPath required for components that write to user profile -->
         <RegistryValue Root="HKCU" Key="Software\MyCompany\VSCodeCustom"
                        Name="CodeConfigDirKey" Type="string" Value="1" KeyPath="yes" />
         <File Id="SettingsJson" Source="Files\settings.json" />
         <File Id="KeybindingsJson" Source="Files\keybindings.json" />
-        <!-- Remove the folder and contents on uninstall -->
         <RemoveFolder Id="RemoveCodeConfigDir" Directory="CodeConfigDir" On="uninstall" />
       </Component>
     </DirectoryRef>
@@ -65,11 +70,6 @@
     </DirectoryRef>
 
     <!-- CustomActions -->
-    <!-- 1) Run VS Code installer (FileKey)                             -->
-    <!-- 2) Install VSIX using code.cmd (Directory -> VSIXFolder)        -->
-    <!-- Both are deferred and run elevated (Impersonate="no") so they    -->
-    <!-- run with admin privileges for perMachine install.              -->
-    <!-- Run the embedded installer EXE (file reference) -->
     <CustomAction Id="RunVSCodeInstaller"
                   FileKey="VSCodeSetupExe"
                   ExeCommand="/VERYSILENT /NORESTART /MERGETASKS=!runcode /LOG=&quot;[TempFolder]vscode_installer.log&quot;"
@@ -77,22 +77,19 @@
                   Impersonate="no"
                   Return="check" />
 
-    <!-- Install the VSIX using code.cmd from ProgramFiles; we set Directory
-         to VSIXFolder so ExeCommand can reference the VSIX by name. -->
     <CustomAction Id="InstallVSIX"
                   Directory="VSIXFolder"
-                  ExeCommand='"[ProgramFilesFolder]Microsoft VS Code\bin\code.cmd" --install-extension "[#MyExtensionVsix]" --force'
+                  ExeCommand='"[LocalAppDataFolder]Microsoft VS Code\bin\code.cmd" --install-extension "[#MyExtensionVsix]" --force'
                   Execute="deferred"
                   Impersonate="no"
                   Return="check" />
 
-    <!-- Sequence: run after InstallFiles so files exist on disk            -->
     <InstallExecuteSequence>
       <Custom Action="RunVSCodeInstaller" After="InstallFiles">NOT Installed</Custom>
       <Custom Action="InstallVSIX" After="RunVSCodeInstaller">NOT Installed</Custom>
     </InstallExecuteSequence>
 
-    <!-- Feature tree: include every component here                        -->
+    <!-- Feature tree -->
     <Feature Id="MainFeature" Title="VSCode Custom Installer" Level="1">
       <ComponentRef Id="VSCodeInstallerComponent" />
       <ComponentRef Id="VSIXComponent" />

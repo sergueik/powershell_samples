@@ -264,6 +264,65 @@ Running EXEs in immediate mode is **explicitly discouraged by Microsoft**.
 Rollback becomes unusable.
 
 
+#### User Install Error
+
+```text
+             CustomActionSchedule(Action=InstallVSIX,ActionType=3106,Source=C:\Users\sergueik\AppData\Local\Temp\VSIX\,Target="C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force,)
+MSI (s) (88:68) [10:01:33:093]: Note: 1: 1721 2: InstallVSIX 3: C:\Users\sergueik\AppData\Local\Temp\VSIX\ 4: "C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force 
+MSI (s) (88:68) [10:01:33:093]: Note: 1: 2205 2:  3: Error 
+MSI (s) (88:68) [10:01:33:093]: Note: 1: 2228 2:  3: Error 4: SELECT `Message` FROM `Error` WHERE `Error` = 1721 
+MSI (c) (80:A0) [10:01:33:108]: Font created.  Charset: Req=0, Ret=0, Font: Req=MS Shell Dlg, Ret=MS Shell Dlg
+
+Error 1721. There is a problem with this Windows Installer package. A program required for this install to complete could not be run. Contact your support personnel or package vendor. Action: InstallVSIX, location: C:\Users\sergueik\AppData\Local\Temp\VSIX\, command: "C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force 
+MSI (s) (88:68) [10:01:38:358]: Note: 1: 2205 2:  3: Error 
+MSI (s) (88:68) [10:01:38:358]: Note: 1: 2228 2:  3: Error 4: SELECT `Message` FROM `Error` WHERE `Error` = 1709 
+MSI (s) (88:68) [10:01:38:358]: Product: VSCode Custom Installer -- Error 1721. There is a problem with this Windows Installer package. A program required for this install to complete could not be run. Contact your support personnel or package vendor. Action: InstallVSIX, location: C:\Users\sergueik\AppData\Local\Temp\VSIX\, command: "C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force 
+
+Action ended 10:01:38: InstallFinalize. Return value 3.
+```
+Explanation: Deferred Custom Actions run in SYSTEM context by default if Impersonate="no".
+
+Your current `<CustomAction>` uses:
+```text
+Execute="deferred" Impersonate="no"
+```
+
+This means code.cmd runs as SYSTEM, not the user.
+
+code.cmd expects a user profile to exist (%APPDATA%\Code), otherwise it fails.
+
+Error 1721 happens because `code.cmd` cannot find the user environment.
+
+Recommended approaches
+* Install VSIX after MSI finishes.Don’t run code.cmd inside MSI. Provide a post-install script (PowerShelatch) that the user can run:
+```
+$vsix = "$env:TEMP\VSIX\vscode-extension-for-zowe.vsix"
+$codecmd = "$env:LOCALAPPDATA\Microsoft VS Code\bin\code.cmd"
+& $codecmd --install-extension $vsix --force
+```
+
+This avoids MSI 1721 errors completely because it runs in the user context.
+
+* Immediate, impersonated custom action
+
+Change your action to:
+```
+<CustomAction Id="InstallVSIX"
+              Directory="VSIXFolder"
+              ExeCommand='"[LocalAppDataFolder]Microsoft VS Code\bin\code.cmd" --install-extension "[#MyExtensionVsix]" --force'
+              Execute="immediate"
+              Impersonate="yes"
+              Return="check" />
+```    
+
+Pros: Runs as the user.
+
+Cons: Cannot elevate. Fails if VS Code is not yet installed or paths are wrong.
+
+For your scenario, Option A is more reliable, especially since VS Code may be installed in the user’s %LOCALAPPDATA% and MSI can’t guarantee the user environment during deferred execution.
+
+* Skip code.cmd in MSI entirely
+
 ### Docker 
 
 #### Run [VS Code Server]() in the browser
