@@ -415,6 +415,7 @@ cert: false
 
 ![Visual Studio Code Login](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/login.png)
 
+![Visual Studio in the Browser](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code.png)
 
 #### Customizing
 
@@ -513,12 +514,54 @@ echo $?
 ```text
 0
 ```
-![Visual Studio in the Browser](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code.png)
+![Visual Studio with Extensions in the Browser](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code_with_extensions.png)
 
 
 #### Run [VS Code with X Server](https://github.com/pubkey/vscode-in-docker/blob/master/docker/Dockerfile) In Container
 
-WIP
+ALL modern __Windows 11__ versions include an X server, automatically, inside __WSL2__.
+
+Specifically:
+
+	* Windows 11 __21H2__
+	* Windows 11 __22H2__
+	* Windows 11 __23H2__
+	* Windows 11 __24H2__
+
+all of them include __Windows Subsystem for Linux GUI__ (__WSLg__)
+
+which bundles:
+
+ *  built-in __Wayland__ compositor
+ *  __XWayland__ (so __X11__ apps work)
+ * __PulseAudio__
+ * __RDP__ backend for efficient forwarding
+
+There is no need for __VcXsrv__ nor __Xming__, nor X410 on a __Windows 11__ host 
+with __WSL2__ / __WSLg__
+
+NOTE,cannot just
+
+```shs
+docker pull pubkey/vscode-in-docker
+```
+have to follow the steps described in `https://github.com/pubkey/vscode-in-docker/blob/master/README.md`, copied below 
+
+```sh
+git clone https://github.com/pubkey/vscode-in-docker.git vscode-in-docker
+cd vscode-in-docker
+mkdir ~/workspace
+sed -i "s|\"\"|\"/home/$(whoami)/workspace\"|" config.bash
+sudo bash run.bash |tee a.log
+```
+
+NOTE: you *have* to set `WORKSPACE` to something non-blank to prevent the error
+```txt
+docker: invalid spec: :/workspace: empty section between colons
+```
+
+![Visual Studio with Extensions on X Windows](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code_xserver.png)
+
 
 ### See Also
    * `ruanbekker/docker-vscode-server` [project](https://github.com/ruanbekker/docker-vscode-server)
