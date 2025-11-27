@@ -1,0 +1,20 @@
+digraph VSCode_Modes {
+    rankdir=LR;
+    node [shape=box, style=rounded];
+
+    HostVSCode [label="Host: VSCode Desktop\n(.deb/.rpm/msi/appimage)"];
+    ContainerX [label="Container: VSCode Desktop\n(X11)"];
+    Containerserver [label="Container: VSCode Server\n(headless)"];
+    X11Socket [label="X11 / Wayland / RDP"];
+    FSBind [label="Bind-mounted Filesystem\n(workspace)"];
+    User [label="User using GUI"];
+    Extensions [label="Extensions Host\n(Node / .vsix\n(platform-specific)"];
+
+    User -> HostVSCode [label="GUI"];
+    User -> ContainerX [label="X11/Wayland over host"];
+    HostVSCode -> FSBind [label="reads/writes"];
+    ContainerX -> FSBind [label="reads/writes"];
+    Containerserver -> FSBind [label="workspace access"];
+    HostVSCode -> Containerserver [label="RPC over WebSocket"];
+}
+

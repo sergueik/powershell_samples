@@ -1,0 +1,16 @@
+digraph LinuxHost_XContainer {
+    rankdir=LR;
+    node [shape=box, style=rounded];
+
+    Container [label="Docker Container\n(X11 app: VSCode, xterm, etc.)"];
+    XSocket [label="/tmp/.X11-unix/X0\n(shared UNIX socket)"];
+    XAuth [label="Xauthority\n(host → container)"];
+    XServer [label="Host Xorg Server"];
+    GPU [label="Host GPU / DRM / Mesa"];
+
+    Container -> XSocket [label="X11 protocol\n(write/read)"];
+    XSocket -> XServer [label="AF_UNIX socket"];
+    XServer -> GPU [label="render"];
+    XAuth -> XServer [label="auth cookie"];
+}
+

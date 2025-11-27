@@ -1,0 +1,14 @@
+digraph WSL2_X11 {
+    rankdir=LR;
+    node [shape=box, style=rounded];
+
+    Container [label="Docker Container\ninside WSL2"];
+    WSLNet [label="WSL2 Virtual Network\n(eth0, NAT)"];
+    XServerWin [label="Windows X Server\n(Xming / VcXsrv / GWSL)"];
+    GPU [label="Windows GPU\n(DXGI / WSLg path if optimized)"];
+
+    Container -> WSLNet [label="X11 TCP\n(DISPLAY=host_ip:0.0)"];
+    WSLNet -> XServerWin [label="TCP 6000"];
+    XServerWin -> GPU [label="DirectX"];
+}
+

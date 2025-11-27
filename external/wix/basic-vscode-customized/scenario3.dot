@@ -1,0 +1,18 @@
+digraph WSLg_Wayland {
+    rankdir=LR;
+    node [shape=box, style=rounded];
+
+    Container [label="Docker Container\n(X11 app)"];
+    XWayland [label="XWayland\n(inside WSLg)"];
+    Weston [label="WSLg Weston Compositor\n(Wayland)"];
+    RdpTransport [label="RDP Channel\n(Virtualized)"];
+    WinComp [label="Windows Compositor"];
+    GPU [label="GPU\n(DX12)"];
+
+    Container -> XWayland [label="X11 protocol"];
+    XWayland -> Weston [label="Wayland protocol"];
+    Weston -> RdpTransport [label="RDP GFX"];
+    RdpTransport -> WinComp [label="frame updates"];
+    WinComp -> GPU [label="render"];
+}
+

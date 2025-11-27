@@ -593,6 +593,178 @@ docker: invalid spec: :/workspace: empty section between colons
 
 ![Visual Studio with Extensions on X Windows](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code_xserver.png)
 
+### X11 Rendering Models Across Linux, WSL, and Containers
+
+This section summarizes how X11 applications—such as VS Code in a Docker container—reach the actual display in different environments. These scenarios differ significantly in networking, authentication, and rendering behavior.
+
+---
+
+#### 1. X11 on a Real Linux Host
+
+When running X11 applications in a Docker container on a native Linux system, the display path is entirely local and relies on UNIX domain sockets.
+
+##### How It Works
+
+1. **Host Xorg provides `/tmp/.X11-unix/X0`**
+   This is a UNIX socket exposed by the host display server.
+
+2. **Container bind-mounts the socket**
+   Example:
+   ```
+   -v /tmp/.X11-unix:/tmp/.X11-unix
+   ```
+
+3. **Container sets `DISPLAY=:0`**
+   The container now knows where to send X11 messages.
+
+4. **Host Xauthority cookie is shared or bypassed**
+   Usually done via:
+   - `xhost +local:` (insecure but convenient), or
+   - embedding `.Xauthority` into the container.
+
+5. **Rendering path is host-native**
+   - X11 protocol is transmitted over a local AF_UNIX socket.
+   - Xorg runs on the host.
+   - GPU acceleration uses host Mesa, DRM, and the host compositor.
+
+![X11 on a real Linux host](screenshots/scenario1.png)
+
+##### Characteristics
+
+- Fastest and lowest latency.
+- No TCP involved.
+- Authentication is simple but insecure with `xhost +local:`.
+- Works extremely reliably with Docker containers.
+
+
+---
+
+#### 2. X11 on WSL1 / WSL2 (Legacy X11 Using Windows X Servers)
+
+In WSL1/WSL2 (without WSLg), X11 only works through a **Windows-native X server** such as VcXsrv, Xming, GWSL, or X410.
+
+##### How It Works
+
+1. **Windows runs the X server**
+   The display server runs on Windows, not Linux.
+
+2. **WSL Linux apps connect over TCP**
+   - `DISPLAY=$(hostname).mshome.net:0.0`
+   - or `DISPLAY=172.29.xxx.xxx:0.0`
+   WSL2 uses a NAT’d virtual network, so X11 must go over TCP.
+
+3. **Container → WSL → Windows X server**
+   Docker inside WSL2 sends X11 messages through:
+   - the WSL virtual network,
+   - then to the Windows X server on port `6000`.
+
+4. **Rendering happens through Windows GDI/DirectX**
+   The X server translates X11 drawing calls into Windows graphics.
+
+![X11 on WSL with Windows X server](screenshots/scenario2.png)
+
+##### Characteristics
+
+- Higher latency due to TCP.
+- Possible rendering glitches (especially with Electron apps).
+- Requires firewall exceptions.
+- Slower than native Linux X11.
+
+
+
+---
+
+#### 3. WSLg (Windows 11) — Wayland/RDP Hybrid Path
+
+WSLg fundamentally changes how graphical apps are displayed.
+It **does not** rely on Windows X servers.
+
+##### How It Works
+
+1. **WSLg runs a Weston compositor inside WSL**
+   Weston provides the Wayland environment.
+
+2. **X11 apps run through XWayland**
+   - X11 → XWayland → Wayland
+
+3. **WSLg sends graphics to Windows through RDP GFX**
+   This is a special optimized RDP channel.
+
+4. **Windows renders via DirectX**
+   The Windows compositor handles final presentation.
+
+![WSLg Wayland/RDP architecture](screenshots/scenario3.png)
+
+##### Characteristics
+
+- Much smoother than TCP X11 forwarding.
+- Proper DPI scaling.
+- Full GPU acceleration.
+- No `/tmp/.X11-unix` is needed.
+
+
+
+---
+
+#### 4. VS Code Rendering Across Different Models
+
+VS Code can run in three different modes:
+
+##### 4.1 VS Code Desktop (Installed on Host)
+
+- Runs directly on host OS.
+- Uses native Xorg / Wayland / GDI/DirectX.
+- Best performance.
+
+##### 4.2 VS Code Desktop Inside a Docker Container (X11/Electron)
+
+- Electron runs in container.
+- X11 forwarded as in scenarios above.
+- Requires correct UID/GID for workspace bind mounts.
+
+##### 4.3 VS Code Server + Browser Mode
+
+- Headless VS Code server runs inside the container.
+- Browser UI runs on the host.
+- File operations occur inside container → extremely sensitive to UID/GID alignment.
+
+![VS Code execution models](screenshots/scenario4.png)
+
+
+---
+
+#### 5. Why UID/GID Alignment Matters
+
+When bind-mounting host directories:
+
+- The kernel checks **numeric** UID/GID only.
+- Names (`dev`, `ubuntu`) do not matter.
+- Example:
+
+| Host | Container | Result |
+|------|-----------|--------|
+| UID `1000` | UID `1000` | Works |
+| UID `1000` | UID `1001` | Permission denied |
+
+This causes:
+
+- VS Code extension install failures
+- Logback/Login4j unable to write logs
+- Permission errors in `/userdata`
+- Random failures depending on which user wrote the directory originally
+
+
+### Misc.
+
+```cmd
+for /F %. in  ('dir /b *.dot') do @"c:\Program Files\Graphviz\bin\dot.exe" -Tpng -oscreenshots\%~n..png %.
+```
+e.g.
+
+```cmd
+"c:\Program Files\Graphviz\bin\dot.exe" -Tpng -ox_display_variations.png x_display_variations.dot
+```
+NOTE: no space after `-o`, and `dot` file argument must be the last argument.
 
 ### See Also
    * `ruanbekker/docker-vscode-server` [project](https://github.com/ruanbekker/docker-vscode-server)
