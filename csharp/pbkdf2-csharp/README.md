@@ -608,6 +608,7 @@ need to use
 
   * navigate to `https://dotnet.microsoft.com/en-us/download/dotnet/6.0` to download the SDK archive, pick per Linux platform / CPU
 or directly to `https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.428-linux-x64-binaries`
+  * purge the possibly installed - it is prone to lack the `host/fxr`
 
 ![downloads](https://github.com/sergueik/powershell_samples/blob/master/csharp/pbkdf2-csharp/screenshots/downloads.png)
 
@@ -711,6 +712,8 @@ Build succeeded.
 dotnet add Test package NUnit --version 3.13.3
 dotnet add Test package NUnit3TestAdapter --version 4.3.1
 dotnet add Test package Microsoft.NET.Test.Sdk --version 17.8.3
+```
+```sh
 dotnet test Test
 ```
 ```text
