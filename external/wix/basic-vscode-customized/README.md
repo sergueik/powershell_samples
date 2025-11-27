@@ -498,10 +498,27 @@ NOTE: base image runs `code-server`, *not* __VS Code Desktop__.
 So the correct settings directory is `$HOME/.local/share/code-server/User` not  `$HOME/.config/Code/User`
 
 
-
+```sh
+mkdir workspace
+ls -ld workspace/
+```
+```text
+drwxr-xr-x 2 sergueik sergueik 4096 Nov 27 02:49 workspace/
+```
 
 ```sh
-docker run -d -p 8080:8080 vscode-customized
+docker run -u coder -d -p 8080:8080 -v $(pwd)/workspace:/home/coder/workspace:rw vscode-customized
+```
+```sh
+docker container ls
+```
+```text
+CONTAINER ID   IMAGE               COMMAND                  CREATED          STATUS                            PORTS                                         NAMES
+8d08cbe8da70   vscode-customized   "/usr/bin/entrypoint…"   4 seconds ago    Up 3 seconds (health: starting)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp   kind_mcclintock
+```
+```text
+CONTAINER ID   IMAGE               COMMAND                  CREATED          STATUS                      PORTS                                         NAMES
+8d08cbe8da70   vscode-customized   "/usr/bin/entrypoint…"   9 seconds ago    Up 9 seconds (healthy)      0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp   kind_mcclintock
 ```
 ```sh
 ID=$(docker ps --filter 'ancestor=vscode-customized' --format '{{.ID}}')
@@ -514,9 +531,23 @@ echo $?
 ```text
 0
 ```
+
+```sh
+docker exec -t $ID sh -c 'cat ~/.config/code-server/config.yaml'
+```
+```text
+bind-addr: 127.0.0.1:8080
+auth: password
+password: 91365534b1287d2e4e3acd73
+cert: false
+```
 ![Visual Studio with Extensions in the Browser](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code_with_extensions.png)
 
-
+```sh
+docker container rm -f $ID
+docker image rm vscode-customized
+docker system prune -f
+```
 #### Run [VS Code with X Server](https://github.com/pubkey/vscode-in-docker/blob/master/docker/Dockerfile) In Container
 
 ALL modern __Windows 11__ versions include an X server, automatically, inside __WSL2__.
