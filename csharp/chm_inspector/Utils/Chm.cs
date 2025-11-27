@@ -44,19 +44,19 @@ namespace Utils {
 		    IEnumSTATSTG enumStat = null;
 		    IStream stream = null;
 		    string result = null;
-		
+
 		    try {
 		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
 		        iit = (IITStorage)obj;
-		
+
 		        HRESULT hresult = iit.StgOpenStorage(filePath, null, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), IntPtr.Zero, 0, out storage);
 		        if (hresult != HRESULT.S_OK || storage == null)
 							throw new Exception(String.Format("Failed to open CHM: {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
-		
+
 		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
 		        if (hresult != HRESULT.S_OK || enumStat == null)
 		 					throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
-		
+
 		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
 		        uint fetched;
 		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
@@ -65,21 +65,21 @@ namespace Utils {
 		                hresult = storage.OpenStream("#SYSTEM", IntPtr.Zero, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ), 0, out stream);
 		                if (hresult != HRESULT.S_OK || stream == null)
 		                	throw new Exception(String.Format("Failed to open #SYSTEM stream: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
-		
-		
+
+
 		                // Read entire #SYSTEM into bytes
 		                byte[] systemData = devour(stream);
-		
+
 		                // Parse #SYSTEM: the layout is a sequence of records; we look for entries with type STGTY_ILOCKBYTES (value 3)
 		                // The exact layout depends on the CHM; we'll scan bytes for (type, length, data) pairs.
 		                // This code assumes the pattern you used: one-byte type, one-byte reserved, 2-byte length (or similar).
 		                // We'll implement a conservative parser that looks for ASCII NUL-terminated strings in the data blocks.
-		
+
 		                using (var ms = new MemoryStream(systemData)) {
 		                    var br = new BinaryReader(ms);
 		                    // Skip header (you previously skipped 4 bytes)
 		                    if (ms.Length >= 4) br.ReadBytes(4);
-		
+
 		                    while (ms.Position < ms.Length) {
 		                        // read type (1 byte)
 		                        int typeCode = -1;
@@ -87,16 +87,16 @@ namespace Utils {
 		                        // read next byte (often reserved)
 		                        if (ms.Position >= ms.Length) break;
 		                        br.ReadByte();
-		
+
 		                        // Read 2-byte length (unsigned short little-endian)
 		                        if (ms.Position + 2 > ms.Length) break;
 		                        ushort len = br.ReadUInt16();
-		
+
 		                        if (len == 0) continue;
 		                        if (ms.Position + len > ms.Length) break;
-		
+
 		                        byte[] data = br.ReadBytes(len);
-		
+
 		                        if (typeCode == (int)STGTY.STGTY_ILOCKBYTES) {
 		                            // the payload often contains a zero-terminated ANSI string path/name
 		                            // Use ASCII/Default encoding
@@ -107,7 +107,7 @@ namespace Utils {
 		                        }
 		                    }
 		                }
-		
+
 		                break; // done after #SYSTEM
 		            }
 		        }
@@ -118,7 +118,7 @@ namespace Utils {
 		        if (iit != null) Marshal.ReleaseComObject(iit);
 		        if (obj != null) Marshal.ReleaseComObject(obj);
 		    }
-		
+
 		    return result;
 		}
 
@@ -194,30 +194,30 @@ namespace Utils {
 		    IITStorage iit = null;
 		    IStorage storage = null;
 		    IStream stream = null;
-		
+
 		    try {
 		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
 		        iit = (IITStorage)obj;
-		
+
 		        HRESULT hresult = iit.StgOpenStorage(filePath, null,
 		            (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),
 		            IntPtr.Zero, 0, out storage);
-		
+
 		        if (hresult != HRESULT.S_OK || storage == null)
 		            return null;
-		
+
 		        hresult = storage.OpenStream("#URLSTR", IntPtr.Zero,
 		            (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),
 		            0, out stream);
-		
+
 		        if (hresult != HRESULT.S_OK || stream == null)
 		            return null;
-		
+
 		        var data = devour(stream);
-		
+
 		        var text = Encoding.Default.GetString(data);
 		        var parts = text.Split('\0');
-		
+
 		        foreach (var p in parts) {
 		            if (p.EndsWith(".hhc", StringComparison.OrdinalIgnoreCase))
 		                return p.Replace("\\", "/");
@@ -232,6 +232,17 @@ namespace Utils {
 		    return null;
 		}
 
+		private static IEnumerable<string> split_on_nulls(byte[] data) {
+		    string text = Encoding.Default.GetString(data);
+		    string[] parts = text.Split('\0');
+
+		    var result = new List<string>();
+		    foreach (string s in parts) {
+		        if (!string.IsNullOrWhiteSpace(s))
+		            result.Add(s.Trim());
+		    }
+		    return result;
+		}
 		private static byte[] devour(IStream stream) {
 			Log.Information("Starting devour");
 		    var ms = new MemoryStream();
@@ -241,14 +252,14 @@ namespace Utils {
 		        var buffer = new byte[CHUNK_SIZE];
 				// NOTE: do not be logging every iteration of the read loop
 				int loopCounter = 0;
-	
+
 		        while (true) {
 		            // Read returns HRESULT; number of bytes read is returned via bytesReadPtr
 		            stream.Read(buffer, buffer.Length, bytesReadPtr);
 		            int bytesRead = Marshal.ReadInt32(bytesReadPtr);
 		            if (bytesRead <= 0) break;
 		            ms.Write(buffer, 0, bytesRead);
-		            
+
                     loopCounter++;
 					if (loopCounter % 20 == 0){
 						long mem = GC.GetTotalMemory(false);
@@ -266,7 +277,7 @@ namespace Utils {
 		        if (bytesReadPtr != IntPtr.Zero) Marshal.FreeCoTaskMem(bytesReadPtr);
 		    }
 		}
-		
+
 		public static String tocfilename_7zip(string filePath) {
 			string result = null;
 			string resourceFilename = "#URLSTR";
@@ -305,9 +316,9 @@ namespace Utils {
 				if (!File.Exists(resourceFilePath))
 					throw new FileNotFoundException(String.Format("file {0} not found after extraction: {1}\n{2} {3}", resourceFilename, resourceFilePath, processStartInfo.FileName, processStartInfo.Arguments));
 				string payload = File.ReadAllText(resourceFilePath, Encoding.UTF8);
-        
+
 		        var parts = payload.Split('\0');
-		
+
 		        foreach (var p in parts) {
 		            if (p.EndsWith(".hhc", StringComparison.OrdinalIgnoreCase))
 		                result = p.Replace("\\", "/");

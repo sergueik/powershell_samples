@@ -14,7 +14,7 @@ Free tool like [7-Zip](https://www.7-zip.org) can unpack/extract CHM files (list
 
 * **Implemented**
   * Reading the title of the compiled help file and listing component HTML files via `StgOpenStorage` and `7z.exe` commands
-  * Loading the file list into a `DataGrid` for selection of files to extract   
+  * Loading the file list into a `DataGrid` for selection of files to extract
   * Reading the CHM *table of contents* (`toc.hhc' by default) and building a title–filename map. This is crucial for enterprise-grade help files containing  many thousands of documents
 
 
@@ -33,9 +33,9 @@ Free tool like [7-Zip](https://www.7-zip.org) can unpack/extract CHM files (list
 ### Out Of Memory Exception
 
 
-Earlier revision [f261436](https://github.com/sergueik/powershell_samples/commit/f261436579455ba52c05872e0a086287fb077b8e) of the server has been throwing exception during 
+Earlier revision [f261436](https://github.com/sergueik/powershell_samples/commit/f261436579455ba52c05872e0a086287fb077b8e) of the server has been throwing exception during
 
-extraction of data from Structured Storage, due to unsafe implementation of the method `toc_structured` 
+extraction of data from Structured Storage, due to unsafe implementation of the method `toc_structured`
 
 attempting to read an entire storage stream into memory without checking the number of bytes actually returned.
 
@@ -123,7 +123,7 @@ public static List<TocEntry> toc_structured(string filePath) {
 
   }
 ```
-Note: Although the MemoryStream appeared to grow without bounds, we cannot conclusively prove an actual global memory shortage occurred. 
+Note: Although the MemoryStream appeared to grow without bounds, we cannot conclusively prove an actual global memory shortage occurred.
 The failure is consistent with a *segmentation-related* allocation failure — meaning the runtime could not obtain a sufficiently large contiguous block of virtual memory — rather than true exhaustion of total system RAM.
 
 A more resilient approach achieved in the commit [37fa6dbfe](https://github.com/sergueik/powershell_samples/commit/37fa6dbfe44d94856ec0fa8c35aed558a10f01b6) involves:
@@ -188,7 +188,7 @@ Information about the topics covered in individual files is stored in the table 
 
 The table of content index (named by default `toc.hhc`) is a plain HTML file inside the CHM (MS ITSS) archive. For a selection helper grid, the relevant attributes to extract are `Name` and `Local`.
 
-### Processing `toc.hhc` 
+### Processing `toc.hhc`
 #### Using `7-Zip`
 
 ```cmd
@@ -239,7 +239,7 @@ This regex approach avoids **DOM** parsing overhead, and can be used for small `
 
 ### Elastic Search
 
-Adding ElasticSearh packages through `packages.config` for .Net Framework __4.5__ 
+Adding ElasticSearh packages through `packages.config` for .Net Framework __4.5__
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 
@@ -265,7 +265,7 @@ The type 'System.Object' is defined in an assembly that is not referenced.
 You must add a reference to assembly 'System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'. (CS0012)
 
 ```
-switching to older .Net Framework version __4.0__ 
+switching to older .Net Framework version __4.0__
 leads to compilation error:
 ```text
 Assembly 'Serilog.Sinks.Elasticsearch, Version=4.1.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10' uses 'Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10' which has a higher version than referenced assembly 'Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10' (CS1705)
@@ -295,7 +295,7 @@ unzip ~/Downloads/serilog.sinks.periodicbatching.2.3.0.nupkg -d packages/serilog
 ```sh
 curl -s -v -L -o ~/Downloads/serilog.formatting.elasticsearch.8.4.1.nupkg https://www.nuget.org/api/v2/package/Serilog.Formatting.Elasticsearch/8.4.1
 
-test -f ~/Downloads/serilog.formatting.elasticsearch.8.4.1.nupkg              
+test -f ~/Downloads/serilog.formatting.elasticsearch.8.4.1.nupkg
 $ echo $?
 
 mkdir -p packages/serilog.formatting.elasticsearch/8.4.1
@@ -401,9 +401,9 @@ you will see
   "tagline" : "You Know, for Search"
 }
 ```
-run test and repeat the log check. 
+run test and repeat the log check.
 
-In browser console after authenticating to ELK, see 
+In browser console after authenticating to ELK, see
 ```json
 ```
 in console authenticate with header
@@ -466,7 +466,7 @@ update the test with credentials (hardcode for test run):
 repeat the data check
 
 ```
-            
+
 ```
 ```json
 {
@@ -487,7 +487,7 @@ repeat the data check
     "hits" : [ ]
   }
 }
-    
+
 ```
 
 if the runtime error is observed
@@ -510,7 +510,7 @@ need to update
 ```sh
 curl -s -v -L -o ~/Downloads/system.diagnostics.diagnosticSource.4.7.1.nupkg https://www.nuget.org/api/v2/package/Serilog.Formatting.Elasticsearch/4.7.1
 
-test -f ~/Downloads/system.diagnostics.diagnosticSource.4.7.1.nupkg              
+test -f ~/Downloads/system.diagnostics.diagnosticSource.4.7.1.nupkg
 $ echo $?
 
 mkdir -p packages/system.diagnostics.diagnosticSource/4.7.1
@@ -520,7 +520,7 @@ unzip ~/Downloads/system.diagnostics.diagnosticSource.4.7.1.nupkg -d packages/sy
 ```sh
 curl -s -v -L -o ~/Downloads/system.buffers.4.5.1.nupkg https://www.nuget.org/api/v2/package/system.buffers/4.5.1
 
-test -f ~/Downloads/system.buffers.4.5.1.nupkg              
+test -f ~/Downloads/system.buffers.4.5.1.nupkg
 $ echo $?
 
 mkdir -p packages/system.buffers.4.5.1
@@ -530,7 +530,7 @@ unzip ~/Downloads/system.buffers.4.5.1.nupkg -d packages/system.buffers.4.5.1
 ```sh
 curl -s -v -L -o ~/Downloads/system.diagnostics.diagnosticSource.4.0.3.1.nupkg https://www.nuget.org/api/v2/package/Serilog.Formatting.Elasticsearch/4.0.3.1
 
-test -f ~/Downloads/system.diagnostics.diagnosticSource.4.0.3.1.nupkg              
+test -f ~/Downloads/system.diagnostics.diagnosticSource.4.0.3.1.nupkg
 $ echo $?
 
 mkdir -p packages/system.diagnostics.diagnosticSource/4.0.3.1
@@ -576,10 +576,10 @@ call bin\elasticsearch-service.bat install
 ```
 wait for the console message
 ```txt
-Installing service      :  "elasticsearch-service-x64"    
-    
+Installing service      :  "elasticsearch-service-x64"
+
 ```
-allow the common daemon service runner to make the registry changes 
+allow the common daemon service runner to make the registry changes
 if a failure mesage is printed
 ```text
 Failed installing 'elasticsearch-service-x64' service
@@ -667,7 +667,7 @@ using (var httpClient = new HttpClient()) {
     httpClient.PostAsync("http://localhost:8086/api/v2/write?bucket=app_metrics&org=myorg&precision=ns", content).Wait();
 }
 ```
-or 
+or
 ```cs
 using System.Net.Http;
 
@@ -738,7 +738,7 @@ kibana              "/usr/local/bin/dumb…"   kibana              running (heal
 
 ```
 
-if observe instead 
+if observe instead
 ```txt
 NAME                COMMAND                  SERVICE             STATUS
        PORTS
@@ -871,7 +871,7 @@ X-axis → Aggregation: Date Histogram
 
 Field: timestamp
 
-Interval: auto 
+Interval: auto
 
 Merge with/cherry pick the OOM broken commit to produce dramatic result
 ```c#
@@ -881,7 +881,7 @@ tokens = Chm.toc_structured_oom(file);
 ```
 
 ### Result
-save visualization and run application. 
+save visualization and run application.
 
 ![kibana7](screenshots/kibana7.jpg)
 
@@ -899,14 +899,14 @@ netstat -ano |  findstr -i 9200
 use the process id  in the following commands
 
 ```cmd
-tasklist.exe | findstr -i 11768 
+tasklist.exe | findstr -i 11768
 ```
 ```text
-java.exe 11768 Console 1 256,672 K 
+java.exe 11768 Console 1 256,672 K
 ```
 ```cmd
 wmic path win32_process where (processid = 11768) get commandline
-``` 
+```
 ```text
 "c:\java\elasticsearch-7.9.1\jdk\bin\java.exe" -Des.networkaddress.cache.ttl=60 -Des.networkaddress.cache.negative.ttl=10 -XX:+AlwaysPreTouch -Xss1m -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djna.nosys=true -XX:-OmitStackTraceInFastThrow -XX:+ShowCodeDetailsInExceptionMessages -Dio.netty.noUnsafe=true -Dio.netty.noKeySetOptimization=true -Dio.netty.recycler.maxCapacityPerThread=0 -Dio.netty.allocator.numDirectArenas=0 -Dlog4j.shutdownHookEnabled=false -Dlog4j2.disable.jmx=true -Djava.locale.providers=SPI,COMPAT -Xms1g -Xmx1g -XX:+UseG1GC -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -Djava.io.tmpdir=C:\Users\kouzm\AppData\Local\Temp\elasticsearch -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=data -XX:ErrorFile=logs/hs_err_pid%p.log -Xlog:gc*,gc+age=trace,safepoint:file=logs/gc.log:utctime,pid,tags:filecount=32,filesize=64m -XX:MaxDirectMemorySize=536870912 -Delasticsearch -Des.path.home="c:\java\elasticsearch-7.9.1" -Des.path.conf="c:\java\elasticsearch-7.9.1\config" -Des.distribution.flavor="default" -Des.distribution.type="zip" -Des.bundled_jdk="true" -cp "c:\java\elasticsearch-7.9.1\lib\*" "org.elasticsearch.bootstrap.Elasticsearch"
 
@@ -929,6 +929,20 @@ get-nettcpconnection -localport 9200 | foreach-object {
     stop-process -id $pid -force
 }
 
+```
+### Misc.
+```sh
+find  Program/ Test TestUtils/ Utils/  -name '*.cs' -exec wc {} \;| awk '{total+=$1} END {print total}'
+```
+```txt
+4330
+```
+### Legacy
+
+in earlier Windows (but not in Windows 11) one could extract CHM contents semi-manually by starting: `hh.exe` (__HTML Help Executable__) with a cryptic commmand line:
+
+```powershell
+Invoke-Expression 'hh.exe mk:@MSITStore:file.chm::/index.htm'
 ```
 ---
 ### See Also
