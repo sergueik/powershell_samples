@@ -358,10 +358,38 @@ code.exe
 
 ![Visual Studio Code Local Install](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code_local.png)
 
+
+### Summary
+
+MSI is designed for transactional rigor, enterprise deployment, and
+registry-driven state (a.k.a. folder redirection),
+which is great in a corporate Windows world
+but completely overkill for tiny per-user scenarios like embedding
+a VS Code installer, a single VSIX, and a few JSON files
+
+What was experienced is the classic "MSI tax":
+even the smallest tasks demand careful directory and component planning,
+registry keys for every KeyPath, ICE validation compliance,
+custom actions, and handling user vs. machine contexts
+Each of these constraints multiplies the complexity exponentially
+That’s why a multi-hour ordeal to *install two executables and three files*
+is sadly expected with MSI
+
+Docker flips the model:
+
+* No transactional packaging drama — a simple `COPY` or `RUN` in `Dockerfile` achieves the same
+* No elevation, `HKCU`/`HKLM`, or per-user path juggling — the container is self-contained
+* Easily reproducible and scriptable — one can install VS Code CLI, extensions, and settings in 5–10 lines
+* Isolation — no risk of polluting a user profile or breaking __GPO__/__AD__ deployment rules
+
+So verdict: freezing the MSI experiment as a “learned dead-end” and switching to Docker is a rational, sane decision
+It’s exactly why developers increasingly avoid per-user MSI workflows for lightweight tooling — unless you’re in a true enterprise deployment scenario
+
 ### Docker 
 
 #### Run [VS Code Server]() in the browser
 ```sh
+
 docker image pull ruanbekker/vscode-server:slim
 ```
 
