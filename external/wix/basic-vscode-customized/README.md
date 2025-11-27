@@ -415,11 +415,113 @@ cert: false
 
 ![Visual Studio Code Login](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/login.png)
 
+
+#### Customizing
+
+```sh
+ID=$(docker ps  --format '{{.ID}} {{.Image}}' | grep ruanbekker/vscode-server | cut -f 1 -d ' ')
+```
+
+```sh
+docker exec -t $ID whoami
+```
+
+```text
+coder
+```
+
+if the user changes update `Dockerfile` accordingly 
+```sh
+docker build -t vscode-customized -f Dockerfile  .
+```
+```text
+Sending build context to Docker daemon  57.99MB
+Step 1/15 : FROM ruanbekker/vscode-server:slim
+ ---> 03d71236aa80
+Step 2/15 : ARG VERSION=2.2.0
+ ---> Using cache
+ ---> 62fcd728f50c
+Step 3/15 : ARG VSCODEUSER='coder'
+ ---> Using cache
+ ---> 174cd167a2e4
+Step 4/15 : ENV HOME=/home/$VSCODEUSER
+ ---> Using cache
+ ---> fee5cbcace6a
+Step 5/15 : WORKDIR /tmp
+ ---> Using cache
+ ---> c397e205f61d
+Step 6/15 : RUN curl -kLO https://github.com/zowe/zowe-explorer-vscode/releases/download/v${VERSION}/vscode-extension-for-zowe-${VERSION}.vsix     && mkdir -p $HOME/Files     && mv vscode-extension-for-zowe-${VERSION}.vsix $HOME/Files/vscode-extension-for-zowe.vsix
+ ---> Using cache
+ ---> 9f438d34fb5c
+Step 7/15 : COPY Files/settings.json $HOME/.config/Code/User/settings.json
+ ---> Using cache
+ ---> b52593158ddc
+Step 8/15 : COPY Files/keybindings.json $HOME/.config/Code/User/keybindings.json
+ ---> Using cache
+ ---> 7bf4cfe2d433
+Step 9/15 : USER root
+ ---> Using cache
+ ---> 5b74d15719e0
+Step 10/15 : RUN chown -R $VSCODEUSER:$VSCODEUSER $HOME/.config $HOME/Files
+ ---> Using cache
+ ---> 0940cb1779a8
+Step 11/15 : USER $VSCODEUSER
+ ---> Using cache
+ ---> 052b36f6cc2f
+Step 12/15 : USER $VSCODEUSER
+ ---> Using cache
+ ---> 01717f849b94
+Step 13/15 : RUN code-server --install-extension $HOME/Files/vscode-extension-for-zowe.vsix --force
+ ---> Running in c8427b28d3fe
+[2025-11-26T21:28:10.154Z] info  Wrote default config file to ~/.config/code-server/config.yaml
+Installing extensions...
+Extension 'vscode-extension-for-zowe.vsix' was successfully installed.
+Removing intermediate container c8427b28d3fe
+ ---> a310ba2a3922
+Step 14/15 : EXPOSE 8080
+ ---> Running in d124b8557e21
+Removing intermediate container d124b8557e21
+ ---> 865ef93b7cf8
+Step 15/15 : HEALTHCHECK --interval=30s --timeout=5s --start-period=10s CMD curl -f http://localhost:8080/ || exit 1
+ ---> Running in d6029234a7a8
+Removing intermediate container d6029234a7a8
+ ---> 239549fb5621
+Successfully built 239549fb5621
+Successfully tagged vscode-customized:latest
+SECURITY WARNING: You are building a Docker image from Windows against a non-Windows Docker host.
+All files and directories added to build context will have '-rwxr-xr-x' permissions. 
+It is recommended to double check and reset permissions for sensitive files and directories.
+```
+NOTE: base image runs `code-server`, *not* __VS Code Desktop__.
+
+So the correct settings directory is `$HOME/.local/share/code-server/User` not  `$HOME/.config/Code/User`
+
+
+
+
+```sh
+docker run -d -p 8080:8080 vscode-customized
+```
+```sh
+ID=$(docker ps --filter 'ancestor=vscode-customized' --format '{{.ID}}')
+```
+```sh
+EXTENSION=Zowe.vscode-extension-for-zowe
+docker exec -t $ID code-server --list-extensions | grep -q $EXTENSION
+echo $?
+```
+```text
+0
+```
 ![Visual Studio in the Browser](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code.png)
+
+
 #### Run [VS Code with X Server](https://github.com/pubkey/vscode-in-docker/blob/master/docker/Dockerfile) In Container
 
 WIP
 
+### See Also
+   * `ruanbekker/docker-vscode-server` [project](https://github.com/ruanbekker/docker-vscode-server)
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 
