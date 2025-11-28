@@ -4,24 +4,52 @@ This directory contains the setup project of a [Visual Studio Code](https://code
 NOTE: the primary, canonical scenario Microsoft designed __VS Code Server__ for is using the `Remote-SSH` [extension](https://code.visualstudio.com/docs/remote/ssh) in local __VS Code Desktop__ to connect to a remote Linux host or a device that doesn't support installation of __VS Code Desktop__, such as an __iPad__ / __tablet__ or __Chromebook__, where a compatible VS Code Server is automatically deployed and runs as a headless backend for editing, language services, and debugging. However, the same server can also act as a remote host for lightweight browser-only clients, such as in web-based VS Code deployments.
 
 
-The solution has under control and is fully capable of preinstalling [Settings](https://code.visualstudio.com/docs/configure/settings), [Extentions](https://code.visualstudio.com/docs/configure/extensions/extension-marketplace) and 
+The solution has under control and is fully capable of preinstalling [Settings](https://code.visualstudio.com/docs/configure/settings), [Extentions](https://code.visualstudio.com/docs/configure/extensions/extension-marketplace) and
 [Profiles](https://code.visualstudio.com/docs/configure/profiles)
 
 
 ### Local Install Package
 
-MSI files are essentially stripped down SQL Server data bases stored in COM/OLE [structured storage files]()
-Due to supported database referential integrity even the minor changes in install workflow cascade 
-through dozen of tables and make it difficult to see what  has changed even to a trained eye.
-WiX is a XML storage format of MSI and also the first project open sourced by Microsoft in 2004.  
+MSI files are essentially stripped down SQL Server data bases stored in COM/OLE [structured storage files](https://en.wikipedia.org/wiki/COM_Structured_Storage)
+which was conceptually similar to [NIB](https://en.wikipedia.org/wiki/Interface_Builder) or [SWT](https://en.wikipedia.org/wiki/Standard_Widget_Toolkit) binary GUI format
+
+__COM/OLE__ structured storage was originally designed in the same era and with a similar goal to Apple’s early __NIB__ format:
+
+to support integration of callable, embeddable UI components (controls, widgets, compound objects)
+
+in visual, drag-and-drop design tools like Visual Basic and early Visual Studio.
+
+However — and this is the key difference — __OLE__ then evolved far beyond GUI composition, eventually becoming the universal container and embedding system on Windows for just about anything
+
+
+| Feature / Aspect               | **Microsoft OLE (COM Structured Storage)**                                          | **Apple NIB (NeXT Interface Builder)**                                   | **SWT Binary UI Format**                                                   |
+| ------------------------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| **Primary Purpose**            | Persist forms, ActiveX controls, embedded objects, properties                       | Persist a fully serialized UI object graph (views, controllers, outlets) | Persist SWT widget trees and layout metadata                               |
+| **File Types**                 | Compound Binary Files (CFB); internally multiple “streams” inside one file          | `.nib` (binary); `.xib` is XML editable that compiles into `.nib`        | No universally standard extension; often embedded in Eclipse RCP resources |
+| **Serialization Style**        | Structured storage (mini-filesystem); streams with COM property sets                | ObjC object archive using keyed archiver; binary plist-like structure    | Java object graph serialized to SWT’s proprietary binary format            |
+| **Usage Context**              | Visual Basic / Visual Studio form designers, OLE container apps                     | Interface Builder (macOS/iOS); Xcode UI design                           | Eclipse RCP/SWT UI designers (less commonly used in practice)              |
+| **Runtime Reconstruction**     | COM instantiation via `IStorage` / `IStream`; recreate controls and ActiveX objects | Loaded by Cocoa via `NSBundle`, `NSNib`, `UINib`                         | SWT internal loader constructs widget tree from serialized data            |
+| **Scope**                      | General-purpose: UI controls + any embeddable objects (Excel, Word, drawing)        | UI-specific: windows, views, menus, controllers                          | UI-specific: shells, composites, widgets                                   |
+| **Openness / Standardization** | Fully documented MS format; widely reverse-engineered                               | Documented Apple proprietary; widely understood                          | Poorly documented; specific to Eclipse tooling                             |
+| **Popularity / Adoption**      | Very high (Office, VB6, classic Windows apps)                                       | Very high (macOS, iOS apps for decades)                                  | Low to moderate (mostly inside Eclipse ecosystem)                          |
+| **Design Philosophy**          | “Filesystem in a file” — generic object containers                                  | “Serialized object graph” — UI objects encoded as objects                | Similar to NIB but Java/SWT-specific, not generic                          |
+| **Legacy Influence**           | Precursor to .doc/.xls binary formats; basis for ActiveX                            | Essential format of NeXTSTEP and Cocoa; later XML variants               | Less influential; niche beyond Eclipse RCP                                 |
+
+
+Due to supported database referential integrity even the minor changes in install workflow cascade
+through dozen of tables and make it difficult to see what  has changed even to a *trained eye*.
+
+MSI files / databases and [merge modules](https://en.wikipedia.org/wiki/Merge_Module) were originally authored using third-party tools such as [InstallShield](http://www.installshield.com/), [Advanced Installer](https://www.advancedinstaller.com/) [Orca](https://learn.microsoft.com/en-us/windows/win32/msi/orca-exe) and [Wise Package Studio](https://wise-package-studio.software.informer.com/) and [other](https://www.installsite.org/pages/en/msi/authoring.htm)
+
+WiX is a XML storage format of MSI and often a reference to [Wix Toolset](https://github.com/wixtoolset) also the [pioneering open source project](https://download.microsoft.com/download/B/6/8/B6811521-81F6-4F57-8009-6D9C60E5F744/Windows_Installer_XML_Toolset.pdf) by Microsoft in 2004.
 
 __Visual Studio Code__ no longer officially supports Windows 32-bit versions. Support for Windows 32-bit VS Code ended with the October 2023 (version 1.84) release.
 If a 32-bit system is being used, it is recommended to update to a 64-bit version of Windows to run the [latest](https://code.visualstudio.com/Download) versions of Visual Studio Code.
 If a 32-bit version of Visual Studio Code is absolutely necessary, it would require locating and installing an older version of VS Code released prior to October 2023, which can be found in archived release [download pages](https://www.filepuma.com/download/visual_studio_code_32bit_1.43.2-25054/download/)
 
-From MSI point of view User and System installs are very different in the impersonation, interactivity and directory management.  
+From MSI point of view User and System installs are very different in the impersonation, interactivity and directory management.
 
-Extensions are available on 
+Extensions are available on
 [visual Studio Code Extension Marketplace](https://marketplace.visualstudio.com/VSCode)
 which is hosted on [Visual Studio Marketplace](https://marketplace.visualstudio.com/)
 The [document](https://code.visualstudio.com/docs/configure/extensions/extension-marketplace)
@@ -29,7 +57,7 @@ explains how to find the extension of interest.
 
 
 In particular, [Zowe Explorer](https://marketplace.visualstudio.com/items?itemName=Zowe.vscode-extension-for-zowe)
-extension is used in this poject for constructing the preconfigured installer 
+extension is used in this poject for constructing the preconfigured installer
 VS Code extension is glorified zip file with pure Javascript:
 ```text
 ------------------------
@@ -121,7 +149,7 @@ NOTE: the `MERGETASKS` argument do not seem to combine, e.g.
 ```text
 /MERGETASKS=!addcontextmenufiles,addcontextmenufolders,runcode
 ```
-does not really suppress install from launching __VS Code__ at the end and the following command should be used: 
+does not really suppress install from launching __VS Code__ at the end and the following command should be used:
 ```cmd
 vscode-installer.exe %-- /VERYSILENT /NORESTART /MERGETASKS=!runcode
 ```
@@ -151,7 +179,7 @@ MSI (c) (B0:B4) [05:13:14:171]: Back from server. Return value: 1603
 ```
 ![MSI error running Visual Studio Code Installer](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/msi_error.png)
 
-MSI error `1603` is a generic "fatal error" that occurs during a Windows 
+MSI error `1603` is a generic "fatal error" that occurs during a Windows
 Installer operation due to a variety of system-related issues, such as insufficient permissions, corrupted files, or a conflicting application
 
 The MSI  is running `vscode-installer.exe` in the background:
@@ -197,7 +225,7 @@ alternatively
 ```powershell
 get-content full.log -Encoding Unicode | Set-Content full-utf8.log -Encoding UTF8
 ```
-or better 
+or better
 
 ```powershell
 
@@ -208,7 +236,7 @@ $text = [System.Text.Encoding]::Unicode.GetString($bytes)
 ```
 ```sh
 LOG=full-utf8.log
-grep -B 10 -A 10 "vscode-installer.exe" $LOG 
+grep -B 10 -A 10 "vscode-installer.exe" $LOG
 ```
 or
 
@@ -229,21 +257,21 @@ This cannot work because:
 - Inno Setup requires:
   - `%LOCALAPPDATA%`
   - `%USERPROFILE%`
-	
-- Access to **shell folders**  
-- Access to **UI subsystem** (even in silent mode)  
+
+- Access to **shell folders**
+- Access to **UI subsystem** (even in silent mode)
 - MSI deferred custom actions **block GUI** and break elevation
 
-As a result, Inno Setup **exits immediately**, and the MSI sees a **non-zero exit code → 1603**.  
+As a result, Inno Setup **exits immediately**, and the MSI sees a **non-zero exit code → 1603**.
 
 This is why `vscode_installer.log` contains nothing abnormal — the installer never got far enough to fail.
 
 ---
 
-Your current WiX XML uses `ProgramFilesFolder`.  
-Windows Installer blocks this in a **per-user context**.  
+Your current WiX XML uses `ProgramFilesFolder`.
+Windows Installer blocks this in a **per-user context**.
 
-VS Code itself installs into Program Files — but your MSI cannot.  
+VS Code itself installs into Program Files — but your MSI cannot.
 **Mismatch → architecture break.**
 
 ---
@@ -265,9 +293,9 @@ Enterprise deployment requires **per-machine installers**.
 
 Per-user MSI:
 
-- Can prompt for elevation  
-- But **cannot guarantee elevation**  
-- Custom actions in **immediate mode** cannot elevate mid-install  
+- Can prompt for elevation
+- But **cannot guarantee elevation**
+- Custom actions in **immediate mode** cannot elevate mid-install
 
 → This makes the install fragile.
 
@@ -275,7 +303,7 @@ Per-user MSI:
 
 ❌ **4. EXE runs as the user, but rollback/logging/error codes are lost**
 
-Running EXEs in immediate mode is **explicitly discouraged by Microsoft**.  
+Running EXEs in immediate mode is **explicitly discouraged by Microsoft**.
 Rollback becomes unusable.
 
 
@@ -283,15 +311,15 @@ Rollback becomes unusable.
 
 ```text
              CustomActionSchedule(Action=InstallVSIX,ActionType=3106,Source=C:\Users\sergueik\AppData\Local\Temp\VSIX\,Target="C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force,)
-MSI (s) (88:68) [10:01:33:093]: Note: 1: 1721 2: InstallVSIX 3: C:\Users\sergueik\AppData\Local\Temp\VSIX\ 4: "C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force 
-MSI (s) (88:68) [10:01:33:093]: Note: 1: 2205 2:  3: Error 
-MSI (s) (88:68) [10:01:33:093]: Note: 1: 2228 2:  3: Error 4: SELECT `Message` FROM `Error` WHERE `Error` = 1721 
+MSI (s) (88:68) [10:01:33:093]: Note: 1: 1721 2: InstallVSIX 3: C:\Users\sergueik\AppData\Local\Temp\VSIX\ 4: "C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force
+MSI (s) (88:68) [10:01:33:093]: Note: 1: 2205 2:  3: Error
+MSI (s) (88:68) [10:01:33:093]: Note: 1: 2228 2:  3: Error 4: SELECT `Message` FROM `Error` WHERE `Error` = 1721
 MSI (c) (80:A0) [10:01:33:108]: Font created.  Charset: Req=0, Ret=0, Font: Req=MS Shell Dlg, Ret=MS Shell Dlg
 
-Error 1721. There is a problem with this Windows Installer package. A program required for this install to complete could not be run. Contact your support personnel or package vendor. Action: InstallVSIX, location: C:\Users\sergueik\AppData\Local\Temp\VSIX\, command: "C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force 
-MSI (s) (88:68) [10:01:38:358]: Note: 1: 2205 2:  3: Error 
-MSI (s) (88:68) [10:01:38:358]: Note: 1: 2228 2:  3: Error 4: SELECT `Message` FROM `Error` WHERE `Error` = 1709 
-MSI (s) (88:68) [10:01:38:358]: Product: VSCode Custom Installer -- Error 1721. There is a problem with this Windows Installer package. A program required for this install to complete could not be run. Contact your support personnel or package vendor. Action: InstallVSIX, location: C:\Users\sergueik\AppData\Local\Temp\VSIX\, command: "C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force 
+Error 1721. There is a problem with this Windows Installer package. A program required for this install to complete could not be run. Contact your support personnel or package vendor. Action: InstallVSIX, location: C:\Users\sergueik\AppData\Local\Temp\VSIX\, command: "C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force
+MSI (s) (88:68) [10:01:38:358]: Note: 1: 2205 2:  3: Error
+MSI (s) (88:68) [10:01:38:358]: Note: 1: 2228 2:  3: Error 4: SELECT `Message` FROM `Error` WHERE `Error` = 1709
+MSI (s) (88:68) [10:01:38:358]: Product: VSCode Custom Installer -- Error 1721. There is a problem with this Windows Installer package. A program required for this install to complete could not be run. Contact your support personnel or package vendor. Action: InstallVSIX, location: C:\Users\sergueik\AppData\Local\Temp\VSIX\, command: "C:\Users\sergueik\AppData\Local\Microsoft VS Code\bin\code.cmd" --install-extension "C:\Users\sergueik\AppData\Local\Temp\VSIX\vscode-extension-for-zowe.vsix" --force
 
 Action ended 10:01:38: InstallFinalize. Return value 3.
 ```
@@ -328,7 +356,7 @@ Change your action to:
               Execute="immediate"
               Impersonate="yes"
               Return="check" />
-```    
+```
 
 Pros: Runs as the user.
 
@@ -351,14 +379,14 @@ if not exist %pathToCode% (
 %pathToCode% --install-extension %pathToVSIX% --force
 ```
 this helps debugging that
-batch is waiting for 
+batch is waiting for
 ```text
-Directory of C:\Users\sergueik\AppData\Local\Microsoft VS Code 
+Directory of C:\Users\sergueik\AppData\Local\Microsoft VS Code
 
 vscode-installer.exe
 
 ```
-but the `code.exe` is installed into 
+but the `code.exe` is installed into
 ```
 Directory of c:\Users\sergueik\AppData\Local\Programs\Microsoft VS Code
 
@@ -373,7 +401,7 @@ code.exe
 ![Visual Studio Code Local Install](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code_local.png)
 
 
-NOTE: there is **no** supported or undocumented way to suppress or pre-acknowledge the *Reload Required* / *Installing* message once an extension is installed after __VS Code__ / __code-server__ has already started. 
+NOTE: there is **no** supported or undocumented way to suppress or pre-acknowledge the *Reload Required* / *Installing* message once an extension is installed after __VS Code__ / __code-server__ has already started.
 This is not a limitation of the __MSI__ installer package or `Dockerfile` — it is a hard rule in the __VS Code__ / __Electron__ architecture
 
 ### Summary
@@ -404,8 +432,10 @@ It’s exactly why developers increasingly avoid per-user MSI workflows for ligh
 
 ### Docker
 
-__VS Code Dev Containers__ [extension](https://code.visualstudio.com/docs/devcontainers/containers) lets one use containers as a full development environment, opening folders inside, with local-quality features.
-NOTE: it is stated that Docker Toolbox is *not* supported. 
+__VS Code Dev Containers__ [extension](https://code.visualstudio.com/docs/devcontainers/containers) lets one use certain flavours of Linux containerd to host Node.js and code as a full development environment, opening folders inside, with local-app grade developer convenience.
+
+It is stated that Docker Toolbox is *not* supported (it actually seems to be working fine).
+
 Windows container images are *not* supported.
 
 
@@ -433,7 +463,7 @@ auth: password
 password: 955141ef9c82051e9db612a2
 cert: false
 ```
-* authenticate 
+* authenticate
 
 ![Visual Studio Code Login](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/login.png)
 
@@ -453,7 +483,7 @@ docker exec -t $ID whoami
 coder
 ```
 
-if the user changes update `Dockerfile` accordingly 
+if the user changes update `Dockerfile` accordingly
 ```sh
 docker build -t vscode-customized -f Dockerfile  .
 ```
@@ -512,7 +542,7 @@ Removing intermediate container d6029234a7a8
 Successfully built 239549fb5621
 Successfully tagged vscode-customized:latest
 SECURITY WARNING: You are building a Docker image from Windows against a non-Windows Docker host.
-All files and directories added to build context will have '-rwxr-xr-x' permissions. 
+All files and directories added to build context will have '-rwxr-xr-x' permissions.
 It is recommended to double check and reset permissions for sensitive files and directories.
 ```
 NOTE: base image runs `code-server`, *not* __VS Code Desktop__.
@@ -682,7 +712,7 @@ which bundles:
  * __PulseAudio__
  * __RDP__ backend for efficient forwarding
 
-There is no need for __VcXsrv__ nor __Xming__, nor X410 on a __Windows 11__ host 
+There is no need for __VcXsrv__ nor __Xming__, nor X410 on a __Windows 11__ host
 with __WSL2__ / __WSLg__
 
 NOTE,cannot just
@@ -690,7 +720,7 @@ NOTE,cannot just
 ```shs
 docker pull pubkey/vscode-in-docker
 ```
-have to follow the steps described in `https://github.com/pubkey/vscode-in-docker/blob/master/README.md`, copied below 
+have to follow the steps described in `https://github.com/pubkey/vscode-in-docker/blob/master/README.md`, copied below
 
 ```sh
 git clone https://github.com/pubkey/vscode-in-docker.git vscode-in-docker
@@ -911,7 +941,24 @@ NOTE: no space after `-o`, and `dot` file argument must be the last argument.
 __VS Code Profiles__ are mostly a virtual construct, a layered view over your existing settings, extensions, keybindings, snippets, etc. They don’t exist as a single monolithic *profile file* one can just copy into __VS Code__ directory like a ZIP and drop in; instead, they are implemented
 
 ### See Also
-   * `ruanbekker/docker-vscode-server` [project](https://github.com/ruanbekker/docker-vscode-server)
+
+  * __Code Server__ - code anywhere on your Chromebook, tablet, or laptop with a consistent dev environment accessed through the browser - __Docker Hub__ [search](https://hub.docker.com/search?q=code-server) returns tens of implementations, varying in base image and bootstrap automation e.g.
+     + `linuxserver/code-server` [image](https://hub.docker.com/r/linuxserver/code-server) and [repo](https://github.com/linuxserver/docker-code-server)
+     + `ruanbekker/docker-vscode-server` [project](https://github.com/ruanbekker/docker-vscode-server)
+     + `codercom/code-server` [image](https://hub.docker.com/r/codercom/code-server) and [repo](https://github.com/coder/code-server)
+     + `islandora/code-server` [image](https://hub.docker.com/r/islandora/code-server) and [repo](https://github.com/coder/code-server)
+     + `martinussuherman/alpine-code-server` [image](https://hub.docker.com/r/martinussuherman/alpine-code-server) and [repo](https://github.com/martinussuherman/alpine-code-server)
+     + `hotari/alpine-vscode-server` [image](https://hub.docker.com/r/hotari/alpine-vscode-server)
+   
+   * e.g. [LibreOffice](https://github.com/libreoffice) Windows installer (MSI) is currently being developed or has been reworked using the WiX Toolset.  
+
+   * [curious story](https://ericlippert.com/2003/09/16/erics-complete-guide-to-vt_date/) of epic Excel and Lotus 1-2-3 zero point date
+   * [Fabulous Adventures In Coding](http://web.archive.org/web/20090606213951/http://blogs.msdn.com/ericlippert/archive/2009/06/01/bug-psychology.aspx) explained
+   * [NSIS](https://nsis.sourceforge.io/Download) alternative packaging
+
+   * Dom: "I guess she's packed on a few pounds over the years." [scene](https://youtu.be/xBesSOSsOfE?t=32S&end=42S) 
+     + NOTE: the `end` param seemingly ignored by normal __YouTube__ watch URLs opened in browser - __YouTube__ simply doesn’t support auto-stop on the main site.   + only works in *embedded player* URLs but embedded links will return Error 153 on copyright protected URLs
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 

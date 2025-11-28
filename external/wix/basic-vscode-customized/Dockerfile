@@ -3,7 +3,7 @@ FROM ruanbekker/vscode-server:slim
 ARG VERSION=2.2.0
 
 ARG VSCODEUSER=coder
-# NOTE: do not use 
+# NOTE: do not use
 # ARG VSCODEUSER=$(whoami)
 # it will be read literally
 # NOTE: mkdir: cannot create directory ‘/home/$(whoami)’: Permission denied

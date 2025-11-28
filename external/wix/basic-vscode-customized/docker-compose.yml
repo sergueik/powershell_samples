@@ -1,0 +1,12 @@
+version: '3'
+services:
+  code-server:
+    image: martinussuherman/alpine-code-server
+    environment:
+      - TZ=Your/Timezone
+      - EUID=1001 # Replace with your user ID
+      - EGID=1001 # Replace with your group ID
+    volumes:
+      - ~/path/on/host:/home/vscode
+    ports:
+      - 8080:8080
