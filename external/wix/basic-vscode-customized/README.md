@@ -570,6 +570,98 @@ docker container rm -f $ID
 docker image rm vscode-customized
 docker system prune -f
 ```
+#### Accessing Windows SMB/CIFS shares
+
+```cmd
+net.exe share share \\${env:computername} /delete
+```
+```txt
+share was deleted successfully.
+```
+```cmd
+net.exe share share=c:\temp\share /grant:sergueik,full
+```
+```txt
+share was shared successfully.
+```
+
+
+
+registry entry
+```txt
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\LanmanServer\Shares
+"share"
+```
+```txt
+
+CSCFlags=0
+MaxUses=4294967295
+Path=c:\temp\share
+Permissions=63
+ShareName=share
+Type=0
+```
+
+```txt
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\LanmanServer\Shares\Security
+"share"
+```
+binary data (Network ACL)
+on Linux host
+
+```sh'
+mkdir /tmp/share
+sudo mount -t cifs //192.168.99.101/share /tmp/share -o username=sergueik,password="password",vers=2.0,uid=$(id -u),gid=$(id -g)
+```
+
+populates the mount point with files owned by specified user, with `-rwxr-xr-x` permisions (depends on umask)
+
+
+```sh
+docker login
+```
+```sh
+docker image pull ruanbekker/vscode-server:slim
+```
+
+NOTE:  must pass the `slim` tag - there is no `latest` there
+```sh
+docker build -t vscode-customized -f Dockerfile .
+```
+```sh
+docker run -u coder -d -p 8080:8080 -v /tmp/share:/home/coder/workspace:rw vscode-customized
+```
+```sh
+ID=$(docker ps --filter 'ancestor=vscode-customized' --format '{{.ID}}')
+```
+```sh
+docker exec -t $ID sh -c 'cat ~/.config/code-server/config.yaml'
+```
+```txt
+
+bind-addr: 127.0.0.1:8080
+auth: password
+password: 3918b88a7a0d9d284d351cf9
+cert: false
+```
+
+login to __Visual Studio Code Server__ through the browser,
+browse the `/home/coder/workspace`, open and save a file,
+observe it is visible on windows
+
+NOTE:  this was possible because user `ID` match between dev machine and container:
+```sh
+id
+```
+```txt
+uid=1000(sergueik) gid=1000(sergueik) groups=1000(sergueik),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),118(lpadmin),126(sambashare),127(docker)
+```
+```sh
+docker exec -t $ID id
+```
+```txt
+uid=1000(coder) gid=1000(coder) groups=1000(coder)
+```
 #### Run [VS Code with X Server](https://github.com/pubkey/vscode-in-docker/blob/master/docker/Dockerfile) In Container
 
 ALL modern __Windows 11__ versions include an X server, automatically, inside __WSL2__.
