@@ -1,23 +1,23 @@
 ### Info
 
-This directory contains the setup project of a [Visual Studio Code]() installer:
+This directory contains the setup project of a [Visual Studio Code](https://code.visualstudio.com/docs/introvideos/basics) and [Visual Studio Code Server](https://code.visualstudio.com/docs/remote/vscode-server) installers.
+NOTE: the primary, canonical scenario Microsoft designed __VS Code Server__ for is using the `Remote-SSH` [extension](https://code.visualstudio.com/docs/remote/ssh) in local __VS Code Desktop__ to connect to a remote Linux host or a device that doesn't support installation of __VS Code Desktop__, such as an __iPad__ / __tablet__ or __Chromebook__, where a compatible VS Code Server is automatically deployed and runs as a headless backend for editing, language services, and debugging. However, the same server can also act as a remote host for lightweight browser-only clients, such as in web-based VS Code deployments.
 
 
-### Note
+The solution has under control and is fully capable of preinstalling [Settings](https://code.visualstudio.com/docs/configure/settings), [Extentions](https://code.visualstudio.com/docs/configure/extensions/extension-marketplace) and 
+[Profiles](https://code.visualstudio.com/docs/configure/profiles)
+
+
+### Local Install Package
+
 MSI files are essentially stripped down SQL Server data bases stored in COM/OLE [structured storage files]()
 Due to supported database referential integrity even the minor changes in install workflow cascade 
 through dozen of tables and make it difficult to see what  has changed even to a trained eye.
 WiX is a XML storage format of MSI and also the first project open sourced by Microsoft in 2004.  
 
-Visual Studio Code no longer officially supports Windows 32-bit versions. Support for Windows 32-bit VS Code ended with the October 2023 (version 1.84) release.
-If a 32-bit system is being used, it is recommended to update to a 64-bit version of Windows to run the latest versions of Visual Studio Code.
-If a 32-bit version of Visual Studio Code is absolutely necessary, it would require locating and installing an older version of VS Code released prior to October 2023, which might be found in archived release notes or older download pages.
-e.g. 
-`https://www.filepuma.com/download/visual_studio_code_32bit_1.43.2-25054/download/`
-
-Latest releases (64 only) can be found in `https://code.visualstudio.com/Download`
-VS Code installer supports silent installation toggled with command line options
-`SILENT` ,`VERYSILENT`, `NORESTART`, `/MERGETASKS=!addcontextmenufiles,addcontextmenufolders,runcode` etc.
+__Visual Studio Code__ no longer officially supports Windows 32-bit versions. Support for Windows 32-bit VS Code ended with the October 2023 (version 1.84) release.
+If a 32-bit system is being used, it is recommended to update to a 64-bit version of Windows to run the [latest](https://code.visualstudio.com/Download) versions of Visual Studio Code.
+If a 32-bit version of Visual Studio Code is absolutely necessary, it would require locating and installing an older version of VS Code released prior to October 2023, which can be found in archived release [download pages](https://www.filepuma.com/download/visual_studio_code_32bit_1.43.2-25054/download/)
 
 From MSI point of view User and System installs are very different in the impersonation, interactivity and directory management.  
 
@@ -29,7 +29,7 @@ explains how to find the extension of interest.
 
 
 In particular, [Zowe Explorer](https://marketplace.visualstudio.com/items?itemName=Zowe.vscode-extension-for-zowe)
-extension is used for testing the preconfigured installer 
+extension is used in this poject for constructing the preconfigured installer 
 VS Code extension is glorified zip file with pure Javascript:
 ```text
 ------------------------
@@ -86,14 +86,28 @@ will likely contain native binaries:
 ------------------- ----- ------------ ------------  ------------------------
 ```
 
-to download extension explore its documentation
+to find the release link to download an extension explore its documentation.
+NOTE: with outdated VS Code release taken to perform testing on a 32-bit Windows, pick an old enough release of the extension
 ```sh
 VERSION=3.3.1
-curl -kLO https://github.com/zowe/zowe-explorer-vscode/releases/download/v$VERSION/vscode-extension-for-zowe-$VERSION.vsix
-mv vscode-extension-for-zowe-$VERSION.vsix Files/vscode-extension-for-zowe.vsix 
+VERSION=1.7.1
+
+curl -skLO https://github.com/zowe/zowe-explorer-vscode/releases/download/v$VERSION/vscode-extension-for-zowe-$VERSION.vsix
+mv vscode-extension-for-zowe-$VERSION.vsix Files/vscode-extension-for-zowe.vsix
 ```
 
-the Visual Studio Code installer appears to be Inno Setup.
+otherwise will see the error in runtime:
+```cmd
+pushd c:\Users\sergueik\AppData\Local\Programs\Microsoft VS Code
+code.cmd --install-extension vsode-extension-for-zowe-v3.3.1.vsix --force
+```
+```text
+Installing extensions...
+Unable to install extension 'zowe.vscode-extension-for-zowe-v3.3.1' as it is not compatible with VS Code '1.43.2'.
+Failed Installing Extensions:
+```
+
+the Visual Studio Code installer appears to be __Inno Setup__ with its own commandline argumens.
 
 ```powershell
 .\vscode-installer.exe %-- /SILENT /VERYSILENT /NORESTART /MERGETASKS=!runcode
@@ -107,9 +121,9 @@ NOTE: the `MERGETASKS` argument do not seem to combine, e.g.
 ```text
 /MERGETASKS=!addcontextmenufiles,addcontextmenufolders,runcode
 ```
-does not really suppress install from launching __VS Code__ at the end
+does not really suppress install from launching __VS Code__ at the end and the following command should be used: 
 ```cmd
-vscode-installer.exe %/SILENT /VERYSILENT /NORESTART /MERGETASKS=!runcode
+vscode-installer.exe %-- /VERYSILENT /NORESTART /MERGETASKS=!runcode
 ```
 
 ### Building MSI
@@ -204,6 +218,7 @@ grep -n "vscode-installer.exe"  $LOG
 
 sed -n "$((line-40)),$((line+40))p" full-msi.log
 ```
+
 #### Root Cause
 
 You are trying to run a **per-user Inno Setup installer** inside an MSI in a **deferred, SYSTEM-context custom action**.
@@ -355,9 +370,11 @@ code.exe
 
 ![Visual Studio Code in Programs](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/start.png)
 
-
 ![Visual Studio Code Local Install](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/code_local.png)
 
+
+NOTE: there is **no** supported or undocumented way to suppress or pre-acknowledge the *Reload Required* / *Installing* message once an extension is installed after __VS Code__ / __code-server__ has already started. 
+This is not a limitation of the __MSI__ installer package or `Dockerfile` — it is a hard rule in the __VS Code__ / __Electron__ architecture
 
 ### Summary
 
@@ -385,7 +402,12 @@ Docker flips the model:
 So verdict: freezing the MSI experiment as a “learned dead-end” and switching to Docker is a rational, sane decision
 It’s exactly why developers increasingly avoid per-user MSI workflows for lightweight tooling — unless you’re in a true enterprise deployment scenario
 
-### Docker 
+### Docker
+
+__VS Code Dev Containers__ [extension](https://code.visualstudio.com/docs/devcontainers/containers) lets one use containers as a full development environment, opening folders inside, with local-quality features.
+NOTE: it is stated that Docker Toolbox is *not* supported. 
+Windows container images are *not* supported.
+
 
 #### Run [VS Code Server]() in the browser
 ```sh
@@ -451,7 +473,7 @@ Step 4/15 : ENV HOME=/home/$VSCODEUSER
 Step 5/15 : WORKDIR /tmp
  ---> Using cache
  ---> c397e205f61d
-Step 6/15 : RUN curl -kLO https://github.com/zowe/zowe-explorer-vscode/releases/download/v${VERSION}/vscode-extension-for-zowe-${VERSION}.vsix     && mkdir -p $HOME/Files     && mv vscode-extension-for-zowe-${VERSION}.vsix $HOME/Files/vscode-extension-for-zowe.vsix
+Step 6/15 : RUN curl -skLO https://github.com/zowe/zowe-explorer-vscode/releases/download/v${VERSION}/vscode-extension-for-zowe-${VERSION}.vsix     && mkdir -p $HOME/Files     && mv vscode-extension-for-zowe-${VERSION}.vsix $HOME/Files/vscode-extension-for-zowe.vsix
  ---> Using cache
  ---> 9f438d34fb5c
 Step 7/15 : COPY Files/settings.json $HOME/.config/Code/User/settings.json
@@ -753,6 +775,33 @@ This causes:
 - Permission errors in `/userdata`
 - Random failures depending on which user wrote the directory originally
 
+## Verdict
+
+Which solution is preferred?
+
+**A chain is only as strong as its weakest link** — the reliability of a software assembly is determined by its weakest dependency.
+
+Containerized classic X11, browser-hosted VS Code, and traditional Windows installs differ dramatically in the number of moving parts:
+
+- **Containerized X11**:
+  Highly sensitive to misconfigurations, including UID/GID alignment, volume permissions, and host display setup (each of which requires specific workarounds). These dependencies make it less robust for general use.
+
+- **Browser-hosted VS Code Server**:
+  Minimal local dependencies, making it the most robust and convenient choice in many scenarios.
+  Key advantages include:
+  - Multiple browser tabs can connect simultaneously to the same server instance.
+  - Centralized compute and extension management reduce local setup complexity.
+  - Transparent access to enterprise-mounted directories or pseudo-folders without UID/GID issues.
+
+- **Local Windows VS Code install**:
+  Valid for certain use cases, but introduces additional complexities:
+  - In adition to Install scenario of interest, every MSI *must properly account for* legacy uninstall/upgrade scenarios, as well as Windows __Users__ folder redirection and roaming profiles via Registry.
+  - Per-user vs. per-machine installations are fundamentally different, creating potential conflicts in extensions, settings, and concurrency.
+  - Transactional integrity constraints (through the underlying SQL layer) may impose obscure limitations on seemingly simple operations like file copy or command execution. Some decisions are largely explainable by practical constraints and design goals of the era, though others can feel almost voluntaristic by modern eyes
+  - With moderate setup at the container host level, containerized VS Code Server allows access to enterprise-mounted directories or pseudo-folders while avoiding common UID/GID issues.
+
+**Conclusion:**
+For modern development workflows, **browser-hosted VS Code Server** offers the best combination of robustness, flexibility, and ease of use. Containerized X11 setups carry too many fragile dependencies, while legacy MSI installs require significant overhead.
 
 ### Misc.
 
@@ -765,6 +814,9 @@ e.g.
 "c:\Program Files\Graphviz\bin\dot.exe" -Tpng -ox_display_variations.png x_display_variations.dot
 ```
 NOTE: no space after `-o`, and `dot` file argument must be the last argument.
+
+### VS Code Profiles
+__VS Code Profiles__ are mostly a virtual construct, a layered view over your existing settings, extensions, keybindings, snippets, etc. They don’t exist as a single monolithic *profile file* one can just copy into __VS Code__ directory like a ZIP and drop in; instead, they are implemented
 
 ### See Also
    * `ruanbekker/docker-vscode-server` [project](https://github.com/ruanbekker/docker-vscode-server)
