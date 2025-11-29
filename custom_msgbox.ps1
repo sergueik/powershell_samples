@@ -1,4 +1,4 @@
-#Copyright (c) 2014,2015,2023 Serguei Kouzmine
+#Copyright (c) 2014,2015,2023,2025 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -346,7 +346,7 @@ function click_handler
     $f.Height = $f.Height + $txtDescription.Height + 6
     $button_details.Tag = 'expand'
     $button_details.Text = 'Hide Details'
-    $txtDescription.WordWrap = true
+    $txtDescription.WordWrap = $true
     # txtDescription.Focus();
     # txtDescription.SelectionLength = 0;
   }
