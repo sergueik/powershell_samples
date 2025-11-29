@@ -67,12 +67,6 @@ namespace Program {
             QueueSizeLimit = 1000
         };
 
-        // options.ModifyConnectionSettings = conn => conn.BasicAuthentication("elastic", "5mOz5+0BJKzXNyxHcZ*D");
-        // NOTE: OptionalSystem.TypeInitializationException:
-        // The type initializer for 'Elasticsearch.Net.DiagnosticsSerializerProxy' threw an exception.
-        // ---> System.IO.FileLoadException: Could not load file or assembly 'System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51' or one of its dependencies.
-        // The located assembly's manifest definition does not match the assembly reference.
-
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Elasticsearch(options)
@@ -218,43 +212,6 @@ namespace Program {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
-			/*
-			var cm = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
-			var view = (DataView)cm.List;
-
-			foreach (DataRowView drv in view) {
-				var row = drv.Row;
-				var table = row.Table;
-				var columns = table.Columns;
-				var x = columns.GetEnumerator();
-				x.MoveNext();
-				var z =	x.Current;
-				bool isSelected = drv["selected"] != DBNull.Value &&
-				                  (bool)drv["selected"];
-
-				if (isSelected) {
-					// This row is checked
-					var Name = drv["filename"];
-					// Console.Error.WriteLine(filename);
-					var Local = drv["title"];
-				}
-			}
-			*/
-			var currencyManager = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
-			var dataView = (DataView)currencyManager.List;
-
-			foreach (DataRowView dataRowView in dataView) {
-				// bool isSelected = dataRowView["selected"] is bool b && b;
-			bool selected = dataRowView["selected"] != DBNull.Value &&
-							                  (bool)dataRowView["selected"];
-			    if (selected) {
-			        string name  = Convert.ToString(dataRowView["filename"]);
-			        string local = Convert.ToString(dataRowView["title"]);
-
-			        // do something with the checked row
-			    }
-			}
-			//---
 			var dr = this.openFileDialog1.ShowDialog();
 			if (dr == System.Windows.Forms.DialogResult.OK) {
 				foreach (String fileName in openFileDialog1.FileNames)
@@ -319,12 +276,59 @@ namespace Program {
 			String title = Chm.title(file);
 			if (title != null)
 				MessageBox.Show("Title = " + title, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			/*
+			var cm = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
+			var view = (DataView)cm.List;
+
+			foreach (DataRowView drv in view) {
+				var row = drv.Row;
+				var table = row.Table;
+				var columns = table.Columns;
+				var x = columns.GetEnumerator();
+				x.MoveNext();
+				var z =	x.Current;
+				bool isSelected = drv["selected"] != DBNull.Value &&
+				                  (bool)drv["selected"];
+
+				if (isSelected) {
+					// This row is checked
+					var name = drv["filename"];
+					Console.Error.WriteLine(name);
+					var local = drv["title"];
+					Console.Error.WriteLine(local);
+				}
+			}
+	*/
+			var currencyManager = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
+			var dataView = (DataView)currencyManager.List;
+			var files  = new List<TocEntry>();
+			foreach (DataRowView dataRowView in dataView) {
+				// bool isSelected = dataRowView["selected"] is bool b && b;
+				bool selected = dataRowView["selected"] != DBNull.Value && (bool)dataRowView["selected"];
+			    if (selected) {
+			        var name  = Convert.ToString(dataRowView["filename"]);
+			        var local = Convert.ToString(dataRowView["title"]);
+
+			        // do something with the checked row
+					Console.Error.WriteLine(name);
+					Console.Error.WriteLine(local);
+					files.Add(new TocEntry(){
+					          	Name = name,
+					          	Local = local	
+					          });
+					// "Why is virtualization useful?"
+					// "ch01.html#idp8953472"
+			    }
+			}
+				var datadialg = new DataDialog();
+				datadialg.Files = files;
+				datadialg.ShowDialog();
 		}
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
 			var tokens = new List<TocEntry>();
 			try {
-				tokens = Chm.toc_structured(file);
+				// tokens = Chm.toc_structured(file);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
