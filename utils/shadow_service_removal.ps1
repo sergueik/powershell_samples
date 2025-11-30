@@ -77,6 +77,8 @@ get-WmiObject Win32_Service |  Where-Object { $_.Name -match  ".*_[a-f0-9]+$" } 
 # rogue scheduled tasks
  Get-ScheduledTask | ForEach-Object {[PSCustomObject]@{    TaskName = $_.TaskName; Action   = ($_.Actions | ForEach-Object { $_.Execute }) ; Args     = ($_.Actions | ForEach-Object { $_.Arguments }) } }  |select-object -property Action,Args,TaskName| where-object { $_.Action -match '.*(AppData|Temp).*'} | Sort-Object TaskName | format-list
 
+Get-ScheduledTask | ForEach-Object {[PSCustomObject]@{    TaskName = $_.TaskName; Action   = ($_.Actions | ForEach-Object { $_.Execute }) ; Args     = ($_.Actions | ForEach-Object { $_.Arguments }) } }  |select-object -property Action,Args,TaskName| where-object { $_.Action -match '.*\\AppData\\.*'} | Sort-Object TaskName | format-list
+
 #>
 <#
 
