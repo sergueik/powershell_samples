@@ -1,5 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
@@ -34,7 +37,7 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.10.1";
+		private const string versionString = "0.11.0";
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
@@ -323,6 +326,14 @@ namespace Program {
 				var datadialg = new DataDialog();
 				datadialg.Files = files;
 				datadialg.ShowDialog();
+				var extractFiles = new List<string>();
+				// LINQ query using method syntax
+				extractFiles = files.Select(p => p.Local).Select(s => Regex.Replace(s, "#.*$", "")).ToList();
+				// LINQ query using query syntax
+				var regex = new Regex("#.*$", RegexOptions.Compiled);
+				extractFiles = (from p in files
+				                select regex.Replace(p.Local,"")).ToList();
+				Chm.extract_7zip(file, extractFiles );
 		}
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
