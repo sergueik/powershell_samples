@@ -22,8 +22,8 @@ namespace Tests {
             }
         }
 
-       [Test]
-        public void testw() {
+        [Test]
+        public void test2() {
             try {
                 var tocFilename = Chm.tocfilename_structured(file);
                 Assert.NotNull(tocFilename, "tocfilename_structured() should not be returning null.");

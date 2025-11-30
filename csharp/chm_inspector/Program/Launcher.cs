@@ -273,32 +273,40 @@ namespace Program {
 		}
 
 		private void button2_Click(object sender, EventArgs eventArgs) {
-			var files  = new List<TocEntry>();
+			var files = new List<TocEntry>();
 			try {
-			var currencyManager = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
-			var dataView = (DataView)currencyManager.List;
-			foreach (DataRowView dataRowView in dataView) {
-				// bool isSelected = dataRowView["selected"] is bool b && b;
-				bool selected = dataRowView["selected"] != DBNull.Value && (bool)dataRowView["selected"];
-			    if (selected) {
-			        var name  = Convert.ToString(dataRowView["filename"]);
-			        var local = Convert.ToString(dataRowView["title"]);
+				var currencyManager = BindingContext[dataGrid.DataSource, dataGrid.DataMember] as CurrencyManager;
+				// In Java, the compiler will not allow you to write a catch(ExceptionType) block unless that exc
+				if (currencyManager == null || currencyManager.Count == 0) {
+					// DataGrid has no data - ignore the rest of the handler
+				} else {
+					var dataView = (DataView)currencyManager.List;
+					foreach (DataRowView dataRowView in dataView) {
+						// bool isSelected = dataRowView["selected"] is bool b && b;
+						bool selected = dataRowView["selected"] != DBNull.Value && (bool)dataRowView["selected"];
+						if (selected) {
+							var name = Convert.ToString(dataRowView["filename"]);
+							var local = Convert.ToString(dataRowView["title"]);
 
-			        // do something with the checked row
-					Console.Error.WriteLine(name);
-					Console.Error.WriteLine(local);
-					files.Add(new TocEntry(){
-					          	Name = name,
-					          	Local = local	
-					          });
-					// "Why is virtualization useful?"
-					// "ch01.html#idp8953472"
-			    }
+							// do something with the checked row
+							Console.Error.WriteLine(name);
+							Console.Error.WriteLine(local);
+							files.Add(new TocEntry() {
+								Name = name,
+								Local = local
+							});
+							// "Why is virtualization useful?"
+							// "ch01.html#idp8953472"
+						}
+					}
+				}
+			} catch (ArgumentNullException e) {
+				// DataSource is null - ignore the rest of the handler
+			} catch (ArgumentException e) {
+				// DataMember is invalid - ignore the rest of the handler
 			}
-			} catch (ArgumentNullException e)  { 
-				// grid was not ready, ignore the rest of the handler				
-			}
-			if (files.Count > 0 ) {
+			// only proceed if some DataGrid entries are selected
+			if (files.Count > 0) {
 				var datadialg = new DataDialog();
 				datadialg.Files = files;
 				datadialg.ShowDialog();
@@ -308,8 +316,8 @@ namespace Program {
 				// LINQ query using query syntax
 				var regex = new Regex("#.*$", RegexOptions.Compiled);
 				extractFiles = (from p in files
-				                select regex.Replace(p.Local,"")).ToList();
-				Chm.extract_7zip(file, extractFiles );
+				                select regex.Replace(p.Local, "")).ToList();
+				Chm.extract_7zip(file, extractFiles);
 			}
 		}
 
