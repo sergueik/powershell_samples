@@ -37,7 +37,7 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.12.0";
+		private const string versionString = "0.13.0";
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
@@ -272,53 +272,21 @@ namespace Program {
 
 		}
 
-		private void button2_Click(object sender, EventArgs eventArgs) {
-			var files = new List<TocEntry>();
-			try {
-				var currencyManager = BindingContext[dataGrid.DataSource, dataGrid.DataMember] as CurrencyManager;
-				// In Java, the compiler will not allow you to write a catch(ExceptionType) block unless that exc
-				if (currencyManager == null || currencyManager.Count == 0) {
-					// DataGrid has no data - ignore the rest of the handler
-				} else {
-					var dataView = (DataView)currencyManager.List;
-					foreach (DataRowView dataRowView in dataView) {
-						// bool isSelected = dataRowView["selected"] is bool b && b;
-						bool selected = dataRowView["selected"] != DBNull.Value && (bool)dataRowView["selected"];
-						if (selected) {
-							var name = Convert.ToString(dataRowView["filename"]);
-							var local = Convert.ToString(dataRowView["title"]);
 
-							// do something with the checked row
-							Console.Error.WriteLine(name);
-							Console.Error.WriteLine(local);
-							files.Add(new TocEntry() {
-								Name = name,
-								Local = local
-							});
-							// "Why is virtualization useful?"
-							// "ch01.html#idp8953472"
-						}
-					}
-				}
-			} catch (ArgumentNullException e) {
-				// DataSource is null - ignore the rest of the handler
-			} catch (ArgumentException e) {
-				// DataMember is invalid - ignore the rest of the handler
-			}
-			// only proceed if some DataGrid entries are selected
-			if (files.Count > 0) {
-				var datadialg = new DataDialog();
-				datadialg.Files = files;
-				datadialg.ShowDialog();
-				var extractFiles = new List<string>();
-				// LINQ query using method syntax
-				extractFiles = files.Select(p => p.Local).Select(s => Regex.Replace(s, "#.*$", "")).ToList();
-				// LINQ query using query syntax
-				var regex = new Regex("#.*$", RegexOptions.Compiled);
-				extractFiles = (from p in files
-				                select regex.Replace(p.Local, "")).ToList();
-				Chm.extract_7zip(file, extractFiles);
-			}
+		private void button2_Click(object sender, EventArgs e) {
+		    var files = selectedFiles(dataGrid);
+
+		    if (files.Count == 0)
+		        return;
+			// create object and populate instance properties
+		    var dialog = new DataDialog { Files = files };
+		    dialog.ShowDialog();
+
+		    var regex = new Regex("#.*$", RegexOptions.Compiled);
+			// LINQ query using method syntax
+		    var extractFiles = files.Select(f => regex.Replace(f.Local, "")).Distinct().ToList();
+
+		    Chm.extract_7zip(file, extractFiles);
 		}
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
@@ -338,6 +306,42 @@ namespace Program {
 			if (tokens.Count > 0) {
 				MakeDataSet(tokens);
 			}
+		}
+
+		private List<TocEntry> selectedFiles(DataGrid dataGrid) {
+		    var files = new List<TocEntry>();
+
+		    // Attempt to get the underlying DataView safely
+		    DataView dataView;
+		    if (!currencyManagerAsDataView(dataGrid, out dataView))
+		        return files;
+
+		    foreach (DataRowView row in dataView) {
+		        // Check 'selected' column safely
+		        bool selected = row["selected"] != DBNull.Value && (bool)row["selected"];
+		        if (!selected)
+		            continue;
+
+		        files.Add(new TocEntry
+		        {
+		            Name = Convert.ToString(row["filename"]),
+		            Local = Convert.ToString(row["title"])
+		        });
+		    }
+		    return files;
+		}
+
+		private static bool currencyManagerAsDataView(DataGrid dataGrid, out DataView dataView) {
+		    dataView = null;
+		    if (dataGrid == null || dataGrid.DataSource == null)
+		        return false;
+
+		    var currencyManager = dataGrid.BindingContext[dataGrid.DataSource, dataGrid.DataMember] as CurrencyManager;
+		    if (currencyManager == null || currencyManager.Count == 0)
+		        return false;
+
+		    dataView = currencyManager.List as DataView;
+		    return dataView != null;
 		}
 
 		private void dataGrid_Paint(object sender, PaintEventArgs e){
