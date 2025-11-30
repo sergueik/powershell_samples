@@ -53,6 +53,9 @@ It is literally a __ZIP__-like filesystem with a FAT-like sector allocator, but 
   * Anti‑virus engines often skip unknown stream names.
   * The content inside the stream can be compressed, obfuscated, be a full dll or shell code
 
+One may see this as another angle on the software dilemma, showing how legacy systems can become fertile ground for malware authors who sometimes understand and exploit the old architecture more deeply than the original developers — much like low-margin startups succeeding while high-margin incumbents remain tied to maintaining legacy revenue stream
+
+
 #### MSI Specifics
 
 MSI supports and guarantees several scenarios most of which are no longer significant. 

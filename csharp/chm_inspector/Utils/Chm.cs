@@ -186,7 +186,7 @@ namespace Utils {
 
 
 		// #URLSTR always contains exactly one table of contents (TOC) file name
-		// CHM may contain additional .hhc files 
+		// CHM may contain additional .hhc files
 		// but only the one referenced from #URLSTR is the real TOC.
 		public static string tocfilename_structured(string filePath) {
 
@@ -403,65 +403,70 @@ namespace Utils {
 			return urls;
 		}
 
-		public static List<TocEntry> toc_structured(string filePath){
-			var result = new List<TocEntry>();
+		public static List<TocEntry> toc_structured(string filePath) {
+		    var result = new List<TocEntry>();
 
-			object obj = null;
-			IITStorage iit = null;
-			IStorage storage = null;
-			IEnumSTATSTG enumStat = null;
-			IStream stream = null;
+		    object obj = null;
+		    IITStorage iit = null;
+		    IStorage storage = null;
+		    IEnumSTATSTG enumStat = null;
+		    IStream stream = null;
 
-			try {
-				obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
-				iit = (IITStorage)obj;
+		    try {
+		        obj = Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_ITStorage, true));
+		        iit = (IITStorage)obj;
 
-				HRESULT hresult = iit.StgOpenStorage(
-					filePath,
-					null,
-					(uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),
-					IntPtr.Zero,
-					0,
-					out storage
-				);
+		        HRESULT hresult = iit.StgOpenStorage(
+		            filePath,
+		            null,
+		            (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_READ),
+		            IntPtr.Zero,
+		            0,
+		            out storage
+		        );
 
-				if (hresult != HRESULT.S_OK || storage == null)
-					throw new Exception(String.Format("Failed to open CHM file {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
+		        if (hresult != HRESULT.S_OK || storage == null)
+		            throw new Exception(String.Format("Failed to open CHM file {0}\nError: 0x{1}\n{2}", filePath, hresult.ToString("X"), MessageHelper.Msg(hresult)));
 
-				// Enumerate CHM root directory
-				hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
-				if (hresult != HRESULT.S_OK)
-					throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
+		        // Enumerate CHM root directory
+		        hresult = storage.EnumElements(0, IntPtr.Zero, 0, out enumStat);
+		        if (hresult != HRESULT.S_OK)
+		          throw new Exception(String.Format("Failed to enumerate CHM elements\nError: 0x{0}\n{1}", hresult.ToString("X"), MessageHelper.Msg(hresult)));
 
 
-				var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
-				uint fetched = 0;
+		        var stat = new System.Runtime.InteropServices.ComTypes.STATSTG[1];
+		        uint fetched = 0;
 
-				while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
-					if (String.Compare(stat[0].pwcsName, tocFilename, StringComparison.OrdinalIgnoreCase) == 0) {
-						// Open toc.hhc as stream
-						HRESULT hresult2 = storage.OpenStream(
-							tocFilename,
-							IntPtr.Zero,
-							(uint)(STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE),
-							0,
-							out stream
-						);
+		        while (enumStat.Next(1, stat, out fetched) == HRESULT.S_OK && fetched == 1) {
+		            if (String.Compare(stat[0].pwcsName, tocFilename, StringComparison.OrdinalIgnoreCase) == 0) {
+		                // Open table of contents as stream
+		                HRESULT hresult2 = storage.OpenStream(
+		                    tocFilename,
+		                    IntPtr.Zero,
+		                    (uint)(STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE),
+		                    0,
+		                    out stream
+		                );
 
-						if (hresult2 != HRESULT.S_OK || stream == null)
-							throw new Exception(String.Format("Failed to open stream {0},\nError: 0x{1}\n{2}", tocFilename, hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
+		                if (hresult2 != HRESULT.S_OK || stream == null)
+			                throw new Exception(String.Format("Failed to open stream {0},\nError: 0x{1}\n{2}", tocFilename, hresult2.ToString("X"), MessageHelper.Msg(hresult2)));
 
-						// Memory-conservative read loop
-						using (var ms = new MemoryStream()) {
-							var buffer = new byte[CHUNK_SIZE];
-							IntPtr bytesReadPtr = Marshal.AllocCoTaskMem(sizeof(int));
-							try {
-								while (true) {
-									stream.Read(buffer, buffer.Length, bytesReadPtr);
-									int bytesRead = Marshal.ReadInt32(bytesReadPtr);
-									if (bytesRead == 0)
-										break;
-									ms.Write(buffer, 0, bytesRead);
+
+		                // Memory-conservative read loop
+		                using (var ms = new MemoryStream()) {
+		                    var buffer = new byte[CHUNK_SIZE];
+		                    IntPtr bytesReadPtr = Marshal.AllocCoTaskMem(sizeof(int));
+
+		                    try {
+		                        while (true) {
+		                            stream.Read(buffer, buffer.Length, bytesReadPtr);
+		                            int bytesRead = Marshal.ReadInt32(bytesReadPtr);
+
+		                            if (bytesRead == 0)
+		                                break;
+
+		                            ms.Write(buffer, 0, bytesRead);
+
 									long mem = GC.GetTotalMemory(false);
 									var doc = new {
 										timestamp = DateTime.UtcNow,
@@ -472,25 +477,25 @@ namespace Utils {
 									// Telemetry through Telemetry.sendEvent() is already flushed instantly and is safe for OOM scenarios
 									var resp = Telemetry.sendEvent("oom-events", doc);
 									Log.Information(String.Format("OOM telemetry sent: status {0}", resp.HttpStatusCode));
-								}
-							} finally {
-								Marshal.FreeCoTaskMem(bytesReadPtr);
-							}
-							string payload = Encoding.UTF8.GetString(ms.ToArray());
+		                        }
+		                    } finally {
+		                        Marshal.FreeCoTaskMem(bytesReadPtr);
+		                    }
+		                    string payload = Encoding.UTF8.GetString(ms.ToArray());
+							// Extract OBJECT PARAM Name/Local
 							result = parseToc(payload);
-						}
-						break; // Done with toc.hhc
-					}
-				}
-			} finally {
-				if (stream != null) Marshal.ReleaseComObject(stream);
-				if (enumStat != null) Marshal.ReleaseComObject(enumStat);
-				if (storage != null) Marshal.ReleaseComObject(storage);
-				if (iit != null) Marshal.ReleaseComObject(iit);
-				if (obj != null) Marshal.ReleaseComObject(obj);
-			}
-
-			return result;
+		                }
+		                break;
+		            }
+		        }
+		    } finally {
+		        if (stream != null) Marshal.ReleaseComObject(stream);
+		        if (enumStat != null) Marshal.ReleaseComObject(enumStat);
+		        if (storage != null) Marshal.ReleaseComObject(storage);
+		        if (iit != null) Marshal.ReleaseComObject(iit);
+		        if (obj != null) Marshal.ReleaseComObject(obj);
+		    }
+		    return result;
 		}
 
 
@@ -553,7 +558,7 @@ namespace Utils {
 				// Embedded statement cannot be a declaration or labeled statement (CS1023)
 
 				if (!File.Exists(tocFilePath))
-                   throw new FileNotFoundException(String.Format("table of contents {0} not found after extraction: {1}\n{2} {3}", tocFilename, tocFilePath, processStartInfo.FileName , processStartInfo.Arguments));					
+                   throw new FileNotFoundException(String.Format("table of contents {0} not found after extraction: {1}\n{2} {3}", tocFilename, tocFilePath, processStartInfo.FileName , processStartInfo.Arguments));
 				string payload = File.ReadAllText(tocFilePath, Encoding.UTF8);
 				result = parseToc(payload);
 
@@ -745,5 +750,5 @@ namespace Utils {
 		STGM_PRIORITY = 0x00040000,
 		STGM_DELETEONRELEASE = 0x04000000,
 		STGM_NOSCRATCH = 0x00100000
-	}	
+	}
 }
