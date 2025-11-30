@@ -37,7 +37,7 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.11.0";
+		private const string versionString = "0.12.0";
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
@@ -215,13 +215,10 @@ namespace Program {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
-			var dr = this.openFileDialog1.ShowDialog();
-			if (dr == System.Windows.Forms.DialogResult.OK) {
-				foreach (String fileName in openFileDialog1.FileNames)
-					textBox1.Text = fileName;
-				file = textBox1.Text;
+			if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+				file = openFileDialog1.FileNames.First();
+				textBox1.Text = Chm.title(file);
 			}
-
 		}
 
 		private void MakeDataSet(List<string> files) {
@@ -276,35 +273,10 @@ namespace Program {
 		}
 
 		private void button2_Click(object sender, EventArgs eventArgs) {
-			String title = Chm.title(file);
-			if (title != null)
-				MessageBox.Show("Title = " + title, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			/*
-			var cm = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
-			var view = (DataView)cm.List;
-
-			foreach (DataRowView drv in view) {
-				var row = drv.Row;
-				var table = row.Table;
-				var columns = table.Columns;
-				var x = columns.GetEnumerator();
-				x.MoveNext();
-				var z =	x.Current;
-				bool isSelected = drv["selected"] != DBNull.Value &&
-				                  (bool)drv["selected"];
-
-				if (isSelected) {
-					// This row is checked
-					var name = drv["filename"];
-					Console.Error.WriteLine(name);
-					var local = drv["title"];
-					Console.Error.WriteLine(local);
-				}
-			}
-	*/
+			var files  = new List<TocEntry>();
+			try {
 			var currencyManager = (CurrencyManager)BindingContext[dataGrid.DataSource, dataGrid.DataMember];
 			var dataView = (DataView)currencyManager.List;
-			var files  = new List<TocEntry>();
 			foreach (DataRowView dataRowView in dataView) {
 				// bool isSelected = dataRowView["selected"] is bool b && b;
 				bool selected = dataRowView["selected"] != DBNull.Value && (bool)dataRowView["selected"];
@@ -323,6 +295,10 @@ namespace Program {
 					// "ch01.html#idp8953472"
 			    }
 			}
+			} catch (ArgumentNullException e)  { 
+				// grid was not ready, ignore the rest of the handler				
+			}
+			if (files.Count > 0 ) {
 				var datadialg = new DataDialog();
 				datadialg.Files = files;
 				datadialg.ShowDialog();
@@ -334,12 +310,13 @@ namespace Program {
 				extractFiles = (from p in files
 				                select regex.Replace(p.Local,"")).ToList();
 				Chm.extract_7zip(file, extractFiles );
+			}
 		}
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
 			var tokens = new List<TocEntry>();
 			try {
-				// tokens = Chm.toc_structured(file);
+				 tokens = Chm.toc_structured(file);
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
