@@ -1,7 +1,3 @@
-// BackgroundThreadWithTimeout
-//
-// bool openBackgroundThreadWithTimeout(string path, int timeoutMs, out IStorage storage) { storage = null; relevant type result = null; var thread = new Thread(() => { try { result = Chm.static or chm.instance "mid level" API } catch { // swallow exceptions here } }); thread.IsBackground = true; thread.Start(); if (!thread.Join(timeoutMs)) { // Timeout: consider as failure return false; } storage = result; return storage != null; }
-//
 using System;
 using System.Linq;
 using System.Threading;
@@ -62,21 +58,5 @@ namespace Utils {
 			// Caller to decide whether blank result is failure or OK.
 			return result != null;
 		}
-	}
-	
-	public sealed  class DataGatherer {
-
-		// 'Utils.DataGatherer.Run.get' must declare a body because it is not marked abstract or extern. 
-		// Automatically implemented properties must define both get and set accessors. (CS0840)
-		private string tag;
-		private Func<string, List<TocEntry>> run;
-		public string Tag { get {return tag;} }
-		public Func<string, List<TocEntry>> Run { get {return run;} }
-	
-	    public DataGatherer(string tag, Func<string, List<TocEntry>> run)
-	    {
-	        this.tag = tag;
-	        this.run = run;
-	    }
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.ComponentModel;
@@ -28,7 +28,9 @@ namespace Program {
 		private OpenFileDialog openFileDialog1;
 		private TextBox textBox1;
 		private TextBox textBox2;
-		
+		// TODO: add to components
+		private TextBox textBox3;
+
 		private DataSet dataSet;
 		private DataTable dataTable;
 		private DataGrid dataGrid;
@@ -39,7 +41,7 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.14.0";
+		private const string versionString = "0.15.0";
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
@@ -138,7 +140,7 @@ namespace Program {
 			button3.Size = new System.Drawing.Size(90, 23);
 			button3.TabIndex = 1;
 			button3.Text = "List";
-			button3.Click += button3_Click;
+			button3.Click += button3_click;
 			Controls.Add(button3);
 
 			textBox1 = new TextBox();
@@ -163,6 +165,24 @@ namespace Program {
 			textBox2.Text = "";
 			Controls.Add(textBox2);
 
+			textBox3 = new TextBox();
+			textBox3.Location = new Point(170, 7);
+			textBox3.Name = "textBox3";
+			textBox3.Top = 398;
+			textBox3.Left = 8;
+			textBox3.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			textBox3.Size = new System.Drawing.Size(333, 46);
+			textBox3.TabIndex = 0;
+			textBox3.Text = "";
+
+			textBox3.Multiline = true;
+			textBox3.ScrollBars = ScrollBars.Vertical;
+			textBox3.ReadOnly = true;
+			textBox3.WordWrap = false;
+
+			// textBox3.Dock = DockStyle.Bottom;
+
+			Controls.Add(textBox3);
 
 			dataGrid = new DataGrid();
 			((ISupportInitialize)(dataGrid)).BeginInit();
@@ -213,15 +233,15 @@ namespace Program {
 
 			versionLabel = new Label();
 			versionLabel.BorderStyle = BorderStyle.None;
-			versionLabel.Location = new Point(236, 399);
+			versionLabel.Location = new Point(236, 450);
 			versionLabel.Name = "versionLabel";
 			versionLabel.Size = new System.Drawing.Size(105, 23);
 			versionLabel.Text = String.Format("Version: {0}",versionString);
 			Controls.Add(versionLabel);
 
-			AutoScaleDimensions = new SizeF(8F, 16F);
+			AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new System.Drawing.Size(348, 429);
+			ClientSize = new System.Drawing.Size(348, 480);
 
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -234,7 +254,7 @@ namespace Program {
 			}
 		}
 
-		private void MakeDataSet(List<string> files) {
+		private void makeDataSet(List<string> files) {
 
 			dataSet = new DataSet("DataSet");
 			dataTable = new DataTable("files");
@@ -258,7 +278,7 @@ namespace Program {
 			dataGrid.DataSource = dataTable;
 		}
 
-		private void MakeDataSet(List<TocEntry> files){
+		private void makeDataSet(List<TocEntry> files){
 		    if (files == null) return;
 
 			dataSet = new DataSet("DataSet");
@@ -301,72 +321,6 @@ namespace Program {
 
 			Chm.extract_7zip(file, extractFiles);
 		}
-
-		private void button3_Click(object sender, EventArgs eventArgs) {
-			var results = new List<TocEntry>();
-			String tag = null;
-			var dataGatherers = new[] {
-				new DataGatherer("MSITFS", Chm.toc_structured),
-				new DataGatherer("7-zip", Chm.toc_7zip),
-			};
-			const int timeout = 12000;
-			textBox2.Text = "Starting…";
-			bool status = false;
-			foreach (var dataGatherer in dataGatherers) {
-				status = BackgroundRunner.openBackgroundThreadWithTimeout(file, timeout, (Func<string, List<TocEntry>>)dataGatherer.Run, out results);
-
-				if (status) {
-					tag = dataGatherer.Tag;
-					Log.Information(String.Format("Strategy {0} succeeded", tag));
-					dataGrid.CaptionText = "Loaded via " + tag;
-					this.Invoke((MethodInvoker)(() =>  textBox2.Text = "Done"));
-					break;
-				} else {
-					this.Invoke((MethodInvoker)(() => textBox2.Text = "Timeout or failure"));
-					Log.Warning(String.Format("Strategy {0} failed", dataGatherer.Tag));
-				}
-			}
-
-			if (results.Count > 0) {
-				MakeDataSet(results);
-			}
-		}
-
-		private void button3_Click_old(object sender, EventArgs eventArgs) {
-			var results = new List<TocEntry>();
-			try {
-				 results = Chm.toc_structured(file);
-				 extractionPath = ExtractionPath.IStorage;
-			} catch( Exception e) {
-				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				extractionPath = ExtractionPath.SevenZip;
-			}
-	        if (results.Count == 0) {
-				try {
-					extractionPath = ExtractionPath.SevenZip;
-					results  = Chm.toc_7zip(file);
-				} catch( Exception e) {
-					MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					extractionPath = ExtractionPath.None;
-				}
-
-			}
-			if (results.Count > 0) {
-				MakeDataSet(results);
-			}
-			// TODO: refactor to compare to all values of ExtractionPath enum 
- 			dataGrid.CaptionText = extractionPath == ExtractionPath.IStorage
-    ? "Loaded via MSITFS IStorage"
-    : "Loaded via 7‑Zip fallback";
-		}
-
-		private enum ExtractionPath {
-		    None,
-		    IStorage,
-		    SevenZip
-		}
-
-		private ExtractionPath extractionPath = ExtractionPath.None;
 
 		private List<TocEntry> selectedFiles(DataGrid dataGrid) {
 		    var files = new List<TocEntry>();
@@ -458,11 +412,83 @@ namespace Program {
 		    }
 		}
 
+		private void button3_click(object sender, EventArgs eventArgs) {
+		    // update UI button to prevent multiple clicks
+		    button3.Enabled = false;
+		    // update UI
+		    textBox2.Text = "Starting…";
+
+		    // Start a worker thread
+		    var workerThread = new Thread(() => {
+		        const int timeout = 1200; // 2 minutes
+		        List<TocEntry> results = null;
+		        string tag = null;
+
+		        var dataGatherers = new[] {
+					new DataGatherer("MSITFS", Chm.toc_structured),
+					new DataGatherer("7-zip", Chm.toc_7zip)
+		        };
+
+		        foreach (var dataGatherer in dataGatherers) {
+					bool status = BackgroundRunner.openBackgroundThreadWithTimeout( file, timeout, (Func<string, List<TocEntry>>) dataGatherer.Run, out results);
+					// Update UI
+					this.Invoke((MethodInvoker)(() => {
+						appendLog(String.Format("Method {0} {1}", dataGatherer.Tag, (status ? "succeeded" : "failed")));
+						textBox2.Text = status ? "Done" : "Trying next method";
+					}));
+					
+					if (status) {
+						tag = dataGatherer.Tag;
+						break;
+						// quit after first successful extraction
+					}
+		        }
+
+				// Populate the dataset and update caption on UI thread
+				if (results != null && results.Count > 0) {
+					this.Invoke((MethodInvoker)(() => {
+						makeDataSet(results);
+						dataGrid.CaptionText = "Loaded via " + tag;
+					}));
+				} else {
+					this.Invoke((MethodInvoker)(() => textBox2.Text = "All methods failed or timed out" ));
+				}
+
+				// Re-enable the UI button
+				this.Invoke((MethodInvoker)(() => button3.Enabled = true));
+			});
+
+			// NOTE: COM ( inside BackgroundRunner) needs to run on STA Thread
+			workerThread.SetApartmentState(ApartmentState.STA);
+			workerThread.IsBackground = true;
+			workerThread.Start();
+		}
+
+		private void appendLog(string message) {
+		    if (this.InvokeRequired) {
+		        this.Invoke(new Action(() => appendLog(message)));
+		        return;
+		    }
+
+		    textBox3.AppendText(message + Environment.NewLine);
+		}
+
 	}
+
+   public sealed  class DataGatherer {
+       private string tag;
+	   private Func<string, List<TocEntry>> run;
+       public string Tag { get {return tag;} }
+       public Func<string, List<TocEntry>> Run { get {return run;} }
+
+       public DataGatherer(string tag, Func<string, List<TocEntry>> run) {
+          this.tag = tag;
+           this.run = run;
+      }
+   }
 
 
 	// customization od DataGrid
-
 	public class CheckBoxDataGridColumn : DataGridColumnStyle {
 	    private bool selectAllChecked = false;
 	    private readonly Bitmap checkedBitmap = SystemIcons.Shield.ToBitmap();
