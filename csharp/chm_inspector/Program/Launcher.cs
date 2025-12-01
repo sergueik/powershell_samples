@@ -37,7 +37,7 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.13.0";
+		private const string versionString = "0.14.0";
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
@@ -293,20 +293,36 @@ namespace Program {
 			var tokens = new List<TocEntry>();
 			try {
 				 tokens = Chm.toc_structured(file);
+				 extractionPath = ExtractionPath.IStorage;
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				extractionPath = ExtractionPath.SevenZip;
 			}
 	        if (tokens.Count == 0) {
 				try {
+					extractionPath = ExtractionPath.SevenZip;
 					tokens  = Chm.toc_7zip(file);
 				} catch( Exception e) {
 					MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					extractionPath = ExtractionPath.None;
 				}
+
 			}
 			if (tokens.Count > 0) {
 				MakeDataSet(tokens);
 			}
+			dataGrid.CaptionText = extractionPath == ExtractionPath.IStorage
+    ? "Loaded via MSITFS IStorage"
+    : "Loaded via 7‑Zip fallback";
 		}
+
+		private enum ExtractionPath {
+		    None,
+		    IStorage,
+		    SevenZip
+		}
+
+		private ExtractionPath extractionPath = ExtractionPath.None;
 
 		private List<TocEntry> selectedFiles(DataGrid dataGrid) {
 		    var files = new List<TocEntry>();
