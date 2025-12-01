@@ -304,55 +304,58 @@ namespace Program {
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
 			var results = new List<TocEntry>();
-			const int timeout = 120000;
+			String tag = null;
+			var dataGatherers = new[] {
+				new DataGatherer("MSITFS", Chm.toc_structured),
+				new DataGatherer("7-zip", Chm.toc_7zip),
+			};
+			const int timeout = 12000;
 			textBox2.Text = "Starting…";
-			bool status = BackgroundRunner.openBackgroundThreadWithTimeout(file, timeout, (Func<string, List<TocEntry>>)Chm.toc_structured, out results);
-			this.Invoke((MethodInvoker)(() => {
-				if (status)
-					textBox2.Text = "Done";
-				else
-					textBox2.Text = "Timeout or failure";
-			}));
-	        if (results.Count == 0) {
-				status = BackgroundRunner.openBackgroundThreadWithTimeout(file, timeout, (Func<string, List<TocEntry>>)Chm.toc_7zip, out results);
-				this.Invoke((MethodInvoker)(() => {
-					if (status)
-						textBox2.Text = "Done";
-					else
-						textBox2.Text = "Timeout or failure";
-				}));
+			bool status = false;
+			foreach (var dataGatherer in dataGatherers) {
+				status = BackgroundRunner.openBackgroundThreadWithTimeout(file, timeout, (Func<string, List<TocEntry>>)dataGatherer.Run, out results);
+
+				if (status) {
+					tag = dataGatherer.Tag;
+					Log.Information(String.Format("Strategy {0} succeeded", tag));
+					dataGrid.CaptionText = "Loaded via " + tag;
+					this.Invoke((MethodInvoker)(() =>  textBox2.Text = "Done"));
+					break;
+				} else {
+					this.Invoke((MethodInvoker)(() => textBox2.Text = "Timeout or failure"));
+					Log.Warning(String.Format("Strategy {0} failed", dataGatherer.Tag));
+				}
 			}
+
 			if (results.Count > 0) {
 				MakeDataSet(results);
 			}
-			dataGrid.CaptionText = extractionPath == ExtractionPath.IStorage
-    ? "Loaded via MSITFS IStorage"
-    : "Loaded via 7‑Zip fallback";
 		}
 
 		private void button3_Click_old(object sender, EventArgs eventArgs) {
-			var tokens = new List<TocEntry>();
+			var results = new List<TocEntry>();
 			try {
-				 tokens = Chm.toc_structured(file);
+				 results = Chm.toc_structured(file);
 				 extractionPath = ExtractionPath.IStorage;
 			} catch( Exception e) {
 				MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				extractionPath = ExtractionPath.SevenZip;
 			}
-	        if (tokens.Count == 0) {
+	        if (results.Count == 0) {
 				try {
 					extractionPath = ExtractionPath.SevenZip;
-					tokens  = Chm.toc_7zip(file);
+					results  = Chm.toc_7zip(file);
 				} catch( Exception e) {
 					MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					extractionPath = ExtractionPath.None;
 				}
 
 			}
-			if (tokens.Count > 0) {
-				MakeDataSet(tokens);
+			if (results.Count > 0) {
+				MakeDataSet(results);
 			}
-			dataGrid.CaptionText = extractionPath == ExtractionPath.IStorage
+			// TODO: refactor to compare to all values of ExtractionPath enum 
+ 			dataGrid.CaptionText = extractionPath == ExtractionPath.IStorage
     ? "Loaded via MSITFS IStorage"
     : "Loaded via 7‑Zip fallback";
 		}

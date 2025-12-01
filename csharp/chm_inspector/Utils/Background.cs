@@ -24,11 +24,8 @@ using Elasticsearch;
 
 
 namespace Utils {
-
-	// C# equivalent of java.util.function.Function<String, List<TocEntry>>
 	
 	public class BackgroundRunner {
-		// C# equivalent of java.util.function.Function<String, List<TocEntry>>
 		public static bool openBackgroundThreadWithTimeout( string argument, int timeout, Func<string, List<TocEntry>> method,	out List<TocEntry> result) {
 			result = null;
 			List<TocEntry> data = null;
@@ -39,8 +36,8 @@ namespace Utils {
 					data = method.Invoke(argument);
 				} catch (Exception e) {
 					threadException = e;
-					// TODO: log the exception details
-					// swallow or log later on GUI thread
+					Log.Error(String.Format("Exception: {0}", e.Message));
+ 					// TODO: log later on GUI thread
 				}
 			});
 
@@ -52,6 +49,7 @@ namespace Utils {
 			if (!thread.Join(timeout)) {
 				// timed out — thread keeps running, 
 				// but caller is impatient and counting delayed run as failure
+				Log.Warning(String.Format("Timeout: {0}", timeout));
 				return false;
 			}
 
@@ -64,5 +62,21 @@ namespace Utils {
 			// Caller to decide whether blank result is failure or OK.
 			return result != null;
 		}
+	}
+	
+	public sealed  class DataGatherer {
+
+		// 'Utils.DataGatherer.Run.get' must declare a body because it is not marked abstract or extern. 
+		// Automatically implemented properties must define both get and set accessors. (CS0840)
+		private string tag;
+		private Func<string, List<TocEntry>> run;
+		public string Tag { get {return tag;} }
+		public Func<string, List<TocEntry>> Run { get {return run;} }
+	
+	    public DataGatherer(string tag, Func<string, List<TocEntry>> run)
+	    {
+	        this.tag = tag;
+	        this.run = run;
+	    }
 	}
 }
