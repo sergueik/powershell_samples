@@ -41,7 +41,7 @@ namespace Program {
 		private bool selectAll = false;
 		private Label versionLabel;
 		private Label lblImage;
-		private const string versionString = "0.15.0";
+		private const string versionString = "0.16.0";
 		private const string initialDirectory = @"C:\";
 		private IniFile iniFile = IniFile.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"));
 		private	string file = @"c:\Program Files\Oracle\VirtualBox\VirtualBox.chm";
@@ -436,7 +436,7 @@ namespace Program {
 						appendLog(String.Format("Method {0} {1}", dataGatherer.Tag, (status ? "succeeded" : "failed")));
 						textBox2.Text = status ? "Done" : "Trying next method";
 					}));
-					
+
 					if (status) {
 						tag = dataGatherer.Tag;
 						break;
@@ -465,12 +465,13 @@ namespace Program {
 		}
 
 		private void appendLog(string message) {
-		    if (this.InvokeRequired) {
-		        this.Invoke(new Action(() => appendLog(message)));
+			var control = textBox3 as System.Windows.Forms.TextBoxBase;
+		    if (control.InvokeRequired) {
+		        control.Invoke(new Action(() => appendLog(message)));
 		        return;
 		    }
 
-		    textBox3.AppendText(message + Environment.NewLine);
+		    control.AppendText(message + Environment.NewLine);
 		}
 
 	}
