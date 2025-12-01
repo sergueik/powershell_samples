@@ -71,6 +71,12 @@ __Visual Studio Code__ no longer officially supports Windows 32-bit versions. Su
 If a 32-bit system is being used, it is recommended to update to a 64-bit version of Windows to run the [latest](https://code.visualstudio.com/Download) versions of Visual Studio Code.
 If a 32-bit version of Visual Studio Code is absolutely necessary, it would require locating and installing an older version of VS Code released prior to October 2023, which can be found in archived release [download pages](https://www.filepuma.com/download/visual_studio_code_32bit_1.43.2-25054/download/)
 
+![Visual Studio Code Download Page](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/download.png)
+
+```sh
+mv  ~/Downloads/Visual_Studio_Code_\(32bit\)_v1.43.2.exe  vscode-installer.exe
+```			
+			
 From MSI point of view User and System installs are very different in the impersonation, interactivity and directory management.
 
 Extensions are available on
@@ -144,22 +150,29 @@ NOTE: with outdated VS Code release taken to perform testing on a 32-bit Windows
 VERSION=3.3.1
 VERSION=1.7.1
 
-curl -skLO https://github.com/zowe/zowe-explorer-vscode/releases/download/v$VERSION/vscode-extension-for-zowe-$VERSION.vsix
-mv vscode-extension-for-zowe-$VERSION.vsix Files/vscode-extension-for-zowe.vsix
+curl -skL -o vscode-extension-for-zowe.vsix https://github.com/zowe/zowe-explorer-vscode/releases/download/v$VERSION/vscode-extension-for-zowe-v$VERSION.vsix
+file vscode-extension-for-zowe.vsix
+```
+```text
+vscode-extension-for-zowe.vsix: Zip archive data, at least v2.0 to extract
 ```
 
 otherwise will see the error in runtime:
 ```cmd
-pushd c:\Users\sergueik\AppData\Local\Programs\Microsoft VS Code
-code.cmd --install-extension vsode-extension-for-zowe-v3.3.1.vsix --force
+pushd "$HOME\AppData\Local\Programs\Microsoft VS Code"
+code.cmd --install-extension vsode-extension-for-zowe.vsix --force
 ```
 ```text
 Installing extensions...
-Unable to install extension 'zowe.vscode-extension-for-zowe-v3.3.1' as it is not compatible with VS Code '1.43.2'.
+Unable to install extension 'zowe.vscode-extension-for-zowe' as it is not compatible with VS Code '1.43.2'.
 Failed Installing Extensions:
 ```
 
-the Visual Studio Code installer appears to be __Inno Setup__ with its own commandline argumens.
+the Visual Studio Code installer appears to be the __Inno Setup__ with its own commandline arguments.
+
+
+![Inno Setup Installer Arguments](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/installer_flags.png)
+
 
 ```powershell
 .\vscode-installer.exe %-- /SILENT /VERYSILENT /NORESTART /MERGETASKS=!runcode
@@ -190,7 +203,50 @@ C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe Setup.wixproj
 ### Install
 
 ```powershell
+cmd %-- /c rd /s/q %USERPROFILE%\.zowe\profiles
+```
+```powershell
 msiexec.exe  /l*v "install.log" /i bin\VSCodeCustomInstaller.msi
+```
+NOTE: `profiles` directory is unstable
+```powershell
+get-childitem -path ${env:USERPROFILE}\.zowe\profiles -recurse
+```
+```txt
+
+    Directory: C:\Users\sergueik\.zowe\profiles
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----        12/1/2025  12:19 PM                ssh
+d-----        12/1/2025  12:19 PM                tso
+d-----        12/1/2025  12:19 PM                zosmf
+
+    Directory: C:\Users\sergueik\.zowe\profiles\ssh
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----        12/1/2025  12:19 PM           4191 ssh_meta.yaml
+
+
+    Directory: C:\Users\sergueik\.zowe\profiles\tso
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----        12/1/2025  12:19 PM           3769 tso_meta.yaml
+
+
+    Directory: C:\Users\sergueik\.zowe\profiles\zosmf
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----        12/1/2025  12:19 PM           4772 zosmf_meta.yaml
+
+
 ```
 ```
 ![MSI progress](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/msi_progess.png)
@@ -270,6 +326,16 @@ grep -n "vscode-installer.exe"  $LOG
 
 sed -n "$((line-40)),$((line+40))p" full-msi.log
 ```
+
+![MSI error running Visual Studio Code Installer](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/appwiz.png)
+
+
+
+#### Post Install
+
+![Visual Studio Code Settings](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/settings.png)
+
+![Visual Studio Code Extensions Autoupdate Setting](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/extensions_autoupdate.png)
 
 #### Root Cause
 
