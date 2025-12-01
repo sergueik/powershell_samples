@@ -58,7 +58,7 @@ One may see this as another angle on the [Innovator’s Dilemma](https://en.wiki
 
 #### MSI Specifics
 
-MSI supports and guarantees several scenarios most of which are no longer significant. 
+MSI supports and guarantees several scenarios most of which are no longer significant.
 
 Due to supported database referential integrity even the minor changes in install workflow cascade
 through dozen of tables and make it difficult to see what  has changed even to a *trained eye*.
@@ -336,6 +336,18 @@ sed -n "$((line-40)),$((line+40))p" full-msi.log
 ![Visual Studio Code Settings](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/settings.png)
 
 ![Visual Studio Code Extensions Autoupdate Setting](https://github.com/sergueik/powershell_samples/blob/master/external/wix/basic-vscode-customized/screenshots/extensions_autoupdate.png)
+
+__Visual Studio Code__ stores settings in multiple nonstandard locations e.g.
+
+```sh
+ls ~/.vscode/extensions/zowe.vscode-extension-for-zowe-1.7.1/
+```
+```sh
+ls ~/AppData/Roaming/Code/User/
+```
+```txt
+globalStorage/  settings.json  snippets/  workspaceStorage/
+```
 
 #### Root Cause
 
@@ -1030,28 +1042,54 @@ NOTE: no space after `-o`, and `dot` file argument must be the last argument.
 ### VS Code Profiles
 __VS Code Profiles__ are mostly a virtual construct, a layered view over your existing settings, extensions, keybindings, snippets, etc. They don’t exist as a single monolithic *profile file* one can just copy into __VS Code__ directory like a ZIP and drop in; instead, they are implemented
 
+### Compare VScode.dev and VS Code Server
+  * __VS Code dev__:
+
+    + No Server Required: It does not require a separate server installation or configuration. All processing and rendering happen within your browser.
+
+    + Limited Functionality: While it provides core editing features, it has limitations compared to a full VS Code installation or a remote server setup. Extensions may not function fully, and it lacks direct access to the underlying file system or runtime environments.
+
+    + Quick Access: Ideal for quick edits, reviewing code, or working on projects without needing a local installation or a remote development environment.
+
+* VS Code Server:
+    + Remote Development Host: The VS Code Server is a backend component that runs on a remote machine (physical or virtual) and allows your local VS Code desktop application to connect and interact with that remote environment.
+
+    + Full VS Code Experience (Remotely): It enables you to develop on a powerful remote machine while still using the familiar VS Code interface on your local desktop. This includes full extension support, access to the remote file system, and the ability to debug applications running on the remote server.
+
+    + Requires Local VS Code: You need a local installation of VS Code on your machine to connect to and control the remote VS Code Server.
+
+    + Powerful & Flexible: Suitable for scenarios where you need to leverage the resources of a remote server (e.g., more processing power, specific OS, access to a production environment) or when working with large codebases that are better managed on a remote system.
+
 ### See Also
 
-  * __Code Server__ - code anywhere on your Chromebook, tablet, or laptop with a consistent dev environment accessed through the browser - __Docker Hub__ [search](https://hub.docker.com/search?q=code-server) returns tens of implementations, varying in base image and bootstrap automation e.g.
+  * __VS Code Server__ - code anywhere on your Chromebook, tablet, or laptop with a consistent dev environment accessed through the browser - __Docker Hub__ [search](https://hub.docker.com/search?q=code-server) returns tens of implementations, varying in base image and bootstrap automation e.g.
      + `linuxserver/code-server` [image](https://hub.docker.com/r/linuxserver/code-server) and [repo](https://github.com/linuxserver/docker-code-server)
      + `ruanbekker/docker-vscode-server` [project](https://github.com/ruanbekker/docker-vscode-server)
      + `codercom/code-server` [image](https://hub.docker.com/r/codercom/code-server) and [repo](https://github.com/coder/code-server)
      + `islandora/code-server` [image](https://hub.docker.com/r/islandora/code-server) and [repo](https://github.com/coder/code-server)
      + `martinussuherman/alpine-code-server` [image](https://hub.docker.com/r/martinussuherman/alpine-code-server) and [repo](https://github.com/martinussuherman/alpine-code-server)
      + `hotari/alpine-vscode-server` [image](https://hub.docker.com/r/hotari/alpine-vscode-server)
-   
-   * e.g. [LibreOffice](https://github.com/libreoffice) Windows installer (MSI) is currently being developed or has been reworked using the WiX Toolset.  
+
+   * e.g. [LibreOffice](https://github.com/libreoffice) Windows installer (MSI) is currently being developed or has been reworked using the WiX Toolset.
 
    * [curious story](https://ericlippert.com/2003/09/16/erics-complete-guide-to-vt_date/) of epic Excel and Lotus 1-2-3 zero point date
    * [Fabulous Adventures In Coding](http://web.archive.org/web/20090606213951/http://blogs.msdn.com/ericlippert/archive/2009/06/01/bug-psychology.aspx) explained
    * [NSIS](https://nsis.sourceforge.io/Download) alternative packaging
 
-   * Dom: "I guess she's packed on a few pounds over the years." [scene](https://youtu.be/xBesSOSsOfE?t=32S&end=42S) 
+   * Dom: "I guess she's packed on a few pounds over the years." [scene](https://youtu.be/xBesSOSsOfE?t=32S&end=42S)
      + NOTE: the `end` param seemingly ignored by normal __YouTube__ watch URLs opened in browser - __YouTube__ simply doesn’t support auto-stop on the main site.   + only works in *embedded player* URLs but embedded links will return Error 153 on copyright protected URLs
   * __NeXT__ vs __Sun__ developer productivity [video](https://www.youtube.com/watch?v=UGhfB-NICzg)
-  * [Jean-Marie Hullot](https://www.youtube.com/watch?v=y-VNjvffxvM) 
+  * [Jean-Marie Hullot](https://www.youtube.com/watch?v=y-VNjvffxvM)
   * [Nib Files](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/LoadingResources/CocoaNibs/CocoaNibs.html)
-  
+  * post announcint [vscode.dev](https://code.visualstudio.com/blogs/2021/10/20/vscode-dev)
+
+  * [vscode.dev](https://vscode.dev/) is a web-based version of Visual Studio Code that runs entirely in your browser
+  * __VS Code Portable__ [manual setup steps](https://code.visualstudio.com/docs/editor/portable)
+  * __VS Code__[pre-built](https://portapps.io/app/vscode-portable/)
+  * [developing](https://habr.com/ru/companies/ncloudtech/articles/822475/) __VS Code__ extensions (in Russian)
+  * few [useful extensions](https://habr.com/ru/articles/930926/) (in Russian) for __VS Code__
+  * Javascript [instruments for testing](https://habr.com/ru/companies/haulmont/articles/879002/) __VS Code__ extensions (:in Russian) on __WebDriver__ Protocol and __Chrome DevTools__ Protocol
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 

@@ -891,8 +891,6 @@ save visualization and run application.
 
 ![app11](screenshots/app11.jpg)
 
-![app12](screenshots/app12.jpg)
-
 
 ###  Cleanup of Locally Installed ElasticSearch
 to terminate elasticsearch zip-installed locally earlier
