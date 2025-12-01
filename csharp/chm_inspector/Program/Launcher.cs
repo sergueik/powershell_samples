@@ -27,6 +27,8 @@ namespace Program {
 		private Button button3;
 		private OpenFileDialog openFileDialog1;
 		private TextBox textBox1;
+		private TextBox textBox2;
+		
 		private DataSet dataSet;
 		private DataTable dataTable;
 		private DataGrid dataGrid;
@@ -145,11 +147,22 @@ namespace Program {
 			textBox1.Top = 7;
 			textBox1.Left = 30;
 			textBox1.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-			Controls.Add(textBox1);
-
-			textBox1.Size = new System.Drawing.Size(200, 23);
+			textBox1.Size = new System.Drawing.Size(140, 23);
 			textBox1.TabIndex = 3;
 			textBox1.Text = "";
+			Controls.Add(textBox1);
+
+			textBox2 = new TextBox();
+			textBox2.Location = new Point(170, 7);
+			textBox2.Name = "textBox2";
+			textBox2.Top = 7;
+			textBox2.Left = 170;
+			textBox2.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			textBox2.Size = new System.Drawing.Size(140, 23);
+			textBox2.TabIndex = 4;
+			textBox2.Text = "";
+			Controls.Add(textBox2);
+
 
 			dataGrid = new DataGrid();
 			((ISupportInitialize)(dataGrid)).BeginInit();
@@ -274,22 +287,50 @@ namespace Program {
 
 
 		private void button2_Click(object sender, EventArgs e) {
-		    var files = selectedFiles(dataGrid);
+			var files = selectedFiles(dataGrid);
 
-		    if (files.Count == 0)
-		        return;
+			if (files.Count == 0)
+				return;
 			// create object and populate instance properties
-		    var dialog = new DataDialog { Files = files };
-		    dialog.ShowDialog();
+			var dialog = new DataDialog { Files = files };
+			dialog.ShowDialog();
 
-		    var regex = new Regex("#.*$", RegexOptions.Compiled);
+			var regex = new Regex("#.*$", RegexOptions.Compiled);
 			// LINQ query using method syntax
-		    var extractFiles = files.Select(f => regex.Replace(f.Local, "")).Distinct().ToList();
+			var extractFiles = files.Select(f => regex.Replace(f.Local, "")).Distinct().ToList();
 
-		    Chm.extract_7zip(file, extractFiles);
+			Chm.extract_7zip(file, extractFiles);
 		}
 
 		private void button3_Click(object sender, EventArgs eventArgs) {
+			var results = new List<TocEntry>();
+			const int timeout = 120000;
+			textBox2.Text = "Starting…";
+			bool status = BackgroundRunner.openBackgroundThreadWithTimeout(file, timeout, (Func<string, List<TocEntry>>)Chm.toc_structured, out results);
+			this.Invoke((MethodInvoker)(() => {
+				if (status)
+					textBox2.Text = "Done";
+				else
+					textBox2.Text = "Timeout or failure";
+			}));
+	        if (results.Count == 0) {
+				status = BackgroundRunner.openBackgroundThreadWithTimeout(file, timeout, (Func<string, List<TocEntry>>)Chm.toc_7zip, out results);
+				this.Invoke((MethodInvoker)(() => {
+					if (status)
+						textBox2.Text = "Done";
+					else
+						textBox2.Text = "Timeout or failure";
+				}));
+			}
+			if (results.Count > 0) {
+				MakeDataSet(results);
+			}
+			dataGrid.CaptionText = extractionPath == ExtractionPath.IStorage
+    ? "Loaded via MSITFS IStorage"
+    : "Loaded via 7‑Zip fallback";
+		}
+
+		private void button3_Click_old(object sender, EventArgs eventArgs) {
 			var tokens = new List<TocEntry>();
 			try {
 				 tokens = Chm.toc_structured(file);

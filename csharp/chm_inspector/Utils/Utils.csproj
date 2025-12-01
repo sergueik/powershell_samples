@@ -44,10 +44,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-
-
-	  
-	  
+    <Compile Include="Background.cs" />
     <Compile Include="BaseDialog.cs" />
     <Compile Include="DataDialog.cs" />
     <Compile Include="DialogMessage.cs" />

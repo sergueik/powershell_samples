@@ -982,7 +982,10 @@ __VS Code Profiles__ are mostly a virtual construct, a layered view over your ex
 
    * Dom: "I guess she's packed on a few pounds over the years." [scene](https://youtu.be/xBesSOSsOfE?t=32S&end=42S) 
      + NOTE: the `end` param seemingly ignored by normal __YouTube__ watch URLs opened in browser - __YouTube__ simply doesn’t support auto-stop on the main site.   + only works in *embedded player* URLs but embedded links will return Error 153 on copyright protected URLs
-
+  * __NeXT__ vs __Sun__ developer productivity [video](https://www.youtube.com/watch?v=UGhfB-NICzg)
+  * [Jean-Marie Hullot](https://www.youtube.com/watch?v=y-VNjvffxvM) 
+  * [Nib Files](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/LoadingResources/CocoaNibs/CocoaNibs.html)
+  
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 
