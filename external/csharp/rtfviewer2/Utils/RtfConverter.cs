@@ -203,9 +203,7 @@ namespace Utils {
 			sb.Append("\\highlight0 ");
 			sb.Append(@"\f0 ");
 			sb.Append(UseFontColor(rtfTextColor, "Code Block"));
-
-			sb.Append(String.Format(" ln: {0} pd:{1} / pad {2}", elements, padDiff, padding));
-
+			Debug.WriteLine(String.Format(" ln: {0} pd:{1} / pad {2}", elements, padDiff, padding));
 			sb.AppendLine("\\par ");
 			return sb.ToString();
 		}
