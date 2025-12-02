@@ -89,8 +89,7 @@ namespace Utils {
 		private RtfColorInfo previousFontColor;
 		private string FileName;
 
-		public enum ParseErrorOutput
-		{
+		public enum ParseErrorOutput {
 			NoOutput,
 			RawText,
 			ErrorText,
@@ -99,8 +98,7 @@ namespace Utils {
 
 		private bool codeBlockActive = false;
 
-		public enum CodeBlockType
-		{
+		public enum CodeBlockType {
 			Indented,
 			Fenced,
 			Inline,
@@ -109,20 +107,18 @@ namespace Utils {
 
 		private CodeBlockType CurrentCodeBlockType = CodeBlockType.None;
 
-		public RtfConverter(string fileName)
-		{
+		public RtfConverter(string fileName) {
 			currentFontColor = rtfTextColor;
 			previousFontColor = rtfTextColor;
 			FileName = fileName;
 		}
 
-		public string ConvertText(string text)
-		{
+		public string stringReader(string text) {
 			var lines = new List<string>();
 			lines.Clear();
-			using (StringReader sr = new StringReader(text)) {
+			using (var stringReader = new StringReader(text)) {
 				string line;
-				while ((line = sr.ReadLine()) != null) {
+				while ((line = stringReader.ReadLine()) != null) {
 					if (line != null) {
 						lines.Add(line);
 					}
@@ -182,15 +178,14 @@ namespace Utils {
 			text.AppendLine("\\par ");
 		}
 
-		private string CodeblockLine(string line, int padding)
-		{
-			StringInfo stringInfo = new StringInfo(line);
+		private string CodeblockLine(string line, int padding) {
+			var stringInfo = new StringInfo(line);
 			int elements = stringInfo.LengthInTextElements;
 			int lineDiff = line.Length - elements;
 			int padDiff = Math.Max(padding - elements, 0);
 			int tabCount = line.AllIndexesOf("\t").Count();
 
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			sb.Append(UseFontColor(rtfCodeFontColor, "Code block"));
 			sb.Append(@"\f1 ");
 			sb.Append(rtfCodeBackgroundColor.asBackgroundColor());
@@ -208,9 +203,8 @@ namespace Utils {
 			return sb.ToString();
 		}
 
-		private string CodeSegment(string line)
-		{
-			StringBuilder sb = new StringBuilder();
+		private string CodeSegment(string line) {
+			var sb = new StringBuilder();
 			sb.Append(UseFontColor(rtfCodeFontColor, "Code block"));
 			sb.Append(@"\f1 ");
 			sb.Append(rtfCodeBackgroundColor.asBackgroundColor());
@@ -221,10 +215,23 @@ namespace Utils {
 			return sb.ToString();
 		}
 
-		public string ConvertText(List<string> lines)
-		{
+		public string ConvertText(string text){
+			var lines = new List<string>();
+			lines.Clear();
+			using (var sr = new StringReader(text)) {
+				string line;
+				while ((line = sr.ReadLine()) != null) {
+					if (line != null) {
+						lines.Add(line);
+					}
+				}
+			}
+			return ConvertText(lines);
+		}
+
+		public string ConvertText(List<string> lines) {
 			Errors = new List<string>();
-			int[] textSizes = new int[7] {
+			var textSizes = new int[7] {
 				DefaultPointSize * 2,
 				H1PointSize * 2,
 				H2PointSize * 2,
@@ -233,7 +240,7 @@ namespace Utils {
 				H5PointSize * 2,
 				H6PointSize * 2
 			};
-			List<int> columnSizes = new List<int>();
+			var columnSizes = new List<int>();
 			var text = new StringBuilder();
 
 			string colorTable = @"{\colortbl;" + ColorToTableDef(TextColor) + ColorToTableDef(HeadingColor) + ColorToTableDef(CodeFontColor) + ColorToTableDef(CodeBackgroundColor) + ColorToTableDef(ListPrefixColor) + ColorToTableDef(LinkColor) + "}";
@@ -249,35 +256,27 @@ namespace Utils {
 					nextLine = lines[i + 1];
 				}
 
-				//Debug.WriteLine($"¤{line}¤");
+				// Debug.WriteLine($"¤{line}¤");
 
 				try {
-
-					// Code block, skip all other formatting
-					if (line.StartsWith("\t") || line.StartsWith("    ")) { // lines starting with TAB or four spaces is a code block
-						//CreateCodeBlock(lines, text, i, ref line, codeBlockActive);
-						//codeBlockActive = true;
+					// Code block - skip all other formatting
+					// https://www.markdownguide.org/basic-syntax/#code-blocks
+					if (line.StartsWith("\t") || line.StartsWith("    ")) {
 						CurrentCodeBlockType = CodeBlockType.Indented;
-						CreateCodeBlock(lines, text, ref i, CurrentCodeBlockType);//ref line, codeBlockActive);
+						CreateCodeBlock(lines, text, ref i, CurrentCodeBlockType);
 						CurrentCodeBlockType = CodeBlockType.None;
+					// https://www.markdownguide.org/extended-syntax/#fenced-code-blocks
 					} else if (line.StartsWith("```") && CurrentCodeBlockType == CodeBlockType.None) {
 						CurrentCodeBlockType = CodeBlockType.Fenced;
-						CreateCodeBlock(lines, text, ref i, CurrentCodeBlockType);//ref line, codeBlockActive);
+						CreateCodeBlock(lines, text, ref i, CurrentCodeBlockType);
 						CurrentCodeBlockType = CodeBlockType.None;
-					} else { // normal processing
+					} else {
+						// normal processing
 						CurrentCodeBlockType = CodeBlockType.None;
 						line = SetEscapeCharacters(line, true).Text;
 
-						//if (codeBlockActive == true) // exiting a code block from the previous lines
-						//{
-						//    text.Append(CodeblockLine("\t", currentPaddingWidth));
-						//    codeBlockActive = false;
-						//}
-
-						// # to ####### at the start of a line is a heading
 						line = SetHeading(textSizes, line);
 
-						// if there are three or more * or _ in a row, its text, not a font style marker
 						line = EscapeNonStyleTags(line, new char[] { '*', '_' });
 
 						// Font style, * _ ** __ used for bold and italic
@@ -292,7 +291,7 @@ namespace Utils {
 						}
 
 						// Images. Currently images are removed, TODO: inline images
-						// ![image title](http://example.com/picture.png)
+						// https://www.markdownguide.org/basic-syntax/#images-1
 						line = SetImage(line);
 
 						// Comment tag. Remove or implement special behavior in the comment
@@ -310,12 +309,14 @@ namespace Utils {
 						}
 
 						// lists, ordered and unordered
+						// https://www.markdownguide.org/basic-syntax/#lists-1
 						line = SetListSymbols(line, nextLine);
 
 						// Table. Create table if at least one line followin also start with |.
 						// Using the format | one | two | three |   // headings
 						//                  |-----|-----|-------|   // this line is skipped
 						//                  | a   | b   | c     |   // content
+						// https://www.markdownguide.org/extended-syntax/#tables
 						if (line.TrimStart().StartsWith("|")) {
 							var result = CreateTable(i, lines, columnSizes);
 							line = result.Text;
@@ -365,27 +366,14 @@ namespace Utils {
 		}
 
 
-		private string UseFontColor(RtfColorInfo newColor, string debugHint = "???")
-		{
+		private string UseFontColor(RtfColorInfo newColor, string debugHint = "???") {
 			//Debug.WriteLine($"Use font color, hint: {debugHint}. new:{newColor.Color}, previous:{previousFontColor.Color}, current:{currentFontColor.Color}");
 			previousFontColor = currentFontColor;
 			currentFontColor = newColor;
 			return newColor.asFontColor();
 		}
 
-		//private string RevertFontColor(string debugHint = "???")
-		//{
-
-		//        Debug.WriteLine($"Reverting font color, hint: {debugHint}. previous:{previousFontColor.Color}, current:{currentFontColor.Color}");
-
-		//    RtfColorInfo tempColor = currentFontColor;
-		//    currentFontColor = previousFontColor;
-		//    previousFontColor = tempColor;
-		//    return previousFontColor.asFontColor();
-		//}
-
-		private string SetLink(string line)
-		{
+		private string SetLink(string line) {
 			string linkTitle = "";
 			string linkUrl = "";
 			int endLinkUrl;
@@ -424,20 +412,22 @@ namespace Utils {
 			return line;
 		}
 
-		private string CreateLinkCode(string linkTitle, string linkURL)
-		{
+		private string CreateLinkCode(string linkTitle, string linkURL) {
 			string result = "{\\field{\\*\\fldinst HYPERLINK \"" + linkURL + "\"}{\\fldrslt " + linkTitle + "}}";
-			//string result = "{\\field{\\*\\fldinst HYPERLINK \"http://www.google.com/\"}{\\fldrslt Google}}";
 			return result;
 		}
 
-		private string SetImage(string line)
-		{
-			// IMPORTANT
-			// The RichTextBox Readonly value must be False, otherwise images will not load. This is a bug, since at least 2018
+		private string SetImage(string line) {
 
+			// IMPORTANT
+			// The RichTextBox Readonly value must be False,
+			// otherwise images will not load. This is a bug, since at least 2018
+			// https://stackoverflow.com/questions/34843931/readonly-content-of-richtextbox-doesnt-show-images
+			// https://developercommunity.visualstudio.com/t/richtextbox-fails-to-display-image/383903
+			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextbox?view=netframework-4.5
 			string imageTitle = "";
 			string imageUrl = "";
+			// https://www.markdownguide.org/basic-syntax/#images
 			int startImageTitle = line.IndexOf("![");
 			if (startImageTitle == -1) {
 				return line;
@@ -463,8 +453,7 @@ namespace Utils {
 			return line;
 		}
 
-		private string CreateImageCode(string imageTitle, string imageUrl)
-		{
+		private string CreateImageCode(string imageTitle, string imageUrl) {
 			// IMPORTANT
 			// The RichTextBox Readonly value must be False, otherwise images will not load. This is a bug, since at least 2017
 
@@ -500,7 +489,7 @@ namespace Utils {
 			string imagePath;
 			Image img = null;
 			byte[] bytes = null;
-			MemoryStream stream = new MemoryStream();
+			var stream = new MemoryStream();
 			int imageWidth = 100;
 			int imageHeight = 100;
 			if (imageUrl.StartsWith("http") || imageUrl.StartsWith("ftp")) {
@@ -575,8 +564,7 @@ namespace Utils {
 			#pragma warning restore CA1416 // Validate platform compatibility
 		}
 
-		private string SetListSymbols(string line, string nextLine)
-		{
+		private string SetListSymbols(string line, string nextLine) {
 			string updatedLine = line;
 			if (AllowUnOrderedList) {
 				updatedLine = UnorderedListSymbol(line, nextLine);
@@ -591,9 +579,8 @@ namespace Utils {
 
 		int OrderedListCurrentNumber = -1;
 		bool OrderedListActive = false;
-		private string OrderedListSymbol(string line, string nextLine)
-		{
-			StringBuilder sb = new StringBuilder();
+		private string OrderedListSymbol(string line, string nextLine) {
+			var sb = new StringBuilder();
 			int prefixLenght = 1;
 
 			if (line.Length == 0) {
@@ -654,8 +641,8 @@ namespace Utils {
 		}
 
 		bool UnOrderedListActive = false;
-		private string UnorderedListSymbol(string line, string nextLine)
-		{
+
+		private string UnorderedListSymbol(string line, string nextLine) {
 			string asteriskEsc = @"\'2a ";
 			string[] unOrderedListPrefixes = { "- ", "+ ", "* ", asteriskEsc };
 			//bool unOrderedList = false;
@@ -772,11 +759,11 @@ namespace Utils {
 		}
 
 		private string RemoveComment(string line) {
-			string startTag = "<!--";
-			string endTag = "-->";
+			const string startTag = "<!--";
+			const string endTag = "-->";
 			int commentStart = line.IndexOf(startTag);
 			int commentEnd = line.IndexOf(endTag);
-			StringBuilder stringBuilder = new StringBuilder();
+			var stringBuilder = new StringBuilder();
 			if (commentStart > 0)
 				stringBuilder.Append(line.Substring(0, commentStart));
 			if (commentEnd < line.Length)
@@ -788,9 +775,8 @@ namespace Utils {
 			return @"\red" + color.R + @"\green" + color.G + @"\blue" + color.B + ";";
 		}
 
-		private static Result SetEscapeCharacters(string line, bool doubleToSingleBackslash = true)
-		{
-			//https://www.oreilly.com/library/view/rtf-pocket-guide/9781449302047/ch04.html
+		private static Result SetEscapeCharacters(string line, bool doubleToSingleBackslash = true) {
+			// https://www.oreilly.com/library/view/rtf-pocket-guide/9781449302047/ch04.html
 			string result = line;
 			int numReplaced = 0;
 			// IMPORTANT: \’7d is not the same as \'7d, the ' character matters
@@ -829,7 +815,9 @@ namespace Utils {
 
 			result = GetRtfUnicodeEscapedString(result);
 
-			return new Result {Text = result, Num = numReplaced
+			return new Result {
+				Text = result,
+				Num = numReplaced
 			};
 		}
 
@@ -844,7 +832,7 @@ namespace Utils {
 
 
 		public static string GetRtfUnicodeEscapedString(string s) {
-			//https://stackoverflow.com/questions/1368020/how-to-output-unicode-string-to-rtf-using-c
+			// https://stackoverflow.com/questions/1368020/how-to-output-unicode-string-to-rtf-using-c
 			var sb = new StringBuilder();
 			foreach (var c in s) {
 				if (c <= 0x7f) // if ((int)c <= 127)
@@ -855,7 +843,6 @@ namespace Utils {
 					sb.Append(converted);
 					//sb.Append("\\'" + ((int)c).ToString("X"));
 				}
-
 			}
 			return sb.ToString();
 		}

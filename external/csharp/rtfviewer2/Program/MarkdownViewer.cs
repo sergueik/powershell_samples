@@ -1,35 +1,27 @@
 using System;
-using System.Linq.Expressions;
 using System.Windows.Forms;
 using System.Linq;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Collections.Generic;
 
 using Utils;
-// using static System.Windows.Forms.LinkLabel;
 
-namespace Program
-{
-	public partial class MarkdownViewer : Form
-	{
+namespace Program {
+	public partial class MarkdownViewer : Form {
 		string rtfText = string.Empty;
-		string FileName = "readme.MD";
-		//string testFile = "test.md";
+		string FileName = "README.md";
 		bool errorPopup = false;
 
-		public MarkdownViewer(string[] args)
-		{
+		public MarkdownViewer(string[] args) {
 			InitializeComponent();
 			UpdateSplitters();
 			ProcessArguments(args);
 			OpenFile(FileName);
 		}
 
-		private void ProcessArguments(string[] args)
-		{
+		private void ProcessArguments(string[] args) {
 			if (args.Length == 0)
 				return;
 			string file = args[0];
@@ -40,8 +32,7 @@ namespace Program
 			}
 		}
 
-		public void OpenFile(string fileName)
-		{
+		public void OpenFile(string fileName) {
 			if (File.Exists(fileName)) {
 				Debug.WriteLine("Loading file: " + fileName);
 				string text = File.ReadAllText(fileName, System.Text.Encoding.UTF8);
@@ -55,12 +46,10 @@ namespace Program
 				rtfText = "";
 				Debug.WriteLine("RTF text is 0 long");
 			}
-
 		}
 
-		private void LoadText(string text, string fileName)
-		{
-			RtfConverter rtfConverter = new RtfConverter(fileName);
+		private void LoadText(string text, string fileName) {
+			var rtfConverter = new RtfConverter(fileName);
 			rtfText = rtfConverter.ConvertText(text);
 
 			if (rtfConverter.Errors.Count > 0 && errorPopup) {
@@ -81,22 +70,19 @@ namespace Program
 			//richTextBoxRtfCode.Text = richTextBoxRtfView.Rtf;
 		}
 
-		private string LineListToString(List<string> lines)
-		{
-			StringBuilder sb = new StringBuilder();
+		private string LineListToString(List<string> lines) {
+			var sb = new StringBuilder();
 			foreach (string line in lines) {
 				sb.AppendLine(line);
 			}
 			return sb.ToString();
 		}
 
-		private void CopyToClipboard_Click(object sender, EventArgs e)
-		{
+		private void CopyToClipboard_Click(object sender, EventArgs e) {
 			Clipboard.SetText(rtfText, TextDataFormat.Rtf);
 		}
 
-		private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
-		{
+		private void richTextBox1_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyCode == Keys.F5) {
 				LoadText(textBoxSourceMd.Text, FileName);
 			}
@@ -105,35 +91,32 @@ namespace Program
 			}
 		}
 
-		private void ButtonLoad_Click(object sender, EventArgs e)
-		{
+		private void ButtonLoad_Click(object sender, EventArgs e) {
 			OpenFileAction();
 		}
 
-		private void OpenFileAction()
-		{
-			OpenFileDialog openFileDialog = new OpenFileDialog() {
+		private void OpenFileAction() {
+			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.openfiledialog?view=netframework-4.5
+			var openFileDialog = new OpenFileDialog() {
 				Filter = "Markdown|*.md",
 				// ShowPinnedPlaces = true,
 				// ShowPreview = true
 				// 'System.Windows.Forms.OpenFileDialog' does not contain a definition for 'ShowPinnedPlaces' (CS0117)
 			};
-			DialogResult = openFileDialog.ShowDialog();
-			if (DialogResult == DialogResult.OK) {
+			DialogResult result = openFileDialog.ShowDialog();
+			if (result == DialogResult.OK) {
 				FileName = openFileDialog.FileName;
 				OpenFile(FileName);
 			}
 		}
 
-		private void buttonRefresh_Click(object sender, EventArgs e)
-		{
+		private void buttonRefresh_Click(object sender, EventArgs e) {
 			LoadText(textBoxSourceMd.Text, FileName);
 		}
 
-		private void buttonSave_Click(object sender, EventArgs e)
-		{
+		private void buttonSave_Click(object sender, EventArgs e) {
 			string saveFile = "readme.rtf";
-			SaveFileDialog saveFileDialog = new SaveFileDialog() {
+			var saveFileDialog = new SaveFileDialog() {
 				Filter = "Rich Text|*.rtf|All files|*.*",
 				FileName = saveFile,
 				OverwritePrompt = true
@@ -145,20 +128,15 @@ namespace Program
 			}
 		}
 
-		private void checkBoxShowSourceMd_CheckedChanged(object sender, EventArgs e)
-		{
-
+		private void checkBoxShowSourceMd_CheckedChanged(object sender, EventArgs e) {
 			UpdateSplitters();
 		}
 
-		private void checkBoxShowRtfCode_CheckedChanged(object sender, EventArgs e)
-		{
-
+		private void checkBoxShowRtfCode_CheckedChanged(object sender, EventArgs e) {
 			UpdateSplitters();
 		}
 
-		private void UpdateSplitters()
-		{
+		private void UpdateSplitters() {
 			textBoxSourceMd.Visible = checkBoxShowSourceMd.Checked;
 			richTextBoxRtfCode.Visible = checkBoxShowRtfCode.Checked;
 			if (checkBoxShowSourceMd.Checked) {
@@ -174,14 +152,13 @@ namespace Program
 			}
 		}
 
-		private void textBoxSourceMd_TextChanged(object sender, EventArgs e)
-		{
+		private void textBoxSourceMd_TextChanged(object sender, EventArgs e) {
 			if (checkBoxLiveUpdate.Checked) {
 				if (!timerUpdate.Enabled) {
-					//Debug.WriteLine("  Start timer");
+					// Debug.WriteLine("  Start timer");
 					timerUpdate.Start();
 				} else {
-					//Debug.WriteLine("    Timer already running, restarting");
+					// Debug.WriteLine("    Timer already running, restarting");
 					timerUpdate.Enabled = false;
 					timerUpdate.Start();
 
@@ -189,16 +166,14 @@ namespace Program
 			}
 		}
 
-		private void timerUpdate_Tick(object sender, EventArgs e)
-		{
+		private void timerUpdate_Tick(object sender, EventArgs e) {
 			//Debug.WriteLine("Timer tick, update text");
 			LoadText(textBoxSourceMd.Text, FileName);
 			timerUpdate.Stop();
 
 		}
 
-		private void buttonSaveMd_Click(object sender, EventArgs e)
-		{
+		private void buttonSaveMd_Click(object sender, EventArgs e) {
 			string saveFile = FileName;
 			var saveFileDialog = new SaveFileDialog() {
 				Filter = "Markdown|*.md|All files|*.*",
@@ -212,15 +187,7 @@ namespace Program
 			}
 		}
 
-		private void richTextBoxRtfView_LinkClicked(object sender, LinkClickedEventArgs e)
-		{
-
-			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.linkclickedeventargs?view=netframework-4.5
-			// 'System.Windows.Forms.LinkClickedEventArgs' does not contain a definition for 'LinkLength' and
-			// no extension method 'LinkLength' accepting a first argument of type 'System.Windows.Forms.LinkClickedEventArgs'
-			// could be found (are you missing a using directive or an assembly reference?) (CS1061)
-			// LinkLabel linkLabel = e.
-
+		private void richTextBoxRtfView_LinkClicked(object sender, LinkClickedEventArgs e) {
 			// Debug.WriteLine(String.Format("Link Clicked: {0}, start: {1}, length{2}",e.LinkText,e.LinkStart,e.LinkLength));
 			string linkURL = e.LinkText;
 			if (linkURL != null) {
@@ -247,16 +214,14 @@ namespace Program
 
 		}
 
-		public static void OpenLink(string url)
-		{
+		public static void OpenLink(string url) {
 			Process.Start(new ProcessStartInfo() {
 				FileName = url,
 				UseShellExecute = true
 			});
 		}
 
-		private void OpenFileExternal(string file)
-		{
+		private void OpenFileExternal(string file) {
 			if (File.Exists(file)) {
 				Process.Start(new ProcessStartInfo() {
 					FileName = file,
@@ -267,8 +232,7 @@ namespace Program
 			}
 		}
 
-		private void richTextBoxRtfView_TextChanged(object sender, EventArgs e)
-		{
+		private void richTextBoxRtfView_TextChanged(object sender, EventArgs e) {
 			richTextBoxRtfCode.Text = richTextBoxRtfView.Rtf;
 		}
 	}

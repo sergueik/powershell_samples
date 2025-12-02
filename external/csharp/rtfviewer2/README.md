@@ -16,6 +16,43 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
   - Deconstruction rules
 - *Target-typed* `new` - C# __9.0__
 - `AsSpan` instead of `Substring` – not supported in C# __5.0__ due to compiler dependencies
+- `using static` directive - C# __6.0__
+### WIP
+
+- Tag the __RTF__ generated from __Markdown__ with **hidden markers** for [Paragraphs](https://www.markdownguide.org/basic-syntax/#paragraphs-1), [Headings](https://www.markdownguide.org/basic-syntax/#headings), [Images](https://www.markdownguide.org/basic-syntax/#images), [Lists](https://www.markdownguide.org/basic-syntax/#lists-1), [Tables](https://www.markdownguide.org/extended-syntax/#tables) and [Code Blocks](https://www.markdownguide.org/basic-syntax/#code-blocks).  
+  *(Markers remain invisible during normal rendering and do not affect the displayed content.)*
+- Implement **forward / backward navigation buttons** to scroll to the following/preceding anchor, enabling vi-style movement *by paragraph*, *section*, or *code block* logical units.
+- Implement a **toggle button** in the UI to instantly reveal or hide the markers for debugging or inspection purposes.
+
+#### Example
+
+
+- Fragment *without* markers:
+
+![app1](screenshots/form1.jpg)
+
+```rtf
+MyRichTextBox.Rtf = "{\rtf1\ansi\deff0 " & vbCrLf & _
+	"{\fonttbl{\f0\fswiss\fcharset0 Arial;}} " & vbCrLf  & _
+	"\pard\sa200\sl276\slmult1\f0\fs24 " & vbCrLf & _
+	"This is visible text. This is also visible text.  " & vbCrLf & _
+	"} "
+```
+
+-- Same fragment *with* **hidden marker**:
+
+![app1](screenshots/form2.jpg)
+
+The hidden text will not be displayed; visually, it renders identically.
+
+```rtf
+MyRichTextBox.Rtf = "{\rtf1\ansi\deff0 " & vbCrLf & _
+	"{\fonttbl{\f0\fswiss\fcharset0 Arial;}} " & vbCrLf & _
+	"\pard\sa200\sl276\slmult1\f0\fs24  " & vbCrLf & _
+	"This is visible text. {\v This text is hidden.} This is also visible text. " & vbCrLf & _
+	"} "
+```
+
 
 ### See Also
 
@@ -25,36 +62,18 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 - [GustavoHennig/MarkdownToRtf](https://github.com/GustavoHennig/MarkdownToRtf) – basic Markdown to RTF converter.
 - [Avalon Renderer](https://github.com/Kryptos-FR/markdig.wpf) – WPF renderer using [Markdig](https://github.com/xoofx/markdig).
 - [Markdown Basic Syntax](https://www.markdownguide.org/basic-syntax/)
-- [RTF Spec](https://latex2rtf.sourceforge.net/RTF-Spec-1.2.pdf) – the original published specification was developed by __Microsoft Corporation__ in __1987__.
+- [RTF Spec](https://latex2rtf.sourceforge.net/RTF-Spec-1.2.pdf) – the original published specification was developed by __Microsoft Corporation__ in __1987__ (The __Windows OS__ was first launched in __1985__).
 - [The RTF Cookbook](https://metacpan.org/dist/RTF-Writer/view/lib/RTF/Cookbook.pod) – note: not a Perl module
+  * Misc. `RichTextBox` articlesi (note traditionally the `RichTextBox` examples are writen in [VB.Net](https://en.wikipedia.org/wiki/Visual_Basic_(.NET))):
+   + [Scrolling Around with the RichTextBox Contro](https://www.codeproject.com/articles/Scrolling-Around-with-the-RichTextBox-Control)
+   + [Numbering lines of RichTextBox](https://www.codeproject.com/articles/Numbering-lines-of-RichTextBox-in-NET-2-0) (no source)
+   + [Insert Plain Text and Images into RichTextBox at Runtime](https://www.codeproject.com/articles/Insert-Plain-Text-and-Images-into-RichTextBox-at-R#comments-section) (no source)
+   + [RicherTextBox](https://www.codeproject.com/articles/RicherTextBox) (no source)
+   + [Line Numbering of RichTextBox in .NET 2.0](https://www.codeproject.com/articles/Line-Numbering-of-RichTextBox-in-NET-2-0)
+   + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/Changing-the-line-spacing-in-a-RichTextBox-control)
+   + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/EXTENDED-Version-of-Extended-Rich-Text-Box-RichTex)
 
-### WIP
 
-- Tag the __RTF__ generated from __Markdown__ with **hidden markers** for [Paragraphs](https://www.markdownguide.org/basic-syntax/#paragraphs-1), [Headings](https://www.markdownguide.org/basic-syntax/#headings), [Images](https://www.markdownguide.org/basic-syntax/#images), and [Code Blocks](https://www.markdownguide.org/basic-syntax/#code-blocks).  
-  *(Markers remain invisible during normal rendering and do not affect the displayed content.)*
-- Implement **forward / backward navigation buttons** to scroll to the following/preceding anchor, enabling vi-style movement *by paragraph*, *section*, or *code block* logical units.
-- Implement a **toggle button** in the UI to instantly reveal or hide the markers for debugging or inspection purposes.
-
-#### Example
-
-- Fragment *without* markers:
-```rtf
-{\rtf1\ansi\deff0
-{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
-\pard\sa200\sl276\slmult1\f0\fs24
-This is visible text. This is also visible text.
-}
-```
-
--- Same fragment *with* **hidden marker**:
-The hidden text will not be displayed; visually, it renders identically.
-```rtf
-{\rtf1\ansi\deff0
-{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
-\pard\sa200\sl276\slmult1\f0\fs24
-This is visible text. {\v This text is hidden.} This is also visible text.
-}
-```
 
 ### Author
 

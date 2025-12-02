@@ -73,9 +73,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Buffers">
-      <HintPath>..\packages\system.buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Collections.Concurrent" />
@@ -92,6 +89,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="MarkdownViewer.cs" />
