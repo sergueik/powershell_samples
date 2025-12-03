@@ -29,14 +29,29 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 
 - Fragment *without* markers:
 
+#### Example
+
+
+- Fragment *without* markers:
+
 ![app1](screenshots/form1.jpg)
 
 ```rtf
-MyRichTextBox.Rtf = "{\rtf1\ansi\deff0 " & vbCrLf & _
-	"{\fonttbl{\f0\fswiss\fcharset0 Arial;}} " & vbCrLf  & _
-	"\pard\sa200\sl276\slmult1\f0\fs24 " & vbCrLf & _
-	"This is visible text. This is also visible text.  " & vbCrLf & _
-	"} "
+{\rtf1\ansi\deff0
+{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+\pard\sa200\sl276\slmult1\f0\fs24
+This is visible text. This is also visible text.
+}
+```
+
+-- Same fragment *with* **hidden marker**:![app1](screenshots/form1.jpg)
+
+```rtf
+{\rtf1\ansi\deff0
+{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+\pard\sa200\sl276\slmult1\f0\fs24
+This is visible text. This is also visible text.
+}
 ```
 
 -- Same fragment *with* **hidden marker**:
@@ -45,15 +60,79 @@ MyRichTextBox.Rtf = "{\rtf1\ansi\deff0 " & vbCrLf & _
 
 The hidden text will not be displayed; visually, it renders identically.
 
-```rtf
-MyRichTextBox.Rtf = "{\rtf1\ansi\deff0 " & vbCrLf & _
-	"{\fonttbl{\f0\fswiss\fcharset0 Arial;}} " & vbCrLf & _
-	"\pard\sa200\sl276\slmult1\f0\fs24  " & vbCrLf & _
-	"This is visible text. {\v This text is hidden.} This is also visible text. " & vbCrLf & _
-	"} "
+```
+x= "{\rtf1\ansi\deff0 {\fonttbl{\f0\fswiss\fcharset0 Arial;}} \pard\sa200\sl276\slmult1\f0\fs24 This is visible text. {\v This text is hidden.} This is also visible text.}"
 ```
 
 
+### ⚠️ Bugs: Rendering RTF inside Markdown
+
+#### Problem
+
+Placing *real* RTF markup inside Markdown code blocks—either by indentation or fenced code blocks—causes the entire document to fail to render when passed through `RichTextBox` or `RichTextBoxControl`.
+
+This renders correctly when embedded *as plain text*:
+
+```
+{\rtf1\ansi\deff0
+{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+\pard\sa200\sl276\slmult1\f0\fs24
+This is visible text. This is also visible text.
+}
+```
+
+But turning the same text into a code block (indented or fenced) results in malformed or unreadable output.
+
+#### Why this happens
+
+When Markdown is converted to RTF, the renderer must treat code blocks as **literal text**, not as actual RTF content.  
+However, unescaped RTF control characters inside a code block:
+
+- `{` and `}` (RTF group delimiters)  
+- backslash `\` introducing control words  
+- sequences like `\pard`, `\fs24`, etc.
+
+are still interpreted by the Windows RichText control as real RTF commands.
+
+If the Markdown → RTF layer does **not escape** these characters, the output becomes invalid RTF.
+
+#### Example of a failure case
+
+Even placing raw RTF inside a Markdown HTML comment produces partial corruption:
+
+```markdown
+<!--
+   {\rtf1\ansi\deff0
+    {\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+    \pard\sa200\sl276\slmult1\f0\fs24
+    This is visible text. This is also visible text.
+   }
+-->
+```
+
+The comment is removed by the Markdown parser, but the intermediate AST still contains raw control sequences that the RTF writer outputs without escaping.  
+`RichTextBox.Rtf` then misinterprets them and fails.
+
+#### Layer where things go wrong
+
+1. **Markdown parsing** — OK; the code block is interpreted correctly.  
+2. **AST → RTF conversion** — ❌ escaping incomplete; raw `{`, `}`, and `\` survive.  
+3. **RichTextBox rendering** — attempts to interpret the unintended RTF commands and fails.
+
+#### Workaround
+
+Do **not** fence real RTF using triple backticks with a language tag such as `rtf`.  
+Instead, force plain-text mode:
+
+````text
+{\rtf1\ansi\deff0
+{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+\pard\sa200\sl276\slmult1\f0\fs24
+This is visible text. This is also visible text.
+}
+```
+
+or escape braces and backslashes manually before embedding them in Markdown.
 ### See Also
 
 - [RichText Builder (StringBuilder for RTF)](https://www.codeproject.com/articles/RichText-Builder-StringBuilder-for-RTF-) – relatively easy to implement.
