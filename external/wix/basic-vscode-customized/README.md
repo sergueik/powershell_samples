@@ -529,8 +529,36 @@ Docker flips the model:
 * Easily reproducible and scriptable — one can install VS Code CLI, extensions, and settings in 5–10 lines
 * Isolation — no risk of polluting a user profile or breaking __GPO__/__AD__ deployment rules
 
-So verdict: freezing the MSI experiment as a “learned dead-end” and switching to Docker is a rational, sane decision
+So verdict: freezing the MSI experiment as a "learned dead-end" and switching to Docker is a rational, sane decision
 It’s exactly why developers increasingly avoid per-user MSI workflows for lightweight tooling — unless you’re in a true enterprise deployment scenario
+
+
+### Configurations and Dependency Caching
+
+Throughout its history, __Java__ has held to a clear principle: a stable, centralized dependency cache and configuration model.
+From a deployment and infrastructure perspective, this atomic, centrally managed approach is by far the easiest to automate and support.
+
+__Node.js__ has always embraced the opposite philosophy — a sprawling network of isolated per-project installs with layers of override-heavy configuration. This flexibility is powerful, but operationally a lot harder to reason about.
+
+
+And __.NET__, uniquely, has reversed its stance once already, moving from the global `GAC` to a Node-like local model.
+
+Because these dependency ideals pull in orthogonal directions — and one ecosystem has already flipped its own —
+migrations between them are inherently problematic, and one should always be prepared for a surprise.
+
+In context of __Visual Studio Code__ one inevitably reverse engineer the locations and override ranks of its global, per-workspace and per-extension confgurations:
+
+```sh
+ls ~/.vscode/extensions/zowe.vscode-extension-for-zowe-1.7.1/
+```
+```sh
+ls ~/AppData/Roaming/Code/User/
+```
+```txt
+globalStorage/  settings.json  snippets/  workspaceStorage/
+```
+
+
 
 ### Docker
 
@@ -1089,7 +1117,7 @@ __VS Code Profiles__ are mostly a virtual construct, a layered view over your ex
   * [developing](https://habr.com/ru/companies/ncloudtech/articles/822475/) __VS Code__ extensions (in Russian)
   * few [useful extensions](https://habr.com/ru/articles/930926/) (in Russian) for __VS Code__
   * Javascript [instruments for testing](https://habr.com/ru/companies/haulmont/articles/879002/) __VS Code__ extensions (:in Russian) on __WebDriver__ Protocol and __Chrome DevTools__ Protocol
-
+  * [Visual Studio Code User and workspace settings](https://code.visualstudio.com/docs/configure/settings)
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 
