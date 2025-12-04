@@ -124,7 +124,7 @@ The comment is removed by the Markdown parser, but the intermediate AST still co
 Do **not** fence real RTF using triple backticks with a language tag such as `rtf`.  
 Instead, force plain-text mode:
 
-````text
+```text
 {\rtf1\ansi\deff0
 {\fonttbl{\f0\fswiss\fcharset0 Arial;}}
 \pard\sa200\sl276\slmult1\f0\fs24
