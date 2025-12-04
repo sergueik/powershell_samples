@@ -230,7 +230,8 @@ namespace Utils {
 			return ConvertText(lines);
 		}
 
-		public string ConvertText(List<string> lines) {
+		public string ConvertText(List<string> lines)
+		{
 			Errors = new List<string>();
 			var textSizes = new int[7] {
 				DefaultPointSize * 2,
@@ -321,7 +322,9 @@ namespace Utils {
 						// https://www.markdownguide.org/extended-syntax/#tables
 						if (line.TrimStart().StartsWith("|")) {
 							var result = CreateTable(i, lines, columnSizes);
-							line = result.Text;
+							// append a hiden mark
+							line = insertHiddenMark(result.Text);			
+							// line = result.Text;
 							i = result.Num;
 							//  (line, i) = CreateTable(i, lines, columnSizes);
 						}
@@ -372,12 +375,18 @@ namespace Utils {
 
 			// end the rtf file
 			text.AppendLine("}");
-      rtfWriter.AppendLine("}");
-      return rtfWriter.ToString();
+			rtfWriter.AppendLine("}");
+			string result2 = rtfWriter.ToString();
+			return result2;
 			// return text.ToString();
       
 		}
 
+		private string  insertHiddenMark(string line, string mark = @"{\v HIDDEN_MARK }"){
+			var text = new StringBuilder(line);
+			text.AppendLine(mark);
+			return text.ToString();
+		}
 
 		private string UseFontColor(RtfColorInfo newColor, string debugHint = "???") {
 			//Debug.WriteLine($"Use font color, hint: {debugHint}. new:{newColor.Color}, previous:{previousFontColor.Color}, current:{currentFontColor.Color}");

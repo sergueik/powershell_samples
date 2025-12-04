@@ -151,8 +151,14 @@ or escape braces and backslashes manually before embedding them in Markdown.
    + [Line Numbering of RichTextBox in .NET 2.0](https://www.codeproject.com/articles/Line-Numbering-of-RichTextBox-in-NET-2-0)
    + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/Changing-the-line-spacing-in-a-RichTextBox-control)
    + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/EXTENDED-Version-of-Extended-Rich-Text-Box-RichTex)
+  * [C# project replica and Powershell port](https://github.com/sergueik/powershell_samples/tree/master/csharp/render_markdown) of a Markdown RTF covertor operating [MarkDig](https://github.com/xoofx/markdig) library
+ 
+### Example to Navigate 
 
-
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
 
 ### Author
 
