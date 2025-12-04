@@ -39,6 +39,7 @@ namespace Utils {
 		private RtfColorInfo rtfListPrefixColor = new RtfColorInfo(Color.Blue, 5);
 		private RtfColorInfo rtfLinkColor = new RtfColorInfo(Color.CornflowerBlue, 6);
 
+		private RtfWriter rtfWriter = new RtfWriter();
 		public Color TextColor {
 			get { return rtfTextColor.color; }
 			set { rtfTextColor = new RtfColorInfo(value, 1); }
@@ -246,9 +247,10 @@ namespace Utils {
 			string colorTable = @"{\colortbl;" + ColorToTableDef(TextColor) + ColorToTableDef(HeadingColor) + ColorToTableDef(CodeFontColor) + ColorToTableDef(CodeBackgroundColor) + ColorToTableDef(ListPrefixColor) + ColorToTableDef(LinkColor) + "}";
 			string fontTable = "{\\fonttbl{\\f0\\" + Font + "; }{\\f1\\" + CodeFont + "; }}";
 			text.AppendLine("{\\rtf1\\ansi\\deff0 " + fontTable + colorTable + "\\pard");
+			rtfWriter.AppendLine("{\\rtf1\\ansi\\deff0 " + fontTable + colorTable + "\\pard");
 			//string fontTable = @"\deff0{\fonttbl{\f0\fnil Default Sans Serif;}{\f1\froman Times New Roman;}{\f2\fswiss Arial;}{\f3\fmodern Courier New;}{\f4\fscript Script MT Bold;}{\f5\fdecor Old English Text MT;}}";
 			text.Append(UseFontColor(rtfTextColor, "Start convert"));
-
+			rtfWriter.Append(UseFontColor(rtfTextColor, "Start convert"));
 			for (int i = 0; i < lines.Count; i++) {
 				string line = lines[i];
 				string nextLine = string.Empty;
@@ -265,7 +267,7 @@ namespace Utils {
 						CurrentCodeBlockType = CodeBlockType.Indented;
 						CreateCodeBlock(lines, text, ref i, CurrentCodeBlockType);
 						CurrentCodeBlockType = CodeBlockType.None;
-					// https://www.markdownguide.org/extended-syntax/#fenced-code-blocks
+						// https://www.markdownguide.org/extended-syntax/#fenced-code-blocks
 					} else if (line.StartsWith("```") && CurrentCodeBlockType == CodeBlockType.None) {
 						CurrentCodeBlockType = CodeBlockType.Fenced;
 						CreateCodeBlock(lines, text, ref i, CurrentCodeBlockType);
@@ -329,8 +331,11 @@ namespace Utils {
 
 						// add the finished line and insert line break
 						text.AppendLine(line);
+						rtfWriter.AppendLine(line);
 						//text.Append(RevertFontColor());
+						//rtfWriter.Append(RevertFontColor());
 						text.AppendLine("\\par ");
+						rtfWriter.AppendLine("\\par ");
 					}
 				} catch {
 					Debug.WriteLine(String.Format("Error parsing line {0}: {1}", i, line));
@@ -346,23 +351,31 @@ namespace Utils {
 
 					if (outputError) {
 						text.Append("PARSE ERROR");
+						rtfWriter.Append("PARSE ERROR");
+            
 					}
 					if (outputError && outputRawText) {
 						text.Append(": ");
+						rtfWriter.Append(": ");
 					}
 					if (outputRawText) {
 						text.Append(line);
+						rtfWriter.Append(line);
 					}
 
 					Errors.Add(String.Format("Parse error on line {0}: {1}", i.ToString().PadLeft(3), line));
 
 					text.AppendLine("\\par ");
+					rtfWriter.AppendLine("\\par ");
 				}
 			}
 
 			// end the rtf file
 			text.AppendLine("}");
-			return text.ToString();
+      rtfWriter.AppendLine("}");
+      return rtfWriter.ToString();
+			// return text.ToString();
+      
 		}
 
 
