@@ -48,20 +48,20 @@ namespace Program {
 			}
 		}
 
-		private void scrollRichTextBox(string search = @"\v HIDDEN_MARK }", int start = 0, bool reverse = false) { 
-			
+		private void scrollRichTextBox(string search = "\u200B\u200B\u200B", int start = 0, bool reverse = false) {
+
 
 			/*
 			the searchable text can be an Invisible token which still occupy a specific character position -
 			cannot find RTF structural tags, destination groups, control groups
-			
+
 			Examples:c
-			
+
 			* A tag string like __MARK__ that won’t be displaed by specifying the same color as the background.
 			* A zero-width Unicode character (e.g. U+200B ZERO WIDTH SPACE).
 			* Hidden text using RTF’s \v (hidden text) control word.
 			* Example inside RTF: {\v HIDDEN}
-			
+
 			*/
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextbox.find?view=windowsdesktop-10.0#system-windows-forms-richtextbox-find(system-string-system-int32-system-windows-forms-richtextboxfinds)
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextboxfinds?view=netframework-4.5
@@ -69,12 +69,14 @@ namespace Program {
 			RichTextBoxFinds options = reverse ? RichTextBoxFinds.Reverse | RichTextBoxFinds.NoHighlight : RichTextBoxFinds.NoHighlight;
 			// Ensure that a search string has been specified and a valid start point.
 			if (search.Length > 0 && start >= 0) {
-				Debug.WriteLine(String.Format("Searching {0} in {1}", search, richTextBoxRtfView.Rtf ));
+				// Debug.WriteLine(BitConverter.ToString(Encoding.UTF8.GetBytes(richTextBoxRtfView.Text)));
+	     		// expect to see repeted E2-80-8B
+				// NOTE: RTF will be normalized
+				// Debug.WriteLine(String.Format("Searching {0} in {1}", search, richTextBoxRtfView.Rtf ));				int index = richTextBoxRtfView.Find(search, start, options);
 				int index = richTextBoxRtfView.Find(search, start, options);
-
 				if (index >= 0) {
-					richTextBoxRtfView.Select(index, 0); 
-					// NOTE: not text.Length in the case of invisible 
+					richTextBoxRtfView.Select(index, 0);
+					// NOTE: not text.Length in the case of invisible
 					richTextBoxRtfView.ScrollToCaret();
 					//  richTextBox1.Select(index, search.Length);
 					//  richTextBox1.ScrollToCaret();   // makes the surrounding area visible
@@ -270,10 +272,10 @@ namespace Program {
 		private void richTextBoxRtfView_TextChanged(object sender, EventArgs e) {
 			richTextBoxRtfCode.Text = richTextBoxRtfView.Rtf;
 		}
-		
+
 		void button5_Click(object sender, EventArgs e) {
 			scrollRichTextBox( reverse: true);
-	
+
 		}
 		void button6_Click(object sender, EventArgs e) {
 			scrollRichTextBox();

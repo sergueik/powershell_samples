@@ -376,13 +376,14 @@ namespace Utils {
 			// end the rtf file
 			text.AppendLine("}");
 			rtfWriter.AppendLine("}");
-			string result2 = rtfWriter.ToString();
-			return result2;
-			// return text.ToString();
-      
+			return rtfWriter.ToString();      
 		}
 
-		private string  insertHiddenMark(string line, string mark = @"{\v HIDDEN_MARK }"){
+		// RTF encoding of the invisible space "Zero Width Space" (ZWSP)character U+200B is \u8203 
+		// decimal value of 0x200B with a trailing ? - ANSI fallback required by RTF spec
+		// an invisible character that indicates a line break opportunity without creating a visible spa
+			
+		private string  insertHiddenMark(string line, string mark = @"\u8203?\u8203?\u8203?"){
 			var text = new StringBuilder(line);
 			text.AppendLine(mark);
 			return text.ToString();
