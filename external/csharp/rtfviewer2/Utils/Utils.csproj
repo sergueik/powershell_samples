@@ -58,7 +58,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="RtfConverter.cs" />
-    
     <Compile Include="RtfWriter.cs" />
     <Compile Include="RtfColorInfo.cs" />
   </ItemGroup>
@@ -68,12 +67,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Collections.Concurrent" />
-    <Reference Include="System.Diagnostics.DiagnosticSource">
-      <HintPath>..\packages\system.diagnostics.diagnosticSource\4.7.1\lib\net45\System.Diagnostics.DiagnosticSource.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
