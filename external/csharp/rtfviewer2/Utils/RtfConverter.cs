@@ -340,8 +340,8 @@ namespace Utils {
 						text.AppendLine("\\par ");
 						rtfWriter.AppendLine("\\par ");
 					}
-				} catch {
-					Debug.WriteLine(String.Format("Error parsing line {0}: {1}", i, line));
+				} catch (Exception e){
+					Debug.WriteLine(String.Format("Error parsing line {0}: {1}: {2}", i, line,e.ToString()));
 					bool outputError = false;
 					bool outputRawText = false;
 
@@ -478,7 +478,7 @@ namespace Utils {
 
 		private string CreateImageCode(string imageTitle, string imageUrl) {
 			// IMPORTANT
-			// The RichTextBox Readonly value must be False, otherwise images will not load. This is a bug, since at least 2017
+			// The RichTextBox Readonly value must be set to False, otherwise images will not load. This is a bug, since at least 2017
 
 			// https://www.codeproject.com/Articles/4544/Insert-Plain-Text-and-Images-into-RichTextBox-at-R
 			//    {\pict\wmetafile8\picw[N]\pich[N]\picwgoal[N]\pichgoal[N] [BYTES]}
@@ -521,6 +521,7 @@ namespace Utils {
 				imagePath = imageUrl;
 				using (WebClient client = new WebClient()) {
 					bytes = client.DownloadData(imageUrl);
+					DumpBytes(bytes);
 					using (var ms = new MemoryStream(bytes)) {
 						img = Image.FromStream(ms);
 					}
@@ -575,8 +576,12 @@ namespace Utils {
 				sb.Append(str);
 
 				sb.Append("}");
-				Debug.WriteLine(sb.ToString());
-				return sb.ToString();
+				// NOTE: do not print image fully - may be heavy
+				string imageCodeString = sb.ToString();
+				Debug.WriteLine(imageCodeString.Length > 100 ?
+				                String.Format("{0}...{1}", imageCodeString.Substring(0, 90), imageCodeString.Substring(imageCodeString.Length - 10)) : imageCodeString
+				);
+				return imageCodeString; // sb.ToString();
 			} else {
 
 				Debug.WriteLine(String.Format("Image {0} could not be found from URL {1}", imageTitle, imagePath));
@@ -586,6 +591,28 @@ namespace Utils {
 
 			#pragma warning restore CA1416 // Validate platform compatibility
 		}
+
+		private void DumpBytes(byte[] bytes, int probeLength = 64)
+		{
+			int take = 64;
+
+			Debug.WriteLine(String.Format("Length: {0}", bytes.Length));
+
+			Debug.WriteLine(String.Format("\n=== FIRST BYTES ===\n{0}", BitConverter.ToString(bytes.Take(take).ToArray())));
+ 
+			Debug.WriteLine(String.Format("\n=== LAST BYTES ===\n{0}", bytes.Skip(Math.Max(0, bytes.Length - take)).ToArray()));
+   
+			// Attempt to print first probeLength bytes as string
+			Debug.WriteLine("\n=== FIRST BYTES AS STRING ===");
+			try {
+				var probeBytes = bytes.Take(Math.Min(bytes.Length, probeLength)).ToArray();
+				string probeText = Encoding.UTF8.GetString(probeBytes);
+				Debug.WriteLine(probeText);
+			} catch (Exception ex) {
+				Debug.WriteLine(String.Format("Could not convert bytes to string: {0}", ex.Message));
+			}
+		}
+
 
 		private string SetListSymbols(string line, string nextLine) {
 			string updatedLine = line;
@@ -953,13 +980,14 @@ namespace Utils {
 			}
 		}
 
-
+		// TODO: the underscore symbol (_), a common underline 0x5F(95) which is valid in url
+		// gets replaced with \'5f
 		private static string SetStyle(string line, string tag, string rtfTag) {
 			if (line.Contains(tag)) {
 				StringBuilder sb = new StringBuilder();
 				List<int> matches = line.AllIndexesOf(tag).ToList();
 				if (matches.Count > 0) {
-					//Debug.WriteLine($"SetStyle start, tag: {tag} to {rtfTag}");
+					//Debug.WriteLine(String.formt("SetStyle start, tag: {0} to {1}",tag,rtfTag));
 					sb.Append(line.Substring(0, matches[0])); // add first chunk before a tag
 
 					int lastTagIndex = 0;
@@ -1012,12 +1040,16 @@ namespace Utils {
 
 							i++;
 						} else { // there is no closing tag, output the tag as text
+								// without escaping characters
+								/*
 							string escapedTag = "";
 							foreach (char c in tag.ToCharArray()) {
 								escapedTag += SetEscapeCharacters("\\" + c.ToString()).Text;
 							}
 							//Debug.WriteLine($"Escaped tag: {escapedTag}");
 							sb.Append(escapedTag);
+							*/
+							sb.Append(tag);
 							//int endChunkIndex = matches[0] + tag.Length;
 							int endChunkIndex = Math.Max(lastTagIndex + tag.Length, matches[0] + tag.Length);
 							string endChunk2 = "";

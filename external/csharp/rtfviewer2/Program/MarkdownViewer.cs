@@ -97,7 +97,8 @@ namespace Program {
 				}
 			}
 
-			// MUST set Readonly to false, otherwise images will not load. This is a bug in RichTextBox.
+			// MUST set Readonly to false, otherwise images will not load. 
+			// https://developercommunity.visualstudio.com/t/richtextbox-fails-to-display-image/383903
 			bool oldReadonly = richTextBoxRtfView.ReadOnly;
 			richTextBoxRtfView.ReadOnly = false;
 			richTextBoxRtfView.Rtf = rtfText;

@@ -7,8 +7,9 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 <!--
 ![app1](screenshots/app1.jpg)
 -->
-![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/app1.jpg)
-
+![app1](https://raw.githubusercontent.com/sergueik/powershell_samples/master/external/csharp/rtfviewer2/screenshots/app1.jpg)
+<!-- ![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/app1.jpg)
+-->
 ### Notes
 
 - `$` - *interpolated strings* - C# __6.0__
