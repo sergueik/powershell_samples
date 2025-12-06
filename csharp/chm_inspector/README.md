@@ -949,6 +949,22 @@ in earlier Windows (but not in Windows 11) one could extract CHM contents semi-m
 ```powershell
 Invoke-Expression 'hh.exe mk:@MSITStore:file.chm::/index.htm'
 ```
+
+Navigation Timing specification metrics
+
+published by w3c
+
+
+Telemetry data provides insights into the performance and behavior of applications and infrastructure. OTel supports three types:
+Metrics: Numerical measurements over time, such as CPU usage or the number of requests, to monitor system health.
+Logs: Timestamped records of events within an application, used for debugging, auditing, and compliance.
+Traces: Sequences of events that show the path of a request through a distributed system to identify bottlenecks.
+How does OTel work?
+Instrumentation: You add OTel libraries to your applications to generate telemetry data.
+Collection: The data is sent to an OpenTelemetry Collector, a component that can process, filter, and route the data.
+Exporting: The Collector exports the processed data to an observability backend	 (e.g., a database or visualization tool) for storage and analysis.
+
+
 ---
 ### See Also
 

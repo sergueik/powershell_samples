@@ -1,10 +1,13 @@
 ### Info
+
 This directory contains a replica of [App to convert Markdown (.md) files to RTF Rich Text files](https://github.com/snjo/MarkdownToRtf), translated from C# __6.x__, __7.x__, and __9.x__ to plain C# __5.0__ syntax / __.NET Framework 4.5__.  
 The driver can also be compiled as a dependency to display __Markdown__ files in a __Rich Text__ field in a C# Windows Forms application.  
 
 Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible_Application_Markup_Language)/[WPF](https://en.wikipedia.org/wiki/Windows_Presentation_Foundation) over [RichText](https://en.wikipedia.org/wiki/Rich_Text_Format) and __HTML__ output.
-
+<!--
 ![app1](screenshots/app1.jpg)
+-->
+![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/app1.jpg)
 
 ### Notes
 
@@ -63,7 +66,7 @@ The hidden text will not be displayed; visually, it renders identically.
 ```
 x= "{\rtf1\ansi\deff0 {\fonttbl{\f0\fswiss\fcharset0 Arial;}} \pard\sa200\sl276\slmult1\f0\fs24 This is visible text. {\v This text is hidden.} This is also visible text.}"
 ```
-
+---
 
 ### ⚠️ Bugs: Rendering RTF inside Markdown
 
@@ -133,6 +136,25 @@ This is visible text. This is also visible text.
 ```
 
 or escape braces and backslashes manually before embedding them in Markdown.
+
+---
+
+### RTF Groups
+
+the [WinForms](https://github.com/dotnet/winforms/blob/main/src/System.Windows.Forms/System/Windows/Forms/Controls/RichTextBox/RichTextBox.cs) `RichTextBox` class does not remove __RTF__ groups in C# code.
+
+All __RTF__ *parsing*, *group filtering*, *hidden-text suppression*, *table collapsing*, etc. are implemented inside the native __Windows__ __RichEdit__ control ( hosted in `msftedit.dll` or legacy `riched20.dll`).
+
+The C# class is only a thin *proxy wrapper* around that native control via Win32 messages.
+
+The idiosyncrasies of `RichTextBox` behavior(loss of groups, normalization, re-serialization) is __native__, not __managed__:
+
++ `riched32.dll`: RichEdit __1.0__, plain RTF
++ `riched20.dll`: RichEdit __2.0__, __3.0__
++ `msftedit.dll`: RichEdit __4.1–8+__
+
+---
+
 ### See Also
 
 - [RichText Builder (StringBuilder for RTF)](https://www.codeproject.com/articles/RichText-Builder-StringBuilder-for-RTF-) – relatively easy to implement.
