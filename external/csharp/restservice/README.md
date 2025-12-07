@@ -3,8 +3,9 @@
 
 [replica os stanalone Rest Service C#](https://github.com/eccosuprastyo/dotnet-csharp/tree/master/restservice)
 
-documented in [](https://www.c-sharpcorner.com/article/rest-api-csharp-console-application/), including how to 
+documented in [Rest API C# Console Application](https://www.c-sharpcorner.com/article/rest-api-csharp-console-application/), including how to 
 configure application using using FILE attribute of APPSETTINGS.
+
 ### Usage
 
 * configure the system
@@ -73,3 +74,8 @@ AddressFilter mismatch at the EndpointDispatcher. Check that the sender and rece
  * [nancy](http://nancyfx.org) REST server
  * article on [WCF as REST Service](https://www.codeproject.com/Articles/344512/Building-and-Testing-WCF-RESTful-services) with detailed explanation of entpoints
  * article on [WCF POST,GET annotations](https://www.c-sharpcorner.com/UploadFile/surya_bg2000/developing-wcf-restful-services-with-get-and-post-methods)
+
+
+
+### Author
+[Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)

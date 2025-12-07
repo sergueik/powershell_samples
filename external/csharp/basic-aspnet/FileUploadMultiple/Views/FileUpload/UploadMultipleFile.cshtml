@@ -1,0 +1,63 @@
+﻿<html ng-app="AgApp">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ImageUploadMultiple</title>
+    <link href="~/App_Content/CSS/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/App_Content/CSS/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="col-md-12">
+        <h2>Image/File Upload With Angular::</h2>
+    </div>
+
+    <div ng-controller="ImageUploadMultipleCtrl">
+
+        <div class="col-md-12" style="text-align:center;margin-bottom:10px;">
+            <input type="file" id="file" name="file" multiple onchange="angular.element(this).scope().setFile(this)" accept="image/*" class="btn btn-warning" />
+        </div>
+        <div class="col-md-12">
+            <button ng-click="UploadFile()" class="btn btn-primary">Upload File</button>
+        </div>
+
+        <div class="col-md-12" style="padding-top:10px;">
+
+            <div class="col-md-7">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>File Type</th>
+                            <th>File Size</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="file in fileList">
+
+                            <td>{{file.file.name}}</td>
+                            <td>{{file.file.type}}</td>
+                            <td>{{file.file.size}}</td>
+                            <td>
+                                <div id="{{'P'+$index}}">
+
+                                </div>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Loading JQuery-->
+    <script src="~/App_Content/JS/jquery-1.7.2.min.js"></script>
+    <script src="~/App_Content/JS/jquery.unobtrusive-ajax.min.js"></script>
+    <!-- Lodaing the Angular JS-->
+    <script src="~/App_Content/JS/angular.min.js"></script>
+
+    <!-- Load our Angular Application-->
+    <script src="~/App_Content/JS/Practical/Module.js"></script>
+    <!-- Load the page Controller-->
+    <script src="~/App_Content/JS/Practical/ImageUploadMultipleController.js"></script>
+</body>
+</html>

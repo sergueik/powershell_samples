@@ -559,6 +559,14 @@ For a comprehensive understanding and troubleshooting guidance, refer to Microso
   * [another explanation of the exploit video](https://hunter2.gitbook.io/darthsidious/privilege-escalation/alpc-bug-0day)
   * software Engineering Institute CERT Microsoft Windows task scheduler contains a local privilege escalation vulnerability in the ALPC interface [summary](https://kb.cert.org/vuls/id/906424) and a workaround explanation
   * [collection of projects demonstrating Windows services for powershell scirpt, named pipes event logs etc.](https://github.com/MScholtes/Windows-Service)
+ 
+  * [send a content type “multipart/form-data” request from c#](https://www.codeproject.com/articles/Send-a-content-type-multipart-form-data-request-fr)
+  * [creating an Issue with Multiple Attachments in Jira using Rest API](https://www.codeproject.com/articles/Creating-an-Issue-with-Multiple-Attachments-in-Jir) - dealing with `multipart/form-data` parameter in `PostFile` 
+  * [sending MIME Messages to a Web Service Endpoint from C#](https://www.codeproject.com/articles/Sending-MIME-Messages-to-a-Web-Service-Endpoint-fr)
+  * [send Email with VB.NET windows application](https://www.codeproject.com/articles/Send-Email-with-VB-NET-windows-application) (no source) 
+  * [C# File Upload with Form Fields, Cookies and Headers](https://www.codeproject.com/articles/Csharp-File-Upload-with-Form-Fields-Cookies-and-He) (no source) 
+  * [Multiple File Upload using AngularJS and ASP.net MVC](https://www.codeproject.com/articles/Multiple-File-Upload-using-AngularJS-and-ASP-net-M)
+---
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

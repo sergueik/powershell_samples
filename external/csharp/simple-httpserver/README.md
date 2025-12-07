@@ -57,3 +57,6 @@ Open web url `http://localhost:9091/src/examples/` and navigate to page `http://
 ### See Also
   * [Simple HTTP Server in C#](https://www.codeproject.com/Articles/137979/Simple-HTTP-Server-in-C) - somewhat too ptimitive - and the [original project](https://github.com/jeske/SimpleHttpServer)
   * https://www.codeproject.com/Articles/12462/A-single-threaded-HTTP-server
+
+### Author
+[Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)
