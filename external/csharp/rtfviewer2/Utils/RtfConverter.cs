@@ -515,18 +515,26 @@ namespace Utils {
 			var stream = new MemoryStream();
 			int imageWidth = 100;
 			int imageHeight = 100;
+			int imageTwipsWidth = 0;
+			int imageTwipsHeight = 0;
+			const double targetWidthTwips = 8000; 
+			double scale = 1;
+
 			if (imageUrl.StartsWith("http") || imageUrl.StartsWith("ftp")) {
 				// load file from web
 				//imageUrlIsWebAddress = true;
 				imagePath = imageUrl;
 				using (WebClient client = new WebClient()) {
-					bytes = client.DownloadData(imageUrl);
-					DumpBytes(bytes);
+					bytes = client.DownloadData(translateImageUrl(imageUrl));
+					dumpBytes(bytes);
 					using (var ms = new MemoryStream(bytes)) {
 						img = Image.FromStream(ms);
 					}
 					imageWidth = img.Width;
 					imageHeight = img.Height;
+					imageTwipsWidth = (int)(img.Width * 1440 / img.HorizontalResolution);
+					imageTwipsHeight = (int)(img.Height * 1440 / img.VerticalResolution);
+
 					img.Dispose();
 					img = null;
 
@@ -544,6 +552,8 @@ namespace Utils {
 					bytes = stream.ToArray();
 					imageWidth = img.Width;
 					imageHeight = img.Height;
+					imageTwipsWidth = (int)(img.Width * 1440 / img.HorizontalResolution);
+					imageTwipsHeight = (int)(img.Height * 1440 / img.VerticalResolution);
 					img.Dispose();
 					img = null;
 				} else {
@@ -561,10 +571,19 @@ namespace Utils {
 				sb.Append(@"{\pict\pngblip");
 				sb.Append("\\picw" + imageWidth); //width source
 				sb.Append("\\pich" + imageHeight); //height source
-				int imageTwipsWidth = imageWidth * 15;
-				int imageTwipsHeight = imageHeight * 15;
-				sb.Append("\\picwgoal" + imageTwipsWidth); //width in twips
-				sb.Append("\\pichgoal" + imageTwipsHeight); //height in twips
+				
+				scale = targetWidthTwips / imageTwipsWidth;
+
+				// int imageTwipsWidth = imageWidth * 15;
+				// int imageTwipsHeight = imageHeight * 15;
+
+				int scaledWidthTwips = (int)(imageTwipsWidth * scale);
+				int scaledHeightTwips = (int)(imageTwipsHeight * scale);				
+				
+				// sb.Append("\\picwgoal" + imageTwipsWidth); //width in twips
+				// sb.Append("\\pichgoal" + imageTwipsHeight); //height in twips
+				sb.Append("\\picwgoal" + scaledWidthTwips); // scaled width in twips
+				sb.Append("\\pichgoal" + scaledHeightTwips); // scaled height in twips
 				sb.Append("\\hex ");
 
 				//MemoryStream stream = new MemoryStream();
@@ -592,8 +611,7 @@ namespace Utils {
 			#pragma warning restore CA1416 // Validate platform compatibility
 		}
 
-		private void DumpBytes(byte[] bytes, int probeLength = 64)
-		{
+		private void dumpBytes(byte[] bytes, int probeLength = 64) {
 			int take = 64;
 
 			Debug.WriteLine(String.Format("Length: {0}", bytes.Length));
@@ -612,7 +630,6 @@ namespace Utils {
 				Debug.WriteLine(String.Format("Could not convert bytes to string: {0}", ex.Message));
 			}
 		}
-
 
 		private string SetListSymbols(string line, string nextLine) {
 			string updatedLine = line;
@@ -1114,6 +1131,36 @@ namespace Utils {
 			LineIsHeading = false;
 			return line;
 		}
+		public static string translateImageUrl(string url){
+			if (string.IsNullOrEmpty(url))
+				return url;
+
+			var pattern = new Regex(
+				              @"https?://github\.com/(?<user>[^/]+)/(?<repo>[^/]+)/(?:blob|tree)/(?<branch>[^/]+)/(?<path>.+)",
+				              RegexOptions.IgnoreCase
+			              );
+
+			var match = pattern.Match(url);
+			if (match.Success) {
+				string user = match.Groups["user"].Value;
+				string repo = match.Groups["repo"].Value;
+				string branch = match.Groups["branch"].Value;
+				string path = match.Groups["path"].Value;
+
+				// Normalize path
+				if (path.StartsWith("/"))
+					path = path.Substring(1);
+
+				string translated = String.Format("https://raw.githubusercontent.com/{0}/{1}/{2}/{3}", user, repo, branch, path);
+
+				Debug.WriteLine(String.Format("TranslateImageUrl: {0} -> {1}", url, translated));
+
+				return translated;
+			}
+
+			// Return original URL if no match
+			return url;
+		}
 	}
 
 	public static class ExtensionMethods {
@@ -1132,6 +1179,7 @@ namespace Utils {
 			count = addToCount + ((text.Split(oldValue.ToCharArray()).Length - 1) * lenghtDiff);
 			return text.Replace(oldValue, newValue);
 		}
+		
 	}
 
 	public sealed  class Result {

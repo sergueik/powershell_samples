@@ -4,12 +4,8 @@ This directory contains a replica of [App to convert Markdown (.md) files to RTF
 The driver can also be compiled as a dependency to display __Markdown__ files in a __Rich Text__ field in a C# Windows Forms application.  
 
 Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible_Application_Markup_Language)/[WPF](https://en.wikipedia.org/wiki/Windows_Presentation_Foundation) over [RichText](https://en.wikipedia.org/wiki/Rich_Text_Format) and __HTML__ output.
-<!--
-![app1](screenshots/app1.jpg)
--->
-![app1](https://raw.githubusercontent.com/sergueik/powershell_samples/master/external/csharp/rtfviewer2/screenshots/app1.jpg)
-<!-- ![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/app1.jpg)
--->
+![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/app1.jpg)
+
 ### Notes
 
 - `$` - *interpolated strings* - C# __6.0__
