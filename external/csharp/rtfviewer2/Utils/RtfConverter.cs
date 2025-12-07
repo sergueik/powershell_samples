@@ -323,7 +323,7 @@ namespace Utils {
 						if (line.TrimStart().StartsWith("|")) {
 							var result = CreateTable(i, lines, columnSizes);
 							// append a hiden mark
-							line = insertHiddenMark(result.Text);			
+							line = insertHiddenMark(result.Text);
 							// line = result.Text;
 							i = result.Num;
 							//  (line, i) = CreateTable(i, lines, columnSizes);
@@ -355,7 +355,7 @@ namespace Utils {
 					if (outputError) {
 						text.Append("PARSE ERROR");
 						rtfWriter.Append("PARSE ERROR");
-            
+
 					}
 					if (outputError && outputRawText) {
 						text.Append(": ");
@@ -376,13 +376,13 @@ namespace Utils {
 			// end the rtf file
 			text.AppendLine("}");
 			rtfWriter.AppendLine("}");
-			return rtfWriter.ToString();      
+			return rtfWriter.ToString();
 		}
 
-		// RTF encoding of the invisible space "Zero Width Space" (ZWSP)character U+200B is \u8203 
+		// RTF encoding of the invisible space "Zero Width Space" (ZWSP)character U+200B is \u8203
 		// decimal value of 0x200B with a trailing ? - ANSI fallback required by RTF spec
 		// an invisible character that indicates a line break opportunity without creating a visible spa
-			
+
 		private string  insertHiddenMark(string line, string mark = @"\u8203?\u8203?\u8203?"){
 			var text = new StringBuilder(line);
 			text.AppendLine(mark);
@@ -517,7 +517,7 @@ namespace Utils {
 			int imageHeight = 100;
 			int imageTwipsWidth = 0;
 			int imageTwipsHeight = 0;
-			const double targetWidthTwips = 8000; 
+			const double targetWidthTwips = 8000;
 			double scale = 1;
 
 			if (imageUrl.StartsWith("http") || imageUrl.StartsWith("ftp")) {
@@ -571,15 +571,15 @@ namespace Utils {
 				sb.Append(@"{\pict\pngblip");
 				sb.Append("\\picw" + imageWidth); //width source
 				sb.Append("\\pich" + imageHeight); //height source
-				
+
 				scale = targetWidthTwips / imageTwipsWidth;
 
 				// int imageTwipsWidth = imageWidth * 15;
 				// int imageTwipsHeight = imageHeight * 15;
 
 				int scaledWidthTwips = (int)(imageTwipsWidth * scale);
-				int scaledHeightTwips = (int)(imageTwipsHeight * scale);				
-				
+				int scaledHeightTwips = (int)(imageTwipsHeight * scale);
+
 				// sb.Append("\\picwgoal" + imageTwipsWidth); //width in twips
 				// sb.Append("\\pichgoal" + imageTwipsHeight); //height in twips
 				sb.Append("\\picwgoal" + scaledWidthTwips); // scaled width in twips
@@ -617,9 +617,9 @@ namespace Utils {
 			Debug.WriteLine(String.Format("Length: {0}", bytes.Length));
 
 			Debug.WriteLine(String.Format("\n=== FIRST BYTES ===\n{0}", BitConverter.ToString(bytes.Take(take).ToArray())));
- 
+
 			Debug.WriteLine(String.Format("\n=== LAST BYTES ===\n{0}", bytes.Skip(Math.Max(0, bytes.Length - take)).ToArray()));
-   
+
 			// Attempt to print first probeLength bytes as string
 			Debug.WriteLine("\n=== FIRST BYTES AS STRING ===");
 			try {
@@ -746,32 +746,6 @@ namespace Utils {
 			return line;
 		}
 
-		private void OldCreateCodeBlock(List<string> lines, StringBuilder text, int i, ref string line, bool blockStartedPreviously) {
-			int numReplaced;
-			var result = SetEscapeCharacters(line, false);
-			line = result.Text;
-			numReplaced = result.Num;
-			//  (line, numReplaced) = SetEscapeCharacters(line, false);
-
-			bool codeBlockStarting = false;
-			if (blockStartedPreviously == false) {
-				// the whole code block has a text background color, and must be padded for the lines to end evenly
-				int longestLine = CheckMaxLineLength(lines, i);
-				currentPaddingWidth = Math.Max(longestLine, CodeBlockPaddingWidth) + 3;
-				codeBlockStarting = true;
-			}
-
-			if (codeBlockStarting) {
-				//insert a blank line if it's the start of a block
-				text.Append(CodeblockLine("\t", currentPaddingWidth));
-			}
-
-			// count TABs in line as more characters than normal
-			int tabCount = line.AllIndexesOf("\t").Count() - 1;
-			// instert the actual text
-			line = CodeblockLine(line, currentPaddingWidth + numReplaced - (tabCount * tabLength));
-			text.Append(line);
-		}
 
 		private string EscapeNonStyleTags(string line, char[] tagChars){
 			foreach (char tagChar in tagChars) {
@@ -997,92 +971,52 @@ namespace Utils {
 			}
 		}
 
-		// TODO: the underscore symbol (_), a common underline 0x5F(95) which is valid in url
-		// gets replaced with \'5f
+
 		private static string SetStyle(string line, string tag, string rtfTag) {
-			if (line.Contains(tag)) {
-				StringBuilder sb = new StringBuilder();
-				List<int> matches = line.AllIndexesOf(tag).ToList();
-				if (matches.Count > 0) {
-					//Debug.WriteLine(String.formt("SetStyle start, tag: {0} to {1}",tag,rtfTag));
-					sb.Append(line.Substring(0, matches[0])); // add first chunk before a tag
+			if (string.IsNullOrEmpty(line) || string.IsNullOrEmpty(tag))
+				return line;
 
-					int lastTagIndex = 0;
+			List<int> positions = line.AllIndexesOf(tag).ToList();
+			int count = positions.Count;
+			if (count < 2)
+				return line;
 
-					for (int i = 0; i < matches.Count; i++) {
-						if (i + 1 < matches.Count) { // is there a second closing tag?
-							//TEST DEBUG
-							//Debug.WriteLine("line: " + line);
-							//Debug.WriteLine("sb  : " + sb.ToString());
-							//Debug.WriteLine($"i: {i}, mC: {matches.Count}, lineL: {line.Length}");
-							//Debug.Write("AllIndexes : ");
-							//foreach (int m in matches)
-							//{
-							//    Debug.Write(m + ", ");
-							//}
-							//Debug.WriteLine("");
-							// TEST DEBUG END
+			var sb = new StringBuilder();
+			int cursor = 0;
 
-							sb.Append(String.Format("\\{0} ", rtfTag)); // start the styled text
-							if (matches[i] < line.Length && matches[i + 1] < line.Length) {
-								try {
-									string words = line.Substring(matches[i], matches[i + 1] - matches[i]); // get the styled text inside the tags
-									string add = words.Replace(tag, "");
-									sb.Append(words.Replace(tag, "")); // remove the tags from the text
-									//Debug.WriteLine(String.Format("1 Appending {0}",add));
-								} catch {
-									Debug.WriteLine(String.Format("SetStyle, match index {0} and {1}, line length is {2} from:\n{3}", matches[i], matches[i + 1], line.Length, line));
-								}
-							}
+			for (int i = 0; i + 1 < count; i += 2) {
+				int openIndex = positions[i];
+				int closeIndex = positions[i + 1];
 
-							sb.Append(String.Format("\\{0}0 ", rtfTag)); // end the styled text
-							if (matches.Count > i + 2) {
+				sb.Append(line, cursor, openIndex - cursor);
 
-								int startChunkIndex = matches[i + 1] + tag.Length;
-								int chunkLength = matches[i + 2] - matches[i + 1] - tag.Length;
-								string chunk = line.Substring(startChunkIndex, chunkLength);
-								sb.Append(chunk);
-								//Debug.WriteLine($"Appending chunk from {startChunkIndex}, length {chunkLength}:{chunk}");
-								lastTagIndex = startChunkIndex + chunkLength;
-							}
+				int start = openIndex + tag.Length;
+				int length = closeIndex - start;
+				if (length < 0)
+					length = 0;
 
-							//Debug.WriteLine($"ending? i: {i}, mC: {matches.Count}");
-							if (i + 2 == matches.Count) {
-								int endChunkIndex = matches[i + 1] + tag.Length;
-								string endChunk1 = line.Substring(endChunkIndex);
-								sb.Append(endChunk1);
-								//Debug.WriteLine($"End chunk from {endChunkIndex}:" + endChunk1);
-								lastTagIndex = endChunkIndex;
-							}
+				string innerText = line.Substring(start, length);
 
-							i++;
-						} else { // there is no closing tag, output the tag as text
-								// without escaping characters
-								/*
-							string escapedTag = "";
-							foreach (char c in tag.ToCharArray()) {
-								escapedTag += SetEscapeCharacters("\\" + c.ToString()).Text;
-							}
-							//Debug.WriteLine($"Escaped tag: {escapedTag}");
-							sb.Append(escapedTag);
-							*/
-							sb.Append(tag);
-							//int endChunkIndex = matches[0] + tag.Length;
-							int endChunkIndex = Math.Max(lastTagIndex + tag.Length, matches[0] + tag.Length);
-							string endChunk2 = "";
-							if (endChunkIndex < line.Length)
-								endChunk2 = line.Substring(endChunkIndex).ToString();
-							//Debug.WriteLine($"Unclosed End Span from {endChunkIndex}:{endChunk2}");
-							//sb.Append(line.AsSpan(matches[0] + tag.Length));
-							sb.Append(endChunk2);
-						}
-					}
-					//Debug.WriteLine("Done: " + sb.ToString() + "\n");
-					line = sb.ToString();
-				}
+				sb.Append("\\").Append(rtfTag).Append(" ");
+				sb.Append(innerText);
+				sb.Append("\\").Append(rtfTag).Append("0 ");
 
+				cursor = closeIndex + tag.Length;
 			}
-			return line;
+
+			if (count % 2 == 1) {
+				int lastTag = positions[positions.Count - 1];
+				// Append literal tag text (unchanged)
+				sb.Append(line, cursor, lastTag - cursor);
+				sb.Append(tag);
+				cursor = lastTag + tag.Length;
+			}
+
+			// append tail
+			if (cursor < line.Length)
+				sb.Append(line.Substring(cursor));
+
+			return sb.ToString();
 		}
 
 		bool LineIsHeading = false;
@@ -1131,6 +1065,7 @@ namespace Utils {
 			LineIsHeading = false;
 			return line;
 		}
+
 		public static string translateImageUrl(string url){
 			if (string.IsNullOrEmpty(url))
 				return url;
@@ -1179,7 +1114,7 @@ namespace Utils {
 			count = addToCount + ((text.Split(oldValue.ToCharArray()).Length - 1) * lenghtDiff);
 			return text.Replace(oldValue, newValue);
 		}
-		
+
 	}
 
 	public sealed  class Result {

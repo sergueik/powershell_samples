@@ -4,6 +4,7 @@ This directory contains a replica of [App to convert Markdown (.md) files to RTF
 The driver can also be compiled as a dependency to display __Markdown__ files in a __Rich Text__ field in a C# Windows Forms application.  
 
 Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible_Application_Markup_Language)/[WPF](https://en.wikipedia.org/wiki/Windows_Presentation_Foundation) over [RichText](https://en.wikipedia.org/wiki/Rich_Text_Format) and __HTML__ output.
+
 ![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/app1.jpg)
 
 ### Notes
@@ -17,6 +18,7 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 - *Target-typed* `new` - C# __9.0__
 - `AsSpan` instead of `Substring` – not supported in C# __5.0__ due to compiler dependencies
 - `using static` directive - C# __6.0__
+
 ### WIP
 
 - Tag the __RTF__ generated from __Markdown__ with **hidden markers** for [Paragraphs](https://www.markdownguide.org/basic-syntax/#paragraphs-1), [Headings](https://www.markdownguide.org/basic-syntax/#headings), [Images](https://www.markdownguide.org/basic-syntax/#images), [Lists](https://www.markdownguide.org/basic-syntax/#lists-1), [Tables](https://www.markdownguide.org/extended-syntax/#tables) and [Code Blocks](https://www.markdownguide.org/basic-syntax/#code-blocks).  
@@ -34,7 +36,7 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 
 - Fragment *without* markers:
 
-![app1](screenshots/form1.jpg)
+![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/form1.jpg)
 
 ```rtf
 {\rtf1\ansi\deff0
@@ -56,7 +58,7 @@ This is visible text. This is also visible text.
 
 -- Same fragment *with* **hidden marker**:
 
-![app1](screenshots/form2.jpg)
+![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/form2.jpg)
 
 The hidden text will not be displayed; visually, it renders identically.
 
