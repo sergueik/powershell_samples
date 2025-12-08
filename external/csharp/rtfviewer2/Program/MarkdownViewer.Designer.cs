@@ -74,7 +74,7 @@ namespace Program
 			this.btnRender.Name = "btnRender";
 			this.btnRender.Size = new System.Drawing.Size(97, 37);
 			this.btnRender.TabIndex = 0;
-			this.btnRender.Text = "Render";
+			this.btnRender.Text = "Refresh"; // fa-refresh, fa-repeat
 			this.btnRender.Click += new System.EventHandler(this.btnRenderClick);
 			//
 			// chkDebugMarkers
@@ -92,7 +92,7 @@ namespace Program
 			this.btnScrollTop.Name = "btnScrollTop";
 			this.btnScrollTop.Size = new System.Drawing.Size(75, 37);
 			this.btnScrollTop.TabIndex = 2;
-			this.btnScrollTop.Text = "<<";
+			this.btnScrollTop.Text = "<<"; // fa-fast-backward
 			//
 			// btnScrollUp
 			//
@@ -100,7 +100,7 @@ namespace Program
 			this.btnScrollUp.Name = "btnScrollUp";
 			this.btnScrollUp.Size = new System.Drawing.Size(75, 37);
 			this.btnScrollUp.TabIndex = 3;
-			this.btnScrollUp.Text = "<";
+			this.btnScrollUp.Text = "<"; // fa-step-backward
 			this.btnScrollUp.Click += new System.EventHandler(this.btnScrollUp_Click);
 			//
 			// btnScrollDown
@@ -109,7 +109,7 @@ namespace Program
 			this.btnScrollDown.Name = "btnScrollDown";
 			this.btnScrollDown.Size = new System.Drawing.Size(75, 37);
 			this.btnScrollDown.TabIndex = 4;
-			this.btnScrollDown.Text = ">";
+			this.btnScrollDown.Text = ">"; // fa-step-forward
 			this.btnScrollDown.Click += new System.EventHandler(this.btnScrollDown_Click);
 			//
 			// btnScrollEnd
@@ -118,7 +118,7 @@ namespace Program
 			this.btnScrollEnd.Name = "btnScrollEnd";
 			this.btnScrollEnd.Size = new System.Drawing.Size(75, 37);
 			this.btnScrollEnd.TabIndex = 5;
-			this.btnScrollEnd.Text = ">>";
+			this.btnScrollEnd.Text = ">>"; // fa-fast-forward
 			//
 			// panelBottom
 			//
