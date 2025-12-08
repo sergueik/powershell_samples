@@ -22,9 +22,6 @@ namespace Program
 		private System.Windows.Forms.SplitContainer splitContainerMain;
 		private System.Windows.Forms.TextBox textBoxSourceMd;
 		private System.Windows.Forms.RichTextBox richTextBoxRtfView;
-
-		private System.Windows.Forms.Timer timerUpdate;
-
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && (components != null)) {
@@ -36,7 +33,6 @@ namespace Program
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.timerUpdate = new System.Windows.Forms.Timer(this.components);
 			this.panelTop = new System.Windows.Forms.Panel();
 			this.btnRender = new System.Windows.Forms.Button();
 			this.chkDebugMarkers = new System.Windows.Forms.CheckBox();
@@ -56,11 +52,6 @@ namespace Program
 			this.splitContainerMain.Panel2.SuspendLayout();
 			this.splitContainerMain.SuspendLayout();
 			this.SuspendLayout();
-			//
-			// timerUpdate
-			//
-			this.timerUpdate.Interval = 1000;
-			this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
 
 			//
 			// panelTop
@@ -147,7 +138,7 @@ namespace Program
 			this.labelVersion.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
 			this.labelVersion.Size = new System.Drawing.Size(139, 35);
 			this.labelVersion.TabIndex = 0;
-			this.labelVersion.Text = "version 0.3.1";
+			this.labelVersion.Text = "version 0.3.2";
 			//
 			// splitContainerMain
 			//

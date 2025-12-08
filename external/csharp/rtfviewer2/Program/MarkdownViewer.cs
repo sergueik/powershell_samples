@@ -14,10 +14,9 @@ namespace Program {
 		string rtfText = string.Empty;
 		string FileName = "README.md";
 		bool errorPopup = false;
-		bool textChanged = false;
-		 private Thread renderThread;
-        private object renderLock = new object();
-        private string pendingText = null;
+		private Thread renderThread;
+		private object renderLock = new object();
+		private string pendingText = null;
 
 		public MarkdownViewer(string[] args) {
 			InitializeComponent();
@@ -133,99 +132,74 @@ namespace Program {
 			LoadText(textBoxSourceMd.Text, FileName);
 		}
 
+		private void textBoxSourceMd_TextChanged(object sender, EventArgs e) {
+			// Capture the latest text
+			string currentText = textBoxSourceMd.Text;
 
-        private void textBoxSourceMd_TextChanged(object sender, EventArgs e)
-        {
-            // Capture the latest text
-            string currentText = textBoxSourceMd.Text;
+			lock (renderLock) {
+				pendingText = currentText;
 
-            lock (renderLock)
-            {
-                pendingText = currentText;
+				// If a background render is already running, let it pick up the new pendingText
+				if (renderThread == null || !renderThread.IsAlive) {
+					renderThread = new Thread(RenderBackground);
+					renderThread.IsBackground = true;
+					renderThread.Start();
+				}
+			}
+		}
 
-                // If a background render is already running, let it pick up the new pendingText
-                if (renderThread == null || !renderThread.IsAlive)
-                {
-                    renderThread = new Thread(RenderBackground);
-                    renderThread.IsBackground = true;
-                    renderThread.Start();
-                }
-            }
-        }
 
-        private void RenderBackground()
-        {
-            string textToRender;
+		private void RenderBackground() {
+			string textToRender;
 
-            while (true)
-            {
-                lock (renderLock)
-                {
-                    if (pendingText == null)
-                        break; // nothing left to render
+			while (true) {
+				lock (renderLock) {
+					if (pendingText == null)
+						break; // nothing left to render
 
-                    // Get the latest text and clear pending
-                    textToRender = pendingText;
-                    pendingText = null;
-                }
+					// Get the latest text and clear pending
+					textToRender = pendingText;
+					pendingText = null;
+				}
 
-                try
-                {
-                    var rtfConverter = new Utils.RtfConverter(FileName);
-                    string payload = rtfConverter.ConvertText(textToRender);
-                    var errors = rtfConverter.Errors;
+				try {
+					var rtfConverter = new Utils.RtfConverter(FileName);
+					string payload = rtfConverter.ConvertText(textToRender);
+					var errors = rtfConverter.Errors;
 
-                    // Invoke back to UI thread
-                    if (!IsDisposed && !Disposing)
-                    {
-                        Invoke((MethodInvoker)delegate
-                        {
-                            // preserve selection
-                            int selStart = richTextBoxRtfView.SelectionStart;
-                            int selLength = richTextBoxRtfView.SelectionLength;
+					// Invoke back to UI thread
+					if (!IsDisposed && !Disposing) {
+						Invoke((MethodInvoker)delegate {
+							// preserve selection
+							int selStart = richTextBoxRtfView.SelectionStart;
+							int selLength = richTextBoxRtfView.SelectionLength;
 
-                            bool oldReadonly = richTextBoxRtfView.ReadOnly;
-                            richTextBoxRtfView.ReadOnly = false;
-                            richTextBoxRtfView.Rtf = payload;
-                            richTextBoxRtfView.ReadOnly = oldReadonly;
+							bool oldReadonly = richTextBoxRtfView.ReadOnly;
+							richTextBoxRtfView.ReadOnly = false;
+							richTextBoxRtfView.Rtf = payload;
+							richTextBoxRtfView.ReadOnly = oldReadonly;
 
-                            if (selStart <= richTextBoxRtfView.TextLength)
-                            {
-                                richTextBoxRtfView.SelectionStart = selStart;
-                                richTextBoxRtfView.SelectionLength = selLength;
-                                richTextBoxRtfView.ScrollToCaret();
-                            }
+							if (selStart <= richTextBoxRtfView.TextLength) {
+								richTextBoxRtfView.SelectionStart = selStart;
+								richTextBoxRtfView.SelectionLength = selLength;
+								richTextBoxRtfView.ScrollToCaret();
+							}
 
-                            // Optional: show errors in dialog
-                            if (errors.Count > 0 && errorPopup)
-                            {
-                                string msg = string.Join(Environment.NewLine, errors);
-                                DialogResult result = MessageBox.Show(
-                                    msg + "\n\nTo stop showing errors, press No",
-                                    "Parsing error",
-                                    MessageBoxButtons.YesNo
-                                );
-                                if (result == DialogResult.No)
-                                {
-                                    errorPopup = false;
-                                }
-                            }
-                        });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Render thread exception: " + ex);
-                }
-            }
-        }
-		private void timerUpdate_Tick(object sender, EventArgs e) {
-			Debug.WriteLine("Timer tick, update text");
-			// timerUpdate.Stop();
-			if (this.textChanged) {
-			LoadText(textBoxSourceMd.Text, FileName);
-						this.textChanged  =false;
+							// Optional: show errors in custom form to have flexibility
+							if (errors.Count > 0 && errorPopup) {
+								this.Invoke((Action)(() => {
+									var errorForm = new ParsingErrorForm(errors, () => {
+										errorPopup = false;
+									});
+									errorForm.ShowDialog(this); // modal
+								}));
+							}
 
+						});
+					}
+				} catch (Exception ex) {
+					Debug.WriteLine("Render thread exception: " + ex);
+				}
 			}
 		}
 
@@ -237,31 +211,49 @@ namespace Program {
 			scrollRichTextBox();
 		}
 	}
- public class ParsingErrorForm : Form
-    {
-        private TextBox textBoxErrors;
-        private Button btnClose;
+	public class ParsingErrorForm : Form {
+		private TextBox textBoxErrors;
+		private Button btnClose;
+		private Button btnStopShowing;
 
-        public ParsingErrorForm(List<string> errors)
-        {
-            this.Text = "Parsing Errors";
-            this.Size = new System.Drawing.Size(600, 400);
+		// Action callback to notify the parent form
+		private readonly Action action;
+		public ParsingErrorForm(List<string> errors, Action action, string text  = "Parsing Errors") {
+			this.action = action;
+			this.Text = text;
+			this.Size = new System.Drawing.Size(600, 400);
 
-            textBoxErrors = new TextBox();
-            textBoxErrors.Multiline = true;
-            textBoxErrors.ReadOnly = true;
-            textBoxErrors.Dock = DockStyle.Fill;
-            textBoxErrors.ScrollBars = ScrollBars.Both;
-            textBoxErrors.Text = string.Join(Environment.NewLine, errors);
+			textBoxErrors = new TextBox();
+			textBoxErrors.Multiline = true;
+			textBoxErrors.ReadOnly = true;
+			textBoxErrors.Dock = DockStyle.Fill;
+			textBoxErrors.ScrollBars = ScrollBars.Both;
+			textBoxErrors.Text = string.Join(Environment.NewLine, errors);
 
-            btnClose = new Button();
-            btnClose.Text = "Close";
-            btnClose.Dock = DockStyle.Bottom;
-            btnClose.Height = 30;
-            btnClose.Click += (s, e) => this.Close();
+			btnClose = new Button();
+			btnClose.Text = "Close";
+			btnClose.Dock = DockStyle.Bottom;
+			btnClose.Height = 30;
+			btnClose.Click += (s, e) => this.Close();
 
-            this.Controls.Add(textBoxErrors);
-            this.Controls.Add(btnClose);
-        }
-    }
+			this.Controls.Add(textBoxErrors);
+			this.Controls.Add(btnClose);
+
+			btnStopShowing = new Button {
+				Text = "Stop Showing Errors",
+				Dock = DockStyle.Bottom,
+				Height = 30
+			};
+			btnStopShowing.Click += BtnStopShowing_Click;
+
+			this.Controls.Add(btnStopShowing);
+		}
+
+		private void BtnStopShowing_Click(object sender, EventArgs e) {
+			// Notify parent to disable future error popups
+			if (action != null)
+				action.Invoke();
+			this.Close();
+		}
+	}
 }
