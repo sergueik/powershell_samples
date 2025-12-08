@@ -3,300 +3,207 @@ using System.Drawing;
 using System.Windows.Forms;
 
 
-namespace Program {
-    partial class MarkdownViewer {
-        private System.ComponentModel.IContainer components = null;
+namespace Program
+{
+	partial class MarkdownViewer
+	{
 
-        private Button buttonLoad;
-        private Button buttonSave;
-        private RichTextBox richTextBoxRtfView;
-        private Button button1;
-        private RichTextBox richTextBoxRtfCode;
-        private Panel panel1;
-        private CheckBox checkBoxShowRtfCode;
-        private CheckBox checkBoxShowSourceMd;
-        private SplitContainer splitContainer1;
-        private SplitContainer splitContainer2;
-        private TextBox textBoxSourceMd;
-        private CheckBox checkBoxLiveUpdate;
-        private Timer timerUpdate;
-        private Button buttonSaveMd;
-        private Button button6;
-        private Button button5;
+		private System.ComponentModel.IContainer components = null;
+		private System.Windows.Forms.Panel panelTop;
+		private System.Windows.Forms.Panel panelBottom;
+		private System.Windows.Forms.Label labelVersion;
+		private System.Windows.Forms.Button btnRender;
+		private System.Windows.Forms.CheckBox chkDebugMarkers;
+		private System.Windows.Forms.Button btnScrollTop;
+		private System.Windows.Forms.Button btnScrollUp;
+		private System.Windows.Forms.Button btnScrollDown;
+		private System.Windows.Forms.Button btnScrollEnd;
 
-        protected override void Dispose(bool disposing) {
-            if (disposing && (components != null)) {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		private System.Windows.Forms.SplitContainer splitContainerMain;
+		private System.Windows.Forms.TextBox textBoxSourceMd;
+		private System.Windows.Forms.RichTextBox richTextBoxRtfView;
 
-        private void InitializeComponent() {
-        	components = new System.ComponentModel.Container();
-        	System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MarkdownViewer));
-        	buttonLoad = new Button();
-        	buttonSave = new Button();
-        	richTextBoxRtfView = new RichTextBox();
-        	button1 = new Button();
-        	richTextBoxRtfCode = new RichTextBox();
-        	panel1 = new Panel();
-        	button6 = new Button();
-        	button5 = new Button();
-        	buttonSaveMd = new Button();
-        	checkBoxLiveUpdate = new CheckBox();
-        	checkBoxShowRtfCode = new CheckBox();
-        	checkBoxShowSourceMd = new CheckBox();
-        	splitContainer1 = new SplitContainer();
-        	textBoxSourceMd = new TextBox();
-        	splitContainer2 = new SplitContainer();
-        	timerUpdate = new Timer(components);
-        	panel1.SuspendLayout();
-        	((System.ComponentModel.ISupportInitialize)(splitContainer1)).BeginInit();
-        	splitContainer1.Panel1.SuspendLayout();
-        	splitContainer1.Panel2.SuspendLayout();
-        	splitContainer1.SuspendLayout();
-        	((System.ComponentModel.ISupportInitialize)(splitContainer2)).BeginInit();
-        	splitContainer2.Panel1.SuspendLayout();
-        	splitContainer2.Panel2.SuspendLayout();
-        	splitContainer2.SuspendLayout();
-        	SuspendLayout();
-        	//
-        	// buttonLoad
-        	//
-        	buttonLoad.Location = new Point(5, 5);
-        	buttonLoad.Margin = new Padding(5);
-        	buttonLoad.Name = "buttonLoad";
-        	buttonLoad.Size = new Size(118, 37);
-        	buttonLoad.TabIndex = 0;
-        	buttonLoad.Text = "Load";
-        	buttonLoad.UseVisualStyleBackColor = true;
-        	//
-        	// buttonSave
-        	//
-        	buttonSave.Location = new Point(449, 5);
-        	buttonSave.Margin = new Padding(5);
-        	buttonSave.Name = "buttonSave";
-        	buttonSave.Size = new Size(118, 37);
-        	buttonSave.TabIndex = 1;
-        	buttonSave.Text = "Save RTF";
-        	buttonSave.UseVisualStyleBackColor = true;
-        	//
-        	// richTextBoxRtfView
-        	//
-        	richTextBoxRtfView.AcceptsTab = true;
-        	richTextBoxRtfView.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right)));
-        	richTextBoxRtfView.BackColor = Color.White;
-        	richTextBoxRtfView.ImeMode = ImeMode.NoControl;
-        	richTextBoxRtfView.Location = new Point(0, 8);
-        	richTextBoxRtfView.Margin = new Padding(5);
-        	richTextBoxRtfView.Name = "richTextBoxRtfView";
-        	richTextBoxRtfView.ScrollBars = RichTextBoxScrollBars.Both;
+		private System.Windows.Forms.Timer timerUpdate;
 
-        	richTextBoxRtfView.Dock = DockStyle.Fill;
-        	richTextBoxRtfView.Multiline = true;
-        	richTextBoxRtfView.WordWrap = false;
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null)) {
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        	richTextBoxRtfView.Size = new Size(843, 1134);
-        	richTextBoxRtfView.TabIndex = 3;
-        	richTextBoxRtfView.Text = "";
-        	//
-        	// button1
-        	//
-        	button1.Location = new Point(132, 5);
-        	button1.Margin = new Padding(5);
-        	button1.Name = "button1";
-        	button1.Size = new Size(118, 37);
-        	button1.TabIndex = 4;
-        	button1.Text = "Update";
-        	button1.UseVisualStyleBackColor = true;
-        	//
-        	// richTextBoxRtfCode
-        	//
-        	richTextBoxRtfCode.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right)));
-        	richTextBoxRtfCode.Location = new Point(0, 8);
-        	richTextBoxRtfCode.Margin = new Padding(5);
-        	richTextBoxRtfCode.Name = "richTextBoxRtfCode";
-        	richTextBoxRtfCode.ReadOnly = true;
-        	richTextBoxRtfCode.Size = new Size(582, 1134);
-        	richTextBoxRtfCode.TabIndex = 6;
-        	richTextBoxRtfCode.Text = "";
-        	//
-        	// panel1
-        	//
-        	panel1.Controls.Add(button6);
-        	panel1.Controls.Add(button5);
-        	panel1.Controls.Add(buttonSaveMd);
-        	panel1.Controls.Add(checkBoxLiveUpdate);
-        	panel1.Controls.Add(checkBoxShowRtfCode);
-        	panel1.Controls.Add(checkBoxShowSourceMd);
-        	panel1.Controls.Add(buttonLoad);
-        	panel1.Controls.Add(buttonSave);
-        	panel1.Controls.Add(button1);
-        	panel1.Dock = DockStyle.Top;
-        	panel1.Location = new Point(0, 0);
-        	panel1.Margin = new Padding(5);
-        	panel1.Name = "panel1";
-        	panel1.Size = new Size(1955, 48);
-        	panel1.TabIndex = 8;
-        	//
-        	// button6
-        	//
-        	button6.Location = new Point(1155, 6);
-        	button6.Margin = new Padding(5);
-        	button6.Name = "button6";
-        	button6.Size = new Size(68, 37);
-        	button6.TabIndex = 10;
-        	button6.Text = ">";
-        	button6.UseVisualStyleBackColor = true;
-        	button6.Click += new System.EventHandler(button6_Click);
-        	//
-        	// button5
-        	//
-        	button5.Location = new Point(1077, 6);
-        	button5.Margin = new Padding(5);
-        	button5.Name = "button5";
-        	button5.Size = new Size(68, 37);
-        	button5.TabIndex = 9;
-        	button5.Text = "<";
-        	button5.UseVisualStyleBackColor = true;
-        	button5.Click += new System.EventHandler(button5_Click);
-        	//
-        	// buttonSaveMd
-        	//
-        	buttonSaveMd.Location = new Point(259, 5);
-        	buttonSaveMd.Margin = new Padding(5);
-        	buttonSaveMd.Name = "buttonSaveMd";
-        	buttonSaveMd.Size = new Size(181, 37);
-        	buttonSaveMd.TabIndex = 8;
-        	buttonSaveMd.Text = "Save Markdown";
-        	buttonSaveMd.UseVisualStyleBackColor = true;
-        	//
-        	// checkBoxLiveUpdate
-        	//
-        	checkBoxLiveUpdate.AutoSize = true;
-        	checkBoxLiveUpdate.Checked = true;
-        	checkBoxLiveUpdate.CheckState = CheckState.Checked;
-        	checkBoxLiveUpdate.Location = new Point(941, 10);
-        	checkBoxLiveUpdate.Margin = new Padding(5);
-        	checkBoxLiveUpdate.Name = "checkBoxLiveUpdate";
-        	checkBoxLiveUpdate.Size = new Size(139, 29);
-        	checkBoxLiveUpdate.TabIndex = 7;
-        	checkBoxLiveUpdate.Text = "Live update";
-        	checkBoxLiveUpdate.UseVisualStyleBackColor = true;
-        	//
-        	// checkBoxShowRtfCode
-        	//
-        	checkBoxShowRtfCode.AutoSize = true;
-        	checkBoxShowRtfCode.Checked = true;
-        	checkBoxShowRtfCode.CheckState = CheckState.Checked;
-        	checkBoxShowRtfCode.Location = new Point(767, 10);
-        	checkBoxShowRtfCode.Margin = new Padding(5);
-        	checkBoxShowRtfCode.Name = "checkBoxShowRtfCode";
-        	checkBoxShowRtfCode.Size = new Size(179, 29);
-        	checkBoxShowRtfCode.TabIndex = 6;
-        	checkBoxShowRtfCode.Text = "Show RTF code";
-        	checkBoxShowRtfCode.UseVisualStyleBackColor = true;
-        	//
-        	// checkBoxShowSourceMd
-        	//
-        	checkBoxShowSourceMd.AutoSize = true;
-        	checkBoxShowSourceMd.Checked = true;
-        	checkBoxShowSourceMd.CheckState = CheckState.Checked;
-        	checkBoxShowSourceMd.Location = new Point(577, 10);
-        	checkBoxShowSourceMd.Margin = new Padding(5);
-        	checkBoxShowSourceMd.Name = "checkBoxShowSourceMd";
-        	checkBoxShowSourceMd.Size = new Size(188, 29);
-        	checkBoxShowSourceMd.TabIndex = 5;
-        	checkBoxShowSourceMd.Text = "Show source MD";
-        	checkBoxShowSourceMd.UseVisualStyleBackColor = true;
-        	//
-        	// splitContainer1
-        	//
-        	splitContainer1.Dock = DockStyle.Fill;
-        	splitContainer1.Location = new Point(0, 0);
-        	splitContainer1.Margin = new Padding(5);
-        	splitContainer1.Name = "splitContainer1";
-        	//
-        	// splitContainer1.Panel1
-        	//
-        	splitContainer1.Panel1.Controls.Add(textBoxSourceMd);
-        	splitContainer1.Panel1MinSize = 0;
-        	//
-        	// splitContainer1.Panel2
-        	//
-        	splitContainer1.Panel2.Controls.Add(richTextBoxRtfView);
-        	splitContainer1.Panel2MinSize = 100;
-        	splitContainer1.Size = new Size(1354, 1144);
-        	splitContainer1.SplitterDistance = 496;
-        	splitContainer1.SplitterWidth = 6;
-        	splitContainer1.TabIndex = 10;
-        	//
-        	// textBoxSourceMd
-        	//
-        	textBoxSourceMd.AcceptsTab = true;
-        	textBoxSourceMd.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left)  | AnchorStyles.Right)));
-        	textBoxSourceMd.Font = new Font("Courier New", 9F);
-        	textBoxSourceMd.Location = new Point(5, 8);
-        	textBoxSourceMd.Margin = new Padding(5);
-        	textBoxSourceMd.Multiline = true;
-        	textBoxSourceMd.Name = "textBoxSourceMd";
-        	textBoxSourceMd.ScrollBars = ScrollBars.Both;
-        	textBoxSourceMd.Size = new Size(484, 1134);
-        	textBoxSourceMd.TabIndex = 6;
-        	textBoxSourceMd.Dock = DockStyle.Fill;
-        	textBoxSourceMd.WordWrap = false;
+		private void InitializeComponent()
+		{
+			this.components = new System.ComponentModel.Container();
+			this.timerUpdate = new System.Windows.Forms.Timer(this.components);
+			this.panelTop = new System.Windows.Forms.Panel();
+			this.btnRender = new System.Windows.Forms.Button();
+			this.chkDebugMarkers = new System.Windows.Forms.CheckBox();
+			this.btnScrollTop = new System.Windows.Forms.Button();
+			this.btnScrollUp = new System.Windows.Forms.Button();
+			this.btnScrollDown = new System.Windows.Forms.Button();
+			this.btnScrollEnd = new System.Windows.Forms.Button();
+			this.panelBottom = new System.Windows.Forms.Panel();
+			this.labelVersion = new System.Windows.Forms.Label();
+			this.splitContainerMain = new System.Windows.Forms.SplitContainer();
+			this.textBoxSourceMd = new System.Windows.Forms.TextBox();
+			this.richTextBoxRtfView = new System.Windows.Forms.RichTextBox();
+			this.panelTop.SuspendLayout();
+			this.panelBottom.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
+			this.splitContainerMain.Panel1.SuspendLayout();
+			this.splitContainerMain.Panel2.SuspendLayout();
+			this.splitContainerMain.SuspendLayout();
+			this.SuspendLayout();
+			//
+			// timerUpdate
+			//
+			this.timerUpdate.Interval = 1000;
+			this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
 
-        	//
-        	// splitContainer2
-        	//
-        	splitContainer2.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right)));
-        	splitContainer2.Location = new Point(5, 50);
-        	splitContainer2.Margin = new Padding(5);
-        	splitContainer2.Name = "splitContainer2";
-        	//
-        	// splitContainer2.Panel1
-        	//
-        	splitContainer2.Panel1.Controls.Add(splitContainer1);
-        	splitContainer2.Panel1MinSize = 100;
-        	//
-        	// splitContainer2.Panel2
-        	//
-        	splitContainer2.Panel2.Controls.Add(richTextBoxRtfCode);
-        	splitContainer2.Panel2MinSize = 0;
-        	splitContainer2.Size = new Size(1950, 1144);
-        	splitContainer2.SplitterDistance = 1354;
-        	splitContainer2.SplitterWidth = 6;
-        	splitContainer2.TabIndex = 7;
-        	//
-        	// timerUpdate
-        	//
-        	timerUpdate.Interval = 1000;
-        	//
-        	// MarkdownViewer
-        	//
-        	AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
-        	AutoScaleMode = AutoScaleMode.Font;
-        	ClientSize = new Size(1955, 1195);
-        	Controls.Add(splitContainer2);
-        	Controls.Add(panel1);
-        	Icon = ((Icon)(resources.GetObject("$this.Icon")));
-        	Margin = new Padding(5);
-        	Name = "MarkdownViewer";
-        	Text = "Markdown Viewer";
-        	panel1.ResumeLayout(false);
-        	panel1.PerformLayout();
-        	splitContainer1.Panel1.ResumeLayout(false);
-        	splitContainer1.Panel1.PerformLayout();
-        	splitContainer1.Panel2.ResumeLayout(false);
-        	((System.ComponentModel.ISupportInitialize)(splitContainer1)).EndInit();
-        	splitContainer1.ResumeLayout(false);
-        	splitContainer2.Panel1.ResumeLayout(false);
-        	splitContainer2.Panel2.ResumeLayout(false);
-        	((System.ComponentModel.ISupportInitialize)(splitContainer2)).EndInit();
-        	splitContainer2.ResumeLayout(false);
-        	ResumeLayout(false);
+			//
+			// panelTop
+			//
+			this.panelTop.Controls.Add(this.btnRender);
+			this.panelTop.Controls.Add(this.chkDebugMarkers);
+			this.panelTop.Controls.Add(this.btnScrollTop);
+			this.panelTop.Controls.Add(this.btnScrollUp);
+			this.panelTop.Controls.Add(this.btnScrollDown);
+			this.panelTop.Controls.Add(this.btnScrollEnd);
+			this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+			this.panelTop.Location = new System.Drawing.Point(0, 0);
+			this.panelTop.Name = "panelTop";
+			this.panelTop.Size = new System.Drawing.Size(1076, 53);
+			this.panelTop.TabIndex = 2;
+			//
+			// btnRender
+			//
+			this.btnRender.Location = new System.Drawing.Point(5, 8);
+			this.btnRender.Name = "btnRender";
+			this.btnRender.Size = new System.Drawing.Size(97, 37);
+			this.btnRender.TabIndex = 0;
+			this.btnRender.Text = "Render";
+			this.btnRender.Click += new System.EventHandler(this.btnRenderClick);
+			//
+			// chkDebugMarkers
+			//
+			this.chkDebugMarkers.Location = new System.Drawing.Point(108, 14);
+			this.chkDebugMarkers.Name = "chkDebugMarkers";
+			this.chkDebugMarkers.Size = new System.Drawing.Size(104, 24);
+			this.chkDebugMarkers.TabIndex = 1;
+			this.chkDebugMarkers.Text = "Debug markers";
+			//
+			// btnScrollTop
+			//
+			this.btnScrollTop.DialogResult = System.Windows.Forms.DialogResult.No;
+			this.btnScrollTop.Location = new System.Drawing.Point(230, 8);
+			this.btnScrollTop.Name = "btnScrollTop";
+			this.btnScrollTop.Size = new System.Drawing.Size(75, 37);
+			this.btnScrollTop.TabIndex = 2;
+			this.btnScrollTop.Text = "<<";
+			//
+			// btnScrollUp
+			//
+			this.btnScrollUp.Location = new System.Drawing.Point(310, 8);
+			this.btnScrollUp.Name = "btnScrollUp";
+			this.btnScrollUp.Size = new System.Drawing.Size(75, 37);
+			this.btnScrollUp.TabIndex = 3;
+			this.btnScrollUp.Text = "<";
+			this.btnScrollUp.Click += new System.EventHandler(this.btnScrollUp_Click);
+			//
+			// btnScrollDown
+			//
+			this.btnScrollDown.Location = new System.Drawing.Point(391, 8);
+			this.btnScrollDown.Name = "btnScrollDown";
+			this.btnScrollDown.Size = new System.Drawing.Size(75, 37);
+			this.btnScrollDown.TabIndex = 4;
+			this.btnScrollDown.Text = ">";
+			this.btnScrollDown.Click += new System.EventHandler(this.btnScrollDown_Click);
+			//
+			// btnScrollEnd
+			//
+			this.btnScrollEnd.Location = new System.Drawing.Point(472, 8);
+			this.btnScrollEnd.Name = "btnScrollEnd";
+			this.btnScrollEnd.Size = new System.Drawing.Size(75, 37);
+			this.btnScrollEnd.TabIndex = 5;
+			this.btnScrollEnd.Text = ">>";
+			//
+			// panelBottom
+			//
+			this.panelBottom.Controls.Add(this.labelVersion);
+			this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.panelBottom.Location = new System.Drawing.Point(0, 601);
+			this.panelBottom.Name = "panelBottom";
+			this.panelBottom.Size = new System.Drawing.Size(1076, 35);
+			this.panelBottom.TabIndex = 1;
+			//
+			// labelVersion
+			//
+			this.labelVersion.Dock = System.Windows.Forms.DockStyle.Right;
+			this.labelVersion.Location = new System.Drawing.Point(937, 0);
+			this.labelVersion.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
+			this.labelVersion.Name = "labelVersion";
+			this.labelVersion.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
+			this.labelVersion.Size = new System.Drawing.Size(139, 35);
+			this.labelVersion.TabIndex = 0;
+			this.labelVersion.Text = "version 0.3.0";
+			//
+			// splitContainerMain
+			//
+			this.splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainerMain.Location = new System.Drawing.Point(0, 53);
+			this.splitContainerMain.Name = "splitContainerMain";
+			//
+			// splitContainerMain.Panel1
+			//
+			this.splitContainerMain.Panel1.Controls.Add(this.textBoxSourceMd);
+			//
+			// splitContainerMain.Panel2
+			//
+			this.splitContainerMain.Panel2.Controls.Add(this.richTextBoxRtfView);
+			this.splitContainerMain.Size = new System.Drawing.Size(1076, 548);
+			this.splitContainerMain.SplitterDistance = 358;
+			this.splitContainerMain.TabIndex = 0;
+			//
+			// textBoxSourceMd
+			//
+			this.textBoxSourceMd.AcceptsTab = true;
+			this.textBoxSourceMd.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.textBoxSourceMd.Location = new System.Drawing.Point(0, 0);
+			this.textBoxSourceMd.Multiline = true;
+			this.textBoxSourceMd.Name = "textBoxSourceMd";
+			this.textBoxSourceMd.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+			this.textBoxSourceMd.Size = new System.Drawing.Size(358, 548);
+			this.textBoxSourceMd.TabIndex = 0;
+			this.textBoxSourceMd.TextChanged += new System.EventHandler(this.textBoxSourceMd_TextChanged);
+			//
+			// richTextBoxRtfView
+			//
+			this.richTextBoxRtfView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.richTextBoxRtfView.Location = new System.Drawing.Point(0, 0);
+			this.richTextBoxRtfView.Name = "richTextBoxRtfView";
+			this.richTextBoxRtfView.Size = new System.Drawing.Size(714, 548);
+			this.richTextBoxRtfView.TabIndex = 0;
+			this.richTextBoxRtfView.Text = "";
+			//
+			// MarkdownViewer
+			//
+			this.ClientSize = new System.Drawing.Size(1076, 636);
+			this.Controls.Add(this.splitContainerMain);
+			this.Controls.Add(this.panelBottom);
+			this.Controls.Add(this.panelTop);
+			this.Name = "MarkdownViewer";
+			this.Text = "Markdown → RTF Renderer";
+			this.panelTop.ResumeLayout(false);
+			this.panelBottom.ResumeLayout(false);
+			this.splitContainerMain.Panel1.ResumeLayout(false);
+			this.splitContainerMain.Panel1.PerformLayout();
+			this.splitContainerMain.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
+			this.splitContainerMain.ResumeLayout(false);
+			this.ResumeLayout(false);
 
-        }
-
-    }
+		}
+	}
 }

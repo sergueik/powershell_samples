@@ -24,6 +24,6 @@ namespace Utils {
 		}
 		public override string ToString() {
 			return toggle? sb2.ToString(): sb1.ToString();
-		}	
+		}
 	}
 }
