@@ -16,9 +16,10 @@ namespace Program {
 		bool errorPopup = false;
 		private Thread renderThread;
 		private object renderLock = new object();
-		private string pendingText = null;
+		private const string versionString = "0.6.0";
 
-		public MarkdownViewer(string[] args) {
+		public MarkdownViewer(string[] args)
+		{
 			InitializeComponent();
 			ProcessArguments(args);
 			OpenFile(FileName);
@@ -51,19 +52,6 @@ namespace Program {
 
 		private void scrollRichTextBox(string search = "\u200B\u200B\u200B", int start = 0, bool reverse = false) {
 
-
-			/*
-			the searchable text can be an Invisible token which still occupy a specific character position -
-			cannot find RTF structural tags, destination groups, control groups
-
-			Examples:c
-
-			* A tag string like __MARK__ that won’t be displaed by specifying the same color as the background.
-			* A zero-width Unicode character (e.g. U+200B ZERO WIDTH SPACE).
-			* Hidden text using RTF’s \v (hidden text) control word.
-			* Example inside RTF: {\v HIDDEN}
-
-			*/
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextbox.find?view=windowsdesktop-10.0#system-windows-forms-richtextbox-find(system-string-system-int32-system-windows-forms-richtextboxfinds)
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextboxfinds?view=netframework-4.5
 			// NOTE: if text is not in richTextBox.Text, RichTextBox cannot scroll to it.
@@ -77,18 +65,13 @@ namespace Program {
 				int index = richTextBoxRtfView.Find(search, start, options);
 				if (index >= 0) {
 					richTextBoxRtfView.Select(index, 0);
-					// NOTE: not text.Length in the case of invisible
 					richTextBoxRtfView.ScrollToCaret();
-					//  richTextBox1.Select(index, search.Length);
-					//  richTextBox1.ScrollToCaret();   // makes the surrounding area visible
-					//  richTextBox1.Focus();           // optionally focus - not applicable to inbisible control words
 				}
 			}
 		}
 
 		private void LoadText(string text, string fileName) {
 			var rtfConverter = new RtfConverter(fileName);
-			// rtfText = rtfConverter.ConvertText(text);
 
 			string payload = rtfConverter.ConvertText(text);
 			if (rtfConverter.Errors.Count > 0 && errorPopup) {
@@ -133,74 +116,36 @@ namespace Program {
 		}
 
 		private void textBoxSourceMd_TextChanged(object sender, EventArgs e) {
-			// Capture the latest text
-			string currentText = textBoxSourceMd.Text;
+			// NOTE: guard against
+			// System.InvalidOperationException: Invoke or BeginInvoke cannot be called on a control until
+			// the window handle has been created.
 
-			lock (renderLock) {
-				pendingText = currentText;
+			if (!this.IsHandleCreated) return;
+		    var text = textBoxSourceMd.Text;
+		    var file = FileName;
 
-				// If a background render is already running, let it pick up the new pendingText
-				if (renderThread == null || !renderThread.IsAlive) {
-					renderThread = new Thread(RenderBackground);
-					renderThread.IsBackground = true;
-					renderThread.Start();
-				}
-			}
-		}
+		    var thread = new Thread(() => {
+		        var rtfConverter = new RtfConverter(file);
+		        var payload = rtfConverter.ConvertText(text);
 
+		        // Invoke UI update
+		        this.Invoke((Action)(() => {
+		            bool oldReadonly = richTextBoxRtfView.ReadOnly;
+		            richTextBoxRtfView.ReadOnly = false;
+		            richTextBoxRtfView.Rtf = payload;
+		            richTextBoxRtfView.ReadOnly = oldReadonly;
 
-		private void RenderBackground() {
-			string textToRender;
+		            // Show errors in custom form
+		            if (rtfConverter.Errors.Count > 0 && errorPopup) {
+		                var errorForm = new ParsingErrorForm(rtfConverter.Errors, () => errorPopup = false);
+		                errorForm.ShowDialog(this); // application modal
+		            }
+		        }));
+		    });
 
-			while (true) {
-				lock (renderLock) {
-					if (pendingText == null)
-						break; // nothing left to render
-
-					// Get the latest text and clear pending
-					textToRender = pendingText;
-					pendingText = null;
-				}
-
-				try {
-					var rtfConverter = new Utils.RtfConverter(FileName);
-					string payload = rtfConverter.ConvertText(textToRender);
-					var errors = rtfConverter.Errors;
-
-					// Invoke back to UI thread
-					if (!IsDisposed && !Disposing) {
-						Invoke((MethodInvoker)delegate {
-							// preserve selection
-							int selStart = richTextBoxRtfView.SelectionStart;
-							int selLength = richTextBoxRtfView.SelectionLength;
-
-							bool oldReadonly = richTextBoxRtfView.ReadOnly;
-							richTextBoxRtfView.ReadOnly = false;
-							richTextBoxRtfView.Rtf = payload;
-							richTextBoxRtfView.ReadOnly = oldReadonly;
-
-							if (selStart <= richTextBoxRtfView.TextLength) {
-								richTextBoxRtfView.SelectionStart = selStart;
-								richTextBoxRtfView.SelectionLength = selLength;
-								richTextBoxRtfView.ScrollToCaret();
-							}
-
-							// Optional: show errors in custom form to have flexibility
-							if (errors.Count > 0 && errorPopup) {
-								this.Invoke((Action)(() => {
-									var errorForm = new ParsingErrorForm(errors, () => {
-										errorPopup = false;
-									});
-									errorForm.ShowDialog(this); // modal
-								}));
-							}
-
-						});
-					}
-				} catch (Exception ex) {
-					Debug.WriteLine("Render thread exception: " + ex);
-				}
-			}
+		    thread.IsBackground = true;
+		    thread.SetApartmentState(ApartmentState.STA); // just in case
+		    thread.Start();
 		}
 
 		void btnScrollUp_Click(object sender, EventArgs e) {
@@ -211,6 +156,7 @@ namespace Program {
 			scrollRichTextBox();
 		}
 	}
+
 	public class ParsingErrorForm : Form {
 		private TextBox textBoxErrors;
 		private Button btnClose;
