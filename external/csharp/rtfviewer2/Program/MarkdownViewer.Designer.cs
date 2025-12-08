@@ -147,7 +147,7 @@ namespace Program
 			this.labelVersion.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
 			this.labelVersion.Size = new System.Drawing.Size(139, 35);
 			this.labelVersion.TabIndex = 0;
-			this.labelVersion.Text = "version 0.3.0";
+			this.labelVersion.Text = "version 0.3.1";
 			//
 			// splitContainerMain
 			//

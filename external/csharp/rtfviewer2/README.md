@@ -18,6 +18,8 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 - *Target-typed* `new` - C# __9.0__
 - `AsSpan` instead of `Substring` – not supported in C# __5.0__ due to compiler dependencies
 - `using static` directive - C# __6.0__
+- *discard*-style unused variables `_` - C# __7.0__
+- *async* / *await* and `Task` - C# __5.0__
 
 ### WIP
 
