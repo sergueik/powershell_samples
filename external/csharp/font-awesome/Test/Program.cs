@@ -163,7 +163,7 @@ namespace Test {
             // 
             iconButton5.ActiveColor = Color.YellowGreen;
             iconButton5.BackColor = Color.Transparent;
-            iconButton5.IconType = IconType.Star;
+            iconButton5.IconType =IconType.ArrowCircleUp; // IconType.AngleLeft;
             iconButton5.InActiveColor = Color.OliveDrab;
             iconButton5.Location = new Point(12, 86);
             iconButton5.Name = "iconButton5";
