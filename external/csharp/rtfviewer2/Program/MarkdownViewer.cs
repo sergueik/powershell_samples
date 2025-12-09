@@ -16,10 +16,10 @@ namespace Program {
 		bool errorPopup = false;
 		private Thread renderThread;
 		private object renderLock = new object();
-		private const string versionString = "0.6.0";
+		private const string versionString = "0.7.0";
+		private int selectionIndex = 0 ;
 
-		public MarkdownViewer(string[] args)
-		{
+		public MarkdownViewer(string[] args) {
 			InitializeComponent();
 			ProcessArguments(args);
 			OpenFile(FileName);
@@ -50,23 +50,41 @@ namespace Program {
 			}
 		}
 
-		private void scrollRichTextBox(string search = "\u200B\u200B\u200B", int start = 0, bool reverse = false) {
-
+		// NOTE: Error CS1736: Default parameter value for 'position' must be a compile-time constant
+		private void scrollRichTextBox(string search = "\u200B\u200B\u200B", int position = 0, bool reverse = false) {
+			int findIndex = -1;
+			if (selectionIndex != 0)
+			if (position == 0)
+				position = selectionIndex;
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextbox.find?view=windowsdesktop-10.0#system-windows-forms-richtextbox-find(system-string-system-int32-system-windows-forms-richtextboxfinds)
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextboxfinds?view=netframework-4.5
-			// NOTE: if text is not in richTextBox.Text, RichTextBox cannot scroll to it.
+			// NOTE: if search is not in richTextBox.Text, RichTextBox cannot scroll to it.
 			RichTextBoxFinds options = reverse ? RichTextBoxFinds.Reverse | RichTextBoxFinds.NoHighlight : RichTextBoxFinds.NoHighlight;
 			// Ensure that a search string has been specified and a valid start point.
-			if (search.Length > 0 && start >= 0) {
-				// Debug.WriteLine(BitConverter.ToString(Encoding.UTF8.GetBytes(richTextBoxRtfView.Text)));
-				// expect to see repeted E2-80-8B
-				// NOTE: RTF will be normalized
-				// Debug.WriteLine(String.Format("Searching {0} in {1}", search, richTextBoxRtfView.Rtf ));				int index = richTextBoxRtfView.Find(search, start, options);
-				int index = richTextBoxRtfView.Find(search, start, options);
-				if (index >= 0) {
-					richTextBoxRtfView.Select(index, 0);
-					richTextBoxRtfView.ScrollToCaret();
+			if (search.Length > 0 && position >= 0) {
+				// Debug.WriteLine(BitConverter.ToString(Encoding.UTF8.GetBytes(search));
+				if (reverse) {
+					Debug.WriteLine(String.Format("reverse search within {0}...{1} with {2}", 0, position, options));
+
+					findIndex =
+					richTextBoxRtfView.Find(search, 0, position, options);
+					// NOTE: For a reverse search on RichTextBox,
+					// use 4 argument override of find method: int findIndex = richTextBox1.Find(textToFind, startIndex, endIndex, RichTextBoxFinds.Reverse);
+					// where startIndex should typically be set to 0 (the beginning of the text).
+					// endIndex should be set to the desired end point of your reverse search.
+					// This tells the Find method to search the text before the endIndex,
+					// starting from the endIndex and moving backward towards startIndex
+				} else {
+					Debug.WriteLine(String.Format("search from {0} with {1}", position, options));
+					findIndex = richTextBoxRtfView.Find(search, position, options);
 				}
+				if (findIndex != -1) {
+					Debug.WriteLine(String.Format("Found: {0}", findIndex));
+					selectionIndex = reverse ? Math.Max(findIndex - search.Length, 0) : findIndex + search.Length;
+					richTextBoxRtfView.Select(findIndex, 0);
+					richTextBoxRtfView.ScrollToCaret();
+				} else
+					Debug.WriteLine("Not Found.");
 			}
 		}
 
@@ -157,49 +175,4 @@ namespace Program {
 		}
 	}
 
-	public class ParsingErrorForm : Form {
-		private TextBox textBoxErrors;
-		private Button btnClose;
-		private Button btnStopShowing;
-
-		// Action callback to notify the parent form
-		private readonly Action action;
-		public ParsingErrorForm(List<string> errors, Action action, string text  = "Parsing Errors") {
-			this.action = action;
-			this.Text = text;
-			this.Size = new System.Drawing.Size(600, 400);
-
-			textBoxErrors = new TextBox();
-			textBoxErrors.Multiline = true;
-			textBoxErrors.ReadOnly = true;
-			textBoxErrors.Dock = DockStyle.Fill;
-			textBoxErrors.ScrollBars = ScrollBars.Both;
-			textBoxErrors.Text = string.Join(Environment.NewLine, errors);
-
-			btnClose = new Button();
-			btnClose.Text = "Close";
-			btnClose.Dock = DockStyle.Bottom;
-			btnClose.Height = 30;
-			btnClose.Click += (s, e) => this.Close();
-
-			this.Controls.Add(textBoxErrors);
-			this.Controls.Add(btnClose);
-
-			btnStopShowing = new Button {
-				Text = "Stop Showing Errors",
-				Dock = DockStyle.Bottom,
-				Height = 30
-			};
-			btnStopShowing.Click += BtnStopShowing_Click;
-
-			this.Controls.Add(btnStopShowing);
-		}
-
-		private void BtnStopShowing_Click(object sender, EventArgs e) {
-			// Notify parent to disable future error popups
-			if (action != null)
-				action.Invoke();
-			this.Close();
-		}
-	}
 }
