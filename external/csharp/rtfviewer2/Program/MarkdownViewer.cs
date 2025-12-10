@@ -2,10 +2,8 @@ using System;
 using System.Windows.Forms;
 using System.Linq;
 using System.IO;
-using System.Text;
 using System.Diagnostics;
 using System.Threading;
-using System.Collections.Generic;
 
 using Utils;
 
@@ -16,7 +14,7 @@ namespace Program {
 		bool errorPopup = true;
 		private Thread renderThread;
 		private object renderLock = new object();
-		private const string versionString = "0.8.0";
+		private const string versionString = "0.9.0";
 		private int selectionIndex = 0 ;
 
 		public MarkdownViewer(string[] args) {

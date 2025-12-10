@@ -90,6 +90,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ParsingErrorForm.cs" />
+    <Compile Include="ParsingErrorForm.Designer.cs">
+      <DependentUpon>ParsingErrorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MarkdownViewer.cs" />
     <Compile Include="MarkdownViewer.Designer.cs">
       <DependentUpon>MarkdownViewer.cs</DependentUpon>

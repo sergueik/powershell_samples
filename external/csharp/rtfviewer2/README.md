@@ -20,6 +20,11 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 - `using static` directive - C# __6.0__
 - *discard*-style unused variables`_` - C# __7.0__
 - *async* / *await* and `Task` - C# __5.0__
+- *null-conditional operator* `?.` - C# __6.0__
+- *null-coalescing operator* `x ?? y` - C# __2.0__ (often confused with *null-conditional operator* )
+
+
+
 ### Usage
 
 * Launch the Tool
@@ -83,6 +88,17 @@ This is visible text. This is also visible text.
 
 The hidden text will not be displayed; visually, it renders identically.
 
+### Error Processing
+
+If processing of the markdown has encountered errors these are displayed in a custom dialog
+
+![error3](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/error3.jpg)
+
+and affected markup elements are rendered verbatim with `PARSE ERROR` prefix
+
+![error4](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/error4.jpg)
+
+By pressing __Suppress__ button one stops this dialog from showing
 
 ### ⚠️ Bugs: Rendering RTF inside Markdown
 
