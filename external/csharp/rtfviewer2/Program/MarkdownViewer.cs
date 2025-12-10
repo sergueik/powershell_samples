@@ -13,10 +13,10 @@ namespace Program {
 	public partial class MarkdownViewer : Form {
 		string rtfText = string.Empty;
 		string FileName = "README.md";
-		bool errorPopup = false;
+		bool errorPopup = true;
 		private Thread renderThread;
 		private object renderLock = new object();
-		private const string versionString = "0.7.0";
+		private const string versionString = "0.8.0";
 		private int selectionIndex = 0 ;
 
 		public MarkdownViewer(string[] args) {
@@ -93,11 +93,8 @@ namespace Program {
 
 			string payload = rtfConverter.ConvertText(text);
 			if (rtfConverter.Errors.Count > 0 && errorPopup) {
-				string errors = LineListToString(rtfConverter.Errors);
-				DialogResult result = MessageBox.Show(errors + "\n\n To stop showing errors, press No", "Parsing error", MessageBoxButtons.YesNo);
-				if (result == DialogResult.No) {
-					errorPopup = false;
-				}
+				var errorForm = new ParsingErrorForm(rtfConverter.Errors, () => errorPopup = false);
+	            errorForm.ShowDialog(this); // application modal
 			}
 
 			// preserve selection
@@ -119,14 +116,6 @@ namespace Program {
 			}
 
 			rtfText = payload;
-		}
-
-		private string LineListToString(List<string> lines) {
-			var sb = new StringBuilder();
-			foreach (string line in lines) {
-				sb.AppendLine(line);
-			}
-			return sb.ToString();
 		}
 
 		private void btnRenderClick(object sender, EventArgs e) {

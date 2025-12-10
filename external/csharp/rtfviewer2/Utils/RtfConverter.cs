@@ -370,6 +370,7 @@ namespace Utils {
 
 					text.AppendLine("\\par ");
 					rtfWriter.AppendLine("\\par ");
+					// throw e;
 				}
 			}
 
@@ -525,6 +526,8 @@ namespace Utils {
 				//imageUrlIsWebAddress = true;
 				imagePath = imageUrl;
 				using (WebClient client = new WebClient()) {
+					// trigger the error
+					// bytes = client.DownloadData(imageUrl);
 					bytes = client.DownloadData(translateImageUrl(imageUrl));
 					dumpBytes(bytes);
 					using (var ms = new MemoryStream(bytes)) {
