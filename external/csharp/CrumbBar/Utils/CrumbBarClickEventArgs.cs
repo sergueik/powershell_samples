@@ -1,12 +1,7 @@
 ﻿using System;
 
-namespace Free.Controls.CrumbBar
-{
-	public class CrumbBarClickEventArgs : EventArgs
-	{
-		/// <summary>
-		/// Gets the index of the clicked crumb in the nesting.
-		/// </summary>
+namespace Utils {
+	public class CrumbBarClickEventArgs : EventArgs {
 		public int Index { get; private set; }
 
 		/// <summary>
@@ -16,8 +11,7 @@ namespace Free.Controls.CrumbBar
 		/// <param name="checkd">Was the crumb checked before it was clicked?</param>
 		/// <param name="checksonclick">Is the crumb supposed to change it's checked state when clicked?</param>
 		/// <param name="sender">The clicked crumb.</param>
-		internal CrumbBarClickEventArgs(int index)
-		{
+		internal CrumbBarClickEventArgs(int index) {
 			Index=index;
 		}
 	}

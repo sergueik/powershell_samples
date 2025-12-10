@@ -4,8 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Free.Controls.CrumbBar
-{
+namespace Utils {
 	[DefaultEvent("CrumbClicked")]
 	public class CrumbBar : Control
 	{
@@ -25,25 +24,25 @@ namespace Free.Controls.CrumbBar
 			get { return crumbList.ConvertAll(c => c.Text).AsReadOnly(); }
 		}
 		#region Setup Images
-		static Image imgLeftEdge = global::Free.Controls.Properties.Resources.crumb_left_end;
-		static Image imgBody = global::Free.Controls.Properties.Resources.crumb_body;
-		static Image imgRightEdge = global::Free.Controls.Properties.Resources.crumb_right_end;
-		static Image imgRightTriangle = global::Free.Controls.Properties.Resources.crumb_right_point;
+		static Image imgLeftEdge = global::Utils.Properties.Resources.crumb_left_end;
+		static Image imgBody = global::Utils.Properties.Resources.crumb_body;
+		static Image imgRightEdge = global::Utils.Properties.Resources.crumb_right_end;
+		static Image imgRightTriangle = global::Utils.Properties.Resources.crumb_right_point;
 
-		static Image imgSelectedLeftEdge = global::Free.Controls.Properties.Resources.selected_crumb_left_end;
-		static Image imgSelectedBody = global::Free.Controls.Properties.Resources.selected_crumb_body;
-		static Image imgSelectedRightEdge = global::Free.Controls.Properties.Resources.selected_crumb_right_end;
-		static Image imgSelectedRightTriangle = global::Free.Controls.Properties.Resources.selected_crumb_right_point;
+		static Image imgSelectedLeftEdge = global::Utils.Properties.Resources.selected_crumb_left_end;
+		static Image imgSelectedBody = global::Utils.Properties.Resources.selected_crumb_body;
+		static Image imgSelectedRightEdge = global::Utils.Properties.Resources.selected_crumb_right_end;
+		static Image imgSelectedRightTriangle = global::Utils.Properties.Resources.selected_crumb_right_point;
 
-		static Image imgHoveredLeftEdge = global::Free.Controls.Properties.Resources.hovered_crumb_left_end;
-		static Image imgHoveredBody = global::Free.Controls.Properties.Resources.hovered_crumb_body;
-		static Image imgHoveredRightEdge = global::Free.Controls.Properties.Resources.hovered_crumb_right_end;
-		static Image imgHoveredRightTriangle = global::Free.Controls.Properties.Resources.hovered_crumb_right_point;
+		static Image imgHoveredLeftEdge = global::Utils.Properties.Resources.hovered_crumb_left_end;
+		static Image imgHoveredBody = global::Utils.Properties.Resources.hovered_crumb_body;
+		static Image imgHoveredRightEdge = global::Utils.Properties.Resources.hovered_crumb_right_end;
+		static Image imgHoveredRightTriangle = global::Utils.Properties.Resources.hovered_crumb_right_point;
 
-		static Image imgClickedLeftEdge = global::Free.Controls.Properties.Resources.clicked_crumb_left_end;
-		static Image imgClickedBody = global::Free.Controls.Properties.Resources.clicked_crumb_body;
-		static Image imgClickedRightEdge = global::Free.Controls.Properties.Resources.clicked_crumb_right_end;
-		static Image imgClickedRightTriangle = global::Free.Controls.Properties.Resources.clicked_crumb_right_point;
+		static Image imgClickedLeftEdge = global::Utils.Properties.Resources.clicked_crumb_left_end;
+		static Image imgClickedBody = global::Utils.Properties.Resources.clicked_crumb_body;
+		static Image imgClickedRightEdge = global::Utils.Properties.Resources.clicked_crumb_right_end;
+		static Image imgClickedRightTriangle = global::Utils.Properties.Resources.clicked_crumb_right_point;
 		#endregion
 
 		List<Crumb> crumbList;
