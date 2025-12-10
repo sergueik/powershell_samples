@@ -11,52 +11,78 @@ using System.Windows.Forms;
 
 namespace Free.Controls.CrumbBar
 {
-    public partial class Form1 : Form
-    {
+	public partial class Form1 : Form
+	{
+    	
+    	
+		private CrumbBar crumbBar;
+		private System.ComponentModel.IContainer components = null;
 
-        public Form1()
-        {
-            InitializeComponent();
-        }
+      
+		public Form1()
+		{
+			InitializeComponent();
+		}
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
+		private void Form1_Load(object sender, EventArgs e)
+		{
 
-        }
+		}
 
 
-        private System.ComponentModel.IContainer components = null;
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null)) {
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		private void InitializeComponent() {
+			this.SuspendLayout();
+			this.crumbBar = new CrumbBar();
+			this.crumbBar.Location = new Point(10, 10);
+			this.crumbBar.Font = new Font("Segoe UI", 9);
+			this.crumbBar.ForeColor = Color.Black;
+			// this.crumbBar.BackColor = Color.Transparent; // optional
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {   this.SuspendLayout();
-            this.component = new CrumbBar();
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1113, 615);
-            this.Controls.Add(this.component );
-            this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "Form1";
-            this.Text = "CrumbBar";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.ResumeLayout(false);
-        }
-        private CrumbBar  component;
-    }
+			this.crumbBar.Size = new Size(560, 24);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(1113, 615);
+            
+			this.crumbBar.Add("Home");
+			this.crumbBar.Add("Documents");
+			this.crumbBar.Add("Projects");
+			this.crumbBar.Add("2025");
+
+			this.crumbBar.CrumbClicked += CrumbBar_CrumbClicked;
+            
+			this.Controls.Add(this.crumbBar);
+            
+            
+			this.Margin = new System.Windows.Forms.Padding(4);
+			this.Name = "Form1";
+			this.Text = "CrumbBar";
+			this.Load += new System.EventHandler(this.Form1_Load);
+			this.ResumeLayout(false);
+		}
+
+
+
+		private void CrumbBar_CrumbClicked(object sender, CrumbBarClickEventArgs e)
+		{
+
+			MessageBox.Show(String.Format("Crumb clicked: {0} - Text = {1}", e.Index, GetCrumbText(e.Index)));
+		}
+     
+		private string GetCrumbText(int index)
+		{
+			var crumbs = this.crumbBar.Crumbs;
+			return   	(index >= 0 && index < crumbs.Count) ? this.crumbBar.Crumbs[index] : "";
+ 
+		}
+
+    
+	}
 }
