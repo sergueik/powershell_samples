@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace Utils {
 	[DefaultEvent("CrumbClicked")]
-	public class CrumbBar : Control
-	{
-		class Crumb
-		{
+	public class CrumbBar : Control {
+		class Crumb {
 			public bool Clicked { get; set; }
 			public bool Hovered { get; set; }
 			public string Text { get; private set; }
 
-			public Crumb(string text)
-			{
+			public Crumb(string text) {
 				Text = text;
 			}
 		}
@@ -23,6 +21,26 @@ namespace Utils {
 		public IReadOnlyList<string> Crumbs {
 			get { return crumbList.ConvertAll(c => c.Text).AsReadOnly(); }
 		}
+		
+		
+		public void AddRange(IEnumerable<string> items){
+		    foreach (var item in items)
+		    {
+		        Add(item); // reuse your existing Add method
+		    }
+		}
+
+		public void AddPath(string path, char? separator = null) {
+		    if (string.IsNullOrEmpty(path)) return;
+		
+		    char sep = separator ?? System.IO.Path.DirectorySeparatorChar;
+		    // NOTE: StringSplitOptions.RemoveEmptyEntries available 
+		    // https://learn.microsoft.com/en-us/dotnet/api/system.string.split?view=netframework-4.5#system-string-split(system-char()-system-stringsplitoptions)
+		    var parts = path.Split(new char[]{sep}, StringSplitOptions.RemoveEmptyEntries);
+		
+		    AddRange(parts);
+		}
+
 		#region Setup Images
 		static Image imgLeftEdge = global::Utils.Properties.Resources.crumb_left_end;
 		static Image imgBody = global::Utils.Properties.Resources.crumb_body;

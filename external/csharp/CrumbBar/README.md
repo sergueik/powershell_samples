@@ -29,7 +29,7 @@ crumbBar.addRange( new List<string> { "Home", "Documents", "Projects" } );
 ```
 add path-like Strings
 ```c#
-crumbBar.AddPath"https://example.com/home/products/widgets", '/');
+crumbBar.AddPath("https://example.com/home/products/widgets", '/');
 ```
 
 ### Author
