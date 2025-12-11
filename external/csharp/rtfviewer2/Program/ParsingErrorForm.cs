@@ -26,7 +26,7 @@ protected override void OnLoad(EventArgs e)
 
         // Fill after designer is done
         this.textBoxErrors.Text = string.Join(
-            Environment.NewLine, 
+            Environment.NewLine,
             this.errors
         );
     }

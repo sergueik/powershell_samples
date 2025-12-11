@@ -17,7 +17,7 @@ namespace Program
 		private System.Windows.Forms.Button btnScrollTop;
 		private System.Windows.Forms.Button btnScrollUp;
 		private System.Windows.Forms.Button btnScrollDown;
-		private System.Windows.Forms.Button btnScrollEnd;
+		private System.Windows.Forms.Button btnScrollBottom;
 
 		private System.Windows.Forms.SplitContainer splitContainerMain;
 		private System.Windows.Forms.TextBox textBoxSourceMd;
@@ -39,7 +39,7 @@ namespace Program
 			this.btnScrollTop = new System.Windows.Forms.Button();
 			this.btnScrollUp = new System.Windows.Forms.Button();
 			this.btnScrollDown = new System.Windows.Forms.Button();
-			this.btnScrollEnd = new System.Windows.Forms.Button();
+			this.btnScrollBottom = new System.Windows.Forms.Button();
 			this.panelBottom = new System.Windows.Forms.Panel();
 			this.labelVersion = new System.Windows.Forms.Label();
 			this.splitContainerMain = new System.Windows.Forms.SplitContainer();
@@ -61,7 +61,7 @@ namespace Program
 			this.panelTop.Controls.Add(this.btnScrollTop);
 			this.panelTop.Controls.Add(this.btnScrollUp);
 			this.panelTop.Controls.Add(this.btnScrollDown);
-			this.panelTop.Controls.Add(this.btnScrollEnd);
+			this.panelTop.Controls.Add(this.btnScrollBottom);
 			this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
 			this.panelTop.Location = new System.Drawing.Point(0, 0);
 			this.panelTop.Name = "panelTop";
@@ -93,6 +93,7 @@ namespace Program
 			this.btnScrollTop.Size = new System.Drawing.Size(75, 37);
 			this.btnScrollTop.TabIndex = 2;
 			this.btnScrollTop.Text = "<<"; // fa-fast-backward
+			this.btnScrollTop.Click += new System.EventHandler(this.btnScrollTop_Click);
 			//
 			// btnScrollUp
 			//
@@ -112,13 +113,14 @@ namespace Program
 			this.btnScrollDown.Text = ">"; // fa-step-forward
 			this.btnScrollDown.Click += new System.EventHandler(this.btnScrollDown_Click);
 			//
-			// btnScrollEnd
+			// btnScrollBottom
 			//
-			this.btnScrollEnd.Location = new System.Drawing.Point(472, 8);
-			this.btnScrollEnd.Name = "btnScrollEnd";
-			this.btnScrollEnd.Size = new System.Drawing.Size(75, 37);
-			this.btnScrollEnd.TabIndex = 5;
-			this.btnScrollEnd.Text = ">>"; // fa-fast-forward
+			this.btnScrollBottom.Location = new System.Drawing.Point(472, 8);
+			this.btnScrollBottom.Name = "btnScrollBottom";
+			this.btnScrollBottom.Size = new System.Drawing.Size(75, 37);
+			this.btnScrollBottom.TabIndex = 5;
+			this.btnScrollBottom.Text = ">>"; // fa-fast-forward
+			this.btnScrollBottom.Click += new System.EventHandler(this.btnScrollBottom_Click);
 			//
 			// panelBottom
 			//

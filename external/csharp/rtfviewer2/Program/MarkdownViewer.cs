@@ -14,7 +14,7 @@ namespace Program {
 		bool errorPopup = true;
 		private Thread renderThread;
 		private object renderLock = new object();
-		private const string versionString = "0.9.0";
+		private const string versionString = "0.10.0";
 		private int selectionIndex = 0 ;
 
 		public MarkdownViewer(string[] args) {
@@ -153,6 +153,17 @@ namespace Program {
 		    thread.Start();
 		}
 
+		void btnScrollTop_Click(object sender, EventArgs e) {
+			selectionIndex = 0;
+			richTextBoxRtfView.SelectionStart = selectionIndex;
+		    richTextBoxRtfView.ScrollToCaret();
+		}
+
+		void btnScrollBottom_Click(object sender, EventArgs e) {
+			selectionIndex = richTextBoxRtfView.Text.Length;
+			richTextBoxRtfView.SelectionStart = selectionIndex;
+		    richTextBoxRtfView.ScrollToCaret();
+		}
 		void btnScrollUp_Click(object sender, EventArgs e) {
 			scrollRichTextBox(reverse: true);
 		}
