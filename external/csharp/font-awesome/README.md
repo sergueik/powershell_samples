@@ -336,7 +336,61 @@ this will output
 ```
 (approx 600 glyphs listed for `regular-icon-font-free/fonts/Lineicons.ttf`, less than 300 for `fontawesome-free-7.1.0-desktop/otfs/Font Awesome 7 Free-Regular-400.otf`)
 
+```powershell
+.\Utils\bin\Debug\FontResource.exe --file="regular-icon-font-free\fonts\Lineicons.ttf" --list
+```
+```text
+OK: Font 'Lineicons.ttf' is loadable.
+```
+```text
+U+0020-U+007F
+U+0081-U+0081
+U+008D-U+008D
+U+008F-U+0090
+U+009D-U+009D
+U+00A0-U+00FF
+U+0152-U+0153
+U+0160-U+0161
+U+0178-U+0178
+U+017D-U+017E
+U+0192-U+0192
+U+02C6-U+02C6
+U+02DC-U+02DC
+U+2013-U+2014
+U+2018-U+201A
+U+201C-U+201E
+U+2020-U+2022
+U+2026-U+2026
+U+2030-U+2030
+U+2039-U+203A
+U+20AC-U+20AC
+U+2122-U+2122
+```
+```powershell
+.\Utils\bin\Debug\FontResource.exe --file="regular-icon-font-free\fonts\Lineicons.ttf" --enum
+```
+```text
+OK: Font 'Lineicons.ttf' is loadable.
+```
+```text
 
+
+public enum true
+{
+    glyph_0020 = 0x0020,
+    glyph_0021 = 0x0021,
+    glyph_0022 = 0x0022,
+    glyph_0023 = 0x0023,
+    glyph_0024 = 0x0024,
+    glyph_0025 = 0x0025,
+    ...
+    glyph_FEF9 = 0xFEF9,
+    glyph_FEFA = 0xFEFA,
+    glyph_FEFB = 0xFEFB,
+    glyph_FEFC = 0xFEFC,
+    glyph_FFFC = 0xFFFC,
+}
+```
 ### See Also
 
   * __Font Awesome__ [download](https://fontawesome.com/download) page 

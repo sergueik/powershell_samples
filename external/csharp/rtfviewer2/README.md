@@ -22,8 +22,7 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 - *async* / *await* and `Task` - C# __5.0__
 - *null-conditional operator* `?.` - C# __6.0__
 - *null-coalescing operator* `x ?? y` - C# __2.0__ (often confused with *null-conditional operator* )
-
-
+- *value tuples* and *tuple literal* syntax - C# __7.0__
 
 ### Usage
 
