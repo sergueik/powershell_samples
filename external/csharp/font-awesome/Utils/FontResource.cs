@@ -79,16 +79,17 @@ namespace Utils
 
 		public const int GDI_ERROR = 0;
 		public const uint FR_PRIVATE = 0x10;
+
 		[DllImport("gdi32.dll")]
 		private static extern int AddFontResourceEx(string lpFileName, uint fl, IntPtr pdv);
+
 		[DllImport("gdi32.dll")]
 		public static extern bool RemoveFontResourceEx(string lpFileName, uint fl, IntPtr pdv);
 
 		[DllImport("gdi32.dll")]
 		public static extern IntPtr CreateFontIndirect([In] ref LOGFONT lplf);
 
-		public static IEnumerable<Tuple<int, int>> EnumerateGlyphRanges(string fontPath)
-		{
+		public static IEnumerable<Tuple<int, int>> EnumerateGlyphRanges(string fontPath) {
 			// Load font PRIVATE (not installed)
 			AddFontResourceEx(fontPath, FR_PRIVATE, IntPtr.Zero);
 
@@ -134,69 +135,62 @@ namespace Utils
 			RemoveFontResourceEx(fontPath, FR_PRIVATE, IntPtr.Zero);
 		}
 
-		public static IEnumerable<GlyphInfo> EnumerateGlyphs(string fontName)
-		{
-			var bmp = new Bitmap(1, 1);
-			Graphics g = Graphics.FromImage(bmp);
-			IntPtr hdc = g.GetHdc();
+		public static IEnumerable<GlyphInfo> EnumerateGlyphs(string fontName, int? startCode = null, int? endCode = null) {
+		    var bmp = new Bitmap(1, 1);
+		    Graphics g = Graphics.FromImage(bmp);
+		    IntPtr hdc = g.GetHdc();
 
-			// Create the font
-			IntPtr hFont = CreateFont(0, 0, 0, 0, 400, 0, 0, 0, 1, 0, 0, 0, 0, fontName);
+		    // Create the font
+		    IntPtr hFont = CreateFont(0, 0, 0, 0, 400, 0, 0, 0, 1, 0, 0, 0, 0, fontName);
+		    IntPtr oldFont = SelectObject(hdc, hFont);
 
-			IntPtr oldFont = SelectObject(hdc, hFont);
+		    try {
+		        List<Tuple<int, int>> ranges = GetUnicodeRanges(hdc);
 
-			try {
-				// Get unicode ranges
-				List<Tuple<int, int>> ranges = GetUnicodeRanges(hdc);
+		        foreach (Tuple<int,int> r in ranges) {
+		            int start = r.Item1;
+		            int end = r.Item2;
 
-				// Iterate every codepoint in every supported range
-				foreach (Tuple<int, int> r in ranges) {
-					int start = r.Item1;
-					int end = r.Item2;
+		            // Apply optional CLI range filter
+		            if (startCode.HasValue && start < startCode.Value) start = startCode.Value;
+		            if (endCode.HasValue && end > endCode.Value) end = endCode.Value;
 
-					for (int cp = start; cp <= end; cp++) {
-						char[] chars;
+		            for (int cp = start; cp <= end; cp++) {
+		                char[] chars = (cp <= 0xFFFF) ? new char[] { (char)cp } : Char.ConvertFromUtf32(cp).ToCharArray();
+		                ushort[] glyphIndex = new ushort[chars.Length];
+		                uint result = GetGlyphIndicesW(hdc, chars, chars.Length, glyphIndex, 0);
 
-						// BMP vs surrogate pair
-						if (cp <= 0xFFFF) {
-							chars = new char[] { (char)cp };
-						} else {
-							chars = Char.ConvertFromUtf32(cp).ToCharArray();
-						}
+		                if (glyphIndex[0] == 0xFFFF)
+		                    continue; // Unsupported code point
 
-						ushort[] glyphIndex = new ushort[chars.Length];
-						uint result = GetGlyphIndicesW(hdc, chars, chars.Length, glyphIndex, 0);
+		                string name = "glyph_" + cp.ToString("X4");
 
-						if (glyphIndex[0] == 0xFFFF)
-							continue; // Unsupported code point
+		                GlyphInfo info = new GlyphInfo();
+		                info.CodePoint = cp;
+		                info.Name = name;
 
-						// Synthesize glyph name
-						string name = "glyph_" + cp.ToString("X4");
-
-						GlyphInfo info = new GlyphInfo();
-						info.CodePoint = cp;
-						info.Name = name;
-
-						yield return info;
-					}
-				}
-			} finally {
-				SelectObject(hdc, oldFont);
-				DeleteObject(hFont);
-				g.ReleaseHdc(hdc);
-
-				g.Dispose();
-				bmp.Dispose();
-			}
+		                yield return info;
+		            }
+		        }
+		    } finally {
+		        SelectObject(hdc, oldFont);
+		        DeleteObject(hFont);
+		        g.ReleaseHdc(hdc);
+		        g.Dispose();
+		        bmp.Dispose();
+		    }
 		}
 
-		public static void GenerateEnum(string font, string enumName = "data", string outFile = null) {
+		public static void GenerateEnum(string font, string enumName = "data",  int? startCode = null, int? endCode = null, string outFile = null) {
+
+			if (startCode.HasValue && endCode.HasValue && startCode.Value >= endCode.Value)
+				throw new ArgumentException(String.Format("Invalid range: start 0x{0:X4} >= end 0x{1:X4}", startCode.Value, endCode.Value));
 			TextWriter textWriter = (outFile == null) ? Console.Out : new StreamWriter(outFile);
 			var stringBuilder = new System.Text.StringBuilder();
 			stringBuilder.AppendLine("public enum " + enumName);
 			stringBuilder.AppendLine("{");
 
-			foreach (var glyph in EnumerateGlyphs(font)) {
+			foreach (var glyph in EnumerateGlyphs(font, startCode, endCode)) {
 				stringBuilder.AppendLine(String.Format("    {0} = 0x{1:X4},", glyph.Name, glyph.CodePoint));
 			}
 
@@ -241,21 +235,40 @@ namespace Utils
 			return ranges;
 		}
 
-		public static void Main(string[] args)
+		private static string getOption(string longKey, string shortKey = null)
 		{
+		    if (options.ContainsKey(longKey))
+		        return options[longKey];
+		    if (shortKey != null && options.ContainsKey(shortKey))
+		        return options[shortKey];
+		    return null;
+		}
+
+		private static int? parseOptionalHexArg(string key) {
+		    if (!options.ContainsKey(key))
+		        return null;
+
+		    string s = options[key];
+		    if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+		        return Convert.ToInt32(s.Substring(2), 16);
+		    else
+		        return Convert.ToInt32(s);
+		}
+
+		private static Dictionary<string,string> options;
+
+		public static void Main(string[] args) {
 			if (args.Length == 0) {
 				Console.Error.WriteLine("Usage: FontResourceTool --file=<filename> [--noop] [--format=bytes|base64] [--debug]");
 				return;
 			}
 
-			var opts = NewParseArgs.Parse(args);
+			options = NewParseArgs.Parse(args);
 
-			bool noop = opts.ContainsKey("noop") || opts.ContainsKey("n");
-			string format = opts.ContainsKey("format") ? opts["format"] : "base64";
+			bool noop = options.ContainsKey("noop") || options.ContainsKey("n");
+			string format = options.ContainsKey("format") ? options["format"] : "base64";
 
-			string path = opts.ContainsKey("file") ?
-                  opts["file"] :
-                  (opts.ContainsKey("f") ? opts["f"] : null);
+			string path = getOption("file","f");
 
 			if (path == null) {
 				Console.WriteLine("Error: --file=<file.ttf>");
@@ -283,16 +296,17 @@ namespace Utils
 			if (noop)
 				return;
 
-			if (opts.ContainsKey("list")) {
+			if (options.ContainsKey("list")) {
 				foreach (var r in EnumerateGlyphRanges(path)) {
 					Console.WriteLine("U+{0:X4}–U+{1:X4}", r.Item1, r.Item2);
 				}
 				return;
 			}
 
-			if (opts.ContainsKey("enum")) {
-			    string outFile = opts.ContainsKey("out") ? opts["out"] : null;
-			    GenerateEnum(path, opts["enum"], outFile);
+
+
+			if (options.ContainsKey("enum")) {
+				GenerateEnum(path, options["enum"], parseOptionalHexArg("start"), parseOptionalHexArg("end"),  options.ContainsKey("out") ? options["out"] : null);
 			    return;
 			}
 			// 2) Dump the raw data

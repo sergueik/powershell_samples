@@ -367,29 +367,41 @@ U+20AC-U+20AC
 U+2122-U+2122
 ```
 ```powershell
-.\Utils\bin\Debug\FontResource.exe --file="regular-icon-font-free\fonts\Lineicons.ttf" --enum
+.\Utils\bin\Debug\FontResource.exe --file="regular-icon-font-free\fonts\Lineicons.ttf" --enum --start 0xFEE6 --end 0xFFFC
 ```
 ```text
 OK: Font 'Lineicons.ttf' is loadable.
 ```
 ```text
 
-
 public enum true
 {
-    glyph_0020 = 0x0020,
-    glyph_0021 = 0x0021,
-    glyph_0022 = 0x0022,
-    glyph_0023 = 0x0023,
-    glyph_0024 = 0x0024,
-    glyph_0025 = 0x0025,
-    ...
+    glyph_FEE6 = 0xFEE6,
+    glyph_FEE7 = 0xFEE7,
+    glyph_FEE8 = 0xFEE8,
+    glyph_FEE9 = 0xFEE9,
+    glyph_FEEA = 0xFEEA,
+    glyph_FEEB = 0xFEEB,
+    glyph_FEEC = 0xFEEC,
+    glyph_FEED = 0xFEED,
+    glyph_FEEE = 0xFEEE,
+    glyph_FEEF = 0xFEEF,
+    glyph_FEF0 = 0xFEF0,
+    glyph_FEF1 = 0xFEF1,
+    glyph_FEF2 = 0xFEF2,
+    glyph_FEF3 = 0xFEF3,
+    glyph_FEF4 = 0xFEF4,
+    glyph_FEF5 = 0xFEF5,
+    glyph_FEF6 = 0xFEF6,
+    glyph_FEF7 = 0xFEF7,
+    glyph_FEF8 = 0xFEF8,
     glyph_FEF9 = 0xFEF9,
     glyph_FEFA = 0xFEFA,
     glyph_FEFB = 0xFEFB,
     glyph_FEFC = 0xFEFC,
     glyph_FFFC = 0xFFFC,
 }
+
 ```
 ### See Also
 
