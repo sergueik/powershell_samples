@@ -1,5 +1,5 @@
-﻿namespace FontAwesomeIcons {
-	public enum IconType {
+﻿namespace Utils  {
+	public enum FontAwesome {
         Adjust = 0xf042,
         Adn = 0xf170,
         AlignCenter = 0xf037,

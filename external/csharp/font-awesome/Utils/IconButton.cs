@@ -6,10 +6,12 @@ using System.Drawing.Text;
 using System.Windows.Forms;
 using System.ComponentModel;
 
-namespace FontAwesomeIcons {
+namespace Utils {
     public class IconButton : PictureBox {
+		// TODO: introduce IconType class
+        // private IconType _iconType = FontAwesome.Star;
 
-        private IconType _iconType = IconType.Star;
+		private FontAwesome _iconType = FontAwesome.Star;
         private string _tooltip = null;
         private Color _activeColor = Color.Black;
         private Color _inActiveColor = Color.Black;
@@ -20,9 +22,9 @@ namespace FontAwesomeIcons {
         private Brush ActiveBrush { get; set; } 
         private Brush InActiveBrush { get; set; }
 
-        public IconButton() : this(IconType.Star, 16, Color.DimGray, Color.Black, false, null) { }
+        public IconButton() : this(FontAwesome.Star, 16, Color.DimGray, Color.Black, false, null) { }
 
-        public IconButton(IconType type, int size, Color normalColor, Color hoverColor, bool selectable, string toolTip) {
+        public IconButton(FontAwesome type, int size, Color normalColor, Color hoverColor, bool selectable, string toolTip) {
             IconFont = null;
             BackColor = Color.Transparent;
 
@@ -46,7 +48,7 @@ namespace FontAwesomeIcons {
             MouseLeave += Icon_MouseLeave;
         }
 
-        public IconType IconType {
+        public FontAwesome IconType {
             get { return _iconType; }
             set {
                 _iconType = value;
@@ -164,6 +166,8 @@ namespace FontAwesomeIcons {
         }
 
         private Font GetIconFont(float size) {
+        	       	Console.Error.WriteLine(Fonts.Families.Length);
+ 
             return new Font(Fonts.Families[0], size, GraphicsUnit.Point);
         }
 
