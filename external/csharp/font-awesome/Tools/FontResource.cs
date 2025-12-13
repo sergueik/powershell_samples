@@ -266,6 +266,7 @@ namespace Utils
 			options = NewParseArgs.Parse(args);
 
 			bool noop = options.ContainsKey("noop") || options.ContainsKey("n");
+			// TODO: fix to not set default format to base64
 			string format = options.ContainsKey("format") ? options["format"] : "base64";
 
 			string path = getOption("file","f");

@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "Program\Program.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{5E8A8396-1D35-4495-BA65-B564E3D33282}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools", "Tools\Tools.csproj", "{83477F5B-E2EC-480F-B659-27F5FA6C75A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,14 @@ Global
 		{5E8A8396-1D35-4495-BA65-B564E3D33282}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5E8A8396-1D35-4495-BA65-B564E3D33282}.Release|x86.ActiveCfg = Release|x86
 		{5E8A8396-1D35-4495-BA65-B564E3D33282}.Release|x86.Build.0 = Release|x86
+		{83477F5B-E2EC-480F-B659-27F5FA6C75A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83477F5B-E2EC-480F-B659-27F5FA6C75A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83477F5B-E2EC-480F-B659-27F5FA6C75A6}.Debug|x86.ActiveCfg = Debug|x86
+		{83477F5B-E2EC-480F-B659-27F5FA6C75A6}.Debug|x86.Build.0 = Debug|x86
+		{83477F5B-E2EC-480F-B659-27F5FA6C75A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83477F5B-E2EC-480F-B659-27F5FA6C75A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83477F5B-E2EC-480F-B659-27F5FA6C75A6}.Release|x86.ActiveCfg = Release|x86
+		{83477F5B-E2EC-480F-B659-27F5FA6C75A6}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

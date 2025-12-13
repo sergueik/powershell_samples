@@ -130,214 +130,8 @@ Parameter is not valid.
 ```
 ### WIP
 
-```sh
- curl -skLo wycliffeassociates.typography.openfont.zip  https://www.nuget.org/api/v2/package/WycliffeAssociates.Typography.OpenFont/1.0.0
-```
-```sh
-$ unzip -l wycliffeassociates.typography.openfont.zip
-````
-```text
-Archive:  wycliffeassociates.typography.openfont.zip
-  Length      Date    Time    Name
----------  ---------- -----   ----
-      532  2020-07-23 09:04   _rels/.rels
-      934  2020-07-23 09:04   WycliffeAssociates.Typography.OpenFont.nuspec
-   632320  2020-07-23 13:04   lib/netstandard2.0/Typography.OpenFont.dll
-     2323  2020-07-20 19:07   LICENSE.md
-      527  2020-07-23 09:04   [Content_Types].xml
-      795  2020-07-23 09:04   package/services/metadata/core-properties/833c7d9785a34538bca00b85d54ad42c.psmdcp
-     9474  2020-07-23 06:05   .signature.p7s
----------                     -------
-   646905                     7 files
-```
-```sh
-pip install fontTools
-```
-```text
-Defaulting to user installation because normal site-packages is not writeable
-Requirement already satisfied: fontTools in c:\users\kouzm\appdata\roaming\python\python311\site-packages (4.59.0)
-
-```
-```sh
-python met.py --file  'fontawesome-free-7.1.0-desktop/otfs/Font Awesome 7 Free-Regular-400.otf'
-```
-this will output
-```text
-39 zero-width-space
-40 folder-closed
-41 heart
-42 star
-43 user
-44 house
-45 clock
-46 rectangle-list
-47 flag
-48 headphones
-49 bookmark
-50 camera
-51 image
-52 pen-to-square
-53 circle-xmark
-54 circle-check
-55 circle-question
-56 eye
-57 eye-slash
-58 calendar-days
-59 comment
-60 folder
-61 folder-open
-62 chart-bar
-63 comments
-64 star-half
-65 lemon
-66 credit-card
-67 hard-drive
-68 hand-point-right
-69 hand-point-left
-70 hand-point-up
-71 hand-point-down
-72 cloud
-73 copy
-74 floppy-disk
-75 square
-76 truck
-77 envelope
-78 paste
-79 lightbulb
-80 bell
-81 hospital
-82 square-plus
-83 circle
-84 face-smile
-85 face-frown
-86 face-meh
-87 keyboard
-88 calendar
-89 circle-play
-90 square-minus
-91 square-check
-92 share-from-square
-93 compass
-94 square-caret-down
-95 square-caret-up
-96 square-caret-right
-97 file
-98 file-lines
-99 thumbs-up
-100 thumbs-down
-101 sun
-102 moon
-103 square-caret-left
-104 circle-dot
-105 building
-106 file-pdf
-107 file-word
-108 file-excel
-109 file-powerpoint
-110 file-image
-111 file-zipper
-112 file-audio
-113 file-video
-114 file-code
-115 life-ring
-116 paper-plane
-117 futbol
-118 newspaper
-119 bell-slash
-120 copyright
-121 closed-captioning
-122 object-group
-123 object-ungroup
-124 note-sticky
-125 clone
-126 hourglass-half
-127 hourglass
-128 hand-back-fist
-129 hand
-130 hand-scissors
-131 hand-lizard
-132 hand-spock
-133 hand-pointer
-134 hand-peace
-135 registered
-136 calendar-plus
-137 calendar-minus
-138 calendar-xmark
-139 calendar-check
-140 map
-141 message
-142 circle-pause
-143 circle-stop
-144 font-awesome
-145 handshake
-146 envelope-open
-147 address-book
-148 address-card
-149 circle-user
-150 id-badge
-151 id-card
-152 window-maximize
-153 window-minimize
-154 window-restore
-155 snowflake
-156 trash-can
-157 images
-158 clipboard
-159 alarm-clock
-160 circle-down
-161 circle-left
-162 circle-right
-163 circle-up
-164 gem
-165 money-bill-1
-166 rectangle-xmark
-167 chess-bishop
-168 chess-king
-169 chess-knight
-170 chess-pawn
-171 chess-queen
-172 chess-rook
-173 square-full
-174 comment-dots
-175 face-smile-wink
-176 face-angry
-177 face-dizzy
-178 face-flushed
-179 face-frown-open
-180 face-grimace
-181 face-grin
-182 face-grin-wide
-183 face-grin-beam
-184 face-grin-beam-sweat
-185 face-grin-hearts
-186 face-grin-squint
-187 face-grin-squint-tears
-188 face-grin-stars
-189 face-grin-tears
-190 face-grin-tongue
-191 face-grin-tongue-squint
-192 face-grin-tongue-wink
-193 face-grin-wink
-194 face-kiss
-195 face-kiss-beam
-196 face-kiss-wink-heart
-197 face-laugh
-198 face-laugh-beam
-199 face-laugh-squint
-200 face-laugh-wink
-201 face-meh-blank
-202 face-rolling-eyes
-203 face-sad-cry
-204 face-sad-tear
-205 face-smile-beam
-206 star-half-stroke
-207 face-surprise
-208 face-tired
-```
-(approx 600 glyphs listed for `regular-icon-font-free/fonts/Lineicons.ttf`, less than 300 for `fontawesome-free-7.1.0-desktop/otfs/Font Awesome 7 Free-Regular-400.otf`)
-
 ```powershell
-.\Utils\bin\Debug\FontResource.exe --file="regular-icon-font-free\fonts\Lineicons.ttf" --list
+.\Tools\bin\Debug\FontResource.exe --file="regular-icon-font-free\fonts\Lineicons.ttf" --list
 ```
 ```text
 OK: Font 'Lineicons.ttf' is loadable.
@@ -367,7 +161,7 @@ U+20AC-U+20AC
 U+2122-U+2122
 ```
 ```powershell
-.\Utils\bin\Debug\FontResource.exe --file="regular-icon-font-free\fonts\Lineicons.ttf" --enum --start 0xFEE6 --end 0xFFFC
+.\Tools\bin\Debug\FontResource.exe --file="regular-icon-font-free\fonts\Lineicons.ttf" --enum --start 0xFEE6 --end 0xFFFC
 ```
 ```text
 OK: Font 'Lineicons.ttf' is loadable.
@@ -407,6 +201,42 @@ public enum true
 ```sh
  curl -sLko bootstrap-icons.zip https://github.com/twbs/icons/releases/download/v1.12.0/bootstrap-icons-1.12.0.zip
 ```
+```sh
+unzip -l bootstrap-icons.zip | grep -E '(ttf|otf)'
+```
+```text
+      423  2025-05-04 02:04   bootstrap-icons-1.12.0/filetype-ttf.svg
+      904  2025-05-04 02:04   bootstrap-icons-1.12.0/filetype-otf.svg
+```
+```sh
+unzip bootstrap-icons.zip bootstrap-icons-1.12.0/filetype-ttf.svg
+```
+```sh
+Archive:  bootstrap-icons.zip
+  inflating: bootstrap-icons-1.12.0/filetype-ttf.svg
+```
+```sh
+file bootstrap-icons-1.12.0/filetype-ttf.svg
+```
+```text
+bootstrap-icons-1.12.0/filetype-ttf.svg: SVG Scalable Vector Graphics image, ASCII text
+```
+
+This needs to be fixed.
+#### FlatIcon
+```sh
+curl -skLO https://github.com/ColorlibHQ/Breed/raw/refs/heads/master/assets/fonts/Flaticon.ttf 
+```
+```sh
+file Flaticon.ttf
+```
+```text
+Flaticon.ttf: TrueType Font data, 13 tables, 1st "FFTM", 14 names, Macintosh
+```
+```sh
+curl -skLO https://raw.githubusercontent.com/freepik-company/flaticon-uicons/refs/heads/main/src/uicons/css/regular/straight.css
+```
+
 the code points are shown on individual icon pages in `https://icons.getbootstrap.com/icons/list` `https://icons.getbootstrap.com/icons/envelope-arrow-down-fill/` etc.
 
 to load the  font Unicode Code  / Name data into C# program download the CSS
