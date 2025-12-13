@@ -11,7 +11,7 @@ namespace Utils {
 		// TODO: introduce IconType class
         // private IconType _iconType = FontAwesome.Star;
 
-		private FontAwesome _iconType = FontAwesome.Star;
+		private FlatIcons _iconType = FlatIcons.FiRsUnicorn;
         private string _tooltip = null;
         private Color _activeColor = Color.Black;
         private Color _inActiveColor = Color.Black;
@@ -22,9 +22,9 @@ namespace Utils {
         private Brush ActiveBrush { get; set; } 
         private Brush InActiveBrush { get; set; }
 
-        public IconButton() : this(FontAwesome.Star, 16, Color.DimGray, Color.Black, false, null) { }
+        public IconButton() : this(FlatIcons.FiRsUnicorn, 16, Color.DimGray, Color.Black, false, null) { }
 
-        public IconButton(FontAwesome type, int size, Color normalColor, Color hoverColor, bool selectable, string toolTip) {
+        public IconButton(FlatIcons type, int size, Color normalColor, Color hoverColor, bool selectable, string toolTip) {
             IconFont = null;
             BackColor = Color.Transparent;
 
@@ -48,7 +48,7 @@ namespace Utils {
             MouseLeave += Icon_MouseLeave;
         }
 
-        public FontAwesome IconType {
+        public FlatIcons IconType {
             get { return _iconType; }
             set {
                 _iconType = value;

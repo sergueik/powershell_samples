@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Text;
 using Utils;
 
 namespace Test {
@@ -82,7 +79,7 @@ namespace Test {
             // 
             iconButton4.ActiveColor = Color.Red;
             iconButton4.BackColor = Color.Transparent;
-            iconButton4.IconType = FontAwesome.EnvelopeO;
+            iconButton4.IconType = FlatIcons.FiRs00sMusicDisc;
             iconButton4.ToolTipText = "Envelope";
             iconButton4.InActiveColor = Color.Orange;
             iconButton4.Location = new Point(255, 191);
@@ -98,7 +95,7 @@ namespace Test {
             iconButton3.ActiveColor = Color.Black;
             iconButton3.InActiveColor = Color.DimGray;
             iconButton3.BackColor = Color.Transparent;
-            iconButton3.IconType = FontAwesome.User;
+            iconButton3.IconType = FlatIcons.FiRsStageTheatre;
             iconButton3.Location = new Point(170, 179);
             iconButton3.Name = "iconButton3";
             iconButton3.Size = new Size(40, 40);
@@ -111,7 +108,7 @@ namespace Test {
             iconButton2.ActiveColor = Color.Black;
             iconButton2.Location = new Point(195, 86);
             iconButton2.BackColor = Color.Transparent;
-            iconButton2.IconType = FontAwesome.Music;
+            iconButton2.IconType = FlatIcons.FiRsSaxophone;
             iconButton2.InActiveColor = Color.DimGray;
             iconButton2.Name = "iconButton2";
             iconButton2.Size = new Size(40, 40);
@@ -124,8 +121,8 @@ namespace Test {
             iconButton1.ActiveColor = Color.Brown;
             iconButton1.BackColor = Color.Transparent;
             iconButton1.InActiveColor = Color.Gray;
-            iconButton1.IconType = FontAwesome.Star;            
-            iconButton1.SetIconChar(string.Format("{0} {1}", ((char)FontAwesome.Star).ToString(),"test"));
+            iconButton1.IconType = FlatIcons.FiRsPumpkin;            
+            iconButton1.SetIconChar(string.Format("{0} {1}", ((char)FlatIcons.FiRsPumpkin).ToString(),"test"));
             iconButton1.Location = new Point(114, 28);
             iconButton1.Name = "iconButton1";
             var size1 = TextRenderer.MeasureText("X test",new Font("Arial",8) );
@@ -135,7 +132,7 @@ namespace Test {
             iconButton1.ToolTipText = null;
             
             
-            iconButton10.SetIconChar(string.Format("{0} {1}", ((char)FontAwesome.ChevronRight).ToString(),"development"));
+            iconButton10.SetIconChar(string.Format("{0} {1}", ((char)FlatIcons.FiRsChessKnight).ToString(),"development"));
             iconButton10.ActiveColor = Color.PaleGreen;
             iconButton10.InActiveColor = Color.Gray;
             iconButton10.Location = new Point(114, 44);
@@ -146,7 +143,7 @@ namespace Test {
             iconButton10.TabStop = false;
             iconButton10.ToolTipText = null;
             
-            iconButton11.SetIconChar(string.Format("{0} {1}", ((char)FontAwesome.ChevronRight).ToString(),"production"));
+            iconButton11.SetIconChar(string.Format("{0} {1}", ((char)FlatIcons.FiRsGlassEmpty).ToString(),"production"));
             iconButton11.ActiveColor = Color.LightBlue;
             iconButton11.InActiveColor = Color.Gray;
             iconButton11.Location = new Point(114, 60);
@@ -163,7 +160,7 @@ namespace Test {
             // 
             iconButton5.ActiveColor = Color.YellowGreen;
             iconButton5.BackColor = Color.Transparent;
-            iconButton5.IconType =FontAwesome.ArrowCircleUp; // FontAwesome.AngleLeft;
+            iconButton5.IconType =FlatIcons.FiRsArrowAltCircleUp; // FlatIcons.AngleLeft;
             iconButton5.InActiveColor = Color.OliveDrab;
             iconButton5.Location = new Point(12, 86);
             iconButton5.Name = "iconButton5";
@@ -176,7 +173,7 @@ namespace Test {
             // 
             iconButton6.ActiveColor = Color.Black;
             iconButton6.BackColor = Color.Transparent;
-            iconButton6.IconType = FontAwesome.Star;
+            iconButton6.IconType = FlatIcons.FiRsCircleStar;
             iconButton6.InActiveColor = Color.DimGray;
             iconButton6.Location = new Point(-1, 0);
             iconButton6.Name = "iconButton6";
@@ -189,7 +186,7 @@ namespace Test {
             // 
             iconButton7.ActiveColor = Color.Black;
             iconButton7.BackColor = Color.Transparent;
-            iconButton7.IconType = FontAwesome.Search;
+            iconButton7.IconType = FlatIcons.FiRsSearch;
             iconButton7.InActiveColor = Color.DimGray;
             iconButton7.Location = new Point(12, 0);
             iconButton7.Name = "iconButton7";
@@ -202,7 +199,7 @@ namespace Test {
             // 
             iconButton8.ActiveColor = Color.Black;
             iconButton8.BackColor = Color.Transparent;
-            iconButton8.IconType = FontAwesome.Cog;
+            iconButton8.IconType = FlatIcons.FiRsSensor;
             iconButton8.InActiveColor = Color.DimGray;
             iconButton8.Location = new Point(27, 0);
             iconButton8.Name = "iconButton8";
@@ -215,7 +212,7 @@ namespace Test {
             // 
             iconButton9.ActiveColor = Color.Black;
             iconButton9.BackColor = Color.Transparent;
-            iconButton9.IconType = FontAwesome.Folder;
+            iconButton9.IconType = FlatIcons.FiRsFolderDownload;
             iconButton9.InActiveColor = Color.DimGray;
             iconButton9.Location = new Point(42, 0);
             iconButton9.Name = "iconButton9";
