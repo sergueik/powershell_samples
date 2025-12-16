@@ -58,7 +58,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="RtfConverter.cs" />
-    <Compile Include="RtfWriter.cs" />
     <Compile Include="RtfColorInfo.cs" />
   </ItemGroup>
   <ItemGroup>

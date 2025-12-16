@@ -34,7 +34,7 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 
 ![debug1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/debug1.jpg)
 
-after every
+after every section of kind in the original document to facilitate navigation:
 
 * [Paragraphs](https://www.markdownguide.org/basic-syntax/#paragraphs-1)
 * [Headings](https://www.markdownguide.org/basic-syntax/#headings)
@@ -43,17 +43,10 @@ after every
 * [Tables](https://www.markdownguide.org/extended-syntax/#tables)
 * [Code Blocks](https://www.markdownguide.org/basic-syntax/#code-blocks).
 
-section of the original document to facilitate navigation. i
 
-
-- Implemented the **forward / backward navigation buttons** to scroll to the following/preceding anchor, enabling vi-style movement *by paragraph*, *section*, or *code block* logical units - 
-the __step-forward__ and __step-backward__ are moving the selection from one hidden to the following or preceding one.
-
-
+The **forward / backward navigation buttons** scroll to the following/preceding anchor, enabling vi-style movement.
 
 NOTE :*the Markers remain invisible during normal rendering and do not affect the displayed content.)*
-
-- Implement a **toggle button** in the UI to instantly reveal or hide the markers for debugging or inspection purposes. (WIP)
 
 ### Example to Navigate
 
@@ -61,112 +54,6 @@ NOTE :*the Markers remain invisible during normal rendering and do not affect th
 | ----------- | ----------- |
 | Header      | Title       |
 | Paragraph   | Text        |
-#### Example of Invisible Text Formatted as Hidden with the \v Character-Formatting Control Word
-
-- Fragment *without* markers:
-
-```rtf
-{\rtf1\ansi\deff0
-{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
-\pard\sa200\sl276\slmult1\f0\fs24
-This is visible text. This is also visible text.
-}
-
-![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/form1.jpg)
-```
-
--- Same fragment *with* **hidden marker**:
-
-```rtf
-{\rtf1\ansi\deff0
-{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
-\pard\sa200\sl276\slmult1\f0\fs24 This is visible text. {\v This text is hidden.} This is also visible text.}
-```
-
-![form2](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/form2.jpg)
-
-The hidden text will not be displayed; visually, it renders identically.
-
-### Error Processing
-
-If processing of the markdown has encountered errors these are displayed in a custom dialog
-
-![error3](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/error3.jpg)
-
-and affected markup elements are rendered verbatim with `PARSE ERROR` prefix
-
-![error4](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/error4.jpg)
-
-By pressing __Suppress__ button one stops this dialog from showing
-
-### ⚠️ Bugs: Rendering RTF inside Markdown
-
-#### Problem
-
-Placing *real* RTF markup inside Markdown code blocks—either by indentation or fenced code blocks—causes the entire document to fail to render when passed through `RichTextBox` or `RichTextBoxControl`.
-
-This renders correctly when embedded *as plain text*:
-
-```
-{\rtf1\ansi\deff0
-{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
-\pard\sa200\sl276\slmult1\f0\fs24
-This is visible text. This is also visible text.
-}
-```
-
-But turning the same text into a code block (indented or fenced) results in malformed or unreadable output.
-
-#### Why this happens
-
-When Markdown is converted to RTF, the renderer must treat code blocks as **literal text**, not as actual RTF content.
-However, unescaped RTF control characters inside a code block:
-
-- `{` and `}` (RTF group delimiters)
-- backslash `\` introducing control words
-- sequences like `\pard`, `\fs24`, etc.
-
-are still interpreted by the Windows RichText control as real RTF commands.
-
-If the Markdown → RTF layer does **not escape** these characters, the output becomes invalid RTF.
-
-#### Example of a failure case
-
-Even placing raw RTF inside a Markdown HTML comment produces partial corruption:
-
-```markdown
-<!--
-   {\rtf1\ansi\deff0
-    {\fonttbl{\f0\fswiss\fcharset0 Arial;}}
-    \pard\sa200\sl276\slmult1\f0\fs24
-    This is visible text. This is also visible text.
-   }
--->
-```
-
-The comment is removed by the Markdown parser, but the intermediate AST still contains raw control sequences that the RTF writer outputs without escaping.
-`RichTextBox.Rtf` then misinterprets them and fails.
-
-#### Layer where things go wrong
-
-1. **Markdown parsing** — OK; the code block is interpreted correctly.
-2. **AST → RTF conversion** — ❌ escaping incomplete; raw `{`, `}`, and `\` survive.
-3. **RichTextBox rendering** — attempts to interpret the unintended RTF commands and fails.
-
-#### Workaround
-
-Do **not** fence real RTF using triple backticks with a language tag such as `rtf`.
-Instead, force plain-text mode:
-
-```text
-{\rtf1\ansi\deff0
-{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
-\pard\sa200\sl276\slmult1\f0\fs24
-This is visible text. This is also visible text.
-}
-```
-
-or escape braces and backslashes manually before embedding them in Markdown.
 
 ---
 

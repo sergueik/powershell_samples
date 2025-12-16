@@ -38,8 +38,6 @@ namespace Utils {
 		private RtfColorInfo rtfCodeBackgroundColor = new RtfColorInfo(Color.Lavender, 4);
 		private RtfColorInfo rtfListPrefixColor = new RtfColorInfo(Color.Blue, 5);
 		private RtfColorInfo rtfLinkColor = new RtfColorInfo(Color.CornflowerBlue, 6);
-
-		private RtfWriter rtfWriter = new RtfWriter();
 		public Color TextColor {
 			get { return rtfTextColor.color; }
 			set { rtfTextColor = new RtfColorInfo(value, 1); }
@@ -230,8 +228,7 @@ namespace Utils {
 			return ConvertText(lines);
 		}
 
-		public string ConvertText(List<string> lines)
-		{
+		public string ConvertText(List<string> lines) {
 			Errors = new List<string>();
 			var textSizes = new int[7] {
 				DefaultPointSize * 2,
@@ -248,10 +245,8 @@ namespace Utils {
 			string colorTable = @"{\colortbl;" + ColorToTableDef(TextColor) + ColorToTableDef(HeadingColor) + ColorToTableDef(CodeFontColor) + ColorToTableDef(CodeBackgroundColor) + ColorToTableDef(ListPrefixColor) + ColorToTableDef(LinkColor) + "}";
 			string fontTable = "{\\fonttbl{\\f0\\" + Font + "; }{\\f1\\" + CodeFont + "; }}";
 			text.AppendLine("{\\rtf1\\ansi\\deff0 " + fontTable + colorTable + "\\pard");
-			rtfWriter.AppendLine("{\\rtf1\\ansi\\deff0 " + fontTable + colorTable + "\\pard");
 			//string fontTable = @"\deff0{\fonttbl{\f0\fnil Default Sans Serif;}{\f1\froman Times New Roman;}{\f2\fswiss Arial;}{\f3\fmodern Courier New;}{\f4\fscript Script MT Bold;}{\f5\fdecor Old English Text MT;}}";
 			text.Append(UseFontColor(rtfTextColor, "Start convert"));
-			rtfWriter.Append(UseFontColor(rtfTextColor, "Start convert"));
 			for (int i = 0; i < lines.Count; i++) {
 				string line = lines[i];
 				string nextLine = string.Empty;
@@ -334,11 +329,8 @@ namespace Utils {
 
 						// add the finished line and insert line break
 						text.AppendLine(line);
-						rtfWriter.AppendLine(line);
 						//text.Append(RevertFontColor());
-						//rtfWriter.Append(RevertFontColor());
 						text.AppendLine("\\par ");
-						rtfWriter.AppendLine("\\par ");
 					}
 				} catch (Exception e){
 					Debug.WriteLine(String.Format("Error parsing line {0}: {1}: {2}", i, line,e.ToString()));
@@ -354,30 +346,25 @@ namespace Utils {
 
 					if (outputError) {
 						text.Append("PARSE ERROR");
-						rtfWriter.Append("PARSE ERROR");
-
 					}
 					if (outputError && outputRawText) {
 						text.Append(": ");
-						rtfWriter.Append(": ");
 					}
 					if (outputRawText) {
 						text.Append(line);
-						rtfWriter.Append(line);
 					}
 
 					Errors.Add(String.Format("Parse error on line {0}: {1}", i.ToString().PadLeft(3), line));
 
 					text.AppendLine("\\par ");
-					rtfWriter.AppendLine("\\par ");
 					// throw e;
 				}
 			}
 
 			// end the rtf file
 			text.AppendLine("}");
-			rtfWriter.AppendLine("}");
-			return rtfWriter.ToString();
+			// Debug.WriteLine(text.ToString());
+			return text.ToString();
 		}
 
 		// RTF encoding of the invisible space "Zero Width Space" (ZWSP)character U+200B is \u8203
