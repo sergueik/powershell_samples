@@ -566,6 +566,9 @@ For a comprehensive understanding and troubleshooting guidance, refer to Microso
   * [send Email with VB.NET windows application](https://www.codeproject.com/articles/Send-Email-with-VB-NET-windows-application) (no source) 
   * [C# File Upload with Form Fields, Cookies and Headers](https://www.codeproject.com/articles/Csharp-File-Upload-with-Form-Fields-Cookies-and-He) (no source) 
   * [Multiple File Upload using AngularJS and ASP.net MVC](https://www.codeproject.com/articles/Multiple-File-Upload-using-AngularJS-and-ASP-net-M)
+
+  * [Implementing HTTP File Upload with ASP.NET MVC](https://www.codeproject.com/articles/Implementing-HTTP-File-Upload-with-ASP-NET-MVC) (no source)
+
 ---
 
 ### Author

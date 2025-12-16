@@ -55,8 +55,13 @@ Open web url `http://localhost:9091/src/examples/` and navigate to page `http://
 ![Web Page](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-httpserver/screenshots/page_capture.png)
 
 ### See Also
-  * [Simple HTTP Server in C#](https://www.codeproject.com/Articles/137979/Simple-HTTP-Server-in-C) - somewhat too ptimitive - and the [original project](https://github.com/jeske/SimpleHttpServer)
-  * https://www.codeproject.com/Articles/12462/A-single-threaded-HTTP-server
+  * [Simple HTTP Server in C#](https://www.codeproject.com/Articles/137979/Simple-HTTP-Server-in-C) - somewhat too primitive - and the [original project](https://github.com/jeske/SimpleHttpServer)
+  * [single-threaded HTTP server](https://www.codeproject.com/Articles/12462/A-single-threaded-HTTP-server)
+  * [client example](https://briangrinstead.com/blog/multipart-form-post-in-c)
+  * [REST server for file upload via HTTP](https://github.com/waifei/file-rest-server) - on __IIS__
+  * https://github.com/JSIStudios/SimpleRestServices
+  * https://github.com/UsaRandom/RestEasy/tree/master
+ 
 
 ### Author
 [Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)

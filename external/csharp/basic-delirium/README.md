@@ -11,14 +11,19 @@ Below is a structured way to think about it, highlighting the uncanny similariti
 * Lives in 10/26 dimensions humans never experience.
 * Requires huge cognitive overhead to even grasp the basics - several years of study.
 * Promises "the final theory" but delivers no experimentally verifiable predictions
+* Acknowledges its limited ability: Bosonic string theory (26 dimentional) only describes bosons (force-carrying particles like photons and gluons) and cannot account for fermions (matter particles like electrons and quarks), which exist in our universe
 
 #### Longhorn / Avalon / WPF:
 
 * Beautiful design promised (XAML, data binding, composition engine, retained-mode graphics).
 * Lives in a highly abstract MVVM/XAML world developers never asked for.
 * Was designed for CPU that never existed so it was never technically demonstared in full benefits
-* Requires huge cognitive overhead to produce basic UI.
+* Requires huge cognitive overhead to produce basic UI.o
+* To achieve the same basic functionality that a traditional Windows Forms application offers, a WPF developer is required to follow the platform’s intended paradigms. First, one must learn XAML for layout and UI structure. Next, data binding should be considered to leverage WPF’s strengths. Finally, to *"do it really right"*, adopting the MVVM pattern was recommended. Designing in an old-style, WinForms-like way was *possible*, but only as a *compromise* that bypasses the new platform’s intended architecture.
+
 * Promised “next-generation Windows UI” but shipped slowly, broke drivers, and didn't deliver the everyday benefits users cared about.
+* platform was designed under the expectation that Moore’s Law would provide sufficient CPU and GPU performance by the time it shipped. Vista was never expected to be particularly fast on the then-current hardware and turned out to be under performing even worse than antitipated due to singificant growth of the binary size and non matching hard disk speeds
+
 
 
 
