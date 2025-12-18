@@ -1,13 +1,12 @@
 ### Info
 
-This directory contains a replica of [App to convert Markdown (.md) files to RTF Rich Text files](https://github.com/snjo/MarkdownToRtf), translated from C# __6.x__, __7.x__, and __9.x__ to plain C# __5.0__ syntax / __.NET Framework 4.5__.
-The driver can also be compiled as a dependency to display __Markdown__ files in a __Rich Text__ field in a C# Windows Forms application.
-
-Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible_Application_Markup_Language)/[WPF](https://en.wikipedia.org/wiki/Windows_Presentation_Foundation) over [RichText](https://en.wikipedia.org/wiki/Rich_Text_Format) and __HTML__ output.
+This directory contains a replica of [App to convert Markdown (.md) files to RTF Rich Text files](https://github.com/snjo/MarkdownToRtf).
 
 ![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/app1.jpg)
 
-### Notes
+### Downlevel C# Compiler Feature Removals
+
+Translated translated from C# __6.x__, __7.x__, and __9.x__ to plain C# __5.0__ syntax / __.NET Framework 4.5__to plain C# __5.0__ syntax / __.NET Framework 4.5__
 
 - `$` - *interpolated strings* - C# __6.0__
 - *Tuple return types and deconstruction* - C# __7.0__ (required multiple parser and compiler adjustments):
@@ -24,13 +23,13 @@ Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible
 - *null-coalescing operator* `x ?? y` - C# __2.0__ (often confused with *null-conditional operator* )
 - *value tuples* and *tuple literal* syntax - C# __7.0__
 
+Surprisingly, __Markdig__ favors [XAML](https://en.wikipedia.org/wiki/Extensible_Application_Markup_Language)/[WPF](https://en.wikipedia.org/wiki/Windows_Presentation_Foundation) over [RichText](https://en.wikipedia.org/wiki/Rich_Text_Format) and __HTML__ output.
+
 ### Usage
 
-* Launch the Tool
-
-* The markdown payload to render can be pasted into the left pane text area window. This the only currently supported loading process. Earlier available "File Load" functionality has been hidden from te toolbar
-
-* The tool will convert the Markdown payload into RTF while adding invisible yet [searchable](https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextbox.find?view=windowsdesktop-10.0#system-windows-forms-richtextbox-find(system-string-system-int32-system-windows-forms-richtextboxfinds))  [markers]() - the `\u8203?` which is the RTF representarion of `\u200B` (the Unicode [Zero Width Space](https://en.wikipedia.org/wiki/Zero-width_space) [code point](https://en.wikipedia.org/wiki/List_of_Unicode_characters))
+1. Launch the Tool
+2. The markdown payload to render can be pasted into the left pane text area window. This the only currently supported loading process. Earlier available "File Load" functionality has been hidden from te toolbar
+3. The tool will convert the Markdown payload into RTF while adding invisible yet [searchable](https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextbox.find?view=windowsdesktop-10.0#system-windows-forms-richtextbox-find(system-string-system-int32-system-windows-forms-richtextboxfinds))  [markers]() - the `\u8203?` which is the RTF representarion of `\u200B` (the Unicode [Zero Width Space](https://en.wikipedia.org/wiki/Zero-width_space) [code point](https://en.wikipedia.org/wiki/List_of_Unicode_characters))
 
 ![debug1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/rtfviewer2/screenshots/debug1.jpg)
 
@@ -46,7 +45,7 @@ after every section of kind in the original document to facilitate navigation:
 
 The **forward / backward navigation buttons** scroll to the following/preceding anchor, enabling vi-style movement.
 
-NOTE :*the Markers remain invisible during normal rendering and do not affect the displayed content.)*
+NOTE :*the Markers remain invisible during normal rendering and do not affect the displayed content.)*d
 
 ### Example to Navigate
 
@@ -73,6 +72,10 @@ The idiosyncrasies of `RichTextBox` behavior(loss of groups, normalization, re-s
 
 ---
 
+### TODO
+
+Implement rendering of [code](https://www.markdownguide.org/basic-syntax/#code) with switching the background color and code font and color by extending the `SetStyle`
+
 ### See Also
 
 - [RichText Builder (StringBuilder for RTF)](https://www.codeproject.com/articles/RichText-Builder-StringBuilder-for-RTF-) – relatively easy to implement.
@@ -93,6 +96,8 @@ The idiosyncrasies of `RichTextBox` behavior(loss of groups, normalization, re-s
    + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/Changing-the-line-spacing-in-a-RichTextBox-control)
    + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/EXTENDED-Version-of-Extended-Rich-Text-Box-RichTex)
   * [C# project replica and Powershell port](https://github.com/sergueik/powershell_samples/tree/master/csharp/render_markdown) of a Markdown RTF covertor operating [MarkDig](https://github.com/xoofx/markdig) library
+  * __CommonMark.NET__ [repository](https://github.com/Knagis/CommonMark.NET) and [nuget package](https://www.nuget.org/packages/CommonMark.NET) - rendeting markdown to HTML.
+
 
 ### Example to Navigate
 

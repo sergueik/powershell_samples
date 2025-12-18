@@ -210,7 +210,7 @@ namespace Utils {
 			sb.Append(line);
 			sb.Append("\\highlight0 ");
 			sb.Append(@"\f0 ");
-			sb.Append(UseFontColor(rtfTextColor, "Code Block"));
+			sb.Append(UseFontColor(rtfTextColor, "Code Block End"));
 			return sb.ToString();
 		}
 
@@ -288,6 +288,7 @@ namespace Utils {
 							line = SetStyle(line, "_", "i"); // italic
 						}
 
+						line = SetStyleNew(line); // code
 						// Images. Currently images are removed, TODO: inline images
 						// https://www.markdownguide.org/basic-syntax/#images-1
 						line = SetImage(line);
@@ -308,6 +309,7 @@ namespace Utils {
 
 						// lists, ordered and unordered
 						// https://www.markdownguide.org/basic-syntax/#lists-1
+						// https://www.markdownguide.org/basic-syntax/#ordered-lists
 						line = SetListSymbols(line, nextLine);
 
 						// Table. Create table if at least one line followin also start with |.
@@ -363,7 +365,6 @@ namespace Utils {
 
 			// end the rtf file
 			text.AppendLine("}");
-			// Debug.WriteLine(text.ToString());
 			return text.ToString();
 		}
 
@@ -935,6 +936,7 @@ namespace Utils {
 
 						colWord = SetStyle(colWord, "**", "b"); // bold
 						colWord = SetStyle(colWord, "*", "i"); // italic
+						colWord = SetStyleNew(colWord); // code
 						if (AllowUnderscoreBold) {
 							colWord = SetStyle(colWord, "__", "b"); // bold
 						}
@@ -961,7 +963,42 @@ namespace Utils {
 			}
 		}
 
+		// twin of SetStyle
+		private string SetStyleNew(string line) {
+			string tag = "`";
+			if (string.IsNullOrEmpty(line))
+				return line;
 
+			List<int> positions = line.AllIndexesOf(tag).ToList();
+			int count = positions.Count;
+			if (count < 2)
+				return line;
+
+			var sb = new StringBuilder();
+			int cursor = 0;
+
+			for (int i = 0; i + 1 < count; i += 2) {
+				int openIndex = positions[i];
+				int closeIndex = positions[i + 1];
+
+				sb.Append(line, cursor, openIndex - cursor);
+
+				int start = openIndex + tag.Length;
+				int length = closeIndex - start;
+				if (length < 0)
+					length = 0;
+
+				string innerText = CodeSegment(line.Substring(start, length));
+				sb.Append(innerText);
+				cursor = closeIndex + tag.Length;
+			}
+			// append tail
+			if (cursor < line.Length)
+				sb.Append(line.Substring(cursor));
+
+			return sb.ToString();
+		}
+		
 		private static string SetStyle(string line, string tag, string rtfTag) {
 			if (string.IsNullOrEmpty(line) || string.IsNullOrEmpty(tag))
 				return line;
