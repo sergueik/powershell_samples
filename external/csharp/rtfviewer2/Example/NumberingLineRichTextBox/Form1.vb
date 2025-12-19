@@ -50,5 +50,47 @@ Public Class Form1
 			"\pard\sa200\sl276\slmult1\f0\fs24  " & vbCrLf & _
 			"This is visible text. {\v This text is hidden.} This is also visible text. " & vbCrLf & _
 			"} "
+			' NOTE: No blank lines or comments within string
+			MyRichTextBox.Rtf = "{\rtf1\ansi\deff0 " & vbCrLf & _
+			"{\fonttbl{\f0\fswiss\fcharset0 Arial;}} " & vbCrLf & _
+			"{\colortbl;\red0\green0\blue0;\red200\green200\blue200;}" & vbCrLf & _
+			vbCrLf & _
+			"\pard\plain\f0\fs24 " & vbCrLf & _
+			"This is a normal paragraph before the blockquote. \par " & vbCrLf & _
+			vbCrLf & _
+			"\pard\sa200\sb200\li720\ri0\brdrl\brdrw10\brdrs\brdrcf1 " & vbCrLf & _
+			"{\*\shptxtdblk\vertalntc\shpZ 10000} " & vbCrLf & _
+			"This text is part of the blockquote. It has a vertical bar on the left, an indent, and some spacing around it. " & vbCrLf & _
+			"This second line is part of the same paragraph and continues the vertical line. \par " & vbCrLf & _
+			vbCrLf & _
+			"\pard\sa200\sb200\li720\ri0\brdrl\brdrw10\brdrs\brdrcf1 " & vbCrLf & _
+			"More quoted text in a new paragraph. \par " & vbCrLf & _
+			vbCrLf & _
+			"\pard\sa200\sb200\plain " & vbCrLf & _
+			"Back to normal text. \par " & vbCrLf & _
+			"}"
+		MyRichTextBox.Rtf = "{\rtf1\ansi\deff0" & vbCrLf & _
+			"{\fonttbl{\f0\fswiss\fcharset0 Arial;}}" & vbCrLf & _
+			"{\colortbl;\red0\green0\blue0;\red180\green180\blue180;}" & vbCrLf & _
+			vbCrLf & _
+			"\pard\f0\fs24" & vbCrLf & _
+			"This is a normal paragraph before the blockquote.\par" & vbCrLf & _
+			vbCrLf & _
+			"\pard" & vbCrLf & _
+			"\li720" & vbCrLf & _
+			"\sa200\sb200" & vbCrLf & _
+			"\brdrl\brdrbar\brdrw15\brdrcf1" & vbCrLf & _
+			"This text is part of the blockquote. It has a vertical bar on the left and indentation." & vbCrLf & _
+			"This second line is part of the same paragraph and continues the vertical bar.\par" & vbCrLf & _
+			vbCrLf & _
+			"\pard" & vbCrLf & _
+			"\li720" & vbCrLf & _
+			"\sa200\sb200" & vbCrLf & _
+			"\brdrl\brdrbar\brdrw15\brdrcf1" & vbCrLf & _
+			"More quoted text in a new paragraph.\par" & vbCrLf & _
+			vbCrLf & _
+			"\pard\sa200\sb200" & vbCrLf & _
+			"Back to normal text.\par" & vbCrLf & _
+			"}" 
    End Sub
 End Class

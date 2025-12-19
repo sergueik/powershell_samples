@@ -74,7 +74,10 @@ The idiosyncrasies of `RichTextBox` behavior(loss of groups, normalization, re-s
 
 ### TODO
 
-Implement rendering of [code](https://www.markdownguide.org/basic-syntax/#code) with switching the background color and code font and color by extending the `SetStyle`
+`RichTextBox` supports only a subset of Word’s RTF dialect
+neither [LibreOffice]() nor online viewers like
+[JumpShare](https://jumpshare.com/viewer/rtf)
+or [FileHelper.com](https://filehelper.com/view) or [RTF File Viewer](https://chromewebstore.google.com/detail/rtf-file-viewer/mjbmfbhblkemncpbmeepkccpjfakamkd) Chrome extension support this
 
 ### See Also
 
