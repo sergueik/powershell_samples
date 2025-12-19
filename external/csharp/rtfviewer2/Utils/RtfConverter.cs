@@ -807,18 +807,53 @@ namespace Utils {
 			return @"\red" + color.R + @"\green" + color.G + @"\blue" + color.B + ";";
 		}
 
-		private static Result SetEscapeCharacters(string line, bool doubleToSingleBackslash = true) {
+		private static Result SetEscapeCharacters(string line, bool doubleToSingleBackslash = true)
+		{
 			// https://www.oreilly.com/library/view/rtf-pocket-guide/9781449302047/ch04.html
 			string result = line;
 			int numReplaced = 0;
 			// IMPORTANT: \’7d is not the same as \'7d, the ' character matters
 
 			// Escaped markdown characters
+			
+			result = ReplaceAndCount(result, @"\\", (doubleToSingleBackslash) ? @"\'5c" : @"\'5c\'5c", ref numReplaced);
+/*
 			if (doubleToSingleBackslash) {
 				result = result.ReplaceAndCount(@"\\", @"\'5c", out numReplaced, numReplaced); // right curly brace
 			} else {
 				result = result.ReplaceAndCount(@"\\", @"\'5c\'5c", out numReplaced, numReplaced);
 			}
+			*/
+			var replacements = new List<Tuple<string, string>> {
+				Tuple.Create(@"\#", @"\'23"),// number / hash, to prevent deliberate # from being used as heading
+				Tuple.Create(@"\*", @"\'2a"),// asterisk, not font style
+				Tuple.Create(@"\_", @"\'5f"),// underscore, not font style
+				Tuple.Create(@"\[", @"\'5b"),// left square brace
+				Tuple.Create(@"\]", @"\'5d"),// right square brace
+				Tuple.Create(@"\{", @"\'7b"),// left curly brace
+				Tuple.Create(@"\}", @"\'7d"),// right curly brace
+				Tuple.Create(@"\`", @"\'60"),// grave
+				Tuple.Create(@"\(", @"\'28"),// left parenthesis
+				Tuple.Create(@"\)", @"\'29"),// right parenthesis
+				Tuple.Create(@"\+", @"\'2b"),// plus
+				Tuple.Create(@"\-", @"\'2d"),// minus
+				Tuple.Create(@"\.", @"\'2e"),// period
+				Tuple.Create(@"\!", @"\'21"),// exclamation
+				Tuple.Create(@"\|", @"\'7c"),// pipe / vertical bar
+			};
+			
+
+			// C# 
+			//		var replacements = new (string From, string To)[]
+			//		foreach (var (from, to) in replacements) {
+		
+			foreach (var arg in replacements) {
+				var from = arg.Item1;
+				var to = arg.Item2;
+				result = ReplaceAndCount(result, from, to, ref numReplaced);
+			}
+	
+			/*
 			result = result.ReplaceAndCount(@"\#", @"\'23", out numReplaced, numReplaced); // number / hash, to prevent deliberate # from being used as heading
 			result = result.ReplaceAndCount(@"\*", @"\'2a", out numReplaced, numReplaced); // asterisk, not font style
 			result = result.ReplaceAndCount(@"\_", @"\'5f", out numReplaced, numReplaced); // underscore, not font style
@@ -834,17 +869,30 @@ namespace Utils {
 			result = result.ReplaceAndCount(@"\.", @"\'2e", out numReplaced, numReplaced); // period
 			result = result.ReplaceAndCount(@"\!", @"\'21", out numReplaced, numReplaced); // exclamation
 			result = result.ReplaceAndCount(@"\|", @"\'7c", out numReplaced, numReplaced); // pipe / vertical bar
-
+*/
 			// Escape RTF special characters (what remains after escaping the above)
 			// replace backslashes not followed by a '
-			string regMatchBS = @"\\+(?!')";
+	/*		string regMatchBS = @"\\+(?!')";
 			var reg = new Regex(regMatchBS);
 			result = ReplaceAndCountRegEx(result, reg, @"\'5c", out numReplaced, numReplaced);
+			*/
+			result = ReplaceAndCountRegEx(result, new Regex(@"\\+(?!')"), @"\'5c", ref numReplaced);
 
 			// replace curly braces
+			
+			replacements = new List<Tuple<string, string>> {
+				Tuple.Create(@"{", @"\'7b"),// left curly brace
+				Tuple.Create(@"}", @"\'7d"),// right curly brace
+			};
+			foreach (var arg in replacements) {
+				var from = arg.Item1;
+				var to = arg.Item2;
+				result = ReplaceAndCount(result, from, to, ref numReplaced);
+			}
+/*				
 			result = result.ReplaceAndCount(@"{", @"\'7b", out numReplaced, numReplaced); // left curly brace
 			result = result.ReplaceAndCount(@"}", @"\'7d", out numReplaced, numReplaced); // right curly brace
-
+*/
 			result = GetRtfUnicodeEscapedString(result);
 
 			return new Result {
@@ -853,6 +901,24 @@ namespace Utils {
 			};
 		}
 
+		
+		public static string ReplaceAndCount(string text, string oldValue, string newValue, ref int totalReplaced) {
+			int lenghtDiff = newValue.Length - oldValue.Length;
+			totalReplaced += ((text.Split(oldValue.ToCharArray()).Length - 1) * lenghtDiff);
+			return text.Replace(oldValue, newValue);
+		}
+
+				
+		private static string ReplaceAndCountRegEx(string text, Regex reg, string newValue, ref int totalReplaced) {
+			int countBefore = text.Length;
+			string result = reg.Replace(text, newValue);
+			int countAfter = result.Length;
+			int change = countAfter - countBefore;
+			totalReplaced += change;
+			return result;
+		}
+
+		/*
 		private static string ReplaceAndCountRegEx(string text, Regex reg, string newValue, out int count, int addToValue) {
 			int countBefore = text.Length;
 			string result = reg.Replace(text, newValue);
@@ -861,7 +927,7 @@ namespace Utils {
 			count = change + addToValue;
 			return result;
 		}
-
+		*/
 
 		public static string GetRtfUnicodeEscapedString(string s) {
 			// https://stackoverflow.com/questions/1368020/how-to-output-unicode-string-to-rtf-using-c
@@ -1134,14 +1200,14 @@ namespace Utils {
 				minIndex = str.IndexOf(searchstring, minIndex + searchstring.Length);
 			}
 		}
-
+/*
 		public static string ReplaceAndCount(this string text, string oldValue, string newValue, out int count, int addToCount = 0)
 		{
 			int lenghtDiff = newValue.Length - oldValue.Length;
 			count = addToCount + ((text.Split(oldValue.ToCharArray()).Length - 1) * lenghtDiff);
 			return text.Replace(oldValue, newValue);
 		}
-
+*/
 	}
 
 	public sealed  class Result {
