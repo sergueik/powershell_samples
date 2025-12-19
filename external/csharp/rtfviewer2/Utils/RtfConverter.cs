@@ -126,6 +126,19 @@ namespace Utils {
 			return ConvertText(lines);
 		}
 
+		// The vertical bar is achieved by applying a left paragraph border with a specific style, width, and color, rather than a single "blockquote" command which only handles indentation.
+		private void CreateBlockQuote(string line, StringBuilder text) {
+			text.AppendLine(@"\pard\sa200\sb200\li720\ri0\brdrl\brdrw10\brdrs\brdrcf1" ); // Blockquote paragraph formatting
+			// \pard\sa200\sb200\li720\ri0\brdrl\brdrw10\brdrs\brdrcf1
+			// repeat for subsequent paragraphs if needed
+			text.AppendLine(@"{\*\shptxtdblk\vertalntc\shpZ 10000}" ); // Optional: helps with vertical alignment in some viewers
+			// text.AppendLine(@"\pard\li720\ri720\sa240\sb240\i ");
+			Regex reg = new Regex("> *");
+			text.Append(reg.Replace(line, ""));
+			text.AppendLine(@"\par ");
+			text.AppendLine(@"\pard ");
+		}
+
 		private void CreateCodeBlock(List<string> lines, StringBuilder text, ref int currentLineNum, CodeBlockType blockType)//ref string line, bool blockStartedPreviously)
 		{
 			bool fencedBlockHasEnd = false;
@@ -268,7 +281,26 @@ namespace Utils {
 						CurrentCodeBlockType = CodeBlockType.Fenced;
 						CreateCodeBlock(lines, text, ref i, CurrentCodeBlockType);
 						CurrentCodeBlockType = CodeBlockType.None;
-					} else {
+					} else if (line.StartsWith(">") && CurrentCodeBlockType == CodeBlockType.None) {
+						// Blockquote
+						line = SetEscapeCharacters(line, true).Text;
+
+						line = EscapeNonStyleTags(line, new char[] { '*', '_' });
+
+						// Font style, * _ ** __ used for bold and italic
+						line = SetStyle(line, "**", "b"); // bold
+						line = SetStyle(line, "*", "i"); // italic
+						// Option: in cases where unescaped underlines cause problems mid text, disable underscore as font style
+						if (AllowUnderscoreBold) {
+							line = SetStyle(line, "__", "b"); // bold
+						}
+						if (AllowUnderscoreItalic) {
+							line = SetStyle(line, "_", "i"); // italic
+						}
+
+						line = SetStyleNew(line); // code
+						CreateBlockQuote(line, text);
+				} else {
 						// normal processing
 						CurrentCodeBlockType = CodeBlockType.None;
 						line = SetEscapeCharacters(line, true).Text;
@@ -289,7 +321,7 @@ namespace Utils {
 						}
 
 						line = SetStyleNew(line); // code
-						// Images. Currently images are removed, TODO: inline images
+
 						// https://www.markdownguide.org/basic-syntax/#images-1
 						line = SetImage(line);
 
@@ -705,7 +737,8 @@ namespace Utils {
 			string[] unOrderedListPrefixes = { "- ", "+ ", "* ", asteriskEsc };
 			//bool unOrderedList = false;
 			string currentPrefix = "";
-			string unOrderedOutSymbol = " • ";
+			// string unOrderedOutSymbol = " • ";
+			string unOrderedOutSymbol = @" \bullet ";
 
 
 			bool thisLineHasPrefix = false;
@@ -729,7 +762,10 @@ namespace Utils {
 			if (UnOrderedListActive) {
 				StringBuilder sb = new StringBuilder();
 				sb.Append(UseFontColor(rtfListPrefixColor, "UnOrdered List"));
-				sb.Append(unOrderedOutSymbol.PadRight(4));
+				// NOTE
+				// sb.Append(unOrderedOutSymbol.PadRight(4));
+				sb.Append(unOrderedOutSymbol );
+				sb.Append("  ");
 				sb.Append(UseFontColor(rtfTextColor, "UnOrdered List"));
 				sb.Append(line.Substring(currentPrefix.Length));
 				line = sb.ToString();
@@ -812,18 +848,11 @@ namespace Utils {
 			// https://www.oreilly.com/library/view/rtf-pocket-guide/9781449302047/ch04.html
 			string result = line;
 			int numReplaced = 0;
-			// IMPORTANT: \’7d is not the same as \'7d, the ' character matters
 
+			// IMPORTANT: \’7d is not the same as \'7d, the ' character matters
 			// Escaped markdown characters
-			
 			result = ReplaceAndCount(result, @"\\", (doubleToSingleBackslash) ? @"\'5c" : @"\'5c\'5c", ref numReplaced);
-/*
-			if (doubleToSingleBackslash) {
-				result = result.ReplaceAndCount(@"\\", @"\'5c", out numReplaced, numReplaced); // right curly brace
-			} else {
-				result = result.ReplaceAndCount(@"\\", @"\'5c\'5c", out numReplaced, numReplaced);
-			}
-			*/
+
 			var replacements = new List<Tuple<string, string>> {
 				Tuple.Create(@"\#", @"\'23"),// number / hash, to prevent deliberate # from being used as heading
 				Tuple.Create(@"\*", @"\'2a"),// asterisk, not font style
@@ -842,44 +871,17 @@ namespace Utils {
 				Tuple.Create(@"\|", @"\'7c"),// pipe / vertical bar
 			};
 			
-
-			// C# 
-			//		var replacements = new (string From, string To)[]
-			//		foreach (var (from, to) in replacements) {
-		
 			foreach (var arg in replacements) {
 				var from = arg.Item1;
 				var to = arg.Item2;
 				result = ReplaceAndCount(result, from, to, ref numReplaced);
 			}
 	
-			/*
-			result = result.ReplaceAndCount(@"\#", @"\'23", out numReplaced, numReplaced); // number / hash, to prevent deliberate # from being used as heading
-			result = result.ReplaceAndCount(@"\*", @"\'2a", out numReplaced, numReplaced); // asterisk, not font style
-			result = result.ReplaceAndCount(@"\_", @"\'5f", out numReplaced, numReplaced); // underscore, not font style
-			result = result.ReplaceAndCount(@"\[", @"\'5b", out numReplaced, numReplaced); // left square brace
-			result = result.ReplaceAndCount(@"\]", @"\'5d", out numReplaced, numReplaced); // right square brace
-			result = result.ReplaceAndCount(@"\{", @"\'7b", out numReplaced, numReplaced); // left curly brace
-			result = result.ReplaceAndCount(@"\}", @"\'7d", out numReplaced, numReplaced); // right curly brace
-			result = result.ReplaceAndCount(@"\`", @"\'60", out numReplaced, numReplaced); // grave
-			result = result.ReplaceAndCount(@"\(", @"\'28", out numReplaced, numReplaced); // left parenthesis
-			result = result.ReplaceAndCount(@"\)", @"\'29", out numReplaced, numReplaced); // right parenthesis
-			result = result.ReplaceAndCount(@"\+", @"\'2b", out numReplaced, numReplaced); // plus
-			result = result.ReplaceAndCount(@"\-", @"\'2d", out numReplaced, numReplaced); // minus
-			result = result.ReplaceAndCount(@"\.", @"\'2e", out numReplaced, numReplaced); // period
-			result = result.ReplaceAndCount(@"\!", @"\'21", out numReplaced, numReplaced); // exclamation
-			result = result.ReplaceAndCount(@"\|", @"\'7c", out numReplaced, numReplaced); // pipe / vertical bar
-*/
 			// Escape RTF special characters (what remains after escaping the above)
 			// replace backslashes not followed by a '
-	/*		string regMatchBS = @"\\+(?!')";
-			var reg = new Regex(regMatchBS);
-			result = ReplaceAndCountRegEx(result, reg, @"\'5c", out numReplaced, numReplaced);
-			*/
 			result = ReplaceAndCountRegEx(result, new Regex(@"\\+(?!')"), @"\'5c", ref numReplaced);
 
 			// replace curly braces
-			
 			replacements = new List<Tuple<string, string>> {
 				Tuple.Create(@"{", @"\'7b"),// left curly brace
 				Tuple.Create(@"}", @"\'7d"),// right curly brace
@@ -889,10 +891,7 @@ namespace Utils {
 				var to = arg.Item2;
 				result = ReplaceAndCount(result, from, to, ref numReplaced);
 			}
-/*				
-			result = result.ReplaceAndCount(@"{", @"\'7b", out numReplaced, numReplaced); // left curly brace
-			result = result.ReplaceAndCount(@"}", @"\'7d", out numReplaced, numReplaced); // right curly brace
-*/
+
 			result = GetRtfUnicodeEscapedString(result);
 
 			return new Result {
@@ -900,7 +899,6 @@ namespace Utils {
 				Num = numReplaced
 			};
 		}
-
 		
 		public static string ReplaceAndCount(string text, string oldValue, string newValue, ref int totalReplaced) {
 			int lenghtDiff = newValue.Length - oldValue.Length;
@@ -917,17 +915,6 @@ namespace Utils {
 			totalReplaced += change;
 			return result;
 		}
-
-		/*
-		private static string ReplaceAndCountRegEx(string text, Regex reg, string newValue, out int count, int addToValue) {
-			int countBefore = text.Length;
-			string result = reg.Replace(text, newValue);
-			int countAfter = result.Length;
-			int change = countAfter - countBefore;
-			count = change + addToValue;
-			return result;
-		}
-		*/
 
 		public static string GetRtfUnicodeEscapedString(string s) {
 			// https://stackoverflow.com/questions/1368020/how-to-output-unicode-string-to-rtf-using-c
@@ -1200,14 +1187,6 @@ namespace Utils {
 				minIndex = str.IndexOf(searchstring, minIndex + searchstring.Length);
 			}
 		}
-/*
-		public static string ReplaceAndCount(this string text, string oldValue, string newValue, out int count, int addToCount = 0)
-		{
-			int lenghtDiff = newValue.Length - oldValue.Length;
-			count = addToCount + ((text.Split(oldValue.ToCharArray()).Length - 1) * lenghtDiff);
-			return text.Replace(oldValue, newValue);
-		}
-*/
 	}
 
 	public sealed  class Result {

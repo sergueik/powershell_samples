@@ -14,7 +14,7 @@ namespace Program {
 		bool errorPopup = true;
 		private Thread renderThread;
 		private object renderLock = new object();
-		private const string versionString = "0.12.0";
+		private const string versionString = "0.13.0";
 		private int selectionIndex = 0 ;
 
 		public MarkdownViewer(string[] args) {
