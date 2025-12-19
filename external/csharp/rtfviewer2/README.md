@@ -40,12 +40,12 @@ after every section of kind in the original document to facilitate navigation:
 * [Images](https://www.markdownguide.org/basic-syntax/#images)
 * [Lists](https://www.markdownguide.org/basic-syntax/#lists-1)
 * [Tables](https://www.markdownguide.org/extended-syntax/#tables)
-* [Code Blocks](https://www.markdownguide.org/basic-syntax/#code-blocks).
+* [Code Blocks](https://www.markdownguide.org/basic-syntax/#code-blocks)
 
 
-The **forward / backward navigation buttons** scroll to the following/preceding anchor, enabling vi-style movement.
+> The **forward / backward navigation buttons** scroll to the following/preceding anchor, enabling vi-style movement.
 
-NOTE :*the Markers remain invisible during normal rendering and do not affect the displayed content.)*d
+> NOTE :*the Markers remain invisible during normal rendering and do not affect the displayed content.)*
 
 ### Example to Navigate
 
@@ -79,25 +79,36 @@ Implement rendering of [code](https://www.markdownguide.org/basic-syntax/#code) 
 ### See Also
 
 - [RichText Builder (StringBuilder for RTF)](https://www.codeproject.com/articles/RichText-Builder-StringBuilder-for-RTF-) – relatively easy to implement.
+
 - [Extended RichTextBox (RichTextBoxEx)](https://www.codeproject.com/articles/EXTENDED-Version-of-Extended-Rich-Text-Box-RichTex#comments-section) – adds toolbar, ruler, and extended functionality to a standard WinForms `RichTextBox`.
+
 - [MarkdownToRtf](https://github.com/ReneeHuh/MarkdownToRtf) – static utility converting __Markdown__ to __RTF__ using [Markdig](https://github.com/xoofx/markdig) parser via [NuGet](https://www.nuget.org/packages/Markdig/). Generates WordPad-compatible RTF with proper headers, font tables, and formatting codes. Supports headings, paragraphs, lists, tables, code blocks, emphasis, and hyperlinks.
-- [GustavoHennig/MarkdownToRtf](https://github.com/GustavoHennig/MarkdownToRtf) – basic Markdown to RTF converter.
+
+- [GustavoHennig/MarkdownToRtf](https://github.com/GustavoHennig/MarkdownToRtf) – basic Markdown to RTF converter - depends on [Markdig](https://github.com/xoofx/markdig) for Markdown parsing. Capable of [Blockquotes](https://www.markdownguide.org/basic-syntax/#blockquotes) `> quote` rendering 
+
 - [Avalon Renderer](https://github.com/Kryptos-FR/markdig.wpf) – WPF renderer using [Markdig](https://github.com/xoofx/markdig).
 - [Markdown Basic Syntax](https://www.markdownguide.org/basic-syntax/)
 - [RTF Spec](https://latex2rtf.sourceforge.net/RTF-Spec-1.2.pdf) – the original published specification was developed by __Microsoft Corporation__ in __1987__ (The __Windows OS__ was first launched in __1985__).
 - [The RTF 1.x Specification](https://www.biblioscape.com/rtf15_spec.htm)
 - [The RTF Cookbook](https://metacpan.org/dist/RTF-Writer/view/lib/RTF/Cookbook.pod) – note: not a Perl module
   * Misc. `RichTextBox` articles (note traditionally the `RichTextBox` examples are writen in [VB.Net](https://en.wikipedia.org/wiki/Visual_Basic_(.NET))):
-   + [Scrolling Around with the RichTextBox Contro](https://www.codeproject.com/articles/Scrolling-Around-with-the-RichTextBox-Control)
-   + [Numbering lines of RichTextBox](https://www.codeproject.com/articles/Numbering-lines-of-RichTextBox-in-NET-2-0) (no source)
-   + [Insert Plain Text and Images into RichTextBox at Runtime](https://www.codeproject.com/articles/Insert-Plain-Text-and-Images-into-RichTextBox-at-R#comments-section) (no source)
-   + [RicherTextBox](https://www.codeproject.com/articles/RicherTextBox) (no source)
-   + [Line Numbering of RichTextBox in .NET 2.0](https://www.codeproject.com/articles/Line-Numbering-of-RichTextBox-in-NET-2-0)
-   + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/Changing-the-line-spacing-in-a-RichTextBox-control)
-   + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/EXTENDED-Version-of-Extended-Rich-Text-Box-RichTex)
+  + [Scrolling Around with the RichTextBox Contro](https://www.codeproject.com/articles/Scrolling-Around-with-the-RichTextBox-Control)
+  + [Numbering lines of RichTextBox](https://www.codeproject.com/articles/Numbering-lines-of-RichTextBox-in-NET-2-0) (no source)
+  + [Insert Plain Text and Images into RichTextBox at Runtime](https://www.codeproject.com/articles/Insert-Plain-Text-and-Images-into-RichTextBox-at-R#comments-section) (no source)
+  + [RicherTextBox](https://www.codeproject.com/articles/RicherTextBox) (no source)
+  + [Line Numbering of RichTextBox in .NET 2.0](https://www.codeproject.com/articles/Line-Numbering-of-RichTextBox-in-NET-2-0)
+  + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/Changing-the-line-spacing-in-a-RichTextBox-control)
+  + [Changing the line spacing in a RichTextBox control](https://www.codeproject.com/articles/EXTENDED-Version-of-Extended-Rich-Text-Box-RichTex)
   * [C# project replica and Powershell port](https://github.com/sergueik/powershell_samples/tree/master/csharp/render_markdown) of a Markdown RTF covertor operating [MarkDig](https://github.com/xoofx/markdig) library
-  * __CommonMark.NET__ [repository](https://github.com/Knagis/CommonMark.NET) and [nuget package](https://www.nuget.org/packages/CommonMark.NET) - rendeting markdown to HTML.
+  * __CommonMark.NET__ [repository](https://github.com/Knagis/CommonMark.NET) and [nuget package](https://www.nuget.org/packages/CommonMark.NET) - rendering markdown to HTML.
+  * __Chrome Extension__ for viewing RTF files in the browser [project](https://github.com/zoehneto/chrome-rtf-viewer)
+  * __Chrome Extension__ __RTF File Viewer__ in [webstore](https://chromewebstore.google.com/detail/rtf-file-viewer/mjbmfbhblkemncpbmeepkccpjfakamkd)
+  * __RTF book viewer__ [project source](https://github.com/RoWaBe/RtfBook) and [documentation](http://www.rowalt.de/rtfbook/) is written in a VB style language and can be build using the __FreeBasic for Windows__ compiler - for [installer download link](https://sourceforge.net/projects/fbc/files/Older%20versions/1.05.0/FreeBASIC-1.05.0-win64.7z/download?use_mirror=master&download) old release __1.0.5__of the compiler.
+  
+  * Document AST to markup format [renderer](https://github.com/Hypario/Constructeur)
+  * __DocSharp__ [bundle](https://github.com/manfromarce/DocSharp) - pure C# library to convert between document formats without Office interop or native dependencies. Notably, the `DocSharp.Markdown` also available in [nuget](https://www.nuget.org/packages/DocSharp.Markdown) is capable of converting the __Markdown__ to __DOCX__ or __RTF__ using custom [Markdig]() renderers loaded through __C#__ __10__ [project file reference](https://github.com/manfromarce/DocSharp/blob/main/src/DocSharp.Markdown/DocSharp.Markdown.csproj#L29). Project appears to be alive, and has [supported features](https://github.com/manfromarce/DocSharp/blob/main/documentation/Supported_features.MD) documented.
 
+* [md2smf](https://github.com/ogoine/md2smf) pure Python tool for converting a markdown manuscript into an RTF file in Standard Manuscript Format. Has a number of embedded __RTF__ [Templates](https://github.com/ogoine/md2smf/blob/master/rtf_builder.py#L122)
 
 ### Example to Navigate
 
