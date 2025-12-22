@@ -152,10 +152,187 @@ Archive:  /c/Users/kouzm/Downloads/Microsoft.Bcl.AsyncInterfaces.9.0.3.nupkg
 ```
 ```sh
 mkdir -p packages/Microsoft.Bcl.AsyncInterfaces.9.0.3
+mv lib/ packages/Microsoft.Bcl.AsyncInterfaces.9.0.3
 ```
 
 ```sh
-mv lib/ packages/Microsoft.Bcl.AsyncInterfaces.9.0.3
+curl -skLo ~/Downloads/System.Text.JSON.nupkg https://www.nuget.org/api/v2/package/System.Text.Json/9.0.3
+unzip -l ~/Downloads/System.Text.JSON.nupkg |grep lib/net462
+unzip -x ~/Downloads/System.Text.JSON.nupkg lib/net462/System.Text.Json.dll
+```
+```text
+Archive:  /c/Users/kouzm/Downloads/System.Text.JSON.nupkg
+  inflating: lib/net462/System.Text.Json.dll
+```
+```sh
+mkdir -p packages/System.Text.JSON.9.0.3
+mv lib/ packages/System.Text.JSON.9.0.3
+```
+
+```sh
+curl -skLo ~/Downloads/System.Text.Encodings.Web.nupkg https://www.nuget.org/api/v2/package/System.Text.Encodings.Web/9.0.3
+unzip -l ~/Downloads/System.Text.Encodings.Web.nupkg |grep lib/net462
+unzip -x ~/Downloads/System.Text.Encodings.Web.nupkg lib/net462/System.Text.Encodings.Web.dll
+```
+```text
+Archive:  /c/Users/kouzm/Downloads/System.Text.Encodings.Web.nupkg
+  inflating: lib/net462/System.Text.Encodings.Web.dll
+```
+```sh
+mkdir -p packages/System.Text.Encodings.Web.9.0.3
+mv lib/ packages/System.Text.Encodings.Web.9.0.3
+```
+```sh
+curl -skLo ~/Downloads/System.Memory.nupkg https://www.nuget.org/api/v2/package/System.Memory/4.6.0
+unzip -l ~/Downloads/System.Memory.nupkg |grep lib/net462
+unzip -x ~/Downloads/System.Memory.nupkg lib/net462/System.Memory.dll
+```
+```text
+Archive:  /c/Users/kouzm/Downloads/System.Memory.nupkg
+  inflating: lib/net462/System.Memory.dll
+```
+```sh
+mkdir -p packages/System.Memory.4.6.0
+mv lib/ packages/System.Memory.4.6.0
+```
+
+after seeing the runtime exception
+```text
+System.IO.FileLoadException: Could not load file or assembly 'System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)
+
+
+```
+
+examine the CLR version  of the dependency downloaded from nuget 
+
+```powershell
+$asm = [Reflection.AssemblyName]::GetAssemblyName((resolve-path -path "system.memory.dll").path)
+$asm | select-object -property *  |format-list
+
+```
+
+```text
+
+Name                  : System.Memory
+Version               : 4.0.2.0
+CultureInfo           :
+CultureName           :
+CodeBase              : file:///.../bin/Debug/system.memory.dll
+EscapedCodeBase       : file:///.../bin/Debug/system.memory.dll
+ProcessorArchitecture : MSIL
+ContentType           : Default
+Flags                 : PublicKey
+HashAlgorithm         : SHA1
+VersionCompatibility  : SameMachine
+KeyPair               :
+FullName              : System.Memory, Version=4.0.2.0, Culture=neutral,
+                        PublicKeyToken=cc7b13ffcd2ddd51
+
+```
+and update `app.config` binding redirect:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+	<startup>
+		<supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" />
+	</startup>
+	<runtime>
+	  <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+    <dependentAssembly>
+      <assemblyIdentity name="System.Memory"
+                        publicKeyToken="cc7b13ffcd2ddd51"
+                        culture="neutral" />
+      <bindingRedirect oldVersion="0.0.0.0-4.0.1.2"
+                       newVersion="4.0.2.0" />
+    </dependentAssembly>
+  </assemblyBinding>
+</runtime>
+
+</configuration>
+
+```
+
+```text
+System.TypeInitializationException: The type initializer for 'System.Text.Json.JsonSerializer' threw an exception. ---> 
+System.TypeInitializationException: The type initializer for 'PerTypeValues`1' threw an exception. ---> 
+System.IO.FileNotFoundException: Could not load file or 
+assembly 'System.Runtime.CompilerServices.Unsafe, Version=6.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' 
+or one of its dependencies. The system cannot find the file specified.
+
+```
+```sh
+curl -skLo ~/Downloads/System.Runtime.CompilerServices.Unsafe.nupkg  https://www.nuget.org/api/v2/package/System.Runtime.CompilerServices.Unsafe/6.0.0
+unzip -l ~/Downloads/System.Runtime.CompilerServices.Unsafe.nupkg |grep lib/net461
+unzip -x ~/Downloads/System.Runtime.CompilerServices.Unsafe.nupkg lib/net461/System.Runtime.CompilerServices.Unsafe.dll
+```
+```text
+Archive:  /c/Users/kouzm/Downloads/System.Memory.nupkg
+  inflating: lib/net462/System.Memory.dll
+```
+```sh
+mkdir -p packages/System.Runtime.CompilerServices.Unsafe.6.0.0
+mv lib/ packages/System.Runtime.CompilerServices.Unsafe.6.0.0
+```
+```powershell
+$asm = [Reflection.AssemblyName]::GetAssemblyName((resolve-path -path "System.Runtime.CompilerServices.Unsafe.dll").path)
+$asm | select-object -property *  |format-list
+```
+```text
+
+
+Name                  : System.Runtime.CompilerServices.Unsafe
+Version               : 6.0.0.0
+CultureInfo           :
+CultureName           :
+CodeBase              : file:///...bin/Debug/System.Runtime.CompilerServices.Unsafe.dll
+EscapedCodeBase       : file:///...bin/Debug/System.Runtime.CompilerServices.Unsafe.dll
+ProcessorArchitecture : MSIL
+ContentType           : Default
+Flags                 : PublicKey
+HashAlgorithm         : SHA1
+VersionCompatibility  : SameMachine
+KeyPair               :
+FullName              : System.Runtime.CompilerServices.Unsafe,
+                        Version=6.0.0.0, Culture=neutral,
+                        PublicKeyToken=b03f5f7f11d50a3a
+```
+
+```sh
+curl -skLo ~/Downloads/System.Buffers.nupkg https://www.nuget.org/api/v2/package/System.Buffers/4.6.1
+
+unzip -l ~/Downloads/System.Buffers.nupkg |grep lib/net62
+unzip -x ~/Downloads/System.Buffers.nupkg lib/net462/System.Buffers.dll
+```
+```text
+Archive:  /c/Users/kouzm/Downloads/System.Buffers.nupkg
+  inflating: lib/net462/System.Buffers.dll
+```
+```sh
+mkdir -p packages/System.Buffers.4.6.1
+mv lib/ packages/System.Buffers.4.6.1
+```
+
+```powershell
+$asm = [Reflection.AssemblyName]::GetAssemblyName((resolve-path -path "System.BUFFERS.dll").path)
+$asm | select-object -property *  |format-list
+```
+```text
+
+
+Name                  : System.Buffers
+Version               : 4.0.5.0
+CultureInfo           :
+CultureName           :
+CodeBase              : file:///.../bin/Debug/System.Buffers.dll
+EscapedCodeBase       : file:///.../bin/Debug/System.Buffers.dll
+ProcessorArchitecture : MSIL
+ContentType           : Default
+Flags                 : PublicKey
+HashAlgorithm         : SHA1
+VersionCompatibility  : SameMachine
+KeyPair               :
+FullName              : System.Buffers, Version=4.0.5.0, Culture=neutral,
+                        PublicKeyToken=cc7b13ffcd2ddd51
 ```
 ```text
 System.ArgumentException: API Key is required for Google Gemini AI.
@@ -169,11 +346,11 @@ System.ArgumentException: API Key is required for Google Gemini AI.
  * `Google_GenerativeAI` [nuget package](https://www.nuget.org/packages/Google_GenerativeAI/) that suports .Net Framework and [source repository](https://github.com/gunpal5/Google_GenerativeAI) -  most complete C# .Net SDK for Google Generative AI and Vertex AI (Google Gemini.
  * [WSH Clipboard access](https://www.codeproject.com/articles/WSH-Clipboard-Access)
  * [TalkingClipboard](https://www.codeproject.com/articles/Talking-Clipboard)
- * [Clipboard little helper](https://www.codeproject.com/articles/Clipboard-little-helper)
+ * [Clipboard little helper](https://www.codeproject.com/articles/Clipboard-little-helper) - mirrored in [basic-clipboard](https://github.com/sergueik/powershell_samples/tree/master/csharp/basic-clipboard)
  * [Windows Clipboard Formats](https://www.codeproject.com/articles/Windows-Clipboard-Formats)
   * [Clipboard handling with .NET](https://www.codeproject.com/articles/Clipboard-handling-with-NET)
   * [Clipboard backup in C# using WWindows API](https://www.codeproject.com/articles/Clipboard-backup-in-C-)
-
+  * [using Gemini API keys](https://ai.google.dev/gemini-api/docs/api-key) - NOTE, will rediredct to if "account don't meet the age requirements" - visit `https://myaccount.google.com/age-verification` or `https://support.google.com/accounts/answer/10071085?hl=en`
 ---
 ### Author
 
