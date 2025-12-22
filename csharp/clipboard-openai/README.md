@@ -137,6 +137,30 @@ unzip -x ~/Downloads/Microsoft.Extensions.Logging.Abstractions.9.0.3.nupkg lib/n
 mkdir -p packages/Microsoft.Extensions.Logging.Abstractions.9.0.3
 mv lib packages/Microsoft.Extensions.Logging.Abstractions.9.0.3
 ```
+
+```sh
+curl -skLo  ~/Downloads/Microsoft.Bcl.AsyncInterfaces.9.0.3 https://www.nuget.org/api/v2/package/Microsoft.Bcl.AsyncInterfaces/9.0.3
+unzip -l ~/Downloads/Microsoft.Bcl.AsyncInterfaces.9.0.3.nupkg |grep lib/net462
+```
+```text
+unzip -x ~/Downloads/Microsoft.Bcl.AsyncInterfaces.9.0.3.nupkg lib/net462/Microsoft.Bcl.AsyncInterfaces.dll
+```
+
+```text
+Archive:  /c/Users/kouzm/Downloads/Microsoft.Bcl.AsyncInterfaces.9.0.3.nupkg
+  inflating: lib/net462/Microsoft.Bcl.AsyncInterfaces.dll
+```
+```sh
+mkdir -p packages/Microsoft.Bcl.AsyncInterfaces.9.0.3
+```
+
+```sh
+mv lib/ packages/Microsoft.Bcl.AsyncInterfaces.9.0.3
+```
+```text
+System.ArgumentException: API Key is required for Google Gemini AI.
+```
+- set the API key
 ### See Also
 
  * `ClipGen` [article #1](https://habr.com/ru/articles/891246) (in Russian) and [article #2](https://habr.com/ru/articles/974706/) (in Russian) and [telegram download](https://t.me/VETA14/14) and [repository](https://github.com/Veta-one/clipgen) - AI-powered clipboard enhancement utility with hotkeys for instant text correction, translation, rewriting, and image analysis using Google Gemini API. NOTE: in Python, requires `PyQT5` dependency for UI
