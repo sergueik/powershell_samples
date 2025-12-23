@@ -918,10 +918,11 @@ protected override void OnLoad(EventArgs e) {
   * [Credential Manager in Windows](https://support.microsoft.com/en-us/windows/credential-manager-in-windows-1b5c916a-6a16-889f-8581-fc16e8165ac0) to consider legacy `AppSettings` as *encrypted-at-rest* metadata, and transparently decrypt at *read time*.
   * https://www.c-sharpcorner.com/forums/windows-credential-manager-with-c-sharp
   * https://www.pinvoke.net/default.aspx/advapi32/CredRead.html
-  * https://support.microsoft.com/en-us/help/4026814/windows-accessing-credential-manager Control Panel -&gt; User Accounts -&gt; Credential Manager -&gt; Windows Credential
+  * https://support.microsoft.com/en-us/help/4026814/windows-accessing-credential-manager Control Panel -&gt; User Accounts -&gt; Credential Manager -&gt; Manage Windows Credentials
   * [nuget](https://www.nuget.org/packages/CredentialManagement) package with `CredentialManagement.dll`. Note: package is unlisted (or effectively hidden) on nuget.org. NuGet (even 2.8) does not resolve unlisted packages by ID+version
   
 
+![credential manager](https://github.com/sergueik/powershell_samples/blob/master/csharp/pbkdf2-csharp/screenshots/credential-manager.png)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

@@ -62,7 +62,7 @@ namespace Test {
 			StringAssert.AreEqualIgnoringCase("430431432433", result);
 		}
 
-				[Test]
+		[Test]
 		public void test5() {
 			var result1 = Convertor.ByteArrayToString(bytes);
 			var result2 = Convertor.StringtoHexString(result1);

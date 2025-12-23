@@ -1,9 +1,6 @@
 using System;
-
 using System.Linq;
-
 using CredentialManagement;
-
 
 namespace Utils {
 	public class CredentialManagementHelper {
@@ -38,7 +35,7 @@ namespace Utils {
 			}
 		}
 
-		public String GetPassword() {
+		public string GetPassword() {
 			try {
 				using (var cred = new Credential()) {
 					cred.Target = userName;

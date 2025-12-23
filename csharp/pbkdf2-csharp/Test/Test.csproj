@@ -83,6 +83,8 @@
     <Compile Include="DeriveBytesSHA512Test.cs" />
     <Compile Include="ParseArgsTests.cs" />
     <Compile Include="ProgramTests.cs" />
+    <Compile Include="CredentialManagementTests.cs" />
+    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Program\Program.csproj">
