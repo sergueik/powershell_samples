@@ -337,7 +337,104 @@ FullName              : System.Buffers, Version=4.0.5.0, Culture=neutral,
 ```text
 System.ArgumentException: API Key is required for Google Gemini AI.
 ```
-- set the API key
+```text
+System.IO.FileNotFoundException: 
+Could not load file or assembly 'System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51'
+or one of its dependencies. The system cannot find the file specified.
+```
+
+```sh
+curl -skLo ~/Downloads/System.Threading.Tasks.Extensions.nupkg  https://www.nuget.org/api/v2/package/System.Threading.Tasks.Extensions/4.6.3
+unzip -l ~/Downloads/System.Threading.Tasks.Extensions.nupkg |grep lib/net462
+unzip -x ~/Downloads/System.Threading.Tasks.Extensions.nupkg lib/net462/System.Threading.Tasks.Extensions.dll
+```
+```text
+Archive:  /c/Users/kouzm/Downloads/System.Threading.Tasks.Extensions.nupkg
+  inflating: lib/net462/System.Threading.Tasks.Extensions.dll
+```
+```sh
+mkdir -p packages/System.Threading.Tasks.Extensions.4.6.3
+mv lib/ packages/System.Threading.Tasks.Extensions.4.6.3
+```
+```powershell
+$asm = [Reflection.AssemblyName]::GetAssemblyName((resolve-path -path "System.Threading.Tasks.Extensions.dll").path)
+$asm | select-object -property *  |format-list
+```
+```text
+
+
+Name                  : System.Threading.Tasks.Extensions
+Version               : 4.2.4.0
+CultureInfo           :
+CultureName           :
+CodeBase              : file:///.../bin/Debug/System.Threading.Tasks.Extensions.dll
+EscapedCodeBase       : file:///.../bin/Debug/System.Threading.Tasks.Extensions.dll
+ProcessorArchitecture : MSIL
+ContentType           : Default
+Flags                 : PublicKey
+HashAlgorithm         : SHA1
+VersionCompatibility  : SameMachine
+KeyPair               :
+FullName              : System.Threading.Tasks.Extensions, Version=4.2.4.0,
+                        Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+
+
+
+```
+
+```sh
+curl -skLo ~/Downloads/System.IO.Pipelines.nupkg  https://www.nuget.org/api/v2/package/System.IO.Pipelines/9.0.3
+unzip -l ~/Downloads/System.IO.Pipelines.nupkg |grep lib/net462
+unzip -x ~/Downloads/System.IO.Pipelines.nupkg lib/net462/System.IO.Pipelines.dll
+```
+```text
+Archive:  /c/Users/kouzm/Downloads/System.IO.Pipelines.nupkg
+  inflating: lib/net462/System.IO.Pipelines.dll
+```
+```sh
+mkdir -p packages/System.IO.Pipelines.9.0.3
+mv lib/ packages/System.IO.Pipelines.9.0.3
+
+```
+```powershell
+$asm = [Reflection.AssemblyName]::GetAssemblyName((resolve-path -path "System.Threading.Tasks.Extensions.dll").path)
+$asm | select-object -property *  |format-list
+```
+```text
+
+
+Name                  : System.Threading.Tasks.Extensions
+Version               : 4.2.4.0
+CultureInfo           :
+CultureName           :
+CodeBase              : file:///.../bin/Debug/System.Threading.Tasks.Extensions.dll
+EscapedCodeBase       : file:///.../bin/Debug/System.Threading.Tasks.Extensions.dll
+ProcessorArchitecture : MSIL
+ContentType           : Default
+Flags                 : PublicKey
+HashAlgorithm         : SHA1
+VersionCompatibility  : SameMachine
+KeyPair               :
+FullName              : System.Threading.Tasks.Extensions, Version=4.2.4.0,
+                        Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+
+
+
+```
+```text
+System.Net.Http.HttpRequestException: Request to https://generativelanguage.googleapis.com:443/v1beta/models/gemini-2.0-flash:generateContent 
+failed with status code 429
+```
+This is caused by lack of / blocked status of GCP billing and there is no worksround.
+
+Gemini free tier (no billing enabled) sets limits in multiple dimensions.
+
+If one's billing account is not linked, one's effective free quota is often zero (limit: 0) — so every request returns __429__ a.k.a. __Too Many Requests__ HTTP Status.
+
+
+![billing](screenshots/billing.png)
+
+
 ### See Also
 
  * `ClipGen` [article #1](https://habr.com/ru/articles/891246) (in Russian) and [article #2](https://habr.com/ru/articles/974706/) (in Russian) and [telegram download](https://t.me/VETA14/14) and [repository](https://github.com/Veta-one/clipgen) - AI-powered clipboard enhancement utility with hotkeys for instant text correction, translation, rewriting, and image analysis using Google Gemini API. NOTE: in Python, requires `PyQT5` dependency for UI
