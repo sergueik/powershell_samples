@@ -819,6 +819,70 @@ key: BA39D038F45CBA83D884D6297BE659D42FFF83FC2EBDD4BC51003688CCF2810B
 decrypted: hello
 
 ```
+### Misc
+```powershell
+get-item "C:\Program Files (x86)\SharpDevelop\5.1\AddIns\Misc\PackageManagement\NuGet.exe" | select-object -expandproperty VersionInfo | format-list
+```
+
+```text
+FileVersionRaw    : 2.8.60717.93
+ProductVersionRaw : 2.8.6.0
+```
+
+      
+      
+```sh
+curl -skLo ~/Downloads/CredentialManagement.nupkg https://www.nuget.org/api/v2/package/CredentialManagement/1.0.2
+```
+
+```sh
+ unzip -l ~/Downloads/CredentialManagement.nupkg
+```
+
+```txt
+ 
+Archive:  /c/Users/kouzm/Downloads/CredentialManagement.nupkg
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+      505  2014-12-13 23:02   _rels/.rels
+     1157  2014-12-13 23:02   CredentialManagement.nuspec
+    28672  2014-12-13 23:02   lib/net35/CredentialManagement.dll
+      703  2014-12-13 23:02   package/services/metadata/core-properties/7f813ebd2630449eb953c87be0b19cab.psmdcp
+      448  2014-12-13 23:02   [Content_Types].xml
+     9467  2018-11-06 21:55   .signature.p7s
+```
+
+```sh
+unzip -x ~/Downloads/CredentialManagement.nupkg lib/net35/CredentialManagement.dll
+```
+
+```txt
+Archive:  /c/Users/kouzm/Downloads/CredentialManagement.nupkg
+  inflating: lib/net35/CredentialManagement.dll
+
+```
+```sh
+mkdir -p packages/CredentialManagement.1.0.2
+mv lib packages/CredentialManagement.1.0.2
+```
+
+### Using Credential Management p/invoke
+
+Nice features:
+* Credentials stored via [Credential Manager](https://www.thehacker.recipes/ad/movement/credentials/dumping/windows-credential-manager) are typically encrypted on disk using the Windows DPAPI or [Credential Vault](https://learn.microsoft.com/en-us/windows/apps/develop/security/credential-locker) 
+mechanisms tied to the current user’s logon credentials.
+* Only the same user account (or processes impersonating that user) can decrypt and read them.
+* Even if another process enumerates credential entries, the encryption around the secret blob prevents meaningful access unless the security context matches
+
+For Desktop app, use `Load` event handler
+
+
+```c#
+protected override void OnLoad(EventArgs e) {
+  base.OnLoad(e);
+  LoadSecrets();
+}
+```
 ### See Also
 
   * [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2)
@@ -851,6 +915,13 @@ decrypted: hello
   * [BenchmarkDotNet](https://www.nuget.org/packages/BenchmarkDotNet)  nuget reference. Note the signature of `BenchmarkRunner.Run(...)`.
   * [BCryptPbkdf.Net](https://github.com/Devolutions/BCryptPbkdf.Net/tree/maste)- A pure C# implementation of bcrypt_pbkdf, with Benchmark.net tests, on .Net  core.
   * [Why is a leading comma required when creating an array](https://stackoverflow.com/questions/42772083/why-is-a-leading-comma-required-when-creating-an-array)
+  * [Credential Manager in Windows](https://support.microsoft.com/en-us/windows/credential-manager-in-windows-1b5c916a-6a16-889f-8581-fc16e8165ac0) to consider legacy `AppSettings` as *encrypted-at-rest* metadata, and transparently decrypt at *read time*.
+  * https://www.c-sharpcorner.com/forums/windows-credential-manager-with-c-sharp
+  * https://www.pinvoke.net/default.aspx/advapi32/CredRead.html
+  * https://support.microsoft.com/en-us/help/4026814/windows-accessing-credential-manager Control Panel -&gt; User Accounts -&gt; Credential Manager -&gt; Windows Credential
+  * [nuget](https://www.nuget.org/packages/CredentialManagement) package with `CredentialManagement.dll`. Note: package is unlisted (or effectively hidden) on nuget.org. NuGet (even 2.8) does not resolve unlisted packages by ID+version
+  
+
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

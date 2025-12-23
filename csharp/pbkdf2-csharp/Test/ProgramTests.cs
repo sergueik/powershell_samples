@@ -39,7 +39,7 @@ namespace Test {
 			Assert.AreEqual("", verificationErrors.ToString());
 		}
 
-		[Test] 
+		[Test]
 		public void encryptTest1() {
 			var value = Program.Program.Encrypt(plainValue, password, saltString );
 			StringAssert.Contains(encryptedValue, value);
@@ -62,7 +62,7 @@ namespace Test {
 			StringAssert.StartsWith(head, value);
 		}
 
-		[Test] 
+		[Test]
 		public void decryptTest1() {
 			var value = Program.Program.Decrypt(encryptedValue, password);
 			StringAssert.IsMatch(plainValue, value);
@@ -73,7 +73,7 @@ namespace Test {
 		public void encryptTest3() {
 
 			var deriveBytes = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(password), Utils.Convertor.HexStringToByteArray(saltString), 1000);
-			// ignore the key in this test 
+			// ignore the key in this test
 			deriveBytes.GetBytes(32);
 
 			var iv1 = deriveBytes.GetBytes(16);

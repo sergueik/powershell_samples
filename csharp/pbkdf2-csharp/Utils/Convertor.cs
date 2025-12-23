@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Utils {
 	public class Convertor {
- 
+
 		public static String ByteArrayToString(byte[] bytes) {
 			return System.Text.Encoding.Default.GetString(bytes);
 		}
@@ -23,7 +23,7 @@ namespace Utils {
 				hexByteArray[index / 2] = Convert.ToByte(data.Substring(index, 2), 16);
 			return hexByteArray;
 		}
-			
+
 		public static String StringtoHexString(String data) {
 			String hexString = String.Empty;
 			foreach (char c in data) {

@@ -11,7 +11,7 @@ namespace Utils {
 		public  bool Debug { set { debug = value; } }
 		private byte[] salt = { };
 		private byte[] iv = { };
-		
+
 		private bool strong = false;
 		public  bool Strong{ set { strong = value; } }
 		public string Encrypt(String payloadString, String passwordString, String saltString) {
@@ -19,7 +19,7 @@ namespace Utils {
 			byte[] payload = Encoding.UTF8.GetBytes(payloadString);
 			byte[] result = { };
 			byte[] data = { };
-			
+
 			if (String.IsNullOrEmpty(saltString)) {
 				// Generating salt bytes
 				salt = GetRandomBytes(16);
@@ -33,11 +33,11 @@ namespace Utils {
 				using (var AES = Aes.Create()) {
 					// AES sizes are in bits
 					AES.KeySize = 256;
-					AES.BlockSize = 128; 
+					AES.BlockSize = 128;
 					// https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.rfc2898derivebytes?view=netframework-4.5
 					// https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.hmacsha1?view=netframework-4.5
 					// the Rfc2898DeriveBytes default uses HMACSHA1
-					// but with .Net 4.6 one can override constructor 
+					// but with .Net 4.6 one can override constructor
 					deriveBytes = (strong) ? new Rfc2898DeriveBytes(password, salt, 1000,  HashAlgorithmName.SHA512 ): new Rfc2898DeriveBytes(password, salt, 1000);
 					AES.Key = deriveBytes.GetBytes(AES.KeySize / 8);
 					if (debug)
@@ -45,7 +45,7 @@ namespace Utils {
 					AES.IV = this.iv = deriveBytes.GetBytes(AES.BlockSize / 8);
 					if (debug)
 						Console.Error.WriteLine("iv: "  + Convertor.ByteArrayToHexString(iv));
-					
+
 					AES.Mode = CipherMode.CBC;
 
 					// Create an encryptor to encrypt the data
@@ -91,7 +91,7 @@ namespace Utils {
 					return null;
 				}
 				Array.Copy(payload, salt, salt.Length);
-				if (debug) 
+				if (debug)
 					Console.Error.WriteLine("salt: " + Convertor.ByteArrayToHexString(salt));
 				// NOTE: read IV bytes prepended to encrypted data
 				// compare: https://github.com/giterlizzi/perl-Crypt-PBE/blob/master/lib/Crypt/PBE/PBES2.pm#L93
@@ -111,7 +111,7 @@ namespace Utils {
 						AES.KeySize = 256;
 						AES.BlockSize = 128;
 						// the Rfc2898DeriveBytes default uses HMACSHA1
-						// but with .Net 4.6 one can override constructor 
+						// but with .Net 4.6 one can override constructor
 						deriveBytes = (strong) ? new Rfc2898DeriveBytes(password, salt, 1000, HashAlgorithmName.SHA512 ): new Rfc2898DeriveBytes(password, salt, 1000);
 						AES.Key = deriveBytes.GetBytes(AES.KeySize / 8);
 						AES.IV = this.iv;
@@ -146,7 +146,7 @@ namespace Utils {
 			RNGCryptoServiceProvider.Create().GetBytes(byteArray);
 			return byteArray;
 		}
-	
+
 		// origin: https://csharp.hotexamples.com/examples/-/System.Security.Cryptography.HMACSHA512/ComputeHash/php-system.security.cryptography.hmacsha512-computehash-method-examples.html
 		public static void GetPasswordHash(string password, out byte[] passwordSalt, out byte[] passwordHash) {
 			using (var hmac = new System.Security.Cryptography.HMACSHA512()) {
@@ -161,10 +161,10 @@ namespace Utils {
 
             var valueBytes = System.Text.Encoding.UTF8.GetBytes(key);
             var keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
-            
+
             var alg = new System.Security.Cryptography.HMACSHA512(keyBytes);
             var hash = alg.ComputeHash(valueBytes);
-            
+
             var result = BinaryToHex(hash);
             return result;
         }

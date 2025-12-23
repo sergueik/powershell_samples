@@ -41,7 +41,7 @@ namespace Test {
 			Assert.AreEqual( 0x52, key[0]);
 
 			keyhex  = Convertor.ByteArrayToHexString(key);
-			
+
 			StringAssert.Contains("52F259DE2C1F91D73E74FA3CDEABB115C9307EE436F61193AAA595BFEDEF22EB", keyhex);
 			Console.Error.WriteLine("key(hex): " + keyhex);
 			iv = deriveBytes.GetBytes(16);

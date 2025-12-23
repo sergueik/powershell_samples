@@ -61,21 +61,15 @@ namespace Program {
 		}
 	
 		public static string Decrypt(String payloadString, String passwordString) {
-			var aes = new AES();
-			aes.Strong = strong;
-			aes.Debug = debug;
-			var decrypted = aes.Decrypt(payloadString, passwordString);        
-			Console.Error.WriteLine((debug) ? "decrypted: " + decrypted : decrypted);
-			return decrypted;
+			Helper.Debug = debug;
+			Helper.Strong = strong;
+			return Helper.Decrypt(payloadString, passwordString);
 		}
 
 		public static string Encrypt(String payloadString, String passwordString, String saltString) {
-			var aes = new AES();
-			aes.Strong = strong;
-			aes.Debug = debug;
-			var encrypted = aes.Encrypt(payloadString, passwordString, saltString);
-			Console.Error.WriteLine((debug) ? "encrypted: " + encrypted : encrypted);
-			return encrypted;
+			Helper.Debug = debug;
+			Helper.Strong = strong;
+			return Helper.Encrypt(payloadString, passwordString,saltString);
 		}
 	}
 }

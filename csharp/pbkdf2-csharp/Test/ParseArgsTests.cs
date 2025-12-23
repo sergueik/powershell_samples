@@ -10,7 +10,7 @@ namespace Test {
 	public class ParseArgsTests {
 		private StringBuilder verificationErrors = new StringBuilder();
 		private ParseArgs parseArgs;
-		
+
 		private static readonly string url = "http://www.google.com?q=123";
 		private static readonly int number = 42;
 		private static readonly string commandLine = String.Format("-url:{0} -number:{1} -debug -arg_with_space=\"a test\" -arg_with_repeated_spaces=\"another test  with    space\"", url, number);
@@ -26,7 +26,7 @@ namespace Test {
 			Assert.AreEqual("", verificationErrors.ToString());
 		}
 
-		[Test] 
+		[Test]
 		public void test1() {
 			String result = parseArgs.GetMacro("url");
 			StringAssert.Contains(url, result);

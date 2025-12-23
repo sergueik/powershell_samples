@@ -25,7 +25,7 @@ namespace Test {
 			Assert.AreEqual("", verificationErrors.ToString());
 		}
 
-		[Test] 
+		[Test]
 		public void test1() {
 			byte[] result = Convertor.HexStringToByteArray(hexStr);
 			Assert.IsNotNull(result);
@@ -48,7 +48,7 @@ namespace Test {
 			Assert.AreEqual( 16, result.Length);
 			StringAssert.AreEqualIgnoringCase("6162636465666768", result);
 		}
-		
+
 		[Test]
 		public void test4() {
 			String result;
@@ -61,7 +61,7 @@ namespace Test {
 			Assert.AreEqual( 12, result.Length);
 			StringAssert.AreEqualIgnoringCase("430431432433", result);
 		}
-		
+
 				[Test]
 		public void test5() {
 			var result1 = Convertor.ByteArrayToString(bytes);
