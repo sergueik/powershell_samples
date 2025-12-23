@@ -102,6 +102,8 @@
       <HintPath>..\packages\system.buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\Test\packages.config"/>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
