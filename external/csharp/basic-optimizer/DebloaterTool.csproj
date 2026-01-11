@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5B49C12B-3DDD-441F-9853-56795E50BC9B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DebloaterTool</RootNamespace>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AssemblyName>DebloaterTool.debug</AssemblyName>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AssemblyName>DebloaterTool</AssemblyName>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>.\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Forms\EULAForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EULAForm.Designer.cs">
+      <DependentUpon>EULAForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WaitingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WaitingForm.Designer.cs">
+      <DependentUpon>WaitingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WebBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WebBrowser.Designer.cs">
+      <DependentUpon>WebBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Internet.cs" />
+    <Compile Include="Helpers\Tweakers\TweakRegistry.cs" />
+    <Compile Include="Helpers\Tweakers\TweakModule.cs" />
+    <Compile Include="Helpers\Updater.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Settings\Global.cs" />
+    <Compile Include="Helpers\Admins.cs" />
+    <Compile Include="Modules\BootLogo.cs" />
+    <Compile Include="Modules\Compression.cs" />
+    <Compile Include="Helpers\Display.cs" />
+    <Compile Include="Helpers\Runner.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Helpers\Regedit.cs" />
+    <Compile Include="Settings\ModuleList.cs" />
+    <Compile Include="Helpers\Wallpaper.cs" />
+    <Compile Include="Helpers\Zip.cs" />
+    <Compile Include="Modules\DebloaterTools.cs" />
+    <Compile Include="Modules\DataCollection.cs" />
+    <Compile Include="Modules\SoftwareThemes.cs" />
+    <Compile Include="Modules\RemoveUnnecessary.cs" />
+    <Compile Include="Modules\SecurityPerformance.cs" />
+    <Compile Include="Modules\BrowserDownloader.cs" />
+    <Compile Include="Modules\CustomWallpapers.cs" />
+    <Compile Include="Modules\WinCustomization.cs" />
+    <Compile Include="Modules\WinComponent.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ModuleList.txt" />
+    <Content Include="Icon.ico" />
+    <Content Include="Settings\Resources\EULA.html" />
+    <Content Include="Settings\Resources\SETTINGS.html" />
+    <Content Include="Settings\Resources\welcome.vbs" />
+  </ItemGroup>
+    <!--   error MSB3091:
+          Task failed because "AxImp.exe" was not found, or the correct
+ Microsoft Windows SDK is not installed. The task is looking for "AxImp.exe" in
+ the "bin" subdirectory beneath the location specified in the InstallationFolder
+          value of the registry key
+          HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v8.0A\WinSDK-NetFx40Tools-x86
+  -->
+
+  <!-- Windows Script Host Object Model, specifically the IWshRuntimeLibrary COM reference -->
+  <ItemGroup>
+	  <!--
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+	  </COMReference> -->
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="README.md" />
+    <None Include="Settings\Resources\christitus.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\EULAForm.resx">
+      <DependentUpon>EULAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WaitingForm.resx">
+      <DependentUpon>WaitingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WebBrowser.resx">
+      <DependentUpon>WebBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
