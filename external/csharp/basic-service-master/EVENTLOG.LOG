@@ -1,0 +1,34 @@
+2007-12-10: 10:26
+OutputFile: e:\My Documents\ad.sml
+2007-12-10: 10:26
+Output: 97 ServiceConfigurations
+2008-4-10: 12:03
+OutputBatch :C:\Documents and Settings\Administrator\桌面\ddd.bat
+2008-4-10: 12:10
+OutputFile: C:\Documents and Settings\Administrator\桌面\sss.sml
+2008-4-10: 12:10
+Output: 106 ServiceConfigurations
+2008-4-10: 12:25
+OutputFile: C:\Documents and Settings\Administrator\桌面\fff.sml
+2008-4-10: 12:25
+Output: 106 ServiceConfigurations
+2008-4-10: 12:27
+OutputFile: C:\Documents and Settings\Administrator\桌面\fff.sml
+2008-4-10: 12:27
+Output: 106 ServiceConfigurations
+2008-4-10: 12:33
+OutputFile: C:\Documents and Settings\Administrator\桌面\dt.sml
+2008-4-10: 12:33
+Output: 106 ServiceConfigurations
+2008-4-11: 6:54
+OutputFile: C:\Documents and Settings\Administrator\桌面\aa.sml
+2008-4-11: 6:54
+Output: 11 ServiceConfigurations
+2008-4-11: 6:57
+OutputFile: C:\Documents and Settings\Administrator\桌面\dddd.sml
+2008-4-11: 6:57
+Output: 11 ServiceConfigurations
+2008-4-18: 6:55
+OutputBatch :C:\Documents and Settings\Administrator\桌面\printer.bat
+2008-5-26: 16:20
+setStartType: wuauserv as 3

@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ServiceMaster.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="isSaveLog" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ConfigFileHead" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ServiceMaster</Value>
+    </Setting>
+    <Setting Name="DBfile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DB\ServiceInfo.mdb</Value>
+    </Setting>
+    <Setting Name="Log" Type="System.String" Scope="User">
+      <Value Profile="(Default)">EVENTLOG.LOG</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

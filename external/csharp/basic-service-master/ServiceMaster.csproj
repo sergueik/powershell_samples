@@ -1,0 +1,383 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D60F9005-B312-4157-90DF-E3365486E58C}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ServiceMaster</RootNamespace>
+    <AssemblyName>ServiceMaster</AssemblyName>
+    <ApplicationIcon>Resources\Toolicon.ico</ApplicationIcon>
+    <!--
+	    <ManifestCertificateThumbprint>3DED7854C10B27BCA77ED2CD4233DC73F9E5C8D4</ManifestCertificateThumbprint>
+    -->
+    <ManifestKeyFile>ServiceMaster_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <TargetZone>LocalIntranet</TargetZone>
+    <!--
+	     Unable to find manifest signing certificate in the certificate store. (MSB3323)-->
+    <!--
+	    <SignManifests>true</SignManifests>
+    -->
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <StartupObject>ServiceMaster.Program</StartupObject>
+    <PublishUrl>E:\My Documents\Visual Studio 2005\Projects\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationVersion>1.9.1332.%2a</ApplicationVersion>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	  <!--
+	  <Compile Include="ServiceChange.cs" />-->
+    <Compile Include="UIForms\AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Color16Dialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Color16Dialog.Designer.cs">
+      <DependentUpon>Color16Dialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DBControl.cs" />
+    <Compile Include="UIForms\Guides\GuideAVP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideAVP.Designer.cs">
+      <DependentUpon>GuideAVP.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideFinish.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideFinish.Designer.cs">
+      <DependentUpon>GuideFinish.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideFW.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideFW.Designer.cs">
+      <DependentUpon>GuideFW.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\Guideimap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\Guideimap.Designer.cs">
+      <DependentUpon>Guideimap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideCptBws.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideCptBws.Designer.cs">
+      <DependentUpon>GuideCptBws.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideLDM.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideLDM.Designer.cs">
+      <DependentUpon>GuideLDM.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideAutoUpd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideAutoUpd.Designer.cs">
+      <DependentUpon>GuideAutoUpd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideBase.Designer.cs">
+      <DependentUpon>GuideBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuidePt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuidePt.designer.cs">
+      <DependentUpon>GuidePt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideSQL.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideSQL.Designer.cs">
+      <DependentUpon>GuideSQL.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideTask.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideTask.Designer.cs">
+      <DependentUpon>GuideTask.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideTheme.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideTheme.Designer.cs">
+      <DependentUpon>GuideTheme.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideVM.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideVM.Designer.cs">
+      <DependentUpon>GuideVM.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideWel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideWel.Designer.cs">
+      <DependentUpon>GuideWel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Guides\GuideControl.cs" />
+    <Compile Include="UIForms\LogViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\LogViewer.Designer.cs">
+      <DependentUpon>LogViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\Option.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Option.Designer.cs">
+      <DependentUpon>Option.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PluginCheck.cs" />
+    <Compile Include="UIForms\PluginInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\PluginInfoForm.Designer.cs">
+      <DependentUpon>PluginInfoForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\ServiceBatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\ServiceBatch.Designer.cs">
+      <DependentUpon>ServiceBatch.cs</DependentUpon>
+    </Compile>
+    <!--
+    <Compile Include="ServiceControl.cs" /> -->
+    <Compile Include="UIForms\OutputSvcList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\OutputSvcList.Designer.cs">
+      <DependentUpon>OutputSvcList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\ServiceOptimizer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\ServiceOptimizer.designer.cs">
+      <DependentUpon>ServiceOptimizer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\SvcList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\SvcList.Designer.cs">
+      <DependentUpon>SvcList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\MainFrom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\MainFrom.Designer.cs">
+      <DependentUpon>MainFrom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="UIForms\AboutBox.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Color16Dialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Color16Dialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideAVP.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideAVP.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideFinish.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideFinish.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideFW.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideFW.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\Guideimap.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Guideimap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuidePt.resx">
+      <DependentUpon>GuidePt.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideSQL.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideSQL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideTask.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideTask.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideTheme.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideTheme.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideVM.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideVM.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideWel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideWel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideCptBws.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideCptBws.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideLDM.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideLDM.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideAutoUpd.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideAutoUpd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Guides\GuideBase.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GuideBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\LogViewer.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LogViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Option.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Option.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\PluginInfoForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PluginInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\ServiceBatch.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ServiceBatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\OutputSvcList.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>OutputSvcList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\MainFrom.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MainFrom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\ServiceOptimizer.resx">
+      <DependentUpon>ServiceOptimizer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\SvcList.resx">
+      <DependentUpon>SvcList.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Welcome.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Welcome.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="UIForms\Welcome.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UIForms\Welcome.Designer.cs">
+      <DependentUpon>Welcome.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinAPI.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BaseApplicationManifest Include="Properties\app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EVENTLOG.LOG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\wall0627l.JPG" />
+    <Content Include="Resources\Toolicon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PluginClassLibrary\PluginSupport.csproj">
+      <Project>{2C63EC00-F85E-4B9E-A5DA-EBB26690684E}</Project>
+      <Name>PluginSupport</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Plugin\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
