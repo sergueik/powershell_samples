@@ -60,15 +60,33 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <!--
   <ItemGroup>
     <EmbeddedResource Include="Resources\log4net.dll" />
   </ItemGroup>
+  -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
   <Target Name="AfterBuild">
   </Target>
   -->
+ <Target Name="BeforeBuild">
+
+  <PropertyGroup>
+    <Log4NetVersion>3.2.0</Log4NetVersion>
+    <Script>$(MSBuildProjectDirectory)\prepare-resource.ps1</Script>
+    <OutDir>$(IntermediateOutputPath)</OutDir>
+  </PropertyGroup>
+
+  <Exec Command='powershell -NoProfile -ExecutionPolicy Bypass -File "$(Script)" -Version "$(Log4NetVersion)" -OutDir "$(OutDir)"' />
+
+  <ItemGroup>
+    <EmbeddedResource Include="$(OutDir)embedded\log4net.dll">
+      <LogicalName>log4net.dll</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Target>
+
 </Project>
