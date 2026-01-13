@@ -21,6 +21,7 @@ unzip -l ~/Downloads/PSTools.zip | grep -i psexec
 unzip -x ~/Downloads/PSTools.zip PsExec.exe PsExec64.exe
 ```
 ### See Also
+
    * `psexec` [documentation](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec)
    * `PsExec.exe` [command line options](https://ss64.com/nt/psexec.html)
    * https://github.com/tylerdotrar/RGBwiki/blob/main/vault/Red%20Cell/04.%20Privilege%20Escalation/Windows/PsExec.md
@@ -32,6 +33,9 @@ unzip -x ~/Downloads/PSTools.zip PsExec.exe PsExec64.exe
    * [forge-postinstall.ps1](https://github.com/imribiy/Forged-NTLite/blob/main/Forge-PostInstall.ps1) - stripped-down, aggressively optimized Windows 11 24H2 build for dedicated gaming and special-purpose PCs. This project removes bloat, disables telemetry, maximizes system performance, and applies privacy-focused settings. It is intended for isolated, non-production systems where security trade-offs are acceptable
    * [useful group policy dwords for Windows 10 & 11](https://github.com/imribiy/group-policy-library)
    * https://github.com/dkmilan/service-master
+   * https://github.com/sergueik/powershell_samples/tree/master/external/csharp/basic-proxy-resource-dependency 
 
+---
+### Author
 
 
