@@ -46,7 +46,61 @@ namespace ASCII_EBCDIC_Converter
 				fileStream.Close();
 			}
 		}
+/*
+		public static string ConvertEbcdicToAscii(byte[] ebcdicBytes, string codepage) {
+			// Get the EBCDIC encoding object for a specific code page (e.g., IBM037)
+			Encoding ebcdicEncoding = Encoding.GetEncoding(codePage);
 
+			// Convert the EBCDIC bytes to a Unicode string
+			string unicodeString = ebcdicEncoding.GetString(ebcdicBytes);
+
+			// Convert the Unicode string to an ASCII byte array
+			byte[] asciiBytes = Encoding.ASCII.GetBytes(unicodeString);
+
+			// Convert the ASCII byte array back to an ASCII string
+			return Encoding.ASCII.GetString(asciiBytes);
+		}
+		*/
+		public static byte[]  ConvertEbcdicToAscii(byte[] ebcdicBytes, string codePage) {
+			// Get the EBCDIC encoding object for a specific code page (e.g., IBM037)
+			Encoding ebcdicEncoding = Encoding.GetEncoding(codePage);
+
+			// Convert the EBCDIC bytes to a Unicode string
+			string unicodeString = ebcdicEncoding.GetString(ebcdicBytes);
+
+			// Convert the Unicode string to an ASCII byte array
+			byte[] asciiBytes = Encoding.ASCII.GetBytes(unicodeString);
+	
+			// Convert the ASCII byte array back to an ASCII string
+			return asciiBytes;
+			// return Encoding.ASCII.GetString(asciiBytes);
+		}
+
+		public static byte[] ConvertAsciiToEbcdic(string asciiString, string codePage)
+		{
+			// Get the ASCII encoding object and the target EBCDIC encoding object
+			Encoding asciiEncoding = Encoding.ASCII;
+			Encoding ebcdicEncoding = Encoding.GetEncoding(codePage);
+
+			// Convert the ASCII string to a byte array using the Encoding.Convert method
+			byte[] asciiBytes = asciiEncoding.GetBytes(asciiString);
+			byte[] ebcdicBytes = Encoding.Convert(asciiEncoding, ebcdicEncoding, asciiBytes);
+
+			return ebcdicBytes;
+		}
+
+		public static byte[] ConvertAsciiToEbcdic(byte[] asciiBytes, string codePage)
+		{
+			// Get the ASCII encoding object and the target EBCDIC encoding object
+			Encoding asciiEncoding = Encoding.ASCII;
+			Encoding ebcdicEncoding = Encoding.GetEncoding(codePage);
+
+			// Convert the ASCII string to a byte array using the Encoding.Convert method
+			byte[] ebcdicBytes = Encoding.Convert(asciiEncoding, ebcdicEncoding, asciiBytes);
+
+			return ebcdicBytes;
+		}
+		/*
 		#region public static byte[] ConvertAsciiToEbcdic(byte[] asciiData)
 
 		public static byte[] ConvertAsciiToEbcdic(byte[] asciiData, string codepage)
@@ -70,5 +124,6 @@ namespace ASCII_EBCDIC_Converter
 		}
 
 		#endregion
+		*/
 	}
 }

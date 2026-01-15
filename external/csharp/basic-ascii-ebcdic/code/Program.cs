@@ -1,59 +1,37 @@
-﻿using System;
-using System.Configuration;
-using ASCII_EBCDIC_Converter;
+using System;
+using System.Text;
 
-namespace ASCII_EBCIDIC_Converter
-{
-    internal class Program
-    {
-        private static void Main(string[] args)
-        {
-            Process();
-        }
+namespace ASCII_EBCIDIC_Converter {
+	internal class Program {
 
-        private static void Process()
-        {
-            #region banner
-            Console.WriteLine("\n=====================================================================");
-            Console.WriteLine("aec.exe - Simple ASCII / EBCDIC Convertor Util");
-            Console.WriteLine("Uses the application config file for values so make sure it's there.");
-            Console.WriteLine("Comments/Questions - adnan.masood@owasp.org");
-            Console.WriteLine("=====================================================================\n");
-            #endregion
+		public static string ConvertEbcdicToAscii(byte[] ebcdicBytes, int codePage) {
+			Encoding ebcdicEncoding = Encoding.GetEncoding(codePage);
+			string unicodeString = ebcdicEncoding.GetString(ebcdicBytes);
+			byte[] asciiBytes = Encoding.ASCII.GetBytes(unicodeString);
+			return Encoding.ASCII.GetString(asciiBytes);
+		}
 
-            try
-            {
-                string inFile;
-                string outFile;
-                string convertTo;
-                bool cRLF;
-                int bytesToSkipForCRLF;
-                string codePage;
+		public static byte[] ConvertAsciiToEbcdic(string asciiString, int codePage) {
+			Encoding asciiEncoding = Encoding.ASCII;
+			Encoding ebcdicEncoding = Encoding.GetEncoding(codePage);
+			byte[] asciiBytes = asciiEncoding.GetBytes(asciiString);
+			byte[] ebcdicBytes = Encoding.Convert(asciiEncoding, ebcdicEncoding, asciiBytes);
+			return ebcdicBytes;
+		}
 
-                GetConfigValues(out inFile, out outFile, out convertTo, out cRLF, out bytesToSkipForCRLF, out codePage);
-                Convertor.Convert(inFile, convertTo, outFile, cRLF, bytesToSkipForCRLF, codePage);
-                Console.WriteLine("\nOutput file written: " + outFile);
-                Console.WriteLine("\nAll Done. Bye now.");
+		public static void Main(string[] args) {
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("\nOops, something broke!");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("\n");
-                Environment.Exit(-1);
-            }
-        }
+			string originalAscii = "0123456789abcdefghijklmnopqrstuvwxyz";
+			int ibm037CodePage = 37; // Standard US EBCDIC code page
 
-        private static void GetConfigValues(out string inFile, out string outFile, out string convertTo, out bool cRLF,
-            out int bytesToSkipForCRLF, out string codePage)
-        {
-            inFile = ConfigurationManager.AppSettings["sourcefilename"];
-            outFile = ConfigurationManager.AppSettings["outputfilename"];
-            convertTo = ConfigurationManager.AppSettings["convertto"];
-            cRLF = bool.Parse(ConfigurationManager.AppSettings["crlf"]);
-            bytesToSkipForCRLF = int.Parse(ConfigurationManager.AppSettings["skipbytesforcrlf"]);
-            codePage = ConfigurationManager.AppSettings["codepage"];
-        }
-    }
+			byte[] ebcdicData = ConvertAsciiToEbcdic(originalAscii, ibm037CodePage);
+			// Console.WriteLine("EBCDIC bytes (hex): " + BitConverter.ToString(ebcdicData));
+			// https://learn.microsoft.com/en-us/dotnet/api/system.bitconverter?view=netframework-4.5
+			Console.WriteLine("EBCDIC bytes (hex): " + BitConverter.ToString(ebcdicData).Replace("-", string.Empty));
+
+			string convertedAscii = ConvertEbcdicToAscii(ebcdicData, ibm037CodePage);
+			Console.WriteLine(String.Format("Converted back to ASCII: {0}", convertedAscii));
+
+		}
+	}
 }

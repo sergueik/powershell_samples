@@ -106,10 +106,30 @@ $xml.Save( $name )
 
 ```
 #### Updated
+
+```sh
+.\aec.exe
+```
+```text
+EBCDIC bytes (hex): F0F1F2F3F4F5F6F7F8F9818283848586878889919293949596979899A2A3A4A5A6A7A8A9
+```
+
+![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/basic-ascii-ebcdic/screenshots/capture-online.png)
+
+```text
+Converted back to ASCII: 0123456789abcdefghijklmnopqrstuvwxyz
+```
 ### See Also
 
   * [ASCII EBCDIC translation tables](http://www.simotime.com/asc2ebc1.htm)
-  * EBCDIC [wiki](http://en.wikipedia.org/wiki/EBCDIC)
+  * [wiki](http://en.wikipedia.org/wiki/EBCDIC)
   * Online ASCII and EBCDIC bytes (in hex), and vice versa  [convertor](https://www.longpelaexpertise.com.au/toolsCode.php) and help recource
-  * nodeje [module](https://github.com/Voakie/ebcdic-ascii) for converting between EBCDIC and ASCII (ISO-8859-1)
-  * [ow to convert between ASCII and EBCDIC character code](https://mskb.pkisolutions.com/kb/216399)
+  * nodejs [module](https://github.com/Voakie/ebcdic-ascii) for converting between EBCDIC and ASCII (ISO-8859-1)
+  * [how to convert between ASCII and EBCDIC character code](https://mskb.pkisolutions.com/kb/216399) with explicit convesion table (VB.net)
+  * https://stackoverflow.com/questions/12490458/vb-net-c-ascii-to-ebcdic
+  * https://learn.microsoft.com/en-us/host-integration-server/core/convert2
+  * EBCDIC Converter [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=coderAllan.vscode-ebcdicconverter) and [source](https://github.com/CoderAllan/vscode-ebcdicconverter) (nodejs)
+
+### Author
+
+[Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)
