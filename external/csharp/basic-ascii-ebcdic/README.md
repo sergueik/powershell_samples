@@ -5,7 +5,15 @@
 
 ### Usage
 
+```cmd
+.\aec.exe -help
 ```
+```text
+Usage: aec -operation=[encode|decode] -data=<string> -inputfile=<filename> -outputfile=<filename>
+```
+
+
+```cmd
 .\aec.exe -data=12345 -operation=encode
 ```
 ```text
@@ -19,38 +27,29 @@ Converted back to ASCII: 12345
 ```
 
 ```cmd
-echo 12345>example.txt
+echo 1234567890abcdefghijklmnopqrstuvwxyz>example.txt
 ```
-```cmd
-.\aec.exe -inputfile=example.txt -operation=encode
-```
-```text
-EBCDIC bytes (hex): F1F2F3F4F50D25
-```
-```cmd
-echo 12345>example.txt
-```
-
-```cmd
 .\aec.exe -inputfile=example.txt -operation=encode -outputfile=result.txt
 ```
 ```text
-EBCDIC bytes (hex): F1F2F3F4F50D25
+EBCDIC bytes (hex): F1F2F3F4F5F6F7F8F9F0818283848586878889919293949596979899A2A3A4A5A6A7A8A90D25
 ```
 
 ```cmd
 type result.txt
 ```
 ```text
-%≥≤⌠⌡
+≥≤⌠⌡÷≈°∙≡üéâäàåçêëæÆôöòûùÿÖóúñÑªº¿⌐
 ```
+
+![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/basic-ascii-ebcdic/screenshots/capture-online.png)
+
 
 ```cmd
 .\aec.exe -inputfile=result.txt -operation=decode
 ```
 ```text
-Converted back to ASCII: 12345
-
+Converted back to ASCII: 1234567890abcdefghijklmnopqrstuvwxyz
 ```
 #### Upstream Version
 
@@ -82,10 +81,12 @@ cd '.\bin\Debug'
 $name = 'aec.exe.config'
 $xml = [xml](get-content -path $name )
 $xml.Normalize()
-$xml.configuration.appSettings.add | where-object { $_.key -eq 'crlf'}  | foreach-object { $_.value = 'false' }
-$xml.configuration.appSettings.add | where-object { $_.key -eq 'convertto'}  | foreach-object { $_.value = 'ebcdic' }
-$xml.configuration.appSettings.add | where-object { $_.key -eq 'sourcefilename'}  | foreach-object { $_.value = 'example.txt' }
-$xml.configuration.appSettings.add | where-object { $_.key -eq 'outputfilename'}  | foreach-object { $_.value = 'output.txt' }
+$xml.configuration.appSettings.add | where-object { $_.key -eq 'crlf'} | foreach-object { $_.value = 'false' }
+$xml.SelectSingleNode(('/configuration/appSettings/add[@key="{0}"]' -f 'crlf')).value     = 'false'
+
+$xml.configuration.appSettings.add | where-object { $_.key -eq 'convertto'} | foreach-object { $_.value = 'ebcdic' }
+$xml.configuration.appSettings.add | where-object { $_.key -eq 'sourcefilename'} | foreach-object { $_.value = 'example.txt' }	
+$xml.configuration.appSettings.add | where-object { $_.key -eq 'outputfilename'} | foreach-object { $_.value = 'output.txt' }
 # display
 $xml.configuration.appSettings.add
 # Note: saves into wrong directory
@@ -118,56 +119,7 @@ run
 bin\Debug\aec.exe
 ```
 
-this will print
-```
-=====================================================================
-aec.exe - Simple ASCII / EBCDIC Convertor Util
-Uses the application config file for values so make sure it's there.
-Comments/Questions - adnan.masood@owasp.org
-=====================================================================
 
-
-Output file written: output.txt
-
-All Done. Bye now.
-```
-but the file will not be written:
-```cmd
-dir output.txt
-```
-```text
-Mode                 LastWriteTime         Length Name
-----                 -------------         ------ ----
--a----         1/14/2026   6:04 PM              0 output.txt
-```
-```cmd
-copy .\aec.exe.config ..\..\App.config
-```
-that is because `convertTo` attribute name is controversial, it means actually `inputType`. Update application config file once again:
-```powershell
-$xml = [xml](get-content -path $name )
-$xml.Normalize()
-$xml.configuration.appSettings.add | where-object { $_.key -eq 'convertto'}  | foreach-object { $_.value = 'ascii' }
-# display
-$xml.configuration.appSettings.add
-# Note: saves into wrong directory
-$xml.Save( $name )
-
-```
-#### Updated
-
-```sh
-.\aec.exe
-```
-```text
-EBCDIC bytes (hex): F0F1F2F3F4F5F6F7F8F9818283848586878889919293949596979899A2A3A4A5A6A7A8A9
-```
-
-![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/basic-ascii-ebcdic/screenshots/capture-online.png)
-
-```text
-Converted back to ASCII: 0123456789abcdefghijklmnopqrstuvwxyz
-```
 ### See Also
 
   * [ASCII EBCDIC translation tables](http://www.simotime.com/asc2ebc1.htm)

@@ -44,6 +44,11 @@ namespace Program {
 				// https://stackoverflow.com/questions/12977924/how-do-i-properly-exit-a-c-sharp-application 
 				// Application.Exit();
 			}
+			if (parseArgs.GetMacro("help") != String.Empty) {
+				Console.Error.WriteLine(String.Format(
+					@"Usage: {0} -operation=[encode|decode] -data=<string> -inputfile=<filename> -outputfile=<filename>" , Assembly.GetExecutingAssembly().GetName().Name));
+				Environment.Exit(0);
+			}
 			if (parseArgs.GetMacro("data") != String.Empty)
 				data = parseArgs.GetMacro("data");
 
