@@ -52,21 +52,38 @@ namespace Program {
 
 			if (parseArgs.GetMacro("inputfile") != String.Empty){
 				inputfile = parseArgs.GetMacro("inputfile");
-				bytes = File.ReadAllBytes(inputfile);
 			}
 
 			if (operation.Equals("encode")) {
-			
-				ebcdicBytes = ConvertAsciiToEbcdic(Encoding.ASCII.GetBytes(data), codePage);
+				if (inputfile!= null )
+					bytes = File.ReadAllBytes(inputfile);
+				else 
+					bytes = Encoding.ASCII.GetBytes(data);
+				ebcdicBytes = ConvertAsciiToEbcdic(bytes, codePage);
 				// https://learn.microsoft.com/en-us/dotnet/api/system.bitconverter?view=netframework-4.5
 				// Console.WriteLine("EBCDIC bytes (hex): " + BitConverter.ToString(ebcdicBytes).Replace("-", string.Empty));
 				Console.WriteLine("EBCDIC bytes (hex): " + Utils.Convertor.ByteArrayToHexString(ebcdicBytes));
+				if (outputfile!= null ) {
+					using (var fileStream = new FileStream(outputfile, FileMode.Create, FileAccess.Write)) {
+						fileStream.Write(ebcdicBytes, 0, ebcdicBytes.Length);
+						fileStream.Close();
+					}
+				}
 			}
 			
 			if (operation.Equals("decode")) {
-				ebcdicBytes = Utils.Convertor.HexStringToByteArray(data);
-				asciiBytes = ConvertEbcdicToAscii(ebcdicBytes, codePage);
+				if (inputfile!= null )
+					bytes = File.ReadAllBytes(inputfile);
+				else 
+					bytes = Utils.Convertor.HexStringToByteArray(data);
+				asciiBytes = ConvertEbcdicToAscii(bytes, codePage);
 				Console.WriteLine(String.Format("Converted back to ASCII: {0}", Encoding.ASCII.GetString(asciiBytes)));
+				if (outputfile!= null ) {
+					using (var fileStream = new FileStream(outputfile, FileMode.Create, FileAccess.Write)) {
+						fileStream.Write(asciiBytes, 0, asciiBytes.Length);
+						fileStream.Close();
+					}
+				}
 			}
 		}
 	}

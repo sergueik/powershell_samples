@@ -17,6 +17,41 @@ EBCDIC bytes (hex): F1F2F3F4F5
 ```text
 Converted back to ASCII: 12345
 ```
+
+```cmd
+echo 12345>example.txt
+```
+```cmd
+.\aec.exe -inputfile=example.txt -operation=encode
+```
+```text
+EBCDIC bytes (hex): F1F2F3F4F50D25
+```
+```cmd
+echo 12345>example.txt
+```
+
+```cmd
+.\aec.exe -inputfile=example.txt -operation=encode -outputfile=result.txt
+```
+```text
+EBCDIC bytes (hex): F1F2F3F4F50D25
+```
+
+```cmd
+type result.txt
+```
+```text
+%≥≤⌠⌡
+```
+
+```cmd
+.\aec.exe -inputfile=result.txt -operation=decode
+```
+```text
+Converted back to ASCII: 12345
+
+```
 #### Upstream Version
 
 

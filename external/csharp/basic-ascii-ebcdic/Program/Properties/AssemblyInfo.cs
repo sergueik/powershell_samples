@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("ASCII-EBCIDIC-Converter")]
+[assembly: AssemblyTitle("converter")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ASCII-EBCIDIC-Converter")]
-[assembly: AssemblyCopyright("Copyright ©  Adnan Masood 2014")]
+[assembly: AssemblyProduct("converter")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
-[assembly: Guid("380d1a0e-5ae9-4992-b8ff-b25db91a4812")]
+[assembly: Guid("50fdb0f5-2ec3-4ec9-a769-89820bdb63fe")]
 
 // Version information for an assembly consists of the following four values:
 //
