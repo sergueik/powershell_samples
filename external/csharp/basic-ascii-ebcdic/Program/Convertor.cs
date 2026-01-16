@@ -2,10 +2,8 @@
 using System.IO;
 using System.Text;
 
-namespace ASCII_EBCDIC_Converter
-{
-	internal class Convertor
-	{
+namespace Program {
+	internal class Convertor {
 		public static void Convert(string inFile, string inputType, string outFile, bool crlf, int crlfLength,
 			string codepage)
 		{

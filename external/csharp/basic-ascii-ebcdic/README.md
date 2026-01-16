@@ -1,10 +1,24 @@
 ### Info
 
-[ASCII-EBCDIC-Converter](https://github.com/adnanmasood/ASCII-EBCDIC-Converter)
-console tool
+
+[ASCII-EBCDIC-Converter](https://github.com/adnanmasood/ASCII-EBCDIC-Converter) console tool
+
 ### Usage
 
-#### Upsream Version
+```
+.\aec.exe -data=12345 -operation=encode
+```
+```text
+EBCDIC bytes (hex): F1F2F3F4F5
+```
+```sh
+.\aec.exe -data=F1F2F3F4F5 -operation=decode
+```
+```text
+Converted back to ASCII: 12345
+```
+#### Upstream Version
+
 
 update `aec.exe.config` XML:
 ```xml
