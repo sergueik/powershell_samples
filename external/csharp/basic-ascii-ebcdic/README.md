@@ -114,6 +114,19 @@ this will print
 ```text
 0123456789abcdefghijklmnopqrstuvwxyz
 ```
+
+### Building in IDE less Environment
+```cmd
+path=%path%;c:\Windows\Microsoft.NET\Framework\v4.0.30319
+```
+```cmd
+msbuild.exe basic-ascii-ebcdic.sln /t:clean,build
+```
+```text
+Done Building Project "Utils\Utils.csproj" (default targets).
+Done Building Project "Program.csproj" (default targets).
+Done Building Project "basic-ascii-ebcdic.sln" (clean;build target(s)).
+```
 run
 ```
 bin\Debug\aec.exe
