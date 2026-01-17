@@ -5,6 +5,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
 using System.Collections.Generic;
+/**
+ * Copyright 2006,2024 Serguei Kouzmine
+ */
+
 namespace Utils {
 	public class ParseArgs {
 

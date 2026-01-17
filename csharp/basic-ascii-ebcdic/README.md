@@ -1,7 +1,6 @@
 ### Info
 
-
-[ASCII-EBCDIC-Converter](https://github.com/adnanmasood/ASCII-EBCDIC-Converter) console tool
+console tool to convert EBCDIC files to ASCII and vice versa
 
 ### Usage
 
@@ -42,7 +41,7 @@ type result.txt
 ≥≤⌠⌡÷≈°∙≡üéâäàåçêëæÆôöòûùÿÖóúñÑªº¿⌐
 ```
 
-![app1](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/basic-ascii-ebcdic/screenshots/capture-online.png)
+![app1](https://github.com/sergueik/powershell_samples/blob/master/csharp/basic-ascii-ebcdic/screenshots/capture-online.png)
 
 
 ```cmd
@@ -139,6 +138,7 @@ bin\Debug\aec.exe
   * [wiki](http://en.wikipedia.org/wiki/EBCDIC)
   * Online ASCII and EBCDIC bytes (in hex), and vice versa  [convertor](https://www.longpelaexpertise.com.au/toolsCode.php) and help recource
   * nodejs [module](https://github.com/Voakie/ebcdic-ascii) for converting between EBCDIC and ASCII (ISO-8859-1)
+  * [ASCII-EBCDIC-Converter](https://github.com/adnanmasood/ASCII-EBCDIC-Converter) console tool
   * [how to convert between ASCII and EBCDIC character code](https://mskb.pkisolutions.com/kb/216399) with explicit convesion table (VB.net)
   * https://stackoverflow.com/questions/12490458/vb-net-c-ascii-to-ebcdic
   * https://learn.microsoft.com/en-us/host-integration-server/core/convert2

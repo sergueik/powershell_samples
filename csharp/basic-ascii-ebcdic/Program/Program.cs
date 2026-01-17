@@ -4,6 +4,10 @@ using System.Reflection;
 using System.IO;
 using Utils;
 
+/**
+ * Copyright 2026 Serguei Kouzmine
+ */
+
 namespace Program {
 	internal class Program {
 

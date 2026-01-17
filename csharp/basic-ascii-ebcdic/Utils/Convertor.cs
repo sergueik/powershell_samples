@@ -2,6 +2,10 @@ using System;
 using System.IO;
 using System.Text;
 
+/**
+ * Copyright 2024 Serguei Kouzmine
+ */
+
 namespace Utils {
 	public class Convertor {
 
