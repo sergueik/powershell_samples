@@ -64,10 +64,16 @@ namespace RealTimeEventLogReader {
 				// 4. Set lastReadTime to Date.Now
 				_lastReadTime = DateTime.UtcNow;
 
+				// https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.eventing.reader.eventlogrecord?view=netframework-4.5https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.eventing.reader.eventlogrecord?view=netframework-4.5
 				for (EventRecord eventdetail = logReader.ReadEvent(); eventdetail != null; eventdetail = logReader.ReadEvent()) {
 					byte[] bytes = null;
 					if (eventdetail.Properties.Count >= 2) {
-						bytes = (byte[])eventdetail.Properties[eventdetail.Properties.Count - 1].Value;
+						try {
+							bytes = (byte[])eventdetail.Properties[eventdetail.Properties.Count - 1].Value;
+						}catch (InvalidCastException e) {
+							// TODO: handle
+							// System.InvalidCastException: Unable to cast object of type 'System.UInt64' to type 'System.Byte[]'.
+						}
 					}
 					EventLogRecord record = new EventLogRecord(eventdetail);
 
