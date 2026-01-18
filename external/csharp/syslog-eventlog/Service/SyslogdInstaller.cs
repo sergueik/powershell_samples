@@ -76,6 +76,9 @@ namespace Syslogd
 		{
 			try
 			{
+				// INetFwProfile
+				// 58FBCF7C-E7A9-467C-80B3-FC65E8FCCA08 
+				// will only compile on environment where Windows Platform SDK is installed
 				Type NetFwMgrType = Type.GetTypeFromProgID("HNetCfg.FwMgr", false);
 				INetFwMgr mgr = (INetFwMgr)Activator.CreateInstance(NetFwMgrType);
 
