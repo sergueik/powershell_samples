@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RestoreDrive</name>
+    </assembly>
+    <members>
+        <member name="M:RestoreDrive.RestoreDrive.Main">
+            <summary>
+            ////////////////////////////////////////////////////////////////////
+            Main() is simple:                                                ///
+            o Set up our custom event log                                    ///
+            o Check to see if we need to restore the drive letter            ///
+            o Execute the restore process, if necessary                      ///
+            o Finish recording the event                                     ///
+            ////////////////////////////////////////////////////////////////////
+            </summary>
+        </member>
+        <member name="M:RestoreDrive.RestoreDrive.RestoreDriveInit">
+            <summary>
+            ////////////////////////////////////////////////////////////////////
+            This method processes the command line arguments and then        ///
+            checks to see if the drive letter is still assigned.             ///                       
+                                                                             ///
+            There are three arguments:                                       ///
+            o The app name (which is ignored)                                ///
+            o The drive letter to be restored                                ///
+            o The volume label the drive letter is assigned to               ///
+            ////////////////////////////////////////////////////////////////////
+            </summary>
+            <returns>boolean</returns>
+        </member>
+    </members>
+</doc>
