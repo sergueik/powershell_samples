@@ -771,8 +771,11 @@ $product.save($filepath)
   * [history](https://en.wikipedia.org/wiki/Windows_Installer)
   * __Wix v3__ `EventSource `Element (Util Extension) [documentation](https://wixtoolset.org/docs/v3/xsd/util/eventsource/)   
   * https://stackoverflow.com/questions/9426910/what-is-the-xpath-expression-to-select-a-processing-instruction
+  * [EventLog and resource-only DLL orchestration](https://www.codeproject.com/articles/EventLog-and-resource-only-DLL-orchestration) NOTE: source no longer available, some code is explained inline. Links in the article are no longer avaiable too...
+  * tutorial [Using MC.exe, message resources and the NT event log in your own projects](https://www.codeproject.com/articles/Using-MC-exe-message-resources-and-the-NT-event-lo) - NOTE, source in `cpp`
+  * logger in C# - An easy way for monitoring .NET applications [codeproject article](https://www.codeproject.com/articles/Logger-in-C-An-easy-way-for-monitoring-NET-applica#comments-section) NOTE: source no longer available, some code is explained inline
 
-
+---
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 
