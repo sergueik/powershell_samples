@@ -54,10 +54,10 @@ Affected parameters are:
    password = ********
 ```
 but the service remains assigned to Local System account
-```text
+```powershell
 get-service -name 'WindowsService.NET'|select-object -property *
-
-
+```
+```text
 Name                : WindowsService.NET
 RequiredServices    : {}
 CanPauseAndContinue : False
@@ -74,30 +74,31 @@ ServiceType         : Win32OwnProcess
 Site                :
 Container           :
 ```
-```
+```powershell
 $servicename = 'WindowsService.NET'
 get-wmiobject win32_service -filter "name='$($servicename)'" | format-list *
 
 get-wmiobject win32_service -filter "name='$($servicename)'" |select-object -property startname
-
+```
+```text
 startname
 ---------
 LocalSystem
 ```
 - see [also](https://devblogs.microsoft.com/scripting/the-scripting-wife-uses-powershell-to-find-service-accounts/)
 
-```
+```powershell
 get-itemproperty -name 'objectname' -path "HKLM:\System\CurrentControlSet\Services\${ServiceName}"
-this will show the user
-
 ```
-to set password?
-- use
+this will show the user.
+
+
+to set password, use
 ```powershell
 $domain = $env:USERDOMAIN
 $username = $env:USERNAME	
 $user = "${domain}\${username}"
-$credential = Get-Credential -username $user  -message  ('Enter password for {0}, please' -f $username   )
+$credential = get-credential -username $user -message ('Enter password for {0}, please' -f $username )
 set-service -name $servicename -Credential $credential
 ```
 NOTE:  according to documentation this parameter is supported by Powershell [7.1](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/set-service?view=powershell-7.1)
@@ -105,7 +106,7 @@ but not [5.1](https://docs.microsoft.com/en-us/powershell/module/microsoft.power
 
 in case of success the following will be logged  (among other things):
 
-```cmd
+```text
 Installing service WindowsService.NET...
 Service WindowsService.NET has been successfully installed.
 Creating EventLog source WindowsService.NET in log Application...
@@ -132,7 +133,7 @@ confirm
 sc.exe query WindowsService.NET
 ```
 
-will print
+this will print
 ```text
 SERVICE_NAME: WindowsService.NET
         TYPE               : 10  WIN32_OWN_PROCESS
@@ -145,7 +146,7 @@ SERVICE_NAME: WindowsService.NET
 
 ```
 
-stop
+stop the serive
 ```cmd
 sc.exe start WindowsService.NET
 ```
@@ -170,7 +171,8 @@ cd cert:
 cd currentuser\my
 new-selfsignedCertificate -subject "E=serguei,CN=WellsFargo,CN=wellsfargo" -textExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3") -keyalgorithm RSA -keylength 2048 -friendlyname "Borg Key"  -notAfter 01-01-2022
 ```
-(update the subject and expiration date as neded)
+update the subject and set the certificate expiration date as neieded
+
 this will lead to creation of the file:
 
 ```powershell
@@ -179,7 +181,6 @@ PSParentPath: Microsoft.PowerShell.Security\Certificate::CurrentUser\my
 Thumbprint                                Subject
 ----------                                -------
 AC951DCD45903B3F000B000BDD811CE0CFC70563  E=serguei, CN=WellsFargo, CN=wells...
-
 ```
 * navigate to the `SystemCertificates` directory to cofirm
 ```cmd
@@ -230,7 +231,7 @@ $cert_path = 'AC951DCD45903B3F000B000BDD811CE0CFC70563'
 $cert = get-childitem -path $cert_path
 set-authenticodesignature -certificate:$cert -filepath C:\developer\sergueik\work_script.ps1
 ```
-* the script willl get modified with the signature:
+* the script willl get modified with the signature appended:
 
 ```powershell
 # SIG # Begin signature block
@@ -260,9 +261,7 @@ it will prompt for confirmation:
 ```txt
 
 Do you want to run software from this untrusted publisher?
-File C:\developer\sergueik\work_script.ps1 is published by E=serguei,
-CN=WellsFargo, CN=wellsfargo and is not trusted on your system. Only run
-scripts from trusted publishers.
+File C:\developer\sergueik\work_script.ps1 is published by E=serguei, CN=WellsFargo, CN=wellsfargo and is not trusted on your system. Only run scripts from trusted publishers.
 [V] Never run  [D] Do not run  [R] Run once  [A] Always run  [?] Help
 (default is "D"):
 ```
@@ -295,60 +294,7 @@ You may have to close `services.msc` which is displaying the service if reports 
 [12:15:14] - Average: 1,55172413793103
 [12:15:14] - procesing Timer1TimeStamp=25 Feb2022 12:15:14, Value=3
 [12:15:15] - procesing Timer1TimeStamp=25 Feb2022 12:15:15, Value=2
-[12:15:16] - procesing Timer1TimeStamp=25 Feb2022 12:15:16, Value=2
-[12:15:17] - procesing Timer1TimeStamp=25 Feb2022 12:15:17, Value=3
-[12:15:18] - procesing Timer1TimeStamp=25 Feb2022 12:15:18, Value=2
-[12:15:19] - procesing Timer1TimeStamp=25 Feb2022 12:15:19, Value=2
-[12:15:20] - procesing Timer1TimeStamp=25 Feb2022 12:15:20, Value=2
-[12:15:21] - procesing Timer1TimeStamp=25 Feb2022 12:15:21, Value=3
-[12:15:22] - procesing Timer1TimeStamp=25 Feb2022 12:15:22, Value=5
-[12:15:23] - procesing Timer1TimeStamp=25 Feb2022 12:15:23, Value=1
-[12:15:24] - procesing Timer1TimeStamp=25 Feb2022 12:15:24, Value=1
-[12:15:25] - procesing Timer1TimeStamp=25 Feb2022 12:15:25, Value=1
-[12:15:26] - procesing Timer1TimeStamp=25 Feb2022 12:15:26, Value=1
-[12:15:27] - procesing Timer1TimeStamp=25 Feb2022 12:15:27, Value=1
-[12:15:28] - procesing Timer1TimeStamp=25 Feb2022 12:15:28, Value=1
-[12:15:29] - procesing Timer1TimeStamp=25 Feb2022 12:15:29, Value=1
-[12:15:30] - procesing Timer1TimeStamp=25 Feb2022 12:15:30, Value=1
-[12:15:31] - procesing Timer1TimeStamp=25 Feb2022 12:15:31, Value=1
-[12:15:32] - procesing Timer1TimeStamp=25 Feb2022 12:15:32, Value=1
-[12:15:33] - procesing Timer1TimeStamp=25 Feb2022 12:15:33, Value=1
-[12:15:34] - procesing Timer1TimeStamp=25 Feb2022 12:15:34, Value=4
-[12:15:35] - procesing Timer1TimeStamp=25 Feb2022 12:15:35, Value=1
-[12:15:36] - procesing Timer1TimeStamp=25 Feb2022 12:15:36, Value=1
-[12:15:37] - procesing Timer1TimeStamp=25 Feb2022 12:15:37, Value=4
-[12:15:38] - procesing Timer1TimeStamp=25 Feb2022 12:15:38, Value=4
-[12:15:39] - procesing Timer1TimeStamp=25 Feb2022 12:15:39, Value=3
-[12:15:40] - procesing Timer1TimeStamp=25 Feb2022 12:15:40, Value=1
-[12:15:41] - procesing Timer1TimeStamp=25 Feb2022 12:15:41, Value=1
-[12:15:42] - procesing Timer1TimeStamp=25 Feb2022 12:15:42, Value=1
-[12:15:43] - procesing Timer1TimeStamp=25 Feb2022 12:15:43, Value=4
-[12:15:44] - procesing Timer1TimeStamp=25 Feb2022 12:15:44, Value=1
-[12:15:45] - procesing Timer1TimeStamp=25 Feb2022 12:15:45, Value=1
-[12:15:46] - procesing Timer1TimeStamp=25 Feb2022 12:15:46, Value=3
-[12:15:47] - procesing Timer1TimeStamp=25 Feb2022 12:15:47, Value=1
-[12:15:48] - procesing Timer1TimeStamp=25 Feb2022 12:15:48, Value=1
-[12:15:49] - procesing Timer1TimeStamp=25 Feb2022 12:15:49, Value=1
-[12:15:50] - procesing Timer1TimeStamp=25 Feb2022 12:15:50, Value=1
-[12:15:51] - procesing Timer1TimeStamp=25 Feb2022 12:15:51, Value=1
-[12:15:52] - procesing Timer1TimeStamp=25 Feb2022 12:15:52, Value=1
-[12:15:53] - procesing Timer1TimeStamp=25 Feb2022 12:15:53, Value=1
-[12:15:54] - procesing Timer1TimeStamp=25 Feb2022 12:15:54, Value=1
-[12:15:55] - procesing Timer1TimeStamp=25 Feb2022 12:15:55, Value=1
-[12:15:56] - procesing Timer1TimeStamp=25 Feb2022 12:15:56, Value=1
-[12:15:57] - procesing Timer1TimeStamp=25 Feb2022 12:15:57, Value=1
-[12:15:58] - procesing Timer1TimeStamp=25 Feb2022 12:15:58, Value=1
-[12:15:59] - procesing Timer1TimeStamp=25 Feb2022 12:15:59, Value=2
-[12:16:00] - procesing Timer1TimeStamp=25 Feb2022 12:16:00, Value=2
-[12:16:01] - procesing Timer1TimeStamp=25 Feb2022 12:16:01, Value=1
-[12:16:02] - procesing Timer1TimeStamp=25 Feb2022 12:16:02, Value=1
-[12:16:03] - procesing Timer1TimeStamp=25 Feb2022 12:16:03, Value=1
-[12:16:04] - procesing Timer1TimeStamp=25 Feb2022 12:16:04, Value=1
-[12:16:05] - procesing Timer1TimeStamp=25 Feb2022 12:16:05, Value=1
-[12:16:06] - procesing Timer1TimeStamp=25 Feb2022 12:16:06, Value=2
-[12:16:07] - procesing Timer1TimeStamp=25 Feb2022 12:16:07, Value=1
-[12:16:08] - procesing Timer1TimeStamp=25 Feb2022 12:16:08, Value=1
-[12:16:09] - procesing Timer1TimeStamp=25 Feb2022 12:16:09, Value=1
+..
 [12:16:10] - procesing Timer1TimeStamp=25 Feb2022 12:16:10, Value=1
 [12:16:11] - procesing Timer1TimeStamp=25 Feb2022 12:16:11, Value=2
 [12:16:12] - procesing Timer1TimeStamp=25 Feb2022 12:16:12, Value=2
@@ -357,24 +303,7 @@ You may have to close `services.msc` which is displaying the service if reports 
 [12:16:14] - procesing Timer1TimeStamp=25 Feb2022 12:16:14, Value=1
 [12:16:15] - procesing Timer1TimeStamp=25 Feb2022 12:16:15, Value=2
 [12:16:16] - procesing Timer1TimeStamp=25 Feb2022 12:16:16, Value=1
-[12:16:17] - procesing Timer1TimeStamp=25 Feb2022 12:16:17, Value=1
-[12:16:18] - procesing Timer1TimeStamp=25 Feb2022 12:16:18, Value=2
-[12:16:19] - procesing Timer1TimeStamp=25 Feb2022 12:16:19, Value=1
-[12:16:20] - procesing Timer1TimeStamp=25 Feb2022 12:16:20, Value=1
-[12:16:21] - procesing Timer1TimeStamp=25 Feb2022 12:16:21, Value=1
-[12:16:22] - procesing Timer1TimeStamp=25 Feb2022 12:16:22, Value=1
-[12:16:23] - procesing Timer1TimeStamp=25 Feb2022 12:16:23, Value=1
-[12:16:24] - procesing Timer1TimeStamp=25 Feb2022 12:16:24, Value=1
-[12:16:25] - procesing Timer1TimeStamp=25 Feb2022 12:16:25, Value=1
-[12:16:26] - procesing Timer1TimeStamp=25 Feb2022 12:16:26, Value=1
-[12:16:27] - procesing Timer1TimeStamp=25 Feb2022 12:16:27, Value=1
-[12:16:28] - procesing Timer1TimeStamp=25 Feb2022 12:16:28, Value=1
-[12:16:29] - procesing Timer1TimeStamp=25 Feb2022 12:16:29, Value=1
-[12:16:30] - procesing Timer1TimeStamp=25 Feb2022 12:16:30, Value=1
-[12:16:31] - procesing Timer1TimeStamp=25 Feb2022 12:16:31, Value=1
-[12:16:32] - procesing Timer1TimeStamp=25 Feb2022 12:16:32, Value=1
-[12:16:33] - procesing Timer1TimeStamp=25 Feb2022 12:16:33, Value=1
-[12:16:34] - procesing Timer1TimeStamp=25 Feb2022 12:16:34, Value=1
+...
 [12:16:35] - procesing Timer1TimeStamp=25 Feb2022 12:16:35, Value=1
 [12:16:36] - procesing Timer1TimeStamp=25 Feb2022 12:16:36, Value=1
 ```
@@ -568,7 +497,7 @@ For a comprehensive understanding and troubleshooting guidance, refer to Microso
   * [Multiple File Upload using AngularJS and ASP.net MVC](https://www.codeproject.com/articles/Multiple-File-Upload-using-AngularJS-and-ASP-net-M)
 
   * [Implementing HTTP File Upload with ASP.NET MVC](https://www.codeproject.com/articles/Implementing-HTTP-File-Upload-with-ASP-NET-MVC) (no source)
-
+  * __Turn Any App into a Native Windows Service__ [repository](https://github.com/aelassas/servy) and [codeproject article](https://www.codeproject.com/articles/servy-turn-any-app-into-a-native-windows-service-1)
 ---
 
 ### Author

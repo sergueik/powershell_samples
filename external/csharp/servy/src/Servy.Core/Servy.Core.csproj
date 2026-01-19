@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4D92FA0D-47BB-4658-91CD-774A25ADEB87}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Servy.Core</RootNamespace>
+    <AssemblyName>Servy.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Dapper.2.1.66\lib\net461\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=10.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.AsyncInterfaces.10.0.2\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Config\AppConfig.cs" />
+    <Compile Include="Data\IAppDbContext.cs" />
+    <Compile Include="Data\IDapperExecutor.cs" />
+    <Compile Include="Data\IServiceRepository.cs" />
+    <Compile Include="DTOs\EventLogEntry.cs" />
+    <Compile Include="DTOs\ServiceDto.cs" />
+    <Compile Include="DTOs\ServiceInfo.cs" />
+    <Compile Include="Enums\DateRotationType.cs" />
+    <Compile Include="Enums\EventLogLevel.cs" />
+    <Compile Include="Enums\ServiceStatus.cs" />
+    <Compile Include="EnvironmentVariables\EnvironmentVariable.cs" />
+    <Compile Include="EnvironmentVariables\EnvironmentVariableParser.cs" />
+    <Compile Include="EnvironmentVariables\EnvironmentVariablesValidator.cs" />
+    <Compile Include="Helpers\AppFoldersHelper.cs" />
+    <Compile Include="Helpers\ResourceItem.cs" />
+    <Compile Include="Helpers\HandleHelper.cs" />
+    <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\ISecurePassword.cs" />
+    <Compile Include="Helpers\IXmlServiceSerializer.cs" />
+    <Compile Include="Helpers\JsonServiceValidator.cs" />
+    <Compile Include="Helpers\ProcessHelper.cs" />
+    <Compile Include="Helpers\ProcessKiller.cs" />
+    <Compile Include="Helpers\ResourceHelper.cs" />
+    <Compile Include="Helpers\SecurePassword.cs" />
+    <Compile Include="Helpers\ServiceHelper.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Helpers\XmlServiceSerializer.cs" />
+    <Compile Include="Helpers\XmlServiceValidator.cs" />
+    <Compile Include="Enums\ProcessPriority.cs" />
+    <Compile Include="Logging\EventLogLogger.cs" />
+    <Compile Include="Logging\EventLogReader.cs" />
+    <Compile Include="Logging\IEventLogReader.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Mappers\ServiceMapper.cs" />
+    <Compile Include="Domain\Service.cs" />
+    <Compile Include="Native\LogonAsServiceGrant.cs" />
+    <Compile Include="Native\NativeMethods.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Enums\RecoveryAction.cs" />
+    <Compile Include="IO\RotatingStreamWriter.cs" />
+    <Compile Include="Security\IProtectedKeyProvider.cs" />
+    <Compile Include="Security\ProtectedKeyProvider.cs" />
+    <Compile Include="ServiceDependencies\ServiceDependenciesParser.cs" />
+    <Compile Include="ServiceDependencies\ServiceDependenciesValidator.cs" />
+    <Compile Include="Services\EventLogService.cs" />
+    <Compile Include="Services\IEventLogService.cs" />
+    <Compile Include="Services\IManagementObject.cs" />
+    <Compile Include="Services\IServiceControllerWrapper.cs" />
+    <Compile Include="Services\IServiceManager.cs" />
+    <Compile Include="Services\IWin32ErrorProvider.cs" />
+    <Compile Include="Services\IWindowsServiceApi.cs" />
+    <Compile Include="Services\IWindowsServiceProvider.cs" />
+    <Compile Include="Services\IWmiSearcher.cs" />
+    <Compile Include="Services\ManagementObjectWrapper.cs" />
+    <Compile Include="Services\ServiceControllerWrapper.cs" />
+    <Compile Include="Services\ServiceExporter.cs" />
+    <Compile Include="Services\ServiceManager.cs" />
+    <Compile Include="Enums\ServiceStartType.cs" />
+    <Compile Include="Services\Win32ErrorProvider.cs" />
+    <Compile Include="Services\WindowsServiceApi.cs" />
+    <Compile Include="Services\WindowsServiceInfo.cs" />
+    <Compile Include="Services\WindowsServiceProvider.cs" />
+    <Compile Include="Services\WmiSearcher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
