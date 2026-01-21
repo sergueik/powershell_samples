@@ -132,9 +132,9 @@ bin\Debug\aec.exe
 ```
 ### CopyBook Processing Challenges
 
-Why __EBCDIC __→ __ASCII__  Alone Is Insufficient for __COBOL__ Data Files.
+Why __EBCDIC__→ __ASCII__  Alone Is Insufficient for __COBOL__ Data Files.
 
-When converting mainframe COBOL data files to a readable format, it is incorrect to assume the data contains plain text that can be safely decoded using a simple __EBCDIC __→ __ASCII__ conversion.
+When converting mainframe COBOL data files to a readable format, it is incorrect to assume the data contains plain text that can be safely decoded using a simple __EBCDIC__→ __ASCII__ conversion.
 
 A __COBOL__ data file is typically a binary structured record, whose interpretation is entirely defined by its copybook. Example of real copybook data definition
 ```text
@@ -158,7 +158,7 @@ A __COBOL__ data file is typically a binary structured record, whose interpretat
 Only fields defined as DISPLAY (e.g. `PIC X`, `PIC 9`) contain __EBCDIC__-encoded text or zoned decimal data that can be meaningfully converted to __ASCII__.
 Many other fields — especially those defined as `COMP`,`COMP-3` (packed decimal),`COMP-5`but also binary counters, flags, or redefined areas are not text at all and must never be decoded as __ASCII__.
 
-Attempting a blanket __EBCDIC __→ __ASCII__ conversion across the entire record will inevitably produce:
+Attempting a blanket __EBCDIC__→ __ASCII__ conversion across the entire record will inevitably produce:
 
 unreadable characters, control symbols, apparently viewable as a  *corrupted* output:
 ```text
@@ -178,24 +178,30 @@ COMP / COMP-3 → binary / packed decimal decoding
 In practice, the copybook is not optional metadata — it is the schema of the file.
 Without it, the data cannot be interpreted correctly.
 
-This is precisely why tools such as [coboltojson](https://github.com/bmTas/CobolToJson), [cb2xml](https://github.com/bmTas/cb2xml), [JRecord]](https://github.com/bmTas/JRecord), [Cobrix](https://github.com/AbsaOSS/cobrix), and [LegStar](https://github.com/legsem/legstar-core2) exist: 
-they apply copybook semantics to transform raw mainframe datasets into meaningful, readable representations (JSON, XML, relational rows).
+This is precisely why tools such as 
+
+ * [coboltojson](https://github.com/bmTas/CobolToJson)
+ * [cb2xml](https://github.com/bmTas/cb2xml)
+ * [JRecord](https://github.com/bmTas/JRecord)
+ * [Cobrix](https://github.com/AbsaOSS/cobrix)
+ * [LegStar](https://github.com/legsem/legstar-core2) 
+
+
+exist: they apply copybook semantics to transform raw mainframe datasets into meaningful, readable representations (JSON, XML, relational rows).
 
 
 ### Packed Decimal (`COMP-3`) — Why It Matters
 
-When working with mainframe COBOL data files, many numeric fields are stored using
-packed decimal, also known as `COMP-3`.
+When working with mainframe COBOL data files, many numeric fields are stored using packed decimal, also known as `COMP-3`.
 
 These fields do NOT contain text and must NEVER be decoded using an
-__EBCDIC __→ __ASCII__ conversion.
+__EBCDIC__→ __ASCII__ conversion.
 
 ---
 
-### What Is COMP-3?
+### What Is `COMP-3`?
 
-COMP-3 is a binary numeric storage format that preserves exact decimal precision
-while using less space than character representations.
+`COMP-3` is a binary numeric storage format that preserves exact decimal precision while using less space than character representations.
 
 Key properties:
 
@@ -204,48 +210,46 @@ Key properties:
 - The last nibble stores the sign
 
 Sign nibbles:
-- C = positive
-- D = negative
-- F = unsigned (commonly treated as positive)
+- `C` = positive
+- `D` = negative
+- `F` = unsigned (commonly treated as positive)
 
 ---
 
 ### Storage Size Rule
 
-The number of bytes occupied by a COMP-3 field is calculated as:
+The number of bytes occupied by a COMP-3 field is calculated as: `bytes = ceil((number_of_digits + 1) / 2)`
 
-    bytes = ceil((number_of_digits + 1) / 2)
-
-The extra +1 accounts for the sign nibble.
+The extra `+1` accounts for the sign nibble.
 
 ---
 
 ### Simple Example
 
-COBOL definition:
+__COBOL__ definition:
 
-    PIC S9(7) COMP-3
+    `PIC S9(7) COMP-3`
 
 - 7 digits + sign nibble = 8 nibbles
 - 8 nibbles / 2 = 4 bytes
 
-Value: +1234567
+Value: `+1234567`
 
 Stored as hexadecimal bytes:
-
+```text
     12 34 56 7C
-
+```
 Nibble interpretation:
-
+```text
     1 | 2 | 3 | 4 | 5 | 6 | 7 | C
-
+```
 ---
 
 ### Implied Decimal Example
 
-COBOL definition:
+__COBOL__ definition:
 
-    PIC S9(9)V99 COMP-3
+    `PIC S9(9)V99 COMP-3`
 
 - Total digits: 11
 - Stored bytes: 6
@@ -253,15 +257,15 @@ COBOL definition:
 
 Example stored value:
 
-    00000123456C  →  1234.56
+    `00000123456C`  →  `1234.56`
 
 ---
 
-### Why COMP-3 Appears as “Garbage” in ASCII
+### Why `COMP-3` Appears as “Garbage” in ASCII
 
 Packed decimal bytes do not represent characters.
 
-If COMP-3 data is decoded as ASCII or EBCDIC, the output will contain:
+If `COMP-3` data is decoded as __ASCII__ or __EBCDIC__, the output will contain:
 - punctuation
 - control characters
 - unreadable symbols
@@ -272,17 +276,17 @@ This is NOT data corruption — it is binary numeric data being misinterpreted a
 
 ### Critical Rule
 
-Only DISPLAY fields may be decoded as text.
-COMP-3 fields must be decoded numerically first.
+Only `DISPLAY` fields may be decoded as text.
+`COMP-3` fields must be decoded numerically first.
 
 Correct processing flow:
-
+```text
     Raw bytes
       ├─ DISPLAY        → EBCDIC → ASCII
       └─ COMP / COMP-3  → binary numeric decode
                            ↓
                        formatted text (JSON / CSV / logs)
-
+```
 
 
 ![flow](https://github.com/sergueik/powershell_samples/blob/master/csharp/basic-ascii-ebcdic/screenshots/comp3-text-flow.jpg)
@@ -294,11 +298,11 @@ Correct processing flow:
 The copybook defines:
 - field offsets
 - field lengths
-- storage formats (DISPLAY vs COMP-3)
+- storage formats (`DISPLAY` vs `COMP-3`)
 - implied decimals
 - signed vs unsigned values
 
-Without the copybook, a COBOL data file cannot be correctly interpreted.
+Without the copybook, a __COBOL__ data file cannot be correctly interpreted.
 
 The copybook is not documentation — it is the schema.
 
@@ -306,18 +310,17 @@ The copybook is not documentation — it is the schema.
 
 ### Practical Consequence
 
-Blind EBCDIC → ASCII conversion of a COBOL data file will:
-- partially work for DISPLAY fields
-- always fail for COMP-3 fields
+Blind __EBCDIC__ → __ASCII__ conversion of a COBOL data file will:
+- partially work for `DISPLAY` fields
+- always fail for `COMP-3` fields
 - produce misleading output
 
 This is why copybook-aware tools exist:
-- coboltojson
-- cb2xml
-- JRecord
-- Cobrix
-- LegStar
-
+- [coboltojson](https://github.com/bmTas/CobolToJson)
+- [cb2xml](https://github.com/bmTas/cb2xml)
+- [JRecord](https://github.com/bmTas/JRecord)
+- [Cobrix](https://github.com/AbsaOSS/cobrix)
+- [LegStar](https://github.com/legsem/legstar-core2) 
 
 
 
