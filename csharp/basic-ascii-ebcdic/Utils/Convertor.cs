@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 /**
  * Copyright 2024 Serguei Kouzmine
@@ -21,7 +22,12 @@ namespace Utils {
 			return stringBuilder.ToString();
 		}
 		public static byte[] HexStringToByteArray(String data) {
+			// deal with dash or whitespace formatted hex strings 
+			data = Regex.Replace(data, "[^0-9A-Fa-f]", "");
 			int NumberChars = data.Length;
+			if ((NumberChars & 1) != 0) {
+				throw new ArgumentException("Odd-length hex string");
+			}
 			byte [] hexByteArray = new byte[NumberChars / 2];
 			for (int index = 0; index < NumberChars; index += 2)
 				hexByteArray[index / 2] = Convert.ToByte(data.Substring(index, 2), 16);

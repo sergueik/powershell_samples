@@ -190,12 +190,12 @@ This is precisely why tools such as
 exist: they apply copybook semantics to transform raw mainframe datasets into meaningful, readable representations (JSON, XML, relational rows).
 
 
-### Packed Decimal (`COMP-3`) — Why It Matters
+### Packed Decimal `COMP-3` - Why It Matters
 
 When working with mainframe COBOL data files, many numeric fields are stored using packed decimal, also known as `COMP-3`.
 
-These fields do NOT contain text and must NEVER be decoded using an
-__EBCDIC__→ __ASCII__ conversion.
+These fields do *NOT* contain text and must *NEVER* be decoded using an
+ __EBCDIC__ → __ASCII__ code page based conversion (converting String to Byte and back).
 
 ---
 
@@ -218,7 +218,7 @@ Sign nibbles:
 
 ### Storage Size Rule
 
-The number of bytes occupied by a COMP-3 field is calculated as: `bytes = ceil((number_of_digits + 1) / 2)`
+The number of bytes occupied by a `COMP-3` field is calculated as: `bytes = ceil((number_of_digits + 1) / 2)`
 
 The extra `+1` accounts for the sign nibble.
 
@@ -227,18 +227,17 @@ The extra `+1` accounts for the sign nibble.
 ### Simple Example
 
 __COBOL__ definition:
-
-    `PIC S9(7) COMP-3`
+```
+    PIC S9(7) COMP-3
+```
+says:
 
 - 7 digits + sign nibble = 8 nibbles
 - 8 nibbles / 2 = 4 bytes
 
-Value: `+1234567`
+For example a value: `+1234567`
 
-Stored as hexadecimal bytes:
-```text
-    12 34 56 7C
-```
+Stored as hexadecimal bytes: `12 34 56 7C`
 Nibble interpretation:
 ```text
     1 | 2 | 3 | 4 | 5 | 6 | 7 | C
@@ -248,29 +247,30 @@ Nibble interpretation:
 ### Implied Decimal Example
 
 __COBOL__ definition:
-
-    `PIC S9(9)V99 COMP-3`
+```
+    PIC S9(9)V99 COMP3
+```
+means:
 
 - Total digits: 11
 - Stored bytes: 6
 - Decimal point is implied, not stored
 
-Example stored value:
-
-    `00000123456C`  →  `1234.56`
+Example stored value `00000123456C`  is  `1234.56`
 
 ---
 
-### Why `COMP-3` Appears as “Garbage” in ASCII
+### Why `COMP-3` Appears as "Garbage" in ASCII
 
 Packed decimal bytes do not represent characters.
 
-If `COMP-3` data is decoded as __ASCII__ or __EBCDIC__, the output will contain:
+If `COMP-3` data is decoded as __ASCII__ or __EBCDIC__ , the output will contain:
+
 - punctuation
 - control characters
 - unreadable symbols
 
-This is NOT data corruption — it is binary numeric data being misinterpreted as text.
+This is *NOT* data corruption — it is binary numeric data being misinterpreted as text.
 
 ---
 
@@ -304,18 +304,20 @@ The copybook defines:
 
 Without the copybook, a __COBOL__ data file cannot be correctly interpreted.
 
-The copybook is not documentation — it is the schema.
+The copybook is not documentation — it is __the__ schema.
 
 ---
 
 ### Practical Consequence
 
 Blind __EBCDIC__ → __ASCII__ conversion of a COBOL data file will:
+
 - partially work for `DISPLAY` fields
 - always fail for `COMP-3` fields
 - produce misleading output
 
 This is why copybook-aware tools exist:
+
 - [coboltojson](https://github.com/bmTas/CobolToJson)
 - [cb2xml](https://github.com/bmTas/cb2xml)
 - [JRecord](https://github.com/bmTas/JRecord)
@@ -324,7 +326,7 @@ This is why copybook-aware tools exist:
 
 ### Illustration
 
-Consider the following *visual* copybook with single ISPLAY field that repeats clearly, followed by one COMP-3 field.
+Consider the following *visual* copybook with a single `DISPLAY` field that repeats clearly, followed by one `COMP-3` field.
 
 ```text
 01 VISUAL-RECORD.
@@ -333,23 +335,24 @@ Consider the following *visual* copybook with single ISPLAY field that repeats c
 ```
 
 it will contain
-```text`
+```text
 VIS-TEXT   = "69684558"
 VIS-AMOUNT = +12345.67
 ```   
 
 HEX:
-```
+```hex
 F6 F9 F6 F8 F4 F5 F5 F8   12 34 56 7C
 ```
 
 Breakdown:
 
-Bytes	Meaning
-F6..F8	EBCDIC digits → readable after ASCII
-12 34 56 7C	COMP-3 packed decimal
+| Bytes	              | Meaning                                  |
+| ------------------- | ---------------------------------------- |
+| `F6..F8`            | EBCDIC digits -&gt; readable after ASCII |
+| `12` `34` `56` `7C` | COMP-3 packed decimal                    |
 
-blind blank converison will show (console-sensitive):
+a blanket blind blank converison will show (the `COMP-3` part is console-encoding sensitive):
 ```txt
 69684558??E?
 69684558??E?
