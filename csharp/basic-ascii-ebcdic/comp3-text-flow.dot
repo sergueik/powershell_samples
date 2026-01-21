@@ -1,0 +1,22 @@
+digraph cobol_processing {
+    rankdir=LR;
+    node [shape=box, style=rounded];
+
+    Start [label="Read raw COBOL record"];
+    Lookup [label="Lookup field in copybook"];
+    Decision [label="Field type?"];
+    Display [label="DISPLAY: Convert EBCDIC → ASCII"];
+    Comp3 [label="COMP-3: Decode numeric nibbles"];
+    End [label="Append value to output / JSON / CSV"];
+
+    Start -> Lookup;
+    Lookup -> Decision;
+
+    Decision -> Display [label="PIC X / DISPLAY"];
+    Decision -> Comp3 [label="COMP / COMP-3 / BINARY"];
+    
+    Display -> End;
+    Comp3 -> End;
+}
+
+
