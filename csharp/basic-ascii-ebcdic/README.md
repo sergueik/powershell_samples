@@ -130,6 +130,195 @@ run
 ```
 bin\Debug\aec.exe
 ```
+### CopyBook Processing Challenges
+
+Why __EBCDIC __→ __ASCII__  Alone Is Insufficient for __COBOL__ Data Files.
+
+When converting mainframe COBOL data files to a readable format, it is incorrect to assume the data contains plain text that can be safely decoded using a simple __EBCDIC __→ __ASCII__ conversion.
+
+A __COBOL__ data file is typically a binary structured record, whose interpretation is entirely defined by its copybook. Example of real copybook data definition
+```text
+000100*                                                                        
+000200*   DTAR020 IS THE OUTPUT FROM DTAB020 FROM THE IML                      
+000300*   CENTRAL REPORTING SYSTEM                                             
+000400*                                                                        
+000500*   CREATED BY BRUCE ARTHUR  19/12/90                                    
+000600*                                                                        
+000700*   RECORD LENGTH IS 27.                                                 
+000800*                                                                        
+000900        03  DTAR020-KCODE-STORE-KEY.                                     
+001000            05 DTAR020-KEYCODE-NO      PIC X(08).                        
+001100            05 DTAR020-STORE-NO        PIC S9(03)   COMP-3.              
+001200        03  DTAR020-DATE               PIC S9(07)   COMP-3.              
+001300        03  DTAR020-DEPT-NO            PIC S9(03)   COMP-3.              
+001400        03  DTAR020-QTY-SOLD           PIC S9(9)    COMP-3.              
+001500        03  DTAR020-SALE-PRICE         PIC S9(9)V99 COMP-3.              
+```
+
+Only fields defined as DISPLAY (e.g. `PIC X`, `PIC 9`) contain __EBCDIC__-encoded text or zoned decimal data that can be meaningfully converted to __ASCII__.
+Many other fields — especially those defined as `COMP`,`COMP-3` (packed decimal),`COMP-5`but also binary counters, flags, or redefined areas are not text at all and must never be decoded as __ASCII__.
+
+Attempting a blanket __EBCDIC __→ __ASCII__ conversion across the entire record will inevitably produce:
+
+unreadable characters, control symbols, apparently viewable as a  *corrupted* output:
+```text
+66664028< ????*68654621< ????*63694264< ?c
+                                          r*63604361< ????62634259< ????62634259< ????60684429< ??<??60684037< ??<r*69694875< ??<r*69694875< ??<r*69694875< ??<r*69694875< ??<r)69694875< ??<r)69694875< ??<r)63604108< ???*63694928< ??<??60634765< ??<??69664668< ??i*
+```
+even though the underlying data is perfectly valid. The Correct conversion therefore requires:
+
+* Exact knowledge of the copybook structure
+* Byte-accurate field offsets and lengths
+* Field-type-aware decoding
+
+DISPLAY → EBCDIC → ASCII
+
+COMP / COMP-3 → binary / packed decimal decoding
+
+In practice, the copybook is not optional metadata — it is the schema of the file.
+Without it, the data cannot be interpreted correctly.
+
+This is precisely why tools such as [coboltojson](https://github.com/bmTas/CobolToJson), [cb2xml](https://github.com/bmTas/cb2xml), [JRecord]](https://github.com/bmTas/JRecord), [Cobrix](https://github.com/AbsaOSS/cobrix), and [LegStar](https://github.com/legsem/legstar-core2) exist: 
+they apply copybook semantics to transform raw mainframe datasets into meaningful, readable representations (JSON, XML, relational rows).
+
+
+### Packed Decimal (`COMP-3`) — Why It Matters
+
+When working with mainframe COBOL data files, many numeric fields are stored using
+packed decimal, also known as `COMP-3`.
+
+These fields do NOT contain text and must NEVER be decoded using an
+__EBCDIC __→ __ASCII__ conversion.
+
+---
+
+### What Is COMP-3?
+
+COMP-3 is a binary numeric storage format that preserves exact decimal precision
+while using less space than character representations.
+
+Key properties:
+
+- Each decimal digit occupies one 4-bit nibble
+- Two digits are packed into one byte
+- The last nibble stores the sign
+
+Sign nibbles:
+- C = positive
+- D = negative
+- F = unsigned (commonly treated as positive)
+
+---
+
+### Storage Size Rule
+
+The number of bytes occupied by a COMP-3 field is calculated as:
+
+    bytes = ceil((number_of_digits + 1) / 2)
+
+The extra +1 accounts for the sign nibble.
+
+---
+
+### Simple Example
+
+COBOL definition:
+
+    PIC S9(7) COMP-3
+
+- 7 digits + sign nibble = 8 nibbles
+- 8 nibbles / 2 = 4 bytes
+
+Value: +1234567
+
+Stored as hexadecimal bytes:
+
+    12 34 56 7C
+
+Nibble interpretation:
+
+    1 | 2 | 3 | 4 | 5 | 6 | 7 | C
+
+---
+
+### Implied Decimal Example
+
+COBOL definition:
+
+    PIC S9(9)V99 COMP-3
+
+- Total digits: 11
+- Stored bytes: 6
+- Decimal point is implied, not stored
+
+Example stored value:
+
+    00000123456C  →  1234.56
+
+---
+
+### Why COMP-3 Appears as “Garbage” in ASCII
+
+Packed decimal bytes do not represent characters.
+
+If COMP-3 data is decoded as ASCII or EBCDIC, the output will contain:
+- punctuation
+- control characters
+- unreadable symbols
+
+This is NOT data corruption — it is binary numeric data being misinterpreted as text.
+
+---
+
+### Critical Rule
+
+Only DISPLAY fields may be decoded as text.
+COMP-3 fields must be decoded numerically first.
+
+Correct processing flow:
+
+    Raw bytes
+      ├─ DISPLAY        → EBCDIC → ASCII
+      └─ COMP / COMP-3  → binary numeric decode
+                           ↓
+                       formatted text (JSON / CSV / logs)
+
+
+
+![flow](https://github.com/sergueik/powershell_samples/blob/master/csharp/basic-ascii-ebcdic/screenshots/comp3-text-flow.jpg)
+
+---
+
+### Why the Copybook Is Mandatory
+
+The copybook defines:
+- field offsets
+- field lengths
+- storage formats (DISPLAY vs COMP-3)
+- implied decimals
+- signed vs unsigned values
+
+Without the copybook, a COBOL data file cannot be correctly interpreted.
+
+The copybook is not documentation — it is the schema.
+
+---
+
+### Practical Consequence
+
+Blind EBCDIC → ASCII conversion of a COBOL data file will:
+- partially work for DISPLAY fields
+- always fail for COMP-3 fields
+- produce misleading output
+
+This is why copybook-aware tools exist:
+- coboltojson
+- cb2xml
+- JRecord
+- Cobrix
+- LegStar
+
+
 
 
 ### See Also
