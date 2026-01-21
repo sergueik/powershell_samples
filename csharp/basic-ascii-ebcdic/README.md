@@ -322,6 +322,39 @@ This is why copybook-aware tools exist:
 - [Cobrix](https://github.com/AbsaOSS/cobrix)
 - [LegStar](https://github.com/legsem/legstar-core2) 
 
+### Illustration
+
+Consider the following *visual* copybook with single ISPLAY field that repeats clearly, followed by one COMP-3 field.
+
+```text
+01 VISUAL-RECORD.
+   05 VIS-TEXT     PIC X(8).
+   05 VIS-AMOUNT   PIC S9(7)V99 COMP-3.
+```
+
+it will contain
+```text`
+VIS-TEXT   = "69684558"
+VIS-AMOUNT = +12345.67
+```   
+
+HEX:
+```
+F6 F9 F6 F8 F4 F5 F5 F8   12 34 56 7C
+```
+
+Breakdown:
+
+Bytes	Meaning
+F6..F8	EBCDIC digits → readable after ASCII
+12 34 56 7C	COMP-3 packed decimal
+
+blind blank converison will show (console-sensitive):
+```txt
+69684558??E?
+69684558??E?
+69684558??E?
+```
 
 
 ### See Also
