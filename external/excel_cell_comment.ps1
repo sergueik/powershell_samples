@@ -1,5 +1,32 @@
 # Path to an existing Excel file
 $excelFile = "${env:userprofile}\Desktop\test.xls"
+<#
+ deal with Excel’s crash/lock recovery mechanism.
+ check for owner / lock file - hidden file named ~$test.xls 
+ in the same directory as workbook containing
+ username
+ 
+
+machine name
+
+
+ session info
+#>
+$lockFile = Join-Path (Split-Path $excelFile) ("~$" + (Split-Path $excelFile -Leaf))
+
+if (test-path $lockFile) {
+  Write-Host "Workbook is locked (lock file exists): $lockFile"
+  Remove-Item $lockFile -Force
+}
+else {
+  Write-Host "No lock file detected."
+}
+
+
+# detect Excel is still running in memory (orphaned Excel.exe)
+if ( Get-Process excel -ErrorAction SilentlyContinue) { 
+
+}
 
 # Sheet and cell to work with
 $sheetName = "Test"
@@ -12,6 +39,11 @@ $excel.DisplayAlerts = $false
 
 # Open workbook
 $workbook = $excel.Workbooks.Open($excelFile)
+
+if ($workbook.ReadOnly) {
+    Write-Host "Workbook opened in ReadOnly mode (likely locked by another Excel instance)."
+}
+
 $sheet = $workbook.Worksheets.Item($sheetName)
 
 Write-Host "reading file ${excelFile} sheet ${sheetName}"
@@ -19,23 +51,8 @@ Write-Host "reading file ${excelFile} sheet ${sheetName}"
 # Select range
 $range = $sheet.Range($cellAddress)
 
-# -----------------------------
-# OLD BAD ATTEMPT (kept for reference)
-# -----------------------------
-<#
-if ($range.Comment -ne $null) {
-    $readText = $range.Comment.Text()
+# NOTE: the $range.Comment -ne $null... does not work
 
-    Write-Host "Existing Comment read from cell $cellAddress :"
-    Write-Host $readText
-} else {
-    Write-Host "No  Comment in cell $cellAddress :"
-}
-#>
-
-# -----------------------------
-# NEW SAFE COMMENT READ LOGIC
-# -----------------------------
 $runCount = 0
 $oldText = ""
 
@@ -44,48 +61,41 @@ try {
     Write-Host "Existing Comment read from cell $cellAddress :"
     Write-Host $oldText
 
-    # Extract Run #N if present
     if ($oldText -match 'Run\s*#(\d+)') {
         $runCount = [int]$matches[1]
     }
 }
-catch {
-    Write-Host "No comment in cell $cellAddress"
+catch [Exception] {
+    Write-Debug "No comment in cell $cellAddress"
 }
 
-# Increment counter
 $runCount++
 
-# Remove existing comment if present
 try {
     $range.Comment.Delete()
 }
-catch {
-    # ignore if no comment
+catch [Exception]{
 }
 
-# New Text for the comment (with counter)
 $commentText = @"
 Run #$runCount
 "@
 
-# Add new comment
 $range.AddComment($commentText) | out-null
 
-# Read comment back
 $readText = $range.Comment.Text()
 
-Write-Host "New Comment read from cell $cellAddress :"
-Write-Host $readText
+Write-Host  ('New comment read from cell {0} : {1}' -f $cellAddress, $readText )
+
 
 Write-Host 'Save and close'
 $workbook.Save() | Out-Null
-$workbook.Close() | Out-Null
+$workbook.Close($true) | Out-Null
 
-# Quit Excel
-$excel.Quit()
+if ($excel) {
+  $excel.Quit()
+}
 
-# Release COM objects (VERY important on Win7/Office 2003)
 [System.Runtime.InteropServices.Marshal]::ReleaseComObject($range)     | Out-Null
 [System.Runtime.InteropServices.Marshal]::ReleaseComObject($sheet)     | Out-Null
 [System.Runtime.InteropServices.Marshal]::ReleaseComObject($workbook)  | Out-Null
@@ -93,6 +103,4 @@ $excel.Quit()
 
 [GC]::Collect()
 [GC]::WaitForPendingFinalizers()
-
-Write-Host "Done."
 

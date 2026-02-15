@@ -1,84 +1,69 @@
 Option Explicit
 
-Dim excelFile, sheetName, cellAddress
-Dim excel, wb, sheet, rng
-Dim oldText, newText, runCount
-Dim c
+Dim excelFile : excelFile = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%USERPROFILE%\Desktop\test.xls") 
+Dim sheetName : sheetName = "Test"
+Dim cellAddress : cellAddress = "A2"
 
-' Path to Excel file
-excelFile = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%USERPROFILE%\Desktop\test.xls")
-sheetName = "Test"
-cellAddress = "A2"
+' Deal with Excel crash/lock recovery mechanism.
+' check for
+Dim text, runCount
 
-' Create Excel COM object
+Dim excel
 Set excel = CreateObject("Excel.Application")
 excel.Visible = False
 excel.DisplayAlerts = False
 
 ' Open workbook
-Set wb = excel.Workbooks.Open(excelFile)
-Set sheet = wb.Worksheets(sheetName)
-Set rng = sheet.Range(cellAddress)
+Dim workbook
+Set workbook = excel.Workbooks.Open(excelFile)
+Dim worksheet
+Set worksheet = workbook.Worksheets(sheetName)
+Dim range
+Set range = worksheet.Range(cellAddress)
 
-' -----------------------------
-' OLD BAD ATTEMPT (kept commented for reference)
-' -----------------------------
-' If Not rng.Comment Is Nothing Then
-'     MsgBox "Existing comment: " & rng.Comment.Text
-' Else
-'     MsgBox "No comment in cell " & cellAddress
-' End If
-' -----------------------------
-
-' Read existing comment safely
+' Try..Catch
+' NOTE: not
+' If Not range.Comment Is Nothing Then
+'
 runCount = 0
-oldText = ""
+text = ""
 On Error Resume Next
-oldText = rng.Comment.Text
+text = range.Comment.Text
 If Err.Number <> 0 Then
-    ' No comment exists
-    oldText = ""
+    ' cell has no comment
+    text = ""
     Err.Clear
 End If
 On Error Goto 0
 
-' Try to extract Run #N
-If oldText <> "" Then
-    Dim re, matches
-    Set re = New RegExp
-    re.Pattern = "Run\s*#(\d+)"
-    re.IgnoreCase = True
-    re.Global = False
-    Set matches = re.Execute(oldText)
-    If matches.Count > 0 Then
-        runCount = CInt(matches(0).SubMatches(0))
+If text <> "" Then
+    Dim regexp : Set regexp = New RegExp : regexp.Pattern = "Run\s*#(\d+)" : regexp.IgnoreCase = True : regexp.Global = False
+    Dim match: Set match = regexp.Execute(text)
+    If match.Count > 0 Then
+        runCount = CInt(match(0).SubMatches(0))
     End If
 End If
 
 runCount = runCount + 1
 
-' Remove old comment if present
+' Try..Catch
 On Error Resume Next
-rng.Comment.Delete
+range.Comment.Delete
 On Error Goto 0
 
-' Build new comment text
-newText = "Run #" & runCount ' & vbCrLf & "Hello from VBScript COM automation at " & Now
+text = "Run #" & runCount
 
-' Add new comment (this returns a COM object, beware of implicit output)
-rng.AddComment newText
+' NOTE: AddComment returns a COM object, beware of implicit output
+range.AddComment text
 
-' Display updated comment
-MsgBox "Updated comment in " & cellAddress & ":" & vbCrLf & rng.Comment.Text
+WScript.Echo "Updated comment in " & cellAddress & ":" & vbCrLf & range.Comment.Text
 
-' Save and close
-wb.Save
-wb.Close
+workbook.Save
+workbook.Close
 excel.Quit
 
-' Release objects
-Set rng = Nothing
-Set sheet = Nothing
-Set wb = Nothing
+Set range = Nothing
+Set worksheet = Nothing
+Set workbook = Nothing
 Set excel = Nothing
 
