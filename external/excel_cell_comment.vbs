@@ -1,21 +1,49 @@
 Option Explicit
 
-Dim excelFile : excelFile = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%USERPROFILE%\Desktop\test.xls") 
+Dim filename : filename = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%USERPROFILE%\Desktop\test.xls") 
+Dim fso: set fso = CreateObject("Scripting.FileSystemObject")
+If fso.FileExists(filename) = False Then 
+  WScript.Echo "File does not exist " & filename 
+  WScript.Quit 1
+end if
+' detect owner / lock file - hidden file named ~$test.xls
+Dim lockFile : lockFile = fso.GetParentFolderName(filename) & "\~$" & fso.GetFileName(filename)
+If fso.FileExists(lockFile) Then
+  WScript.Echo "Lock file exists (Excel crash or open instance): " & lockFile
+  WScript.Quit 3
+End If
 Dim sheetName : sheetName = "Test"
 Dim cellAddress : cellAddress = "A2"
 
-' Deal with Excel crash/lock recovery mechanism.
-' check for
 Dim text, runCount
 
 Dim excel
 Set excel = CreateObject("Excel.Application")
+
+If Err.Number<>0 Then 
+  WScript.Echo "Lacking Excel Application": WScript.Quit 2
+end if
+
 excel.Visible = False
 excel.DisplayAlerts = False
 
 ' Open workbook
 Dim workbook
-Set workbook = excel.Workbooks.Open(excelFile)
+Set workbook = excel.Workbooks.Open(filename)
+
+' Deal with Excel crash/lock recovery mechanism.
+' 
+If Err.Number<>0 Then 
+  WScript.Echo "Cannot open " & filename
+  WScript.Quit 4
+end if
+
+If workbook.ReadOnly Then 
+  WScript.Echo "workbook is ReadOnly: " & filename
+  'There is no safe API to unlock this from script.
+  WScript.Quit 4
+end if
+
 Dim worksheet
 Set worksheet = workbook.Worksheets(sheetName)
 Dim range
@@ -59,7 +87,7 @@ range.AddComment text
 WScript.Echo "Updated comment in " & cellAddress & ":" & vbCrLf & range.Comment.Text
 
 workbook.Save
-workbook.Close
+workbook.Close(True)
 excel.Quit
 
 Set range = Nothing

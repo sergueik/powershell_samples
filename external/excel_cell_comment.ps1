@@ -42,6 +42,7 @@ $workbook = $excel.Workbooks.Open($excelFile)
 
 if ($workbook.ReadOnly) {
     Write-Host "Workbook opened in ReadOnly mode (likely locked by another Excel instance)."
+    # there is no safe API to unlock this from script.
 }
 
 $sheet = $workbook.Worksheets.Item($sheetName)
