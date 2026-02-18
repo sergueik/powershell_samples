@@ -81,19 +81,26 @@ or [FileHelper.com](https://filehelper.com/view) or [RTF File Viewer](https://ch
 
 ### See Also
 
-- [RichText Builder (StringBuilder for RTF)](https://www.codeproject.com/articles/RichText-Builder-StringBuilder-for-RTF-) – relatively easy to implement.
+ * A practical guide to Markdown Editors for writing GitHub Readme.md files.
 
-- [Extended RichTextBox (RichTextBoxEx)](https://www.codeproject.com/articles/EXTENDED-Version-of-Extended-Rich-Text-Box-RichTex#comments-section) – adds toolbar, ruler, and extended functionality to a standard WinForms `RichTextBox`.
+    +  https://codeproject.com/articles/6-free-Markdown-md-WYSIWYG-desktop-Editors-Part1
+    +  https://codeproject.com/articles/6-free-Markdown-md-WYSIWYG-desktop-Editors-Part2
+    +  https://codeproject.com/articles/6-free-Markdown-md-WYSIWYG-desktop-Editors-Part3
 
-- [MarkdownToRtf](https://github.com/ReneeHuh/MarkdownToRtf) – static utility converting __Markdown__ to __RTF__ using [Markdig](https://github.com/xoofx/markdig) parser via [NuGet](https://www.nuget.org/packages/Markdig/). Generates WordPad-compatible RTF with proper headers, font tables, and formatting codes. Supports headings, paragraphs, lists, tables, code blocks, emphasis, and hyperlinks.
 
-- [GustavoHennig/MarkdownToRtf](https://github.com/GustavoHennig/MarkdownToRtf) – basic Markdown to RTF converter - depends on [Markdig](https://github.com/xoofx/markdig) for Markdown parsing. Capable of [Blockquotes](https://www.markdownguide.org/basic-syntax/#blockquotes) `> quote` rendering 
+ * [RichText Builder (StringBuilder for RTF)](https://www.codeproject.com/articles/RichText-Builder-StringBuilder-for-RTF-) – relatively easy to implement.
 
-- [Avalon Renderer](https://github.com/Kryptos-FR/markdig.wpf) – WPF renderer using [Markdig](https://github.com/xoofx/markdig).
-- [Markdown Basic Syntax](https://www.markdownguide.org/basic-syntax/)
-- [RTF Spec](https://latex2rtf.sourceforge.net/RTF-Spec-1.2.pdf) – the original published specification was developed by __Microsoft Corporation__ in __1987__ (The __Windows OS__ was first launched in __1985__).
-- [The RTF 1.x Specification](https://www.biblioscape.com/rtf15_spec.htm)
-- [The RTF Cookbook](https://metacpan.org/dist/RTF-Writer/view/lib/RTF/Cookbook.pod) – note: not a Perl module
+ * [Extended RichTextBox (RichTextBoxEx)](https://www.codeproject.com/articles/EXTENDED-Version-of-Extended-Rich-Text-Box-RichTex#comments-section) – adds toolbar, ruler, and extended functionality to a standard WinForms `RichTextBox`.
+
+ * [MarkdownToRtf](https://github.com/ReneeHuh/MarkdownToRtf) – static utility converting __Markdown__ to __RTF__ using [Markdig](https://github.com/xoofx/markdig) parser via [NuGet](https://www.nuget.org/packages/Markdig/). Generates WordPad-compatible RTF with proper headers, font tables, and formatting codes. Supports headings, paragraphs, lists, tables, code blocks, emphasis, and hyperlinks.
+
+ * [GustavoHennig/MarkdownToRtf](https://github.com/GustavoHennig/MarkdownToRtf) – basic Markdown to RTF converter  * depends on [Markdig](https://github.com/xoofx/markdig) for Markdown parsing. Capable of [Blockquotes](https://www.markdownguide.org/basic-syntax/#blockquotes) `> quote` rendering 
+
+ * [Avalon Renderer](https://github.com/Kryptos-FR/markdig.wpf) – WPF renderer using [Markdig](https://github.com/xoofx/markdig).
+ * [Markdown Basic Syntax](https://www.markdownguide.org/basic-syntax/)
+ * [RTF Spec](https://latex2rtf.sourceforge.net/RTF-Spec-1.2.pdf) – the original published specification was developed by __Microsoft Corporation__ in __1987__ (The __Windows OS__ was first launched in __1985__).
+ * [The RTF 1.x Specification](https://www.biblioscape.com/rtf15_spec.htm)
+ * [The RTF Cookbook](https://metacpan.org/dist/RTF-Writer/view/lib/RTF/Cookbook.pod) – note: not a Perl module
   * Misc. `RichTextBox` articles (note traditionally the `RichTextBox` examples are writen in [VB.Net](https://en.wikipedia.org/wiki/Visual_Basic_(.NET))):
   + [Scrolling Around with the RichTextBox Contro](https://www.codeproject.com/articles/Scrolling-Around-with-the-RichTextBox-Control)
   + [Numbering lines of RichTextBox](https://www.codeproject.com/articles/Numbering-lines-of-RichTextBox-in-NET-2-0) (no source)

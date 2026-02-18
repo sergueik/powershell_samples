@@ -6,6 +6,7 @@ using System.IO;
 
 // origin: https://www.codeproject.com/Articles/20120/INI-Files
 // see also: https://www.codeproject.com/Articles/318783/Simplified-INI-Handling
+// see also: https://codeproject.com/articles/Csharp-INI-File-Parser
 // NOTE: p/invoke methods covered in
 // https://www.codeproject.com/Articles/1966/An-INI-file-handling-class-using-C
 // lacks ability to read sections

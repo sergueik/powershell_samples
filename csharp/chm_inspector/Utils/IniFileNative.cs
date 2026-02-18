@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 
 // based on: https://www.codeproject.com/Articles/1966/An-INI-file-handling-class-using-C
+// see also: https://codeproject.com/articles/Csharp-INI-File-Parser
 // NOTE: not uniform: several pinvoke difffer in return string argument
 namespace Utils {
 	public class IniFileNative {
