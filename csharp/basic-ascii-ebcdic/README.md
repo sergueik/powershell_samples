@@ -359,6 +359,41 @@ a blanket blind blank converison will show (the `COMP-3` part is console-encodin
 69684558??E?
 ```
 
+### Validate
+
+```cmd
+.\aec.exe -operation:validate -codepage:IBM037 -data:F1F2F3F4F5F6F7F8F9 -debug
+```
+```text
+valid
+```
+
+
+```cmd
+.\aec.exe -operation:validate -codepage:IBM037 -data:F1F2F3F4F5F6F7F8F9F021 -debug
+```
+```text
+invalid
+invalid EBCDIC character 0x21 on 10
+```
+### Technical Details
+EBCDIC has a weird layout but text tends to cluster:
+
+letters: 0x81–0xA9
+letters: 0xC1–0xE9
+digits : 0xF0–0xF9
+punct  : ~0x4A–0x6F
+			
+CP1047 / most Latin EBCDIC tables, the typical display ranges are roughly:
+
+Category	Hex range
+space	0x40
+lowercase	0x81–0x89, 0x91–0x99, 0xA2–0xA9
+uppercase	0xC1–0xC9, 0xD1–0xD9, 0xE2–0xE9
+digits	0xF0–0xF9
+common punctuation	0x4B, 0x6B, 0x5A, 0x7A, 0x60–0x6F, etc
+
+
 
 ### See Also
 

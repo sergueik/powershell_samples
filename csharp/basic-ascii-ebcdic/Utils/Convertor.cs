@@ -44,6 +44,76 @@ namespace Utils {
 			return hexString;
 		}
 
+		public static ValidationResult ValidateUtf8(byte[] data) {
+			bool status = false;
+			string message = null;
+		    try {
+		        var utf8 = new UTF8Encoding(false, true); // throw on invalid bytes
+		        string decoded = utf8.GetString(data);
+		        status = true;
+		    } catch (DecoderFallbackException e) {
+		        message = String.Format("invalid UTF-8: {0}",e.Message);
+		    }
+	        return new ValidationResult(status, message);
+		}
+		
+		public static ValidationResult ValidateAscii(byte[] data) {
+			bool status = true;
+			string message = null;
+		    for (int cnt = 0; cnt < data.Length; cnt++) {
+		        if (data[cnt] > 127) {
+					status = false;
+		            message = String.Format("invalid US-ASCII character 0x{0:X2} at offset {1}", data[cnt] ,cnt);
+		        }
+		    }
+		    return new ValidationResult(status, message);
+		}
+		
+		// EBCDIC charcode range validator
+		public static ValidationResult ValidateEbcdic(byte[] data) {
+		    bool status = true;
+		    string message = null;
+		
+			for (int cnt = 0; cnt < data.Length; cnt++) {
+			    int charCode = data[cnt] & 0xFF;
+			
+			    if (charCode == 0) {
+			        status = false;
+			        message = String.Format("null character on {0}",cnt);
+			    }
+			
+			    bool valid =
+			        charCode == 0x40 ||                     // space
+			        (charCode >= 0xF0 && charCode <= 0xF9) || // digits
+			        (charCode >= 0xC1 && charCode <= 0xC9) || // uppercase
+			        (charCode >= 0xD1 && charCode <= 0xD9) ||
+			        (charCode >= 0xE2 && charCode <= 0xE9) ||
+			        (charCode >= 0x81 && charCode <= 0x89) || // lowercase
+			        (charCode >= 0x91 && charCode <= 0x99) ||
+			        (charCode >= 0xA2 && charCode <= 0xA9) ||
+			        (charCode >= 0x4A && charCode <= 0x6F);  // punctuation window
+			
+			    if (!valid) {
+			        status = false;
+			        message = String.Format("invalid EBCDIC character 0x{0:X2} on {1}", charCode, cnt);
+			    }
+			}
+		    return new ValidationResult(status, message);
+		}
+
+		public static ValidationResult Validate(byte[] data, string codePage) {
+		    // mimic Java ternary logic, without functional programming
+		    if (string.IsNullOrEmpty(codePage) || codePage.Equals("us-ascii", StringComparison.OrdinalIgnoreCase)) {
+		        return ValidateAscii(data);
+		    } else if (codePage.Equals("utf-8", StringComparison.OrdinalIgnoreCase)) {
+		        return ValidateUtf8(data);
+		    } else if (codePage.Equals("ebcdic", StringComparison.OrdinalIgnoreCase)
+		             || codePage.Equals("cp037", StringComparison.OrdinalIgnoreCase)) {
+		        return ValidateEbcdic(data);
+		    } else {
+		        return ValidateEbcdic(data);
+		    }
+		}
 	}
 }
 

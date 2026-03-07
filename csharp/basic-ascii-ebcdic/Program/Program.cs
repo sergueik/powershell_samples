@@ -24,7 +24,7 @@ namespace Program {
 		private static string inputfile = null;
 		private static string outputfile = null;
 		private static string data = "0123456789abcdefghijklmnopqrstuvwxyz";
-			private static byte[] inputBytes = {};
+		private static byte[] inputBytes = {};
 		private static byte[] outputBytes = {};
  	
 		private static string codePage = "IBM037"; // Standard US EBCDIC code page
@@ -56,6 +56,9 @@ namespace Program {
 			if (parseArgs.GetMacro("data") != String.Empty)
 				data = parseArgs.GetMacro("data");
 
+			if (parseArgs.GetMacro("codepage") != String.Empty)
+				codePage = parseArgs.GetMacro("codepage");
+
 			if (parseArgs.GetMacro("outputfile") != String.Empty)
 				outputfile = parseArgs.GetMacro("outputfile");
 
@@ -64,10 +67,7 @@ namespace Program {
 			}
 
 			if (operation.Equals("encode")) {
-				if (inputfile!= null )
-					inputBytes = File.ReadAllBytes(inputfile);
-				else 
-					inputBytes = Encoding.ASCII.GetBytes(data);
+				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Encoding.ASCII.GetBytes(data);
 				outputBytes = ConvertAsciiToEbcdic(inputBytes, codePage);
 				// https://learn.microsoft.com/en-us/dotnet/api/system.bitconverter?view=netframework-4.5
 				// Console.WriteLine("EBCDIC bytes (hex): " + BitConverter.ToString(ebcdicBytes).Replace("-", string.Empty));
@@ -81,10 +81,7 @@ namespace Program {
 			}
 			
 			if (operation.Equals("decode")) {
-				if (inputfile!= null )
-					inputBytes = File.ReadAllBytes(inputfile);
-				else 
-					inputBytes = Utils.Convertor.HexStringToByteArray(data);
+				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Encoding.ASCII.GetBytes(data);
 				outputBytes = ConvertEbcdicToAscii(inputBytes, codePage);
 				Console.WriteLine(String.Format("Converted back to ASCII: {0}", Encoding.ASCII.GetString(outputBytes)));
 				if (outputfile!= null ) {
@@ -93,6 +90,13 @@ namespace Program {
 						fileStream.Close();
 					}
 				}
+			}
+			if (operation.Equals("validate")) {
+				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Convertor.HexStringToByteArray(data);
+				var result = Convertor.Validate(inputBytes, codePage);
+				Console.WriteLine(result.Valid ? "valid" : "invalid");
+				if (debug) 
+					Console.WriteLine(result.Message);
 			}
 		}
 	}
