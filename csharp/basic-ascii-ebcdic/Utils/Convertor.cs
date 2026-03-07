@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 /**
  * Copyright 2024 Serguei Kouzmine
@@ -73,15 +74,15 @@ namespace Utils {
 		public static ValidationResult ValidateEbcdic(byte[] data) {
 		    bool status = true;
 		    string message = null;
-		
+
 			for (int cnt = 0; cnt < data.Length; cnt++) {
 			    int charCode = data[cnt] & 0xFF;
-			
+
 			    if (charCode == 0) {
 			        status = false;
 			        message = String.Format("null character on {0}",cnt);
 			    }
-			
+
 			    bool valid =
 			        charCode == 0x40 ||                     // space
 			        (charCode >= 0xF0 && charCode <= 0xF9) || // digits
@@ -92,7 +93,7 @@ namespace Utils {
 			        (charCode >= 0x91 && charCode <= 0x99) ||
 			        (charCode >= 0xA2 && charCode <= 0xA9) ||
 			        (charCode >= 0x4A && charCode <= 0x6F);  // punctuation window
-			
+
 			    if (!valid) {
 			        status = false;
 			        message = String.Format("invalid EBCDIC character 0x{0:X2} on {1}", charCode, cnt);
@@ -101,18 +102,25 @@ namespace Utils {
 		    return new ValidationResult(status, message);
 		}
 
-		public static ValidationResult Validate(byte[] data, string codePage) {
-		    // mimic Java ternary logic, without functional programming
-		    if (string.IsNullOrEmpty(codePage) || codePage.Equals("us-ascii", StringComparison.OrdinalIgnoreCase)) {
-		        return ValidateAscii(data);
-		    } else if (codePage.Equals("utf-8", StringComparison.OrdinalIgnoreCase)) {
-		        return ValidateUtf8(data);
-		    } else if (codePage.Equals("ebcdic", StringComparison.OrdinalIgnoreCase)
-		             || codePage.Equals("cp037", StringComparison.OrdinalIgnoreCase)) {
-		        return ValidateEbcdic(data);
-		    } else {
-		        return ValidateEbcdic(data);
-		    }
+		private static readonly Dictionary<string, Func<byte[], ValidationResult>> validatorMap =
+		    new Dictionary<string, Func<byte[], ValidationResult>>(StringComparer.OrdinalIgnoreCase) {
+		    { "ascii", ValidateAscii },
+		    { "us-ascii", ValidateAscii },
+		    { "utf-8", ValidateUtf8 },
+		    { "utf8", ValidateUtf8 },
+		    { "ebcdic", ValidateEbcdic },
+		    { "IBM037", ValidateEbcdic },
+		    { "cp037", ValidateEbcdic }
+		};
+
+		public static ValidationResult Validate(byte[] data, string charMap){
+			if (string.IsNullOrEmpty(charMap))
+				charMap = "ascii";
+			Func<byte[], ValidationResult> validator = null;
+			if (validatorMap.TryGetValue(charMap, out validator)) {
+				return validator(data);
+			} else
+				return ValidateEbcdic(data);
 		}
 	}
 }

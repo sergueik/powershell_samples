@@ -377,23 +377,32 @@ invalid
 invalid EBCDIC character 0x21 on 10
 ```
 ### Technical Details
+
 EBCDIC has a weird layout but text tends to cluster:
 
-letters: 0x81–0xA9
-letters: 0xC1–0xE9
-digits : 0xF0–0xF9
-punct  : ~0x4A–0x6F
-			
-CP1047 / most Latin EBCDIC tables, the typical display ranges are roughly:
+![charmap](https://github.com/sergueik/powershell_samples/blob/master/csharp/basic-ascii-ebcdic/screenshots/capture-charmap.jpg)
 
-Category	Hex range
-space	0x40
-lowercase	0x81–0x89, 0x91–0x99, 0xA2–0xA9
-uppercase	0xC1–0xC9, 0xD1–0xD9, 0xE2–0xE9
-digits	0xF0–0xF9
-common punctuation	0x4B, 0x6B, 0x5A, 0x7A, 0x60–0x6F, etc
+```txt
+space             :	0x40
+lowercase letters :	0x81–0x89, 0x91–0x99, 0xA2–0xA9
+uppercase letters : 0xC1–0xC9, 0xD1–0xD9, 0xE2–0xE9
+digits            : 0xF0–0xF9
+punctuation       : ~0x4A–0x6F
+```			
+This leads to  the following "in the range" probe:
 
-
+```c#
+    bool valid =
+        charCode == 0x40 ||                     // space
+        (charCode >= 0xF0 && charCode <= 0xF9) || // digits
+        (charCode >= 0xC1 && charCode <= 0xC9) || // uppercase
+        (charCode >= 0xD1 && charCode <= 0xD9) ||
+        (charCode >= 0xE2 && charCode <= 0xE9) ||
+        (charCode >= 0x81 && charCode <= 0x89) || // lowercase
+        (charCode >= 0x91 && charCode <= 0x99) ||
+        (charCode >= 0xA2 && charCode <= 0xA9) ||
+        (charCode >= 0x4A && charCode <= 0x6F);  // punctuation window
+```
 
 ### See Also
 
