@@ -9,13 +9,13 @@ using Utils;
  */
 
 namespace Program {
-	internal class Program {
+	public class Program {
 
-		public static byte[] ConvertEbcdicToAscii(byte[] bytes, string codePage) {
+		public static byte[] convertEBCDICToASCII(byte[] bytes, string codePage) {
 			return Encoding.ASCII.GetBytes(Encoding.GetEncoding(codePage).GetString(bytes));
 		}
 
-		public static byte[] ConvertAsciiToEbcdic(byte[] bytes, string codePage) {
+		public static byte[] convertASCIIToEBCDIC(byte[] bytes, string codePage) {
 			return Encoding.Convert(Encoding.ASCII, Encoding.GetEncoding(codePage), bytes);
 		}
 		private static bool debug = false;
@@ -68,7 +68,7 @@ namespace Program {
 
 			if (operation.Equals("encode")) {
 				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Encoding.ASCII.GetBytes(data);
-				outputBytes = ConvertAsciiToEbcdic(inputBytes, codePage);
+				outputBytes = convertASCIIToEBCDIC(inputBytes, codePage);
 				// https://learn.microsoft.com/en-us/dotnet/api/system.bitconverter?view=netframework-4.5
 				// Console.WriteLine("EBCDIC bytes (hex): " + BitConverter.ToString(ebcdicBytes).Replace("-", string.Empty));
 				Console.WriteLine("EBCDIC bytes (hex): " + Utils.Convertor.ByteArrayToHexString(outputBytes));
@@ -81,8 +81,8 @@ namespace Program {
 			}
 			
 			if (operation.Equals("decode")) {
-				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Encoding.ASCII.GetBytes(data);
-				outputBytes = ConvertEbcdicToAscii(inputBytes, codePage);
+				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Convertor.HexStringToByteArray(data);
+				outputBytes = convertEBCDICToASCII(inputBytes, codePage);
 				Console.WriteLine(String.Format("Converted back to ASCII: {0}", Encoding.ASCII.GetString(outputBytes)));
 				if (outputfile!= null ) {
 					using (var fileStream = new FileStream(outputfile, FileMode.Create, FileAccess.Write)) {

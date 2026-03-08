@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 
 /**
- * Copyright 2024 Serguei Kouzmine
+ * Copyright 2024,2026 Serguei Kouzmine
  */
 
 namespace Utils {
@@ -45,7 +45,7 @@ namespace Utils {
 			return hexString;
 		}
 
-		public static ValidationResult ValidateUtf8(byte[] data) {
+		public static ValidationResult validateUTF8(byte[] data) {
 			bool status = false;
 			string message = null;
 		    try {
@@ -58,7 +58,7 @@ namespace Utils {
 	        return new ValidationResult(status, message);
 		}
 		
-		public static ValidationResult ValidateAscii(byte[] data) {
+		public static ValidationResult validateASCII(byte[] data) {
 			bool status = true;
 			string message = null;
 		    for (int cnt = 0; cnt < data.Length; cnt++) {
@@ -71,7 +71,7 @@ namespace Utils {
 		}
 		
 		// EBCDIC charcode range validator
-		public static ValidationResult ValidateEbcdic(byte[] data) {
+		public static ValidationResult validateEBCDIC(byte[] data) {
 		    bool status = true;
 		    string message = null;
 
@@ -82,7 +82,8 @@ namespace Utils {
 			        status = false;
 			        message = String.Format("null character on {0}",cnt);
 			    }
-
+				// EBCDIC picture range probing
+				// EBCDIC isn’t contiguous like ASCII				
 			    bool valid =
 			        charCode == 0x40 ||                     // space
 			        (charCode >= 0xF0 && charCode <= 0xF9) || // digits
@@ -104,13 +105,13 @@ namespace Utils {
 
 		private static readonly Dictionary<string, Func<byte[], ValidationResult>> validatorMap =
 		    new Dictionary<string, Func<byte[], ValidationResult>>(StringComparer.OrdinalIgnoreCase) {
-		    { "ascii", ValidateAscii },
-		    { "us-ascii", ValidateAscii },
-		    { "utf-8", ValidateUtf8 },
-		    { "utf8", ValidateUtf8 },
-		    { "ebcdic", ValidateEbcdic },
-		    { "IBM037", ValidateEbcdic },
-		    { "cp037", ValidateEbcdic }
+		    { "ascii", validateASCII },
+		    { "us-ascii", validateASCII },
+		    { "utf-8", validateUTF8 },
+		    { "utf8", validateUTF8 },
+		    { "ebcdic", validateEBCDIC },
+		    { "IBM037", validateEBCDIC },
+		    { "cp037", validateEBCDIC }
 		};
 
 		public static ValidationResult Validate(byte[] data, string charMap){
@@ -120,7 +121,7 @@ namespace Utils {
 			if (validatorMap.TryGetValue(charMap, out validator)) {
 				return validator(data);
 			} else
-				return ValidateEbcdic(data);
+				return validateEBCDIC(data);
 		}
 	}
 }
