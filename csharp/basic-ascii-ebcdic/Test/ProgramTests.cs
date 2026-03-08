@@ -1,3 +1,8 @@
+
+/**
+ * Copyright 2026 Serguei Kouzmine
+ */
+
 using System;
 using System.Text;
 using NUnit.Framework;
@@ -11,18 +16,18 @@ using System.Text.RegularExpressions;
 using Utils;
 using Program;
 
+// see also:
+// https://www.ibm.com/docs/en/zos-connect/3.0.0?topic=properties-coded-character-set-identifiers
 namespace Test {
 
 	[TestFixture]
 	public class ProgramTests {
 		private StringBuilder verificationErrors = new StringBuilder();
-		private static String data;
 		private static bool debug;
 
 		// To ensure compatibility, encrypt test inputs via Java or Perl
 		[SetUp]
 		public void setUp() {
-			data = "C8C5D3D3D6";
 			debug = true;
 			Program.Program.Debug = debug;
 			verificationErrors.Clear();
@@ -33,11 +38,25 @@ namespace Test {
 			Assert.AreEqual("", verificationErrors.ToString());
 		}
 
-		[Test]
-		public void test() {
+		public void convert(string data, string expected) {
 			var result = Program.Program.convertEBCDICToASCII(Convertor.HexStringToByteArray(data), "IBM037");
 			Assert.IsNotNull(result);
-			Assert.AreEqual("HELLO", Encoding.ASCII.GetString(result));
+			Assert.AreEqual(expected, Encoding.ASCII.GetString(result), "Failed for input: " + data);
+		}
+
+		[Test]
+		public void test() {
+			string[,] arguments = {
+				{ "C8C5D3D3D6", "HELLO" },
+				{ "E6D6D9D3C4", "WORLD" },
+				{ "F1F2F3F4F5", "12345" }
+			};
+
+			for (int cnt = 0; cnt < arguments.GetLength(0); cnt++) {
+				var data = arguments[cnt, 0];
+				var result = arguments[cnt, 1];
+				convert(data, result);
+			}
 		}
 	}
 }
