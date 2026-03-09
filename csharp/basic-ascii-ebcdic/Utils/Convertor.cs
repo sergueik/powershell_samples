@@ -12,18 +12,18 @@ namespace Utils {
 
 	public class Convertor {
 
-		public static String ByteArrayToString(byte[] bytes) {
+		public static String byteArrayToString(byte[] bytes) {
 			return System.Text.Encoding.Default.GetString(bytes);
 		}
 
-		public static String ByteArrayToHexString(byte[] data) {
+		public static String byteArrayToHexString(byte[] data) {
 			var stringBuilder = new StringBuilder(data.Length * 2);
 			foreach (byte b in data)
 				stringBuilder.Append(b.ToString("X2"));
 			return stringBuilder.ToString();
 		}
 
-		public static byte[] HexStringToByteArray(String data) {
+		public static byte[] hexStringToByteArray(String data) {
 			data = Regex.Replace(data, "[^0-9A-Fa-f]", "");
 			int numberChars = data.Length;
 
@@ -57,34 +57,46 @@ namespace Utils {
 				return charCode <= 0x7F;
 			};
 
+		public static Predicate<int> getPredicate(string codePage) {
+			switch (codePage) {
+					case "IBM037": return isEbcdicChar;
+					case "ASCII": return isAsciiChar;
+					case "UTF-8":return null;
+					default: return null;
+			}
+		}
 		private static readonly Predicate<int> isEbcdicChar =
 			delegate(int charCode) {
-
-				return
-					charCode == 0x40 ||
-				(charCode >= 0xF0 && charCode <= 0xF9) ||
-				(charCode >= 0xC1 && charCode <= 0xC9) ||
-				(charCode >= 0xD1 && charCode <= 0xD9) ||
-				(charCode >= 0xE2 && charCode <= 0xE9) ||
-				(charCode >= 0x81 && charCode <= 0x89) ||
-				(charCode >= 0x91 && charCode <= 0x99) ||
-				(charCode >= 0xA2 && charCode <= 0xA9) ||
-				(charCode >= 0x4A && charCode <= 0x6F);
-			};
-
-		private static String DecodeUTF8(byte[] data) {
+					return
+		// space
+		charCode == 0x40 ||
+		// digits
+		(charCode >= 0xF0 && charCode <= 0xF9) ||
+		// uppercase letters
+		(charCode >= 0xC1 && charCode <= 0xC9) || (charCode >= 0xD1 && charCode <= 0xD9)
+		|| (charCode >= 0xE2 && charCode <= 0xE9) ||
+		// lowercase letters
+		(charCode >= 0x81 && charCode <= 0x89) || (charCode >= 0x91 && charCode <= 0x99)
+		|| (charCode >= 0xA2 && charCode <= 0xA9) ||
+		// basic punctuation
+		(charCode >= 0x4A && charCode <= 0x6F) ||
+		// generic fallback bytes for Western European characters
+	    // NOTE: these represent accented letters or symbols outside ASCII,
+		charCode == 0x45 ||charCode == 0xCE || charCode == 0xE9 || charCode == 0xD3 || charCode == 0xC7;
+		};
+		
+		private static String decodeUTF8(byte[] data) {
 			var utf8 = new UTF8Encoding(false, true);
 			return utf8.GetString(data);
 		}
 
-		private static String DecodeEBCDIC(byte[] data) {
+		public static String decodeEBCDIC(byte[] data) {
 
 			Encoding enc = Encoding.GetEncoding( "IBM037", EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
-
 			return enc.GetString(data);
 		}
 
-		private static ValidationResult ValidateCore( byte[] data, String codePage, Func<byte[], String> decoder, Predicate<int> rangeValidator, double? threshold) {
+		public static ValidationResult validateCore( byte[] data, String codePage, Func<byte[], String> decoder, Predicate<int> rangeValidator, double? threshold) {
 
 			bool status = true;
 			String message = null;
@@ -122,21 +134,15 @@ namespace Utils {
 					validCount++;
 
 				if (!valid && threshold == null) {
-
 					status = false;
-
 					message = String.Format( "invalid code page {0} character 0x{1:X2} at position {2}", codePage, charCode, position);
 				}
 			}
 
 			if (threshold != null) {
-
 				double ratio = (double)validCount / data.Length;
-
 				if (ratio < threshold.Value) {
-
 					status = false;
-
 					message = String.Format( "valid byte ratio {0:F2} below threshold {1:F2} for code page {2}", ratio, threshold.Value, codePage);
 				}
 			}
@@ -146,27 +152,27 @@ namespace Utils {
 
 		public static ValidationResult validateUTF8(byte[] data) {
 
-			return ValidateCore( data, "UTF-8", DecodeUTF8, null, null);
+			return validateCore( data, "UTF-8", decodeUTF8, null, null);
 		}
 
 		public static ValidationResult validateASCII(byte[] data) {
 
-			return ValidateCore( data, "US-ASCII", null, isAsciiChar, null);
+			return validateCore( data, "US-ASCII", null, isAsciiChar, null);
 		}
 
 		public static ValidationResult validateASCII(byte[] data, double threshold) {
 
-			return ValidateCore( data, "US-ASCII", null, isAsciiChar, threshold);
+			return validateCore( data, "US-ASCII", null, isAsciiChar, threshold);
 		}
 
 		public static ValidationResult validateEBCDIC(byte[] data) {
 
-			return ValidateCore( data, "IBM037", DecodeEBCDIC, isEbcdicChar, null);
+			return validateCore( data, "IBM037", decodeEBCDIC, isEbcdicChar, null);
 		}
 
 		public static ValidationResult validateEBCDIC(byte[] data, double threshold) {
 
-			return ValidateCore( data, "IBM037", DecodeEBCDIC, isEbcdicChar, threshold);
+			return validateCore( data, "IBM037", decodeEBCDIC, isEbcdicChar, threshold);
 		}
 
 		// validator registry
@@ -182,7 +188,7 @@ namespace Utils {
 				{ "cp037", validateEBCDIC }
 			};
 
-		public static ValidationResult Validate(byte[] data, string charMap) {
+		public static ValidationResult validate(byte[] data, string charMap) {
 
 			if (String.IsNullOrEmpty(charMap))
 				charMap = "ascii";

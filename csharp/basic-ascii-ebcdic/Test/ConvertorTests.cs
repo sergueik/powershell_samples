@@ -15,12 +15,13 @@ namespace Test {
 
 	[TestFixture]
 	public class ConvertorTests {
+
 		private StringBuilder verificationErrors = new StringBuilder();
 		private static bool debug;
 
 		// To ensure compatibility, encrypt test inputs via Java or Perl
 		[SetUp]
-		public void setUp() {
+		public void setUp(){
 			debug = true;
 			Program.Program.Debug = debug;
 			verificationErrors.Clear();
@@ -31,49 +32,56 @@ namespace Test {
 			Assert.AreEqual("", verificationErrors.ToString());
 		}
 
-		public void validate1(string data, bool status, string comment){
-			var result = Convertor.validateEBCDIC(Convertor.HexStringToByteArray(data));
+		public void validate1(string data, bool status, string comment) {
+			var result = Convertor.validateEBCDIC(Convertor.hexStringToByteArray(data));
 			Assert.IsNotNull(result);
 			Assert.AreEqual(status, result.Valid, comment);
 		}
+
 		// converts string to byte array argument on the fly
-		public void validate2(string input, bool status, string comment){
-
-			string hex = String.Concat(
-				           input.Select(ch => ((int)ch).ToString("X2"))
-			           );
-
-			byte[] data = Convertor.HexStringToByteArray(hex);
+		public void validate2(string input, bool status, string comment) {
+			string hex = String.Concat( input.Select(ch => ((int)ch).ToString("X2")));
+			byte[] data = Convertor.hexStringToByteArray(hex);
 
 			var result = Convertor.validateASCII(data, 0.96);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(status, result.Valid,
-				String.Format("{0} input={1} hex={2}", comment, input, hex));
+			Assert.AreEqual(status, result.Valid, String.Format("{0} input={1} hex={2}", comment, input, hex));
 		}
 
 		// converts string to byte array argument on the fly, alternative take
 		public void validate3(string input, bool status, string comment) {
-
-			var chars = input.ToCharArray();
-
-			var hexStream = chars.Select(c => ((int)c).ToString("X2"));
-
-			string hex = String.Join("", hexStream);
-
-			byte[] data = Convertor.HexStringToByteArray(hex);
-
+			string hex = String.Join("", input.ToCharArray().Select(c => ((int)c).ToString("X2")));
+			byte[] data = Convertor.hexStringToByteArray(hex);
 			var result = Convertor.validateASCII(data, 0.96);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(status, result.Valid,
-				String.Format("{0} input={1} hex={2}", comment, input, hex));
+			Assert.AreEqual(status, result.Valid, String.Format("{0} input={1} hex={2}", comment, input, hex));
 		}
 		
+		public void validate4(string input, string codePage, bool status, string comment) { 
+			string hex = String.Concat( input.Select(ch => ((int)ch).ToString("X2")));
+			byte[] data = Convertor.hexStringToByteArray(hex);
+
+			// validate encoded string
+			ValidationResult result = Convertor.validateCore(data, codePage, Utils.Convertor.decodeEBCDIC, Utils.Convertor.getPredicate(codePage), .90);
+
+			Assert.IsNotNull(result);
+			Assert.AreEqual(status, result.Valid, String.Format("{0} input={1} hex={2} error={3}", comment, input, hex,  result.Message));
+		}
+
+		public void validate5(string input, string codePage, bool status, string comment){
+		    byte[] data = Encoding.GetEncoding(codePage).GetBytes(input);
+		    string hex = BitConverter.ToString(data).Replace("-", "");
+		    ValidationResult result = Convertor.validateCore(data, codePage, Utils.Convertor.decodeEBCDIC, Utils.Convertor.getPredicate(codePage), .90);
+		    Assert.IsNotNull(result);
+		    Assert.AreEqual(status, result.Valid, String.Format("{0} input={1} hex={2} error={3}", comment, input, hex, result.Message));
+		}
+
 		[Test]
 		// NOTE: TestName is not supported prior to Nunit 3.x
 		// [TestName("EBCDIC validation")]
-		public void test1(){
+		public void test1() {
 			object[,] arguments = {
 				{ "uppercase HELLO", "C8C5D3D3D6", true },
 				{ "lowercase hello", "8885939396", true },
@@ -106,8 +114,7 @@ namespace Test {
 		[Test]
 		// NOTE: TestName is not supported prior to Nunit 3.x
 		// [TestName("ASCII validation - clear text test data")]
-		public void test2()
-		{
+		public void test2() {
 
 			object[,] arguments = {
 				{ "ASCII HELLO", "HELLO", true },
@@ -126,5 +133,26 @@ namespace Test {
 					String.Format("{0} data={1}", comment, data));
 			}
 		}
+		
+		[Test]
+		// NOTE: TestName is not supported prior to Nunit 3.x
+		// [TestName("EBCDIC validation")]
+		public void test3() {
+			object[,] arguments = {
+				{ "Spanish accented characters in CP1047", "Cómo estás", true },
+				{ "Canadian French accented characters in CP1047", "Ça va bien", true }
+			};
+
+			for (int i = 0; i < arguments.GetLength(0); i++) {
+
+				string comment = (string)arguments[i, 0];
+				string data = (string)arguments[i, 1];
+				string codePage = "IBM037";
+				bool result = (bool)arguments[i, 2];
+
+				validate5(data, codePage, result, String.Format("{0} data={1}", comment, data));
+			}
+		}
+		
 	}
 }

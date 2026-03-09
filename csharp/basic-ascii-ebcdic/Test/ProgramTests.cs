@@ -39,7 +39,7 @@ namespace Test {
 		}
 
 		public void convert(string data, string expected) {
-			var result = Program.Program.convertEBCDICToASCII(Convertor.HexStringToByteArray(data), "IBM037");
+			var result = Program.Program.convertEBCDICToASCII(Convertor.hexStringToByteArray(data), "IBM037");
 			Assert.IsNotNull(result);
 			Assert.AreEqual(expected, Encoding.ASCII.GetString(result), "Failed for input: " + data);
 		}
