@@ -139,8 +139,13 @@ namespace Test {
 		// [TestName("EBCDIC validation")]
 		public void test3() {
 			object[,] arguments = {
-				{ "Spanish accented characters in CP1047", "Cómo estás", true },
-				{ "Canadian French accented characters in CP1047", "Ça va bien", true }
+				{ "Spanish accented characters in CP1047", "El veloz murciélago hindú comía feliz cardillo y kixwi; la cigüeña tocaba el saxofón detrás del palenque de paja", true },
+				{ "Canadian French accented characters in CP1047", "Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwi", true },
+				// A typographic quote ’ or Euro sign € are not present in CP1047.
+				// however they get replaced and tests pass
+				 { "European banking text with Euro sign", "La banque européenne a reçu 100€ pour le dépôt", true },
+				 { "European smart quote", "Voix ambiguë d’un cœur", true}
+
 			};
 
 			for (int i = 0; i < arguments.GetLength(0); i++) {

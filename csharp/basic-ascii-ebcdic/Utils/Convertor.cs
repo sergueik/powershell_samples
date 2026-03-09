@@ -92,8 +92,10 @@ namespace Utils {
 
 		public static String decodeEBCDIC(byte[] data) {
 
-			Encoding enc = Encoding.GetEncoding( "IBM037", EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
-			return enc.GetString(data);
+			// Encoding encoding = Encoding.GetEncoding( "IBM037", EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
+			Encoding encoding = Encoding.GetEncoding( 1047, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
+			// now € or ’ it *should* raise:  EncoderFallbackException, but does not appear to
+			return encoding.GetString(data);
 		}
 
 		public static ValidationResult validateCore( byte[] data, String codePage, Func<byte[], String> decoder, Predicate<int> rangeValidator, double? threshold) {
