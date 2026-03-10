@@ -404,6 +404,72 @@ This leads to  the following "in the range" probe:
         (charCode >= 0x4A && charCode <= 0x6F);  // punctuation window
 ```
 
+### Full European Character Scan
+
+to construct a full alphabet covering phrase in Eutopean languages, one may pick that language equivalent of "the quick brown fox" phrase:
+
+![charmap es](screenshots/capture-charmap-es.jpg)
+
+![charmap fr](screenshots/capture-charmap-fr.jpg)
+
+to workaround unrecognized fallback character code errors, one has to provid additional accepted character codes:
+```c#
+	private static readonly Predicate<int> isEbcdicChar =
+			delegate(int charCode) {
+					return
+		// space
+		charCode == 0x40 ||
+		// digits
+		(charCode >= 0xF0 && charCode <= 0xF9) ||
+		// uppercase letters
+		(charCode >= 0xC1 && charCode <= 0xC9) || (charCode >= 0xD1 && charCode <= 0xD9)
+		|| (charCode >= 0xE2 && charCode <= 0xE9) ||
+		// lowercase letters
+		(charCode >= 0x81 && charCode <= 0x89) || (charCode >= 0x91 && charCode <= 0x99)
+		|| (charCode >= 0xA2 && charCode <= 0xA9) ||
+		// basic punctuation
+		(charCode >= 0x4A && charCode <= 0x6F) ||
+		// generic fallback bytes for Western European characters
+	    // NOTE: these represent accented letters or symbols outside ASCII,
+		charCode == 0x45 ||charCode == 0xCE || charCode == 0xE9 || charCode == 0xD3 || charCode == 0xC7;
+		};
+```
+this makes the tests pass:
+```c#
+		[Test]
+		// NOTE: TestName is not supported prior to Nunit 3.x
+		// [TestName("EBCDIC validation")]
+		public void test3() {
+			object[,] arguments = {
+				{ "Spanish accented characters in CP1047", "El veloz murciélago hindú comía feliz cardillo y kixwi; la cigüeña tocaba el saxofón detrás del palenque de paja", true },
+				{ "Canadian French accented characters in CP1047", "Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwi", true },
+				// A typographic quote ’ or Euro sign € are not present in CP1047.
+				// however they get replaced and tests pass
+				 { "European banking text with Euro sign", "La banque européenne a reçu 100€ pour le dépôt", true },
+				 { "European smart quote", "Voix ambiguë d’un cœur", true}
+
+			};
+
+			for (int i = 0; i < arguments.GetLength(0); i++) {
+
+				string comment = (string)arguments[i, 0];
+				string data = (string)arguments[i, 1];
+				string codePage = "IBM037";
+				bool result = (bool)arguments[i, 2];
+
+				validate5(data, codePage, result, String.Format("{0} data={1}", comment, data));
+			}
+		}
+		public void validate5(string input, string codePage, bool status, string comment){
+		    byte[] data = Encoding.GetEncoding(codePage).GetBytes(input);
+		    string hex = BitConverter.ToString(data).Replace("-", "");
+		    ValidationResult result = Convertor.validateCore(data, codePage, Utils.Convertor.decodeEBCDIC, Utils.Convertor.getPredicate(codePage), .90);
+		    Assert.IsNotNull(result);
+		    Assert.AreEqual(status, result.Valid, String.Format("{0} input={1} hex={2} error={3}", comment, input, hex, result.Message));
+		}
+
+```
+
 ### See Also
 
   * [ASCII EBCDIC translation tables](http://www.simotime.com/asc2ebc1.htm)
