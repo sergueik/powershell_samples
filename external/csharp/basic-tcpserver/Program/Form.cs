@@ -8,9 +8,9 @@ using Utils;
 namespace Program {
 	public class Form: System.Windows.Forms.Form {
 		private Container components = null;
-		private TcpServer Server;
+		private TcpServer tcpServer;
 		private Button button;
-		private EchoServiceProvider Provider;
+		// private EchoServiceProvider Provider;
         
 
 		public Form() {
@@ -20,8 +20,7 @@ namespace Program {
 
 		protected override void Dispose( bool disposing ) {
 			if( disposing ) {
-				if (components != null) 
-				{
+				if (components != null) {
 					components.Dispose();
 				}
 			}
@@ -55,21 +54,18 @@ namespace Program {
 			Application.Run(new Form());
 		}
 
-
-
 		private void Form_Load(object sender, EventArgs e) {
-			Provider = new EchoServiceProvider();
-			Server = new TcpServer(Provider, 15555);
-			Server.Start();
+			var echoServiceProvider = new EchoServiceProvider();
+			tcpServer = new TcpServer(echoServiceProvider, 15555);
+			tcpServer.Start();
 		}
-
 
 		private void button_Click(object sender, EventArgs e) {
 			this.Close();
 		}
 
 		private void Form_Closed(object sender, EventArgs e) {
-			Server.Stop();
+			tcpServer.Stop();
 		}
 	}
 }

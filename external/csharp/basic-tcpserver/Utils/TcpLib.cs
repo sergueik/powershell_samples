@@ -8,30 +8,27 @@ using System.Collections;
 namespace Utils {
 
 	public class ConnectionState {
-		internal Socket _conn;
-		internal TcpServer _server;
-		internal TcpServiceProvider _provider;
-		internal byte[] _buffer;
+		internal Socket socket;
+		internal TcpServer tcpServer;
+		internal TcpServiceProvider tcpServiceProvider;
+		internal byte[] buffer;
 
 		public EndPoint RemoteEndPoint {
-			get{ return _conn.RemoteEndPoint; }
+			get{ return socket.RemoteEndPoint; }
 		}
 
 		public int AvailableData {
-			get{ return _conn.Available; }
+			get{ return socket.Available; }
 		}
 
 		public bool Connected {
-			get{ return _conn.Connected; }
+			get{ return socket.Connected; }
 		}
 
 		public int Read(byte[] buffer, int offset, int count)
 		{
 			try {
-				if (_conn.Available > 0)
-					return _conn.Receive(buffer, offset, count, SocketFlags.None);
-				else
-					return 0;
+				return (socket.Available > 0) ? socket.Receive(buffer, offset, count, SocketFlags.None) :0;
 			} catch {
 				return 0;
 			}
@@ -40,7 +37,7 @@ namespace Utils {
 		public bool Write(byte[] buffer, int offset, int count)
 		{
 			try {
-				_conn.Send(buffer, offset, count, SocketFlags.None);
+				socket.Send(buffer, offset, count, SocketFlags.None);
 				return true;
 			} catch {
 				return false;
@@ -50,20 +47,18 @@ namespace Utils {
 
 		public void EndConnection()
 		{
-			if (_conn != null && _conn.Connected) {
-				_conn.Shutdown(SocketShutdown.Both);
-				_conn.Close();
+			if (socket != null && socket.Connected) {
+				socket.Shutdown(SocketShutdown.Both);
+				socket.Close();
 			}
-			_server.DropConnection(this);
+			tcpServer.DropConnection(this);
 		}
 	}
 
 
 
-	public abstract class TcpServiceProvider:ICloneable
-	{
-		public virtual object Clone()
-		{
+	public abstract class TcpServiceProvider:ICloneable {
+		public virtual object Clone() {
 			throw new Exception("Derived clases must override Clone method.");
 		}
 
@@ -77,22 +72,22 @@ namespace Utils {
 
 
 	public class TcpServer {
-		private int _port;
-		private Socket _listener;
-		private TcpServiceProvider _provider;
-		private ArrayList _connections;
-		private int _maxConnections = 100;
+		private int port;
+		private Socket socket;
+		private TcpServiceProvider tcpServiceProvider;
+		private ArrayList connections;
+		private int maxConnections = 100;
 
 		private AsyncCallback ConnectionReady;
 		private WaitCallback AcceptConnection;
 		private AsyncCallback ReceivedDataReady;
 
 		public TcpServer(TcpServiceProvider provider, int port) {
-			_provider = provider;
-			_port = port;
-			_listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream,
+			tcpServiceProvider = provider;
+			this.port = port;
+			this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream,
 				ProtocolType.Tcp);
-			_connections = new ArrayList();
+			connections = new ArrayList();
 			ConnectionReady = new AsyncCallback(ConnectionReady_Handler);
 			AcceptConnection = new WaitCallback(AcceptConnection_Handler);
 			ReceivedDataReady = new AsyncCallback(ReceivedDataReady_Handler);
@@ -101,9 +96,9 @@ namespace Utils {
 
 		public bool Start() {
 			try {
-				_listener.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), _port));
-				_listener.Listen(100);
-				_listener.BeginAccept(ConnectionReady, null);
+				socket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), port));
+				socket.Listen(100);
+				socket.BeginAccept(ConnectionReady, null);
 				return true;
 			} catch {
 				return false;
@@ -113,10 +108,10 @@ namespace Utils {
 
 		private void ConnectionReady_Handler(IAsyncResult ar) {
 			lock (this) {
-				if (_listener == null)
+				if (socket == null)
 					return;
-				Socket conn = _listener.EndAccept(ar);
-				if (_connections.Count >= _maxConnections) {
+				Socket conn = socket.EndAccept(ar);
+				if (connections.Count >= maxConnections) {
 					//Max number of connections reached.
 					string msg = "SE001: Server busy";
 					conn.Send(Encoding.UTF8.GetBytes(msg), 0, msg.Length, SocketFlags.None);
@@ -125,16 +120,16 @@ namespace Utils {
 				} else {
 					//Start servicing a new connection
 					var connectionState = new ConnectionState();
-					connectionState._conn = conn;
-					connectionState._server = this;
-					connectionState._provider = (TcpServiceProvider)_provider.Clone();
-					connectionState._buffer = new byte[4];
-					_connections.Add(connectionState);
+					connectionState.socket = conn;
+					connectionState.tcpServer = this;
+					connectionState.tcpServiceProvider = (TcpServiceProvider)tcpServiceProvider.Clone();
+					connectionState.buffer = new byte[4];
+					connections.Add(connectionState);
 					//Queue the rest of the job to be executed later
 					ThreadPool.QueueUserWorkItem(AcceptConnection, connectionState);
 				}
 				//Resume the listening callback loop
-				_listener.BeginAccept(ConnectionReady, null);
+				socket.BeginAccept(ConnectionReady, null);
 			}
 		}
 
@@ -142,33 +137,33 @@ namespace Utils {
 		private void AcceptConnection_Handler(object state){
 			var connectionState = state as ConnectionState;
 			try {
-				connectionState._provider.OnAcceptConnection(connectionState);
+				connectionState.tcpServiceProvider.OnAcceptConnection(connectionState);
 			} catch {
 				//report error in provider... Probably to the EventLog
 			}
 			//Starts the ReceiveData callback loop
-			if (connectionState._conn.Connected)
-				connectionState._conn.BeginReceive(connectionState._buffer, 0, 0, SocketFlags.None,
+			if (connectionState.socket.Connected)
+				connectionState.socket.BeginReceive(connectionState.buffer, 0, 0, SocketFlags.None,
 					ReceivedDataReady, connectionState);
 		}
 
 
 		private void ReceivedDataReady_Handler(IAsyncResult ar) {
 			var connectionState = ar.AsyncState as ConnectionState;
-			connectionState._conn.EndReceive(ar);
+			connectionState.socket.EndReceive(ar);
 			//Im considering the following condition as a signal that the
 			//remote host droped the connection.
-			if (connectionState._conn.Available == 0)
+			if (connectionState.socket.Available == 0)
 				DropConnection(connectionState);
 			else {
 				try {
-					connectionState._provider.OnReceiveData(connectionState);
+					connectionState.tcpServiceProvider.OnReceiveData(connectionState);
 				} catch {
 					//report error in the provider
 				}
 				//Resume ReceivedData callback loop
-				if (connectionState._conn.Connected)
-					connectionState._conn.BeginReceive(connectionState._buffer, 0, 0, SocketFlags.None,
+				if (connectionState.socket.Connected)
+					connectionState.socket.BeginReceive(connectionState.buffer, 0, 0, SocketFlags.None,
 						ReceivedDataReady, connectionState);
 			}
 		}
@@ -176,20 +171,20 @@ namespace Utils {
 
 		public void Stop() {
 			lock (this) {
-				_listener.Close();
-				_listener = null;
+				socket.Close();
+				socket = null;
 				//Close all active connections
-				foreach (object obj in _connections) {
+				foreach (object obj in connections) {
 					var connectionState = obj as ConnectionState;
 					try {
-						connectionState._provider.OnDropConnection(connectionState);
+						connectionState.tcpServiceProvider.OnDropConnection(connectionState);
 					} catch {
 						//some error in the provider
 					}
-					connectionState._conn.Shutdown(SocketShutdown.Both);
-					connectionState._conn.Close();
+					connectionState.socket.Shutdown(SocketShutdown.Both);
+					connectionState.socket.Close();
 				}
-				_connections.Clear();
+				connections.Clear();
 			}
 		}
 
@@ -197,20 +192,20 @@ namespace Utils {
 		internal void DropConnection(ConnectionState connectionState)
 		{
 			lock (this) {
-				connectionState._conn.Shutdown(SocketShutdown.Both);
-				connectionState._conn.Close();
-				if (_connections.Contains(connectionState))
-					_connections.Remove(connectionState);
+				connectionState.socket.Shutdown(SocketShutdown.Both);
+				connectionState.socket.Close();
+				if (connections.Contains(connectionState))
+					connections.Remove(connectionState);
 			}
 		}
 
 
 		public int MaxConnections {
 			get {
-				return _maxConnections;
+				return maxConnections;
 			}
 			set {
-				_maxConnections = value;
+				maxConnections = value;
 			}
 		}
 
@@ -218,7 +213,7 @@ namespace Utils {
 		public int CurrentConnections {
 			get {
 				lock (this) {
-					return _connections.Count;
+					return connections.Count;
 				}
 			}
 		}
