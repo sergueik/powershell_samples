@@ -1,21 +1,26 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# SharpDevelop 5.1
+VisualStudioVersion = 12.0.20827.3
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "Program\Program.csproj", "{75F70116-4F9D-4616-8F10-A1EE23C30E29}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{63D223AE-C430-4030-B15A-2BBD167C498E}"
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{75F70116-4F9D-4616-8F10-A1EE23C30E29}.Debug.ActiveCfg = Debug|.NET
-		{75F70116-4F9D-4616-8F10-A1EE23C30E29}.Debug.Build.0 = Debug|.NET
-		{75F70116-4F9D-4616-8F10-A1EE23C30E29}.Release.ActiveCfg = Release|.NET
-		{75F70116-4F9D-4616-8F10-A1EE23C30E29}.Release.Build.0 = Release|.NET
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75F70116-4F9D-4616-8F10-A1EE23C30E29}.Debug|x86.ActiveCfg = Debug|x86
+		{75F70116-4F9D-4616-8F10-A1EE23C30E29}.Debug|x86.Build.0 = Debug|x86
+		{75F70116-4F9D-4616-8F10-A1EE23C30E29}.Release|x86.ActiveCfg = Release|x86
+		{75F70116-4F9D-4616-8F10-A1EE23C30E29}.Release|x86.Build.0 = Release|x86
+		{63D223AE-C430-4030-B15A-2BBD167C498E}.Debug|x86.ActiveCfg = Debug|x86
+		{63D223AE-C430-4030-B15A-2BBD167C498E}.Debug|x86.Build.0 = Debug|x86
+		{63D223AE-C430-4030-B15A-2BBD167C498E}.Release|x86.ActiveCfg = Release|x86
+		{63D223AE-C430-4030-B15A-2BBD167C498E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 EndGlobal

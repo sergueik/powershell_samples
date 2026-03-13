@@ -4,18 +4,19 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{75F70116-4F9D-4616-8F10-A1EE23C30E29}</ProjectGuid>
-    <RootNamespace>Program</RootNamespace>
-    <AssemblyName>TcpServer</AssemblyName>
-    <OutputType>WinExe</OutputType>
-    <ApplicationIcon>App.ico</ApplicationIcon>
+    <ProjectGuid>{63d223ae-c430-4030-b15a-2bbd167c498e}</ProjectGuid>
+    <RootNamespace>Utils</RootNamespace>
+    <AssemblyName>Utils</AssemblyName>
+    <OutputType>Library</OutputType>
+    <ApplicationIcon>
+    </ApplicationIcon>
     <RunPostBuildEvent>OnSuccessfulBuild</RunPostBuildEvent>
     <PreBuildEvent />
     <PostBuildEvent />
     <NoConfig>false</NoConfig>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
-    <NoWin32Manifest>False</NoWin32Manifest>
+    <NoWin32Manifest>True</NoWin32Manifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <NoStdLib>false</NoStdLib>
@@ -44,23 +45,12 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App.ico" />
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Form.cs" />
+    <Compile Include="EchoServiceProvider.cs" />
+    <Compile Include="TcpLib.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{63d223ae-c430-4030-b15a-2bbd167c498e}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
