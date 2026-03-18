@@ -13,49 +13,41 @@ namespace Utils {
 	public class Convertor {
 
 		private static readonly Dictionary<string, string> CodepageAliases =
-		    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-		        { "cp037", "IBM1047" },
-		        { "ibm037", "IBM1047" },
-		        { "ascii", "ASCII" },
-		        { "us-ascii", "ASCII" },
-		        { "utf8", "UTF-8" },
-		        { "utf-8", "UTF-8" }
-		    };
+			new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+				{ "cp037", "IBM1047" },
+				{ "ibm037", "IBM1047" },
+				{ "ascii", "ASCII" },
+				{ "us-ascii", "ASCII" },
+				{ "utf8", "UTF-8" },
+				{ "utf-8", "UTF-8" }
+			};
 		
-		private static readonly Func<byte[], string> utf8Decoder = delegate(byte[] data) {
-	        var utf8 = new UTF8Encoding(false, true);
-	        return utf8.GetString(data);
-	    };
-	
-		private static readonly Func<byte[], string> ebcdicDecoder = delegate(byte[] data) {
-	        Encoding encoding = Encoding.GetEncoding(
-	            1047,
-	            EncoderFallback.ExceptionFallback,
-	            DecoderFallback.ExceptionFallback
-	        );
-	        return encoding.GetString(data);
-	    };
-
-		public static Func<byte[], string> GetDecoder(string codePage) {
+		public static Func<byte[], string> getDecoder(string codePage) {
 		
-		    if (codePage == "UTF-8")
-		        return utf8Decoder;
+			if (codePage == "UTF-8")
+				return delegate(byte[] data) {
+					var utf8 = new UTF8Encoding(false, true);
+					return utf8.GetString(data);
+				};
 		
-		    if (codePage == "IBM1047")
-		        return ebcdicDecoder;
+			if (codePage == "IBM1047")
+				return delegate(byte[] data) {
+					Encoding encoding = Encoding.GetEncoding( 1047, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback );
+					return encoding.GetString(data);
+				};
 		
-		    return null;
+			return null;
 		}
 
 		private static string Normalize(string codepage) {
-		    if (String.IsNullOrEmpty(codepage))
-		        return "ASCII";
+			if (String.IsNullOrEmpty(codepage))
+				return "ASCII";
 		
-		    string value;
-		    if (CodepageAliases.TryGetValue(codepage, out value))
-		        return value;
+			string value;
+			if (CodepageAliases.TryGetValue(codepage, out value))
+				return value;
 		
-		    return codepage.ToUpper();
+			return codepage.ToUpper();
 		}
 	
 		public static String byteArrayToString(byte[] bytes) {
@@ -98,40 +90,37 @@ namespace Utils {
 			return hexString;
 		}
 
-		private static readonly Predicate<int> isAsciiChar =
-			delegate(int charCode) {
-				return charCode <= 0x7F;
-			};
-
 		public static Predicate<int> getPredicate(string codePage) {
 			switch (codePage) {
-					case "IBM037": return isEbcdicChar;
-					case "ASCII": return isAsciiChar;
-					case "UTF-8":return null;
-					default: return null;
+				case "IBM037": return delegate(int charCode) {
+					return
+					// space
+					charCode == 0x40 ||
+					// digits
+							(charCode >= 0xF0 && charCode <= 0xF9) ||
+					// uppercase letters
+							(charCode >= 0xC1 && charCode <= 0xC9) || (charCode >= 0xD1 && charCode <= 0xD9)
+							|| (charCode >= 0xE2 && charCode <= 0xE9) ||
+					// lowercase letters
+							(charCode >= 0x81 && charCode <= 0x89) || (charCode >= 0x91 && charCode <= 0x99)
+							|| (charCode >= 0xA2 && charCode <= 0xA9) ||
+					// basic punctuation
+							(charCode >= 0x4A && charCode <= 0x6F) ||
+					// generic fallback bytes for Western European characters
+				    // NOTE: these represent accented letters or symbols outside ASCII,
+							charCode == 0x45 || charCode == 0xCE || charCode == 0xE9 || charCode == 0xD3 || charCode == 0xC7;
+					};
+				case "ASCII": return delegate(int charCode) {
+					return charCode <= 0x7F;
+				};
+				case "UTF-8":
+					return null;
+				default:
+					return null;
 			}
 		}
-		private static readonly Predicate<int> isEbcdicChar =
-			delegate(int charCode) {
-					return
-		// space
-		charCode == 0x40 ||
-		// digits
-		(charCode >= 0xF0 && charCode <= 0xF9) ||
-		// uppercase letters
-		(charCode >= 0xC1 && charCode <= 0xC9) || (charCode >= 0xD1 && charCode <= 0xD9)
-		|| (charCode >= 0xE2 && charCode <= 0xE9) ||
-		// lowercase letters
-		(charCode >= 0x81 && charCode <= 0x89) || (charCode >= 0x91 && charCode <= 0x99)
-		|| (charCode >= 0xA2 && charCode <= 0xA9) ||
-		// basic punctuation
-		(charCode >= 0x4A && charCode <= 0x6F) ||
-		// generic fallback bytes for Western European characters
-	    // NOTE: these represent accented letters or symbols outside ASCII,
-		charCode == 0x45 ||charCode == 0xCE || charCode == 0xE9 || charCode == 0xD3 || charCode == 0xC7;
-		};
-		
-		public static ValidationResult validateCore( byte[] data, String codePage, Func<byte[], String> decoder, Predicate<int> rangeValidator, double? threshold) {
+
+		public static ValidationResult validateCore(byte[] data, String codePage, Func<byte[], String> decoder, Predicate<int> rangeValidator, double? threshold) {
 
 			bool status = true;
 			String message = null;
@@ -142,7 +131,7 @@ namespace Utils {
 					decoder(data);
 				} catch (Exception e) {
 
-					return new ValidationResult( false, String.Format( "failed to decode in code page {0}: {1}", codePage, e.Message));
+					return new ValidationResult(false, String.Format("failed to decode in code page {0}: {1}", codePage, e.Message));
 				}
 			}
 
@@ -170,7 +159,7 @@ namespace Utils {
 
 				if (!valid && threshold == null) {
 					status = false;
-					message = String.Format( "invalid code page {0} character 0x{1:X2} at position {2}", codePage, charCode, position);
+					message = String.Format("invalid code page {0} character 0x{1:X2} at position {2}", codePage, charCode, position);
 				}
 			}
 
@@ -178,7 +167,7 @@ namespace Utils {
 				double ratio = (double)validCount / data.Length;
 				if (ratio < threshold.Value) {
 					status = false;
-					message = String.Format( "valid byte ratio {0:F2} below threshold {1:F2} for code page {2}", ratio, threshold.Value, codePage);
+					message = String.Format("valid byte ratio {0:F2} below threshold {1:F2} for code page {2}", ratio, threshold.Value, codePage);
 				}
 			}
 
@@ -187,27 +176,33 @@ namespace Utils {
 
 		public static ValidationResult validateUTF8(byte[] data) {
 
-			return validateCore( data, "UTF-8", GetDecoder("UTF-8"), null, null);
+			return validateCore(data, "UTF-8", getDecoder("UTF-8"), null, null);
 		}
 
-		public static ValidationResult validateASCII(byte[] data) {
+		public static ValidationResult validateASCII(byte[] data)
+		{
 
-			return validateCore( data, "US-ASCII", null, isAsciiChar, null);
+			var codePage = "US-ASCII";
+			return validateCore(data, codePage, getDecoder(codePage), getPredicate(codePage), null);
 		}
 
-		public static ValidationResult validateASCII(byte[] data, double threshold) {
+		public static ValidationResult validateASCII(byte[] data, double threshold)
+		{
+			var codePage = "US-ASCII";
+			return validateCore(data, codePage, getDecoder(codePage), getPredicate(codePage), threshold);
 
-			return validateCore( data, "US-ASCII", null, isAsciiChar, threshold);
 		}
 
-		public static ValidationResult validateEBCDIC(byte[] data) {
-
-			return validateCore( data, "IBM037", GetDecoder("IBM037"), isEbcdicChar, null);
+		public static ValidationResult validateEBCDIC(byte[] data)
+		{
+			var codePage = "IBM037";
+			return validateCore(data, codePage, getDecoder(codePage), getPredicate(codePage), null);
 		}
 
 		public static ValidationResult validateEBCDIC(byte[] data, double threshold) {
 
-			return validateCore( data, "IBM037", GetDecoder("IBM037"), isEbcdicChar, threshold);
+			var codePage = "IBM037";
+			return validateCore(data, codePage, getDecoder(codePage), getPredicate(codePage), threshold);
 		}
 
 		// validator registry
@@ -223,7 +218,8 @@ namespace Utils {
 				{ "cp037", validateEBCDIC }
 			};
 
-		public static ValidationResult validate(byte[] data, string charMap) {
+		public static ValidationResult validate(byte[] data, string charMap)
+		{
 
 			if (String.IsNullOrEmpty(charMap))
 				charMap = "ascii";

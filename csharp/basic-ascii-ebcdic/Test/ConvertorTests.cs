@@ -64,7 +64,7 @@ namespace Test {
 			byte[] data = Convertor.hexStringToByteArray(hex);
 
 			// validate encoded string
-			ValidationResult result = Convertor.validateCore(data, codePage, Convertor.GetDecoder(codePage), Convertor.getPredicate(codePage), .90);
+			ValidationResult result = Convertor.validateCore(data, codePage, Convertor.getDecoder(codePage), Convertor.getPredicate(codePage), .90);
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(status, result.Valid, String.Format("{0} input={1} hex={2} error={3}", comment, input, hex,  result.Message));
@@ -73,7 +73,7 @@ namespace Test {
 		public void validate5(string input, string codePage, bool status, string comment){
 		    byte[] data = Encoding.GetEncoding(codePage).GetBytes(input);
 		    string hex = BitConverter.ToString(data).Replace("-", "");
-		    ValidationResult result = Convertor.validateCore(data, codePage, Convertor.GetDecoder(codePage), Convertor.getPredicate(codePage), .90);
+		    ValidationResult result = Convertor.validateCore(data, codePage, Convertor.getDecoder(codePage), Convertor.getPredicate(codePage), .90);
 		    Assert.IsNotNull(result);
 		    Assert.AreEqual(status, result.Valid, String.Format("{0} input={1} hex={2} error={3}", comment, input, hex, result.Message));
 		}
