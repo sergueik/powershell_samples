@@ -135,10 +135,19 @@ namespace Test
                 bool expected = (bool)arguments[i, 2];
                 string codePage= "IBM037";
                 try {
-		        	// 0x3F is a questionmark and if it is loggedin the message, the string to byte conversion was wrong 
+		        	// NOTE: an 0x3F is a questionmark and if it is seen in the message hex position, 
+		        	// the string to byte conversion was wrong
 		            // byte[] data = Encoding.UTF8.GetBytes(input);
 		            
 		            byte[] data = Encoding.GetEncoding(codePage).GetBytes(input);
+		            Console.Error.WriteLine("test3: " + Convertor.ByteArrayToHexString(data));
+		            /*
+		             NOTE: make sure to match with JAVA:
+						Hex: C59340A5859396A94094A499838951938187964088899584DE4083969455814086859389A940838199848993939640A8409289A6895E40938140838987DC85498140A3968381828140859340A281A79686CE95408485A39945A24084859340978193859598A4854084854097819181
+						Hex: E59689A7408194828987A45340847DA49540833FA4994098A4894081A440A9519788A8994097995186549985409385A2409181A3A385A2408485409289A689
+						Hex: D3814082819598A4854085A49996975185959585408140998548A440F1F0F03F409796A49940938540845197CBA3
+						Hex: E59689A7408194828987A45340843FA49540833FA499
+		             */
 		            var convertor = new Validator(data, codePage, threshold);
 		            ValidationResult result = convertor.Validate();
 		

@@ -409,8 +409,20 @@ This leads to  the following "in the range" probe:
 to construct a full alphabet covering phrase in Eutopean languages, one may pick that language equivalent of "the quick brown fox" phrase:
 
 ![charmap es](screenshots/capture-charmap-es.jpg)
+```text
+text: El veloz murciélago hindú comía feliz cardillo y kixwi; la cigüeña tocaba el saxofón detrás del palenque de paja
+hex: C59340A5859396A94094A499838951938187964088899584DE4083969455814086859389A940838199848993939640A8409289A6895E40938140838987DC85498140A3968381828140859340A281A79686CE95408485A39945A24084859340978193859598A4854084854097819181
+```
+
+![charmap es](screenshots/capture-online-es.png)
 
 ![charmap fr](screenshots/capture-charmap-fr.jpg)
+```text
+text: Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwi"
+hex: E59689A7408194828987A45340847DA49540833FA4994098A4894081A440A9519788A8994097995186549985409385A2409181A3A385A2408485409289A689
+```
+
+![charmap fr](screenshots/capture-online-fr.png)
 
 to workaround unrecognized fallback character code errors, one has to provid additional accepted character codes:
 ```c#
