@@ -12,6 +12,52 @@ namespace Utils {
 
 	public class Convertor {
 
+		private static readonly Dictionary<string, string> CodepageAliases =
+		    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+		        { "cp037", "IBM1047" },
+		        { "ibm037", "IBM1047" },
+		        { "ascii", "ASCII" },
+		        { "us-ascii", "ASCII" },
+		        { "utf8", "UTF-8" },
+		        { "utf-8", "UTF-8" }
+		    };
+		
+		private static readonly Func<byte[], string> utf8Decoder = delegate(byte[] data) {
+	        var utf8 = new UTF8Encoding(false, true);
+	        return utf8.GetString(data);
+	    };
+	
+		private static readonly Func<byte[], string> ebcdicDecoder = delegate(byte[] data) {
+	        Encoding encoding = Encoding.GetEncoding(
+	            1047,
+	            EncoderFallback.ExceptionFallback,
+	            DecoderFallback.ExceptionFallback
+	        );
+	        return encoding.GetString(data);
+	    };
+
+		public static Func<byte[], string> GetDecoder(string codePage) {
+		
+		    if (codePage == "UTF-8")
+		        return utf8Decoder;
+		
+		    if (codePage == "IBM1047")
+		        return ebcdicDecoder;
+		
+		    return null;
+		}
+
+		private static string Normalize(string codepage) {
+		    if (String.IsNullOrEmpty(codepage))
+		        return "ASCII";
+		
+		    string value;
+		    if (CodepageAliases.TryGetValue(codepage, out value))
+		        return value;
+		
+		    return codepage.ToUpper();
+		}
+	
 		public static String byteArrayToString(byte[] bytes) {
 			return System.Text.Encoding.Default.GetString(bytes);
 		}
@@ -85,19 +131,6 @@ namespace Utils {
 		charCode == 0x45 ||charCode == 0xCE || charCode == 0xE9 || charCode == 0xD3 || charCode == 0xC7;
 		};
 		
-		private static String decodeUTF8(byte[] data) {
-			var utf8 = new UTF8Encoding(false, true);
-			return utf8.GetString(data);
-		}
-
-		public static String decodeEBCDIC(byte[] data) {
-
-			// Encoding encoding = Encoding.GetEncoding( "IBM037", EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
-			Encoding encoding = Encoding.GetEncoding( 1047, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
-			// now € or ’ it *should* raise:  EncoderFallbackException, but does not appear to
-			return encoding.GetString(data);
-		}
-
 		public static ValidationResult validateCore( byte[] data, String codePage, Func<byte[], String> decoder, Predicate<int> rangeValidator, double? threshold) {
 
 			bool status = true;
@@ -154,7 +187,7 @@ namespace Utils {
 
 		public static ValidationResult validateUTF8(byte[] data) {
 
-			return validateCore( data, "UTF-8", decodeUTF8, null, null);
+			return validateCore( data, "UTF-8", GetDecoder("UTF-8"), null, null);
 		}
 
 		public static ValidationResult validateASCII(byte[] data) {
@@ -169,12 +202,12 @@ namespace Utils {
 
 		public static ValidationResult validateEBCDIC(byte[] data) {
 
-			return validateCore( data, "IBM037", decodeEBCDIC, isEbcdicChar, null);
+			return validateCore( data, "IBM037", GetDecoder("IBM037"), isEbcdicChar, null);
 		}
 
 		public static ValidationResult validateEBCDIC(byte[] data, double threshold) {
 
-			return validateCore( data, "IBM037", decodeEBCDIC, isEbcdicChar, threshold);
+			return validateCore( data, "IBM037", GetDecoder("IBM037"), isEbcdicChar, threshold);
 		}
 
 		// validator registry

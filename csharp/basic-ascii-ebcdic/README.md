@@ -482,6 +482,49 @@ this makes the tests pass:
   * https://learn.microsoft.com/en-us/host-integration-server/core/convert2
   * EBCDIC Converter [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=coderAllan.vscode-ebcdicconverter) and [source](https://github.com/CoderAllan/vscode-ebcdicconverter) (nodejs)
 
+  * famous chaos links
+
+     + https://czyborra.com/charsets/cyrillic.html
+     + https://www.i18nqa.com/debug/utf8-debug.html
+
+
+![chaos](screenshots/61be7a4552a6650bd19b526db63d4779.png)     
+
+Originalr:  __Кракозябры__ (means “gibberish / weird symbols”)
+Broken versions:
+
+ * __йПЮЙНГЪАПШ__ 
+ * __РљСЂР°РєРѕР·СЏР±СЂС‹__
+ * __Êðàêîçÿáðû__
+
+> NOTE: these *funny* epic strings come from interpreting the __same__ bytes under *different* arong ANSI Code Pages and produce *completely different glyphs depending on charset*
+> NOTE: The __KOI8__ stripping turns Cyrillic into weird pseudo-English:
+ “Код Обмена Информацией” → kOD oBMENA iNFORMACIEJ
+
+An anecdotal story of A person becomes so used to mojibake that they can read it fluently
+
+#### Code Pages
+
+* DOS world (__CP866__)
+* Unix world (__KOI8-R__)
+* ISO attempt (__ISO-8859-5__)
+* Windows takeover (__CP1251__)
+
+Plus two unicode pages:
+
+* __UTF-8__ - universaldefault, *except* Windows
+* __UTF16__ - Windows default
+
+In addition a lot of silent auto-conversion of clipboard text between Windows Unicode __UTF16__ and the "current OEM Code Page" or "system locale" (ACP) depending on context
+```cmd
+for /F %%f in ('dir /b') do echo %%f
+```
+Pipeline:
+
+  * `dir` produces output using __OEM__ code page (e.g., __CP866__)
+  * `for /F` parses text via __ANSI__ code page (__ACP__, e.g., __CP1251__ or worse __CP1252__)
+
+
 ### Author
 
 [Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)
