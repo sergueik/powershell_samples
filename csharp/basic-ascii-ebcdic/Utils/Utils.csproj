@@ -48,6 +48,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Convertor.cs" />
+    <Compile Include="Validator.cs" />
 
     <Compile Include="ValidationResult.cs" />
 

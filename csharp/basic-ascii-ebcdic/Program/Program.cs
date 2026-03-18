@@ -71,7 +71,8 @@ namespace Program {
 				outputBytes = convertASCIIToEBCDIC(inputBytes, codePage);
 				// https://learn.microsoft.com/en-us/dotnet/api/system.bitconverter?view=netframework-4.5
 				// Console.WriteLine("EBCDIC bytes (hex): " + BitConverter.ToString(ebcdicBytes).Replace("-", string.Empty));
-				Console.WriteLine("EBCDIC bytes (hex): " + Utils.Convertor.byteArrayToHexString(outputBytes));
+				Console.WriteLine("EBCDIC bytes (hex): " + Utils.Convertor.ByteArrayToHexString(outputBytes));
+
 				if (outputfile!= null ) {
 					using (var fileStream = new FileStream(outputfile, FileMode.Create, FileAccess.Write)) {
 						fileStream.Write(outputBytes, 0, outputBytes.Length);
@@ -81,7 +82,7 @@ namespace Program {
 			}
 			
 			if (operation.Equals("decode")) {
-				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Convertor.hexStringToByteArray(data);
+				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Utils.Convertor.HexStringToByteArray(data);
 				outputBytes = convertEBCDICToASCII(inputBytes, codePage);
 				Console.WriteLine(String.Format("Converted back to ASCII: {0}", Encoding.ASCII.GetString(outputBytes)));
 				if (outputfile!= null ) {
@@ -92,9 +93,9 @@ namespace Program {
 				}
 			}
 			if (operation.Equals("validate")) {
-				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Convertor.hexStringToByteArray(data);
+				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Convertor.HexStringToByteArray(data);
 				// Double threshold = null;
-				var convertor = new Convertor(inputBytes, codePage, null);
+				var convertor = new Validator(inputBytes, codePage, null);
 				var result = convertor.Validate();
 				Console.WriteLine(result.Valid ? "valid" : "invalid");
 				if (debug) 
