@@ -22,29 +22,22 @@ namespace Utils
             };
 
         // Instance state
-        private readonly byte[] _data;
-        private readonly string _codePage;
-        private readonly Func<byte[], string> _decoder;
-        private readonly Predicate<int> _rangeValidator;
-        private readonly double? _threshold;
+        private readonly byte[] data;
+        private readonly string codePage;
+        private readonly double? threshold;
 
         public Convertor(byte[] data, string codePage, double? threshold)
         {
             if (data == null)
                 throw new ArgumentNullException("data");
 
-            _data = data;
-            _codePage = Normalize(codePage);
-            _threshold = threshold;
-            _decoder = GetDecoder(_codePage);
-            _rangeValidator = GetPredicate(_codePage);
+            this.data = data;
+            this.codePage = Normalize(codePage);
+            this.threshold = threshold;
         }
 
         public Convertor(byte[] data) : this(data, "ASCII", null) { }
 
-        // --------------------
-        // Legacy static helpers (kept unchanged)
-        // --------------------
         public static string byteArrayToString(byte[] bytes)
         {
             return Encoding.Default.GetString(bytes);
@@ -52,7 +45,7 @@ namespace Utils
 
         public static string byteArrayToHexString(byte[] data)
         {
-            StringBuilder sb = new StringBuilder(data.Length * 2);
+            var sb = new StringBuilder(data.Length * 2);
             foreach (byte b in data)
                 sb.Append(b.ToString("X2"));
             return sb.ToString();
@@ -79,11 +72,7 @@ namespace Utils
             return hexString;
         }
 
-        // --------------------
-        // Normalize and decoders
-        // --------------------
-        private static string Normalize(string codePage)
-        {
+        private static string Normalize(string codePage) {
             if (string.IsNullOrEmpty(codePage))
                 return "ASCII";
 
@@ -94,8 +83,7 @@ namespace Utils
             return codePage.ToUpper();
         }
 
-        private static Func<byte[], string> GetDecoder(string codePage)
-        {
+        private  Func<byte[], string> GetDecoder(string codePage) {
             if (codePage.Equals("UTF-8", StringComparison.OrdinalIgnoreCase))
                 return delegate(byte[] data) { return new UTF8Encoding(false, true).GetString(data); };
 
@@ -108,8 +96,7 @@ namespace Utils
             return null;
         }
 
-        private static Predicate<int> GetPredicate(string codePage)
-        {
+        private Predicate<int> GetPredicate(string codePage) {
             switch (codePage.ToUpper())
             {
                 case "IBM037":
@@ -134,90 +121,50 @@ namespace Utils
             }
         }
 
-        // --------------------
-        // Legacy static validators (kept)
-        // --------------------
-        public static ValidationResult validateUTF8(byte[] data)
-        {
-            return ValidateCore(data, "UTF-8", GetDecoder("UTF-8"), null, null);
-        }
-
-        public static ValidationResult validateASCII(byte[] data)
-        {
-            return ValidateCore(data, "ASCII", GetDecoder("ASCII"), GetPredicate("ASCII"), null);
-        }
-
-        public static ValidationResult validateASCII(byte[] data, double threshold)
-        {
-            return ValidateCore(data, "ASCII", GetDecoder("ASCII"), GetPredicate("ASCII"), threshold);
-        }
-
-        public static ValidationResult validateEBCDIC(byte[] data)
-        {
-            return ValidateCore(data, "IBM037", GetDecoder("IBM1047"), GetPredicate("IBM1047"), null);
-        }
-
-        public static ValidationResult validateEBCDIC(byte[] data, double threshold)
-        {
-            return ValidateCore(data, "IBM037", GetDecoder("IBM1047"), GetPredicate("IBM1047"), threshold);
-        }
-
-        // --------------------
-        // Instance validator
-        // --------------------
-        public ValidationResult Validate()
-        {
-            return ValidateCore(_data, _codePage, _decoder, _rangeValidator, _threshold);
-        }
-
-        // --------------------
-        // Core validation
-        // --------------------
-        private static ValidationResult ValidateCore(byte[] data, string codePage, Func<byte[], string> decoder, Predicate<int> rangeValidator, double? threshold)
-        {
+        public ValidationResult Validate() {
             bool status = true;
+            Func<byte[], string> decoder = this.GetDecoder(this.codePage);
+            Predicate<int> rangeValidator =  this.GetPredicate(this.codePage);
             string message = null;
             int validCount = 0;
 
-            if (decoder != null)
-            {
-                try { decoder(data); }
+            if (decoder != null) {
+                try { decoder(this.data); }
                 catch (Exception e)
                 {
-                    return new ValidationResult(false, string.Format("failed to decode in code page {0}: {1}", codePage, e.Message));
+                    return new ValidationResult(false, string.Format("failed to decode in code page {0}: {1}", this.codePage, e.Message));
                 }
             }
 
             if (rangeValidator == null)
                 return new ValidationResult(true, null);
 
-            for (int i = 0; i < data.Length; i++)
+            for (int i = 0; i < this.data.Length; i++)
             {
-                int charCode = data[i] & 0xFF;
+                int charCode = this.data[i] & 0xFF;
 
                 if (charCode == 0)
                 {
                     status = false;
-                    message = string.Format("null character in code page {0} at position {1}", codePage, i);
+                    message = string.Format("null character in code page {0} at position {1}", this.codePage, i);
                 }
 
                 bool valid = rangeValidator(charCode);
                 if (valid) validCount++;
 
-                if (!valid && threshold == null)
+                if (!valid && this.threshold == null)
                 {
                     status = false;
-                    message = string.Format("invalid code page {0} character 0x{1:X2} at position {2}", codePage, charCode, i);
+                    message = string.Format("invalid code page {0} character 0x{1:X2} at position {2}", this.codePage, charCode, i);
                 }
             }
 
-            if (threshold != null)
-            {
-                double ratio = (double)validCount / data.Length;
-                if (ratio < threshold.Value)
+            if (this.threshold != null) {
+                double ratio = (double)validCount / this.data.Length;
+                if (ratio < this.threshold.Value)
                 {
                     status = false;
-                    message = string.Format("valid byte ratio {0:F2} below threshold {1:F2} for code page {2}", ratio, threshold.Value, codePage);
+                    message = string.Format("valid byte ratio {0:F2} below threshold {1:F2} for code page {2}", ratio, this.threshold.Value, this.codePage);
                 }
             }
 

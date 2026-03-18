@@ -93,7 +93,9 @@ namespace Program {
 			}
 			if (operation.Equals("validate")) {
 				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Convertor.hexStringToByteArray(data);
-				var result = Convertor.validate(inputBytes, codePage);
+				// Double threshold = null;
+				var convertor = new Convertor(inputBytes, codePage, null);
+				var result = convertor.Validate();
 				Console.WriteLine(result.Valid ? "valid" : "invalid");
 				if (debug) 
 					Console.WriteLine(result.Message);
