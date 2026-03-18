@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
@@ -8,228 +7,222 @@ using System.Collections.Generic;
  * Copyright 2024,2026 Serguei Kouzmine
  */
 
-namespace Utils {
+namespace Utils
+{
+    public class Convertor
+    {
+        private static readonly Dictionary<string, string> CodepageAliases =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+                { "cp037", "IBM1047" },
+                { "ibm037", "IBM1047" },
+                { "ascii", "ASCII" },
+                { "us-ascii", "ASCII" },
+                { "utf8", "UTF-8" },
+                { "utf-8", "UTF-8" }
+            };
 
-	public class Convertor {
+        // Instance state
+        private readonly byte[] _data;
+        private readonly string _codePage;
+        private readonly Func<byte[], string> _decoder;
+        private readonly Predicate<int> _rangeValidator;
+        private readonly double? _threshold;
 
-		private static readonly Dictionary<string, string> CodepageAliases =
-			new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-				{ "cp037", "IBM1047" },
-				{ "ibm037", "IBM1047" },
-				{ "ascii", "ASCII" },
-				{ "us-ascii", "ASCII" },
-				{ "utf8", "UTF-8" },
-				{ "utf-8", "UTF-8" }
-			};
-		
-		public static Func<byte[], string> getDecoder(string codePage) {
-		
-			if (codePage == "UTF-8")
-				return delegate(byte[] data) {
-					var utf8 = new UTF8Encoding(false, true);
-					return utf8.GetString(data);
-				};
-		
-			if (codePage == "IBM1047")
-				return delegate(byte[] data) {
-					Encoding encoding = Encoding.GetEncoding( 1047, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback );
-					return encoding.GetString(data);
-				};
-		
-			return null;
-		}
+        public Convertor(byte[] data, string codePage, double? threshold)
+        {
+            if (data == null)
+                throw new ArgumentNullException("data");
 
-		private static string Normalize(string codepage) {
-			if (String.IsNullOrEmpty(codepage))
-				return "ASCII";
-		
-			string value;
-			if (CodepageAliases.TryGetValue(codepage, out value))
-				return value;
-		
-			return codepage.ToUpper();
-		}
-	
-		public static String byteArrayToString(byte[] bytes) {
-			return System.Text.Encoding.Default.GetString(bytes);
-		}
+            _data = data;
+            _codePage = Normalize(codePage);
+            _threshold = threshold;
+            _decoder = GetDecoder(_codePage);
+            _rangeValidator = GetPredicate(_codePage);
+        }
 
-		public static String byteArrayToHexString(byte[] data) {
-			var stringBuilder = new StringBuilder(data.Length * 2);
-			foreach (byte b in data)
-				stringBuilder.Append(b.ToString("X2"));
-			return stringBuilder.ToString();
-		}
+        public Convertor(byte[] data) : this(data, "ASCII", null) { }
 
-		public static byte[] hexStringToByteArray(String data) {
-			data = Regex.Replace(data, "[^0-9A-Fa-f]", "");
-			int numberChars = data.Length;
+        // --------------------
+        // Legacy static helpers (kept unchanged)
+        // --------------------
+        public static string byteArrayToString(byte[] bytes)
+        {
+            return Encoding.Default.GetString(bytes);
+        }
 
-			if ((numberChars & 1) != 0)
-				throw new ArgumentException("Odd-length hex string");
+        public static string byteArrayToHexString(byte[] data)
+        {
+            StringBuilder sb = new StringBuilder(data.Length * 2);
+            foreach (byte b in data)
+                sb.Append(b.ToString("X2"));
+            return sb.ToString();
+        }
 
-			byte[] hexByteArray = new byte[numberChars / 2];
+        public static byte[] hexStringToByteArray(string data)
+        {
+            data = Regex.Replace(data, "[^0-9A-Fa-f]", "");
+            int numberChars = data.Length;
+            if ((numberChars & 1) != 0)
+                throw new ArgumentException("Odd-length hex string");
 
-			for (int index = 0; index < numberChars; index += 2)
-				hexByteArray[index / 2] =
-					Convert.ToByte(data.Substring(index, 2), 16);
+            byte[] hexByteArray = new byte[numberChars / 2];
+            for (int index = 0; index < numberChars; index += 2)
+                hexByteArray[index / 2] = Convert.ToByte(data.Substring(index, 2), 16);
+            return hexByteArray;
+        }
 
-			return hexByteArray;
-		}
+        public static string StringtoHexString(string data)
+        {
+            string hexString = String.Empty;
+            foreach (char c in data)
+                hexString += string.Format("{0:x2}", Convert.ToUInt32(c.ToString()));
+            return hexString;
+        }
 
-		public static String StringtoHexString(String data) {
-			String hexString = String.Empty;
+        // --------------------
+        // Normalize and decoders
+        // --------------------
+        private static string Normalize(string codePage)
+        {
+            if (string.IsNullOrEmpty(codePage))
+                return "ASCII";
 
-			foreach (char c in data) {
-				int value = c;
-				hexString += String.Format(
-					"{0:x2}",
-					System.Convert.ToUInt32(value.ToString()));
-			}
+            string value;
+            if (CodepageAliases.TryGetValue(codePage, out value))
+                return value;
 
-			return hexString;
-		}
+            return codePage.ToUpper();
+        }
 
-		public static Predicate<int> getPredicate(string codePage) {
-			switch (codePage) {
-				case "IBM037": return delegate(int charCode) {
-					return
-					// space
-					charCode == 0x40 ||
-					// digits
-							(charCode >= 0xF0 && charCode <= 0xF9) ||
-					// uppercase letters
-							(charCode >= 0xC1 && charCode <= 0xC9) || (charCode >= 0xD1 && charCode <= 0xD9)
-							|| (charCode >= 0xE2 && charCode <= 0xE9) ||
-					// lowercase letters
-							(charCode >= 0x81 && charCode <= 0x89) || (charCode >= 0x91 && charCode <= 0x99)
-							|| (charCode >= 0xA2 && charCode <= 0xA9) ||
-					// basic punctuation
-							(charCode >= 0x4A && charCode <= 0x6F) ||
-					// generic fallback bytes for Western European characters
-				    // NOTE: these represent accented letters or symbols outside ASCII,
-							charCode == 0x45 || charCode == 0xCE || charCode == 0xE9 || charCode == 0xD3 || charCode == 0xC7;
-					};
-				case "ASCII": return delegate(int charCode) {
-					return charCode <= 0x7F;
-				};
-				case "UTF-8":
-					return null;
-				default:
-					return null;
-			}
-		}
+        private static Func<byte[], string> GetDecoder(string codePage)
+        {
+            if (codePage.Equals("UTF-8", StringComparison.OrdinalIgnoreCase))
+                return delegate(byte[] data) { return new UTF8Encoding(false, true).GetString(data); };
 
-		public static ValidationResult validateCore(byte[] data, String codePage, Func<byte[], String> decoder, Predicate<int> rangeValidator, double? threshold) {
+            if (codePage.Equals("IBM1047", StringComparison.OrdinalIgnoreCase))
+                return delegate(byte[] data) { return Encoding.GetEncoding(1047, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback).GetString(data); };
 
-			bool status = true;
-			String message = null;
-			int validCount = 0;
+            if (codePage.Equals("ASCII", StringComparison.OrdinalIgnoreCase))
+                return delegate(byte[] data) { return Encoding.ASCII.GetString(data); };
 
-			if (decoder != null) {
-				try {
-					decoder(data);
-				} catch (Exception e) {
+            return null;
+        }
 
-					return new ValidationResult(false, String.Format("failed to decode in code page {0}: {1}", codePage, e.Message));
-				}
-			}
+        private static Predicate<int> GetPredicate(string codePage)
+        {
+            switch (codePage.ToUpper())
+            {
+                case "IBM037":
+                case "IBM1047":
+                    return delegate(int charCode)
+                    {
+                        return charCode == 0x40 ||
+                               (charCode >= 0xF0 && charCode <= 0xF9) ||
+                               (charCode >= 0xC1 && charCode <= 0xC9) || (charCode >= 0xD1 && charCode <= 0xD9) ||
+                               (charCode >= 0xE2 && charCode <= 0xE9) ||
+                               (charCode >= 0x81 && charCode <= 0x89) || (charCode >= 0x91 && charCode <= 0x99) ||
+                               (charCode >= 0xA2 && charCode <= 0xA9) ||
+                               (charCode >= 0x4A && charCode <= 0x6F) ||
+                               charCode == 0x45 || charCode == 0xCE || charCode == 0xE9 || charCode == 0xD3 || charCode == 0xC7;
+                    };
+                case "ASCII":
+                    return delegate(int charCode) { return charCode <= 0x7F; };
+                case "UTF-8":
+                    return null;
+                default:
+                    return null;
+            }
+        }
 
-			if (rangeValidator == null)
-				return new ValidationResult(true, null);
+        // --------------------
+        // Legacy static validators (kept)
+        // --------------------
+        public static ValidationResult validateUTF8(byte[] data)
+        {
+            return ValidateCore(data, "UTF-8", GetDecoder("UTF-8"), null, null);
+        }
 
-			for (int position = 0; position < data.Length; position++) {
+        public static ValidationResult validateASCII(byte[] data)
+        {
+            return ValidateCore(data, "ASCII", GetDecoder("ASCII"), GetPredicate("ASCII"), null);
+        }
 
-				int charCode = data[position] & 0xFF;
+        public static ValidationResult validateASCII(byte[] data, double threshold)
+        {
+            return ValidateCore(data, "ASCII", GetDecoder("ASCII"), GetPredicate("ASCII"), threshold);
+        }
 
-				if (charCode == 0) {
+        public static ValidationResult validateEBCDIC(byte[] data)
+        {
+            return ValidateCore(data, "IBM037", GetDecoder("IBM1047"), GetPredicate("IBM1047"), null);
+        }
 
-					status = false;
+        public static ValidationResult validateEBCDIC(byte[] data, double threshold)
+        {
+            return ValidateCore(data, "IBM037", GetDecoder("IBM1047"), GetPredicate("IBM1047"), threshold);
+        }
 
-					message = String.Format(
-						"null character in code page {0} at position {1}",
-						codePage,
-						position);
-				}
+        // --------------------
+        // Instance validator
+        // --------------------
+        public ValidationResult Validate()
+        {
+            return ValidateCore(_data, _codePage, _decoder, _rangeValidator, _threshold);
+        }
 
-				bool valid = rangeValidator(charCode);
+        // --------------------
+        // Core validation
+        // --------------------
+        private static ValidationResult ValidateCore(byte[] data, string codePage, Func<byte[], string> decoder, Predicate<int> rangeValidator, double? threshold)
+        {
+            bool status = true;
+            string message = null;
+            int validCount = 0;
 
-				if (valid)
-					validCount++;
+            if (decoder != null)
+            {
+                try { decoder(data); }
+                catch (Exception e)
+                {
+                    return new ValidationResult(false, string.Format("failed to decode in code page {0}: {1}", codePage, e.Message));
+                }
+            }
 
-				if (!valid && threshold == null) {
-					status = false;
-					message = String.Format("invalid code page {0} character 0x{1:X2} at position {2}", codePage, charCode, position);
-				}
-			}
+            if (rangeValidator == null)
+                return new ValidationResult(true, null);
 
-			if (threshold != null) {
-				double ratio = (double)validCount / data.Length;
-				if (ratio < threshold.Value) {
-					status = false;
-					message = String.Format("valid byte ratio {0:F2} below threshold {1:F2} for code page {2}", ratio, threshold.Value, codePage);
-				}
-			}
+            for (int i = 0; i < data.Length; i++)
+            {
+                int charCode = data[i] & 0xFF;
 
-			return new ValidationResult(status, message);
-		}
+                if (charCode == 0)
+                {
+                    status = false;
+                    message = string.Format("null character in code page {0} at position {1}", codePage, i);
+                }
 
-		public static ValidationResult validateUTF8(byte[] data) {
+                bool valid = rangeValidator(charCode);
+                if (valid) validCount++;
 
-			return validateCore(data, "UTF-8", getDecoder("UTF-8"), null, null);
-		}
+                if (!valid && threshold == null)
+                {
+                    status = false;
+                    message = string.Format("invalid code page {0} character 0x{1:X2} at position {2}", codePage, charCode, i);
+                }
+            }
 
-		public static ValidationResult validateASCII(byte[] data)
-		{
+            if (threshold != null)
+            {
+                double ratio = (double)validCount / data.Length;
+                if (ratio < threshold.Value)
+                {
+                    status = false;
+                    message = string.Format("valid byte ratio {0:F2} below threshold {1:F2} for code page {2}", ratio, threshold.Value, codePage);
+                }
+            }
 
-			var codePage = "US-ASCII";
-			return validateCore(data, codePage, getDecoder(codePage), getPredicate(codePage), null);
-		}
+            return new ValidationResult(status, message);
+        }
+    }
 
-		public static ValidationResult validateASCII(byte[] data, double threshold)
-		{
-			var codePage = "US-ASCII";
-			return validateCore(data, codePage, getDecoder(codePage), getPredicate(codePage), threshold);
-
-		}
-
-		public static ValidationResult validateEBCDIC(byte[] data)
-		{
-			var codePage = "IBM037";
-			return validateCore(data, codePage, getDecoder(codePage), getPredicate(codePage), null);
-		}
-
-		public static ValidationResult validateEBCDIC(byte[] data, double threshold) {
-
-			var codePage = "IBM037";
-			return validateCore(data, codePage, getDecoder(codePage), getPredicate(codePage), threshold);
-		}
-
-		// validator registry
-		private static readonly Dictionary<string, Func<byte[], ValidationResult>> validatorMap =
-			new Dictionary<string, Func<byte[], ValidationResult>>(StringComparer.OrdinalIgnoreCase) {
-
-				{ "ascii", validateASCII },
-				{ "us-ascii", validateASCII },
-				{ "utf8", validateUTF8 },
-				{ "utf-8", validateUTF8 },
-				{ "ebcdic", validateEBCDIC },
-				{ "ibm037", validateEBCDIC },
-				{ "cp037", validateEBCDIC }
-			};
-
-		public static ValidationResult validate(byte[] data, string charMap)
-		{
-
-			if (String.IsNullOrEmpty(charMap))
-				charMap = "ascii";
-
-			Func<byte[], ValidationResult> validator = null;
-
-			if (validatorMap.TryGetValue(charMap, out validator))
-				return validator(data);
-
-			return validateEBCDIC(data);
-		}
-	}
-}
+ }
