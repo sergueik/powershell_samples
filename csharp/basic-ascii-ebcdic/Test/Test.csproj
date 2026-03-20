@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Compile Include="ConvertorTests.cs" />
     <Compile Include="ValidatorTests.cs" />
     <Compile Include="ParseArgsTests.cs" />
     <Compile Include="ProgramTests.cs" />
