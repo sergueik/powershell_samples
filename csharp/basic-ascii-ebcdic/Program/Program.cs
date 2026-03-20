@@ -26,9 +26,9 @@ namespace Program {
 		private static string data = "0123456789abcdefghijklmnopqrstuvwxyz";
 		private static byte[] inputBytes = {};
 		private static byte[] outputBytes = {};
- 	
+		private static Double threshold = 0;
 		private static string codePage = "IBM037"; // Standard US EBCDIC code page
-	
+
 		
 		public static void Main(string[] args) {
 			var parseArgs = new ParseArgs(System.Environment.CommandLine);
@@ -66,6 +66,16 @@ namespace Program {
 				inputfile = parseArgs.GetMacro("inputfile");
 			}
 
+
+			if (parseArgs.GetMacro("threshold") != String.Empty){
+				if (Double.TryParse(parseArgs.GetMacro("threshold"), out threshold)){
+					if(debug)
+						Console.Error.WriteLine(String.Format("Successfully parsed: {0}", threshold));
+				} else {
+						Console.Error.WriteLine(String.Format("Unable to parse treshold: {0}", parseArgs.GetMacro("threshold") ));
+				}
+			}
+
 			if (operation.Equals("encode")) {
 				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Encoding.ASCII.GetBytes(data);
 				outputBytes = convertASCIIToEBCDIC(inputBytes, codePage);
@@ -94,8 +104,8 @@ namespace Program {
 			}
 			if (operation.Equals("validate")) {
 				inputBytes = (inputfile!= null ) ? File.ReadAllBytes(inputfile): Convertor.HexStringToByteArray(data);
-				// Double threshold = null;
-				var convertor = new Validator(inputBytes, codePage, null);
+				// C# specific: cast to nullable double
+				var convertor = new Validator(inputBytes, codePage, (threshold == 0 )? (double?) null: threshold);
 				var result = convertor.Validate();
 				Console.WriteLine(result.Valid ? "valid" : "invalid");
 				if (debug) 

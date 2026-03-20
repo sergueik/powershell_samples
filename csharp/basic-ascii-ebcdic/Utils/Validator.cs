@@ -41,11 +41,11 @@ namespace Utils {
 
         private static string Normalize(string codePage) {
             if (string.IsNullOrEmpty(codePage))
-                return "ASCII";
+		       return "ASCII";
 
             string value;
             if (CodepageAliases.TryGetValue(codePage, out value))
-                return value;
+				return value;
 
             return codePage.ToUpper();
         }

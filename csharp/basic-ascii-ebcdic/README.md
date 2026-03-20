@@ -40,6 +40,29 @@ type result.txt
 ```text
 ≥≤⌠⌡÷≈°∙≡üéâäàåçêëæÆôöòûùÿÖóúñÑªº¿⌐
 ```
+```cmd
+.\aec.exe -data=F1F2F3F4F5 -operation=validate -codepage=cp037
+```
+```text
+valid
+```
+
+```cmd
+.\aec.exe -data=F1F2F3F4F5 -operation=validate -codepage=ascii -debug
+```
+```text
+invalid
+invalid code page ASCII character 0xF1 at position 0
+```
+
+```cmd
+.\aec.exe -data=F1F2F3F4F5 -operation=validate -codepage=utf8 -debug
+```
+```text
+invalid
+failed to decode in code page UTF-8: Unable to translate bytes [F1] at index -1 from specified code page to Unicode.
+```
+
 
 ![app1](https://github.com/sergueik/powershell_samples/blob/master/csharp/basic-ascii-ebcdic/screenshots/capture-online.png)
 
