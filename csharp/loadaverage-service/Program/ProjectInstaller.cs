@@ -11,7 +11,7 @@ namespace TransactionService {
 		private ServiceAccount serviceAccount = ServiceAccount.LocalSystem;
 		private string eventLog = "LoadAverageCounterServiceLog";
 		private string eventLogSource = "LoadAverageCounterService";
-		private string serviceName = "LoadAverageService";
+		private string serviceName = "LoadAverageCounterService";
 
 		private EventLogInstaller eventLogInstaller;
 		private PerformanceCounterInstaller performanceCounterInstaller;

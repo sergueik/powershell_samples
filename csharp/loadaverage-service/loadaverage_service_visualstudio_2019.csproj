@@ -79,7 +79,7 @@
     <None Include="Program\app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program\DBWriter.cs">
+    <Compile Include="Program\LoadAverageCounterService.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Program\ProjectInstaller.cs">
@@ -90,8 +90,8 @@
     <Compile Include="Utils\FileHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Program\DBWriter.resx">
-      <DependentUpon>DBWriter.cs</DependentUpon>
+    <EmbeddedResource Include="Program\LoadAverageCounterService.resx">
+      <DependentUpon>LoadAverageCounterService.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Program\ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>

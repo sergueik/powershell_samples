@@ -65,9 +65,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DBWriter.cs">
+    <Compile Include="LoadAverageCounterService.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="LoadAverageCounterService.resx">
+      <DependentUpon>LoadAverageCounterService.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -175,7 +175,7 @@ namespace TransactionService {
 		// The value must be between 128 and 256, inclusive.
 		private void Operation(int command)
 		{
-			var controller = new ServiceController("DBWriter");
+			var controller = new ServiceController("LoadAverageCounterService");
 			// https://docs.microsoft.com/en-us/dotnet/api/system.serviceprocess.servicecontroller.waitforstatus?view=netframework-4.5
 			// https://docs.microsoft.com/en-us/dotnet/api/system.serviceprocess.servicecontrollerstatus?view=netframework-4.5
 			controller.WaitForStatus(ServiceControllerStatus.Running);			

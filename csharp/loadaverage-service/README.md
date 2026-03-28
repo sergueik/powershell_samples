@@ -57,7 +57,7 @@ Noop | Use a random number generator instead of reading the performance counter 
 Debug | Log debugging information to `EventLog`| `False`
 CollectInterval | Interval (in mullisecond) between reading performance counter info| `1000`
 AutoAverageInterval | Interval (in mullisecond) between calculating the averages when `Autorun` is enabled | `120000`
-Datafile | Filename to save the "Load Average" results| `c:\temp\loadaverage.txt`	
+Datafile | Filename to save the "Load Average" results| `c:\temp\loadaverageciunterservice.txt`	
 Eventlog | Application Eventlog parameter<br/><i>unused</i>| `Application`
 EventlogSource | Application Eventlog parameter<br/><i>unused</i>| `Custom`
 
@@ -242,7 +242,7 @@ The Commit phase completed successfully.
 
 The transacted install has completed.
 
-SERVICE_NAME: DBWriter
+SERVICE_NAME: LoadAverageCounterService
         TYPE               : 10  WIN32_OWN_PROCESS
         STATE              : 2  START_PENDING
                                 (NOT_STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)
@@ -255,8 +255,8 @@ SERVICE_NAME: DBWriter
 
 ```
 ```text
-Sending 200 to DBWriter
-testing path: C:\temp\loadaverage.txt
+Sending 200 to LoadAverageCounterService
+testing path: C:\temp\loadaveragecounterservice.txt
 executing select-string:
 
 LOAD1MIN: 0.14
@@ -279,7 +279,7 @@ Message       : LOAD1MIN: 0.14 from 7 samples
 InstanceId    : 3
 
 TimeGenerated : 3/5/2022 3:55:09 PM
-Message       : DBWriter FiileHelper c:\temp\loadaverage.txt
+Message       : LoadAverageCounterService FiileHelper c:\temp\loadaverageciunterservice.txt
 InstanceId    : 4
 
 TimeGenerated : 3/5/2022 3:55:09 PM
@@ -289,7 +289,7 @@ InstanceId    : 3
 
 
 TimeGenerated : 3/5/2022 3:48:17 PM
-Message       : DBWriter Serice Started Successfully on 3/5/2022 3:48:17 PM.
+Message       : LoadAverageCounterService Serice Started Successfully on 3/5/2022 3:48:17 PM.
                 Collection Inteval: 1000. AutoAverage Interval: 120000
                 DEBUG: False
                 NOOP: False
@@ -307,8 +307,8 @@ to do the same check later use the scrpit
 if you run it after 5 minutes from launching the service you will notice the different timeseries sample count for each load average:
 
 ```text
-Sending 200 to DBWriter
-testing path: C:\temp\loadaverage.txt
+Sending 200 to LoadAverageCounterService
+testing path: C:\temp\loadaveragecounterservice.txt
 executing select-string:
 
 LOAD1MIN: 0.00
@@ -333,7 +333,7 @@ Message       : LOAD1MIN: 0.00 from 60 samples
 InstanceId    : 3
 
 TimeGenerated : 3/5/2022 4:02:11 PM
-Message       : DBWriter FiileHelper c:\temp\loadaverage.txt
+Message       : LoadAverageCounterService FiileHelper c:\temp\loadaverageciunterservice.txt
 InstanceId    : 4
 
 TimeGenerated : 3/5/2022 4:02:11 PM
@@ -365,10 +365,10 @@ the external too tries to access the same file, it may see the following error
 ```
 will print
 ```text
-Sending 200 to DBWriter
-testing path: C:\temp\loadaverage.txt
+Sending 200 to LoadAverageCounterService
+testing path: C:\temp\loadaverageciunterservice.txt
 Got Exception during Read:
-The process cannot access the file 'C:\temp\loadaverage.txt' because it is being used by another process..
+The process cannot access the file 'C:\temp\loadaverageciunterservice.txt' because it is being used by another process..
 Wait 0.00 sec and retry
 executing select-string:
 ```
@@ -465,19 +465,19 @@ SERVICE_NAME: WindowsService.NET
 * [configure the service](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/sc-config)
 
 ```cmd
-sc.exe  config DBWriter start= auto
+sc.exe  config LoadAverageCounterService start= auto
 ```
 ```text
 [SC] ChangeServiceConfig SUCCESS
 ```
 ```cmd
-sc.exe  config DBWriter start= auto obj= Localsystem
+sc.exe  config LoadAverageCounterService start= auto obj= Localsystem
 ```
 ```text
 [SC] ChangeServiceConfig SUCCESS
 ```
 ```cmd
-sc.exe start DBWriter
+sc.exe start LoadAverageCounterService
 ```
 ```cmd
 shutdown.exe /g /t 0
@@ -487,9 +487,9 @@ shutdown.exe /g /t 0
 
 ```powershell
 .\control.ps1  -eventlog -clean
-Removing file: C:\temp\loadaverage.txt
-Sending 200 to DBWriter
-testing path: C:\temp\loadaverage.txt
+Removing file: C:\temp\loadaverageciunterservice.txt
+Sending 200 to LoadAverageCounterService
+testing path: C:\temp\loadaverageciunterservice.txt
 executing select-string:
 ```
 ```text
@@ -518,7 +518,7 @@ Message       : LOAD1MIN: 0.02 from 60 samples
 InstanceId    : 3
 
 TimeGenerated : 3/8/2022 6:57:19 AM
-Message       : DBWriter FiileHelper c:\temp\loadaverage.txt
+Message       : LoadAverageCounterService FiileHelper c:\temp\loadaverageciunterservice.txt
 InstanceId    : 4
 
 TimeGenerated : 3/8/2022 6:57:19 AM
@@ -532,9 +532,9 @@ if observing the error
  .\control.ps1  -eventlog -clean
 ```
 ```text
-Sending 200 to DBWriter
-testing path: C:\temp\loadaverage.txt
-file not found: C:\temp\loadaverage.txt
+Sending 200 to LoadAverageCounterService
+testing path: C:\temp\loadaverageciunterservice.txt
+file not found: C:\temp\loadaverageciunterservice.txt
 ```
 restart the service and retry (currently no better troubleshooting steps available).
 
@@ -901,9 +901,9 @@ Message       : Exception reading "System\%Total Processor Time":
                    at System.Diagnostics.PerformanceCounter.Initialize()
                    at System.Diagnostics.PerformanceCounter.NextSample()
                    at System.Diagnostics.PerformanceCounter.get_RawValue()
-                   at TransactionService.DBWriter.CollectMetrics() in c:\develo
+                   at TransactionService.LoadAverageCounterService.CollectMetrics() in c:\develo
                 per\sergueik\powershell_samples\csharp\loadaverage-service\Prog
-                ram\DBWriter.cs:line 158
+                ram\LoadAverageCounterService.cs:line 158
 InstanceId    : 99
 ```
 ```text
@@ -911,7 +911,7 @@ InstanceId    : 99
 Exception reading "Processor\% Processor Time": System.InvalidOperationException: Counter is not single instance, an instance name needs to be specified.
    at System.Diagnostics.PerformanceCounter.NextSample()
    at System.Diagnostics.PerformanceCounter.get_RawValue()
-   at TransactionService.DBWriter.CollectMetrics() in c:\developer\sergueik
+   at TransactionService.LoadAverageCounterService.CollectMetrics() in c:\developer\sergueik
 
 ```
 NOTE:  normalization is broken:
