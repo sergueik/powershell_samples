@@ -1,4 +1,4 @@
-$servicename = 'LoadAverageService' ; 
+$servicename = 'LoadAverageCounterService' ; 
 
 sc.exe query $servicename | out-null
 
@@ -11,20 +11,20 @@ if ($o -ne $null) {
   $o =  sc.exe qc $servicename | select-string -pattern 'BINARY_PATH_NAME' | select-object -first 1 | convertfrom-string
   $pathname = ($o.'P4') -replace '"' , ''
   write-host ('BINARY_PATH_NAME: {0}' -f $pathname)
-  $executable = 'LoadAverageService.exe'
-  $configuration = $pathname -replace '^.*\\Program\\bin\\(.*)\\LoadAverageService.exe', '$1'
+  $executable = 'LoadAverageCounterService.exe'
+  $configuration = $pathname -replace '^.*\\Program\\bin\\(.*)\\LoadAverageCounterService.exe', '$1'
   write-host ('Configuration: {0}' -f $configuration )
   <#
   [SC] QueryServiceConfig SUCCESS
 
-  SERVICE_NAME: LoadAverageService
+  SERVICE_NAME: LoadAverageCounterService
           TYPE               : 10  WIN32_OWN_PROCESS
           START_TYPE         : 4   DISABLED
           ERROR_CONTROL      : 1   NORMAL
-          BINARY_PATH_NAME   : "C:\developer\sergueik\powershell_samples\csharp\loadaverage-service\Program\bin\Release\LoadAverageService.exe"
+          BINARY_PATH_NAME   : "C:\developer\sergueik\powershell_samples\csharp\loadaverage-service\Program\bin\Release\LoadAverageCounterService.exe"
           LOAD_ORDER_GROUP   :
           TAG                : 0
-          DISPLAY_NAME       : LoadAverageService
+          DISPLAY_NAME       : LoadAverageCounterService
           DEPENDENCIES       :
           SERVICE_START_NAME : LocalSystem
   #>
@@ -44,19 +44,19 @@ if ($o -ne $null) {
   still breaks the line in the display
   class ManagementObject
   {
-    Name = LoadAverageService
-    DisplayName = LoadAverageService
+    Name = LoadAverageCounterService
+    DisplayName = LoadAverageCounterService
     State = Running
     Pathname = "C:\developer\sergueik\powershell_samples\csharp\loadaverage-servi
-    ce\Program\bin\Release\LoadAverageService.exe"
+    ce\Program\bin\Release\LoadAverageCounterService.exe"
   }
 
   #> 
   # no information  when service is stopped
   $pathname = $o -replace '"',''
   write-host ('Pathname: {0}' -f $pathname)
-  $executable = 'LoadAverageService.exe'
-  $configuration = $pathname -replace '^.*\\Program\\bin\\(.*)\\LoadAverageService.exe', '$1'
+  $executable = 'LoadAverageCounterService.exe'
+  $configuration = $pathname -replace '^.*\\Program\\bin\\(.*)\\LoadAverageCounterService.exe', '$1'
   write-host ('Configuration: {0}' -f $configuration )
 
 }

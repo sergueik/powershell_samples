@@ -18,7 +18,7 @@ $workspace_dir = (resolve-path 'loadaverage-service').path
 
 # NOTE: without filtering will encounter the error
 # copy-item: the process cannot access the file '*.exe' because it is being used by another process
-# the files will be LoadAverageService.exe and Utils.dll
+# the files will be LoadAverageCounterService.exe and Utils.dll
 $exclude_masks  = @( '*.exe','*.dll','*.pdb','*.exe.config' )
 copy-item -path "${staging_dir}\*" -destination $workspace_dir -recurse -force -exclude $exclude_masks 
 if ($debug) {
