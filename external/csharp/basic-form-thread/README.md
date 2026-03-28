@@ -9,3 +9,6 @@ example code from [Updating Your Form from Another Thread without Creating Deleg
   * [how to use InvokeRequired](https://stackoverflow.com/questions/15580494)
 
 
+### Author
+[Serguei Kouzmine](kouzmine_serguei@yahoo.com)
+

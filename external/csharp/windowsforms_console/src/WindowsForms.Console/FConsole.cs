@@ -433,7 +433,7 @@ namespace WindowsForms.Console
                     message == "\r\n")
                         showTimeTag = false;
                     if (showTimeTag)
-                        message = $"{DateTime.Now}: {message}";
+                    	message = String.Format("{0}: {1}",DateTime.Now, message);
 
                     SetText(message, color);
                     DeselectAll();

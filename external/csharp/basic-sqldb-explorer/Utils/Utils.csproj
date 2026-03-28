@@ -24,7 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SQLDatabase.Net">
-      <HintPath>..\packages\lib\net45\SQLDatabase.Net.dll</HintPath>
+      <HintPath>..\packages\SQLDatabase.Net.2.0.1.0\lib\net45\SQLDatabase.Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -38,6 +38,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSVFile.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

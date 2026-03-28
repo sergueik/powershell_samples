@@ -26,7 +26,19 @@ namespace SampleFormApplication
         }
 
         private void Form1_Load(object sender, EventArgs e)
+        
+        
         {
+        	
+        	            comboBox1.Items.Add("Aqua");
+            comboBox1.Items.Add("Red");
+            comboBox1.Items.Add("Blue");
+            comboBox1.Items.Add("White");
+            comboBox1.Items.Add("Yellow");
+            comboBox1.Items.Add("LightBlue");
+            comboBox1.Items.Add("DarkSeaGreen");
+
+        	/*
             comboBox1.Items.Add(nameof(Color.Aqua));
             comboBox1.Items.Add(nameof(Color.Red));
             comboBox1.Items.Add(nameof(Color.Blue));
@@ -34,6 +46,7 @@ namespace SampleFormApplication
             comboBox1.Items.Add(nameof(Color.Yellow));
             comboBox1.Items.Add(nameof(Color.LightBlue));
             comboBox1.Items.Add(nameof(Color.DarkSeaGreen));
+            */
             comboBox1.SelectedIndex = 3;
 
             fconsole1.Text = "";
@@ -79,20 +92,20 @@ namespace SampleFormApplication
         private async void button6_Click(object sender, EventArgs e)
         {
             var line = await this.ReadLine();
-            MessageBox.Show($"Value of ReadLine is '{line}'");
+            MessageBox.Show(String.Format("Value of ReadLine is '{0}'", line));
         }
 
         private async void button7_Click(object sender, EventArgs e)
         {
             var key = await this.ReadKey();
-            MessageBox.Show($"Value of ReadKey is '{key}'");
+            MessageBox.Show(String.Format("Value of ReadKey is '{0}'",key));
         }
 
         private void btnAsyncWrite_Click(object sender, EventArgs e)
         {
             fconsole1.Clear();
             int counter = 1;
-            this.WriteLine($"[Minimum Number:\t1\t]",
+            this.WriteLine("[Minimum Number:\t1\t]",
                 Color.FromName(comboBox1.Items[0].ToString()), cmbTimeTag.SelectedIndex == 1);
             List<Task> tlist = new List<Task>();
             for (int i = 0; i < 7; i++)
@@ -102,7 +115,7 @@ namespace SampleFormApplication
                 counter++;
                 tlist.Add(Task.Run(() =>
                 {
-                    this.WriteLine($"\t[Number:\t{count}\t]",
+                                   	this.WriteLine(String.Format("\t[Number:\t{0}\t]",count),
                         Color.FromName(comboBox1.Items[current].ToString()), cmbTimeTag.SelectedIndex == 1);////used SelectedIndex for preventing a crash
                 }));
             }
@@ -113,12 +126,12 @@ namespace SampleFormApplication
                 counter++;
                 tlist.Add(Task.Run(() =>
                 {
-                    this.WriteLine($"\t[Number:\t{count}\t]",
+                                   	this.WriteLine(String.Format("\t[Number:\t{0}\t]",count),
                         Color.FromName(comboBox1.Items[current].ToString()), cmbTimeTag.SelectedIndex == 1);////used SelectedIndex for preventing a crash
                 }));
             }
             Task.WaitAll(tlist.ToArray());// if you dont do this, writeline squence may be unstable
-            this.WriteLine($"[Maximum Number:\t14\t]",
+            this.WriteLine("[Maximum Number:\t14\t]",
                 Color.FromName(comboBox1.Items[0].ToString()), cmbTimeTag.SelectedIndex == 1);
         }
 
@@ -126,20 +139,20 @@ namespace SampleFormApplication
         {
             fconsole1.Clear();
             List<Task> tlist = new List<Task>();
-            this.WriteLine($"[Minimum Number:\t1\t]",
+            this.WriteLine("[Minimum Number:\t1\t]",
                 Color.FromName(comboBox1.Items[0].ToString()), cmbTimeTag.SelectedIndex == 1);
             for (int i = 0; i < 7; i++)
             {
                 int current = i;
                 tlist.Add(Task.Run(() =>
                 {
-                    this.Write($"{current + 1}\t",
+                                   	this.Write(String.Format("{0}\t",current + 1),
                         Color.FromName(comboBox1.Items[current].ToString()));////used SelectedIndex for preventing a crash
                 }));
             }
             Task.WaitAll(tlist.ToArray());// if you dont do this, writeline squence may be unstable
             this.WriteLine();
-            this.WriteLine($"[Maximum Number:\t7\t]",
+            this.WriteLine("[Maximum Number:\t7\t]",
                 Color.FromName(comboBox1.Items[0].ToString()), cmbTimeTag.SelectedIndex == 1);
         }
 
@@ -151,7 +164,7 @@ namespace SampleFormApplication
         private async void button8_Click(object sender, EventArgs e)
         {
             var key = await this.ReadKey(Color.FromName(comboBox1.Items[comboBox1.SelectedIndex].ToString()));
-            MessageBox.Show($"Value of ReadKey is '{key}'");
+            MessageBox.Show(String.Format("Value of ReadKey is '{0}'",key));
         }
     }
 }
