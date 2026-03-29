@@ -45,6 +45,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="EnvVarsTest.cs" />
+    <Compile Include="ProcessInfoTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
