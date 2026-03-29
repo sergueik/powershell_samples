@@ -125,7 +125,7 @@ namespace Program {
 			}
 
 
-			resultFile = (appSettings.AllKeys.Contains("Datafile")) ? appSettings["Datafile"] : @"c:\temp\loadaverage.txt";
+			resultFile = EnvVars.ResolveEnvVars((appSettings.AllKeys.Contains("Datafile")) ? appSettings["Datafile"] : @"${temp}\loadaverage.txt");
 
 
 /*

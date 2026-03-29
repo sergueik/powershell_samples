@@ -26,11 +26,11 @@ namespace Program {
 
 			for (int i = 0; i <= 1000; i++) {                
 				Thread.Sleep(1000);
-				string textForLabel = (i) + "%";
+				string textForLabel = ((float)i/10).ToString("F2") + " %";
 				CollectMetrics();
-				if (i%100 == 0) {
-				AverageData();
-				Commit();
+				if (i%10 == 0) {
+					AverageData();
+					Commit();
 				}
 				lblProcent.SafeInvoke(d => d.Text = textForLabel);
 				progressBar1.SafeInvoke(d => d.Value = i);
@@ -46,7 +46,7 @@ namespace Program {
 		}
 		
 		private void CollectMetrics() {
-			int value = 0;
+			float value = 0;
 			var row = new Data();
 			row.TimeStamp = DateTime.Now;
 			if (noop) {
@@ -59,7 +59,8 @@ namespace Program {
 					performanceCounter.CategoryName = this.categoryName;
 					performanceCounter.CounterName = this.counterName;
 					performanceCounter.InstanceName = instanceName == "" ? null : instanceName;
-					value = (Int32)performanceCounter.RawValue;
+					// value = (long)performanceCounter.RawValue;
+					value = performanceCounter.NextValue();
 				} catch (InvalidOperationException e) {
 					Console.Error.WriteLine(String.Format("Exception reading \"{0}\\{1}\\{2}\": {3}", categoryName, counterName, "0", e.ToString()));
 					return;

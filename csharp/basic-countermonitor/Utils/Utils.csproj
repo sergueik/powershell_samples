@@ -35,7 +35,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CircularBuffer.cs" />
+    <Compile Include="EnvVars.cs" />
     <Compile Include="Data.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="FileHelper.cs" />
     <Compile Include="JSONParser.cs" />
     <Compile Include="JSONWriter.cs" />
