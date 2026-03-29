@@ -5,8 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace CsvHelper {
-	public sealed class CsvWriter : IDisposable {
+namespace CsvHelper
+{
+	public sealed class CsvWriter : IDisposable
+	{
 		private StreamWriter _streamWriter;
 		private bool _replaceCarriageReturnsAndLineFeedsFromFieldValues = true;
 		private string _carriageReturnAndLineFeedReplacement = ",";
@@ -29,11 +31,13 @@ namespace CsvHelper {
 			}
 		}
 
-		public void WriteCsv(CsvFile csvFile, string filePath) {
+		public void WriteCsv(CsvFile csvFile, string filePath)
+		{
 			WriteCsv(csvFile, filePath, null);
 		}
 
-		public void WriteCsv(CsvFile csvFile, string filePath, Encoding encoding) {
+		public void WriteCsv(CsvFile csvFile, string filePath, Encoding encoding)
+		{
 			if (File.Exists(filePath))
 				File.Delete(filePath);
 
@@ -44,11 +48,13 @@ namespace CsvHelper {
 			}
 		}
 
-		public void WriteCsv(CsvFile csvFile, Stream stream) {
+		public void WriteCsv(CsvFile csvFile, Stream stream)
+		{
 			WriteCsv(csvFile, stream, null);
 		}
 
-		public void WriteCsv(CsvFile csvFile, Stream stream, Encoding encoding) {
+		public void WriteCsv(CsvFile csvFile, Stream stream, Encoding encoding)
+		{
 			stream.Position = 0;
 			_streamWriter = new StreamWriter(stream, encoding ?? Encoding.Default);
 			WriteToStream(csvFile, _streamWriter);
@@ -56,7 +62,8 @@ namespace CsvHelper {
 			stream.Position = 0;
 		}
 
-		public string WriteCsv(CsvFile csvFile, Encoding encoding) {
+		public string WriteCsv(CsvFile csvFile, Encoding encoding)
+		{
 			string content = string.Empty;
 
 			using (var memoryStream = new MemoryStream()) {
@@ -77,11 +84,13 @@ namespace CsvHelper {
 			return content;
 		}
 
-		public void WriteCsv(DataTable dataTable, string filePath) {
+		public void WriteCsv(DataTable dataTable, string filePath)
+		{
 			WriteCsv(dataTable, filePath, null);
 		}
 
-		public void WriteCsv(DataTable dataTable, string filePath, Encoding encoding) {
+		public void WriteCsv(DataTable dataTable, string filePath, Encoding encoding)
+		{
 			if (File.Exists(filePath))
 				File.Delete(filePath);
 
@@ -92,11 +101,13 @@ namespace CsvHelper {
 			}
 		}
 
-		public void WriteCsv(DataTable dataTable, Stream stream) {
+		public void WriteCsv(DataTable dataTable, Stream stream)
+		{
 			WriteCsv(dataTable, stream, null);
 		}
 
-		public void WriteCsv(DataTable dataTable, Stream stream, Encoding encoding) {
+		public void WriteCsv(DataTable dataTable, Stream stream, Encoding encoding)
+		{
 			stream.Position = 0;
 			_streamWriter = new StreamWriter(stream, encoding ?? Encoding.Default);
 			WriteToStream(dataTable, _streamWriter);
@@ -104,7 +115,8 @@ namespace CsvHelper {
 			stream.Position = 0;
 		}
 
-		public string WriteCsv(DataTable dataTable, Encoding encoding) {
+		public string WriteCsv(DataTable dataTable, Encoding encoding)
+		{
 			string content = string.Empty;
 
 			using (var memoryStream = new MemoryStream()) {
@@ -125,14 +137,16 @@ namespace CsvHelper {
 			return content;
 		}
 
-		private void WriteToStream(CsvFile csvFile, TextWriter writer) {
+		private void WriteToStream(CsvFile csvFile, TextWriter writer)
+		{
 			if (csvFile.Headers.Count > 0)
 				WriteRecord(csvFile.Headers, writer);
 
 			csvFile.Records.ForEach(record => WriteRecord(record.Fields, writer));
 		}
 
-		private void WriteToStream(DataTable dataTable, TextWriter writer) {
+		private void WriteToStream(DataTable dataTable, TextWriter writer)
+		{
 			List<string> fields = (from DataColumn column in dataTable.Columns
 			                       select column.ColumnName).ToList();
 			WriteRecord(fields, writer);
@@ -144,7 +158,8 @@ namespace CsvHelper {
 			}
 		}
 
-		private void WriteRecord(IList<string> fields, TextWriter writer) {
+		private void WriteRecord(IList<string> fields, TextWriter writer)
+		{
 			for (int i = 0; i < fields.Count; i++) {
 				bool quotesRequired = fields[i].Contains(",");
 				bool escapeQuotes = fields[i].Contains("\"");
@@ -165,8 +180,20 @@ namespace CsvHelper {
 
 			writer.WriteLine();
 		}
+		public void AppendCsv(CsvFile csvFile, string filePath, Encoding encoding = null, bool writeHeaderIfNew = true)
+		{
+			bool fileExists = File.Exists(filePath);
+			bool append = true;
+			using (var writer = new StreamWriter(filePath, append, encoding ?? Encoding.Default)) {
+				if (!fileExists && writeHeaderIfNew && csvFile.Headers.Count > 0) {
+					WriteRecord(csvFile.Headers, writer);
+				}
 
-		public void Dispose() {
+				csvFile.Records.ForEach(record => WriteRecord(record.Fields, writer));
+			}
+		}
+		public void Dispose()
+		{
 			if (_streamWriter == null)
 				return;
 
