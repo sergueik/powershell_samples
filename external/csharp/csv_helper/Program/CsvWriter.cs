@@ -184,6 +184,12 @@ namespace CsvHelper
 		{
 			bool fileExists = File.Exists(filePath);
 			bool append = true;
+			IList<string> existingHeaders = ReadHeader(filePath, encoding);
+			
+			if (!HeadersMatch(existingHeaders, csvFile.Headers)) {
+				throw new InvalidOperationException(
+					String.Format("CSV headers mismatch. existing: [{0}] new: [{1}]", string.Join(",", existingHeaders), string.Join(",", csvFile.Headers)));
+			}		
 			using (var writer = new StreamWriter(filePath, append, encoding ?? Encoding.Default)) {
 				if (!fileExists && writeHeaderIfNew && csvFile.Headers.Count > 0) {
 					WriteRecord(csvFile.Headers, writer);
@@ -191,6 +197,34 @@ namespace CsvHelper
 
 				csvFile.Records.ForEach(record => WriteRecord(record.Fields, writer));
 			}
+		}
+		
+		private IList<string> ReadHeader(string filePath, Encoding encoding)
+		{
+			using (var reader = new StreamReader(filePath, encoding ?? Encoding.Default)) {
+				var line = reader.ReadLine();
+				if (line == null)
+					return new List<string>();
+
+				return ParseHeaderLine(line);
+			}
+		}
+		private bool HeadersMatch(IList<string> h1, IList<string> h2)
+		{
+			if (h1.Count != h2.Count)
+				return false;
+
+			for (int i = 0; i < h1.Count; i++) {
+				if (!string.Equals(h1[i], h2[i], StringComparison.Ordinal))
+					return false;
+			}
+
+			return true;
+		}
+		private IList<string> ParseHeaderLine(string line)
+		{
+			// keep consistent with your writer (simple CSV)
+			return line.Split(',').Select(h => h.Trim('"')).ToList();
 		}
 		public void Dispose()
 		{

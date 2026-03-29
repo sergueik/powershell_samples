@@ -35,6 +35,9 @@ data 1,""data, 2"",data 3
 		private const string TEST_DATA_6 = @" column one ,  column two  ,   column three   
    1   ,  data 2  , 2010-05-01 11:26:01 
 ";
+		private const string TEST_DATA_7 = @"column one,column two,column three,column four
+1,data 2,2010-05-01 11:26:01,3
+";
 		private TestContext testContextInstance;
 
 		public TestContext TestContext {
@@ -84,41 +87,29 @@ data 1,""data, 2"",data 3
 			}
 			using (var reader = new CsvReader(FilePath, Encoding.Default)) {
 				var records = new List<List<string>>();
-
 				while (reader.ReadNextRecord())
 					records.Add(reader.Fields);
 
-				Assert.IsTrue(records.Count == 2);
+				Assert.IsTrue(records.Count == 3);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[1]);
+				CsvFile csvFile = CreateCsvFile(records[0], records[2]);
+				VerifyTestData1(csvFile.Headers, csvFile.Records);
+				csvFile = CreateCsvFile(records[0], records[1]);
 				VerifyTestData1(csvFile.Headers, csvFile.Records);
 			}
-
-			File.Delete(FilePath);
 		}
 
-		private CsvFile CreateCsvFileFromDataTable(DataTable table) {
+		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void TestBadAppendToFile() {
+			File.WriteAllText(FilePath, TEST_DATA_1, Encoding.Default);
 			var file = new CsvFile();
-
-			foreach (DataColumn column in table.Columns)
-				file.Headers.Add(column.ColumnName);
-
-			foreach (DataRow row in table.Rows) {
-				CsvRecord record = new CsvRecord();
-
-				foreach (object o in row.ItemArray) {
-					if (o is DateTime)
-						record.Fields.Add(((DateTime)o).ToString("yyyy-MM-dd hh:mm:ss"));
-					else
-						record.Fields.Add(o.ToString());
-				}
-
-				file.Records.Add(record);
+			file.Populate(true, TEST_DATA_7);
+			using (var writer = new CsvWriter()) {
+				writer.AppendCsv(file, FilePath, Encoding.Default);
 			}
-
-			return file;
 		}
-
+		
 		private CsvFile CreateCsvFile(List<string> headers, List<string> fields) {
 			var csvFile = new CsvFile();
 
@@ -129,7 +120,7 @@ data 1,""data, 2"",data 3
 			return csvFile;
 		}
 
-
+	
 		private void VerifyTestData1(List<string> headers, CsvRecords records) {
 			Assert.IsTrue(headers.Count == 3);
 			Assert.IsTrue(records.Count == 1);
@@ -140,83 +131,6 @@ data 1,""data, 2"",data 3
 			Assert.AreEqual("data 2", records[0].Fields[1]);
 			Assert.AreEqual("2010-05-01 11:26:01", records[0].Fields[2]);
 		}
-
-		private void VerifyTestData2(List<string> headers, CsvRecords records) {
-			Assert.IsTrue(headers.Count == 3);
-			Assert.IsTrue(records.Count == 1);
-			Assert.AreEqual("column, one", headers[0]);
-			Assert.AreEqual("column two", headers[1]);
-			Assert.AreEqual("column, three", headers[2]);
-			Assert.AreEqual("data 1", records[0].Fields[0]);
-			Assert.AreEqual("data, 2", records[0].Fields[1]);
-			Assert.AreEqual("data 3", records[0].Fields[2]);
-		}
-
-		private void VerifyTestData3(List<string> headers, CsvRecords records) {
-			Assert.IsTrue(headers.Count == 3);
-			Assert.IsTrue(records.Count == 1);
-			Assert.AreEqual("column, one", headers[0]);
-			Assert.AreEqual("column \"two", headers[1]);
-			Assert.AreEqual("column, three", headers[2]);
-			Assert.AreEqual("data \"1", records[0].Fields[0]);
-			Assert.AreEqual("data, 2", records[0].Fields[1]);
-			Assert.AreEqual("data 3", records[0].Fields[2]);
-		}
-
-		private void VerifyTestData4(List<string> headers, CsvRecords records) {
-			Assert.IsTrue(headers.Count == 3);
-			Assert.IsTrue(records.Count == 1);
-			Assert.AreEqual("column, one", headers[0]);
-			Assert.AreEqual("column \"two", headers[1]);
-			Assert.AreEqual("column, three", headers[2]);
-			Assert.AreEqual("data \",1", records[0].Fields[0]);
-			Assert.AreEqual("data, 2", records[0].Fields[1]);
-			Assert.AreEqual("data 3", records[0].Fields[2]);
-		}
-
-		private void VerifyTestData5(List<string> headers, CsvRecords records) {
-			Assert.IsTrue(headers.Count == 3);
-			Assert.IsTrue(records.Count == 1);
-			Assert.AreEqual("column, one", headers[0]);
-			Assert.AreEqual("column \"two", headers[1]);
-			Assert.AreEqual("column, three", headers[2]);
-			Assert.AreEqual("data \"\",1", records[0].Fields[0]);
-			Assert.AreEqual("dat\"\"\"sa, 2", records[0].Fields[1]);
-			Assert.AreEqual("data 3", records[0].Fields[2]);
-		}
-
-		private void VerifyTestData5Alternative(CsvRecords records) {
-			Assert.IsTrue(records.Count == 2);
-			Assert.AreEqual("column, one", records[0].Fields[0]);
-			Assert.AreEqual("column \"two", records[0].Fields[1]);
-			Assert.AreEqual("column, three", records[0].Fields[2]);
-			Assert.AreEqual("data \"\",1", records[1].Fields[0]);
-			Assert.AreEqual("dat\"\"\"sa, 2", records[1].Fields[1]);
-			Assert.AreEqual("data 3", records[1].Fields[2]);
-		}
-
-		private void VerifyTestData6(List<string> headers, CsvRecords records) {
-			Assert.IsTrue(headers.Count == 3);
-			Assert.IsTrue(records.Count == 1);
-			Assert.AreEqual(" column one ", headers[0]);
-			Assert.AreEqual("  column two  ", headers[1]);
-			Assert.AreEqual("   column three   ", headers[2]);
-			Assert.AreEqual("   1   ", records[0].Fields[0]);
-			Assert.AreEqual("  data 2  ", records[0].Fields[1]);
-			Assert.AreEqual(" 2010-05-01 11:26:01 ", records[0].Fields[2]);
-		}
-
-		private void VerifyTestData6Trimmed(List<string> headers, CsvRecords records) {
-			Assert.IsTrue(headers.Count == 3);
-			Assert.IsTrue(records.Count == 1);
-			Assert.AreEqual("column one", headers[0]);
-			Assert.AreEqual("column two", headers[1]);
-			Assert.AreEqual("column three", headers[2]);
-			Assert.AreEqual("1", records[0].Fields[0]);
-			Assert.AreEqual("data 2", records[0].Fields[1]);
-			Assert.AreEqual("2010-05-01 11:26:01", records[0].Fields[2]);
-		}
-
 
 	}
 }
