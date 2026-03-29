@@ -4,7 +4,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 
-namespace CsvHelper {
+namespace Utils {
 	public sealed class CsvReader : IDisposable {
 
 		private FileStream _fileStream;

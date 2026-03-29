@@ -4,7 +4,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-using CsvHelper;
+using Utils;
 using NUnit.Framework;
 using System.Linq;
 
@@ -86,11 +86,9 @@ data 1,""data, 2"",data 3
 
 				Assert.IsTrue(records.Count == 2);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[1]);
-				VerifyTestData1(csvFile.Headers, csvFile.Records);
+				CsvData csvData = CreateCsvData(records[0], records[1]);
+				VerifyTestData1(csvData.Headers, csvData.Records);
 			}
-
-			File.Delete(FilePath);
 		}
 
 		[Test]
@@ -108,8 +106,8 @@ data 1,""data, 2"",data 3
 
 						Assert.IsTrue(records.Count == 2);
 
-						CsvFile csvFile = CreateCsvFile(records[0], records[1]);
-						VerifyTestData1(csvFile.Headers, csvFile.Records);
+						CsvData csvData = CreateCsvData(records[0], records[1]);
+						VerifyTestData1(csvData.Headers, csvData.Records);
 					}
 				}
 			}        
@@ -125,8 +123,8 @@ data 1,""data, 2"",data 3
 
 				Assert.IsTrue(records.Count == 2);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[1]);
-				VerifyTestData1(csvFile.Headers, csvFile.Records);
+				CsvData csvData = CreateCsvData(records[0], records[1]);
+				VerifyTestData1(csvData.Headers, csvData.Records);
 			}   
 		}
 
@@ -142,8 +140,8 @@ data 1,""data, 2"",data 3
 				});
 			}
 
-			CsvFile file = CreateCsvFileFromDataTable(dataTable);
-			VerifyTestData1(file.Headers, file.Records);
+			CsvData csvData = CreateCsvDataFromDataTable(dataTable);
+			VerifyTestData1(csvData.Headers, csvData.Records);
 		}
 
 		[Test]
@@ -154,8 +152,8 @@ data 1,""data, 2"",data 3
 				dataTable = reader.ReadIntoDataTable();
 			}
 
-			CsvFile file = CreateCsvFileFromDataTable(dataTable);
-			VerifyTestData1(file.Headers, file.Records);
+			CsvData csvData = CreateCsvDataFromDataTable(dataTable);
+			VerifyTestData1(csvData.Headers, csvData.Records);
 		}
 		[Test]
 		public void TestReadingFromStringWithSampleData2() {
@@ -167,8 +165,8 @@ data 1,""data, 2"",data 3
 
 				Assert.IsTrue(records.Count == 2);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[1]);
-				VerifyTestData2(csvFile.Headers, csvFile.Records);
+				CsvData csvData = CreateCsvData(records[0], records[1]);
+				VerifyTestData2(csvData.Headers, csvData.Records);
 			}
 		}
 
@@ -182,8 +180,8 @@ data 1,""data, 2"",data 3
 
 				Assert.IsTrue(records.Count == 2);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[1]);
-				VerifyTestData3(csvFile.Headers, csvFile.Records);
+				CsvData csvData = CreateCsvData(records[0], records[1]);
+				VerifyTestData3(csvData.Headers, csvData.Records);
 			}
 		}
 
@@ -197,8 +195,8 @@ data 1,""data, 2"",data 3
 
 				Assert.IsTrue(records.Count == 2);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[1]);
-				VerifyTestData4(csvFile.Headers, csvFile.Records);
+				CsvData csvData = CreateCsvData(records[0], records[1]);
+				VerifyTestData4(csvData.Headers, csvData.Records);
 			}
 		}
 
@@ -212,8 +210,8 @@ data 1,""data, 2"",data 3
 
 				Assert.IsTrue(records.Count == 2);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[1]);
-				VerifyTestData5(csvFile.Headers, csvFile.Records);
+				CsvData csvData = CreateCsvData(records[0], records[1]);
+				VerifyTestData5(csvData.Headers, csvData.Records);
 			}
 		}
 
@@ -227,8 +225,8 @@ data 1,""data, 2"",data 3
 
 				Assert.IsTrue(records.Count == 2);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[1]);
-				VerifyTestData6(csvFile.Headers, csvFile.Records);
+				CsvData csvData = CreateCsvData(records[0], records[1]);
+				VerifyTestData6(csvData.Headers, csvData.Records);
 			}
 		}
 
@@ -242,19 +240,19 @@ data 1,""data, 2"",data 3
 
 				Assert.IsTrue(records.Count == 2);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[1]);
-				VerifyTestData6Trimmed(csvFile.Headers, csvFile.Records);
+				CsvData csvData = CreateCsvData(records[0], records[1]);
+				VerifyTestData6Trimmed(csvData.Headers, csvData.Records);
 			}
 		}
 
-		private CsvFile CreateCsvFileFromDataTable(DataTable table) {
-			var file = new CsvFile();
+		private CsvData CreateCsvDataFromDataTable(DataTable table) {
+			var file = new CsvData();
 
 			foreach (DataColumn column in table.Columns)
 				file.Headers.Add(column.ColumnName);
 
 			foreach (DataRow row in table.Rows) {
-				CsvRecord record = new CsvRecord();
+				var record = new CsvRecord();
 
 				foreach (object o in row.ItemArray) {
 					if (o is DateTime)
@@ -269,14 +267,14 @@ data 1,""data, 2"",data 3
 			return file;
 		}
 
-		private CsvFile CreateCsvFile(List<string> headers, List<string> fields) {
-			var csvFile = new CsvFile();
+		private CsvData CreateCsvData(List<string> headers, List<string> fields) {
+			var csvData = new CsvData();
 
-			headers.ForEach(header => csvFile.Headers.Add(header));
-			CsvRecord record = new CsvRecord();
+			headers.ForEach(header => csvData.Headers.Add(header));
+			var record = new CsvRecord();
 			fields.ForEach(field => record.Fields.Add(field));
-			csvFile.Records.Add(record);
-			return csvFile;
+			csvData.Records.Add(record);
+			return csvData;
 		}
 
 

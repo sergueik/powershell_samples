@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CsvFileTests.cs" />
+    <Compile Include="CsvDataTests.cs" />
     <Compile Include="CsvWriterTests.cs" />
     <Compile Include="CsvReaderTests.cs" />
     <Compile Include="CsvAppendTests.cs" />
@@ -51,9 +51,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Program\Program.csproj">
+    <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{d8d73059-70e8-417d-bed8-d56eccd14591}</Project>
-      <Name>Program</Name>
+      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

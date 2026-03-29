@@ -4,13 +4,13 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-using CsvHelper;
+using Utils;
 using NUnit.Framework;
 using System.Linq;
 
 namespace TestProject1 {
 	[TestFixture]
-	public class CsvFileTests {
+	public class CsvDataTests {
 
 		private const string TEST_DATA_2 = @"""column, one"",column two,""column, three""
 data 1,""data, 2"",data 3
@@ -55,52 +55,52 @@ data 1,""data, 2"",data 3
 		}
 		[Test]
 		public void PopulateFromFileWithHeader() {
-			var csvFile1 = new CsvFile();
+			var csvData = new CsvData();
 			using (var reader = new CsvReader(Encoding.Default, TEST_DATA_5)) {
 				var records = new List<List<string>>();
 
 				while (reader.ReadNextRecord())
 					records.Add(reader.Fields);
 
-				csvFile1 = CreatecsvFile(records[0], records[1]);
+				csvData = CreatecsvData(records[0], records[1]);
 			}
 
 			if (File.Exists(FilePath))
 				File.Delete(FilePath);
 
 			using (var writer = new CsvWriter()) {
-				writer.WriteCsv(csvFile1, FilePath, Encoding.Default);
+				writer.WriteCsv(csvData, FilePath, Encoding.Default);
 			}
 
-			var file = new CsvFile();
-			file.Populate(FilePath, true);
-			VerifyTestData5(file.Headers, file.Records);
+			csvData = new CsvData();
+			csvData.Populate(FilePath, true);
+			VerifyTestData5(csvData.Headers, csvData.Records);
 
 			File.Delete(FilePath);
 		}
 
 		[Test]
 		public void PopulateFromFileWithoutHeader() {
-			var csvFile = new CsvFile();
+			var csvData = new CsvData();
 			using (var reader = new CsvReader(Encoding.Default, TEST_DATA_5)) {
 				var records = new List<List<string>>();
 
 				while (reader.ReadNextRecord())
 					records.Add(reader.Fields);
 
-				csvFile = CreatecsvFile(records[0], records[1]);
+				csvData = CreatecsvData(records[0], records[1]);
 			}
 
 			if (File.Exists(FilePath))
 				File.Delete(FilePath);
 
 			using (var writer = new CsvWriter()) {
-				writer.WriteCsv(csvFile, FilePath, Encoding.Default);
+				writer.WriteCsv(csvData, FilePath, Encoding.Default);
 			}
 
-			var file = new CsvFile();
-			file.Populate(FilePath, false);
-			VerifyTestData5Alternative(file.Records);
+			csvData = new CsvData();
+			csvData.Populate(FilePath, false);
+			VerifyTestData5Alternative(csvData.Records);
 
 			File.Delete(FilePath);
 		}
@@ -112,9 +112,9 @@ data 1,""data, 2"",data 3
 					streamWriter.Write(TEST_DATA_5);
 					streamWriter.Flush();
 
-					var file = new CsvFile();
-					file.Populate(memoryStream, true);
-					VerifyTestData5(file.Headers, file.Records);
+					var csvData = new CsvData();
+					csvData.Populate(memoryStream, true);
+					VerifyTestData5(csvData.Headers, csvData.Records);
 				}
 			}
 		}
@@ -126,36 +126,36 @@ data 1,""data, 2"",data 3
 		data.Value = (float)42.0;
 		var headers = new List<string> { "TimeStamp", "Value" };
 		var fields = new List<string> {data.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),data.Value.ToString("F2") };
-			var csvFile = new CsvFile();
+			var csvData = new CsvData();
 
-			headers.ForEach(header => csvFile.Headers.Add(header));
+			headers.ForEach(header => csvData.Headers.Add(header));
 			var record = new CsvRecord();
 			fields.ForEach(field => record.Fields.Add(field));
-			csvFile.Records.Add(record);
+			csvData.Records.Add(record);
 		}
 
 		[Test]
 		public void PopulateFromString() {
-			var file = new CsvFile();
-			file.Populate(true, TEST_DATA_5);
-			VerifyTestData5(file.Headers, file.Records);
+			var csvData = new CsvData();
+			csvData.Populate(true, TEST_DATA_5);
+			VerifyTestData5(csvData.Headers, csvData.Records);
 		}
 
 		[Test]
 		public void Indexers() {
-			var file = new CsvFile();
-			file.Populate(true, TEST_DATA_2);
+			var csvData = new CsvData();
+			csvData.Populate(true, TEST_DATA_2);
 
-			Assert.IsTrue(file[0] == file.Records[0]);
-			Assert.IsTrue(string.Compare(file[0, 1], "data, 2") == 0);
-			Assert.IsTrue(string.Compare(file[0, "column two"], "data, 2") == 0);
+			Assert.IsTrue(csvData[0] == csvData.Records[0]);
+			Assert.IsTrue(string.Compare(csvData[0, 1], "data, 2") == 0);
+			Assert.IsTrue(string.Compare(csvData[0, "column two"], "data, 2") == 0);
 
 		}
-		private CsvFile CreatecsvFileFromDataTable(DataTable table) {
-			var file = new CsvFile();
+		private CsvData CreatecsvDataFromDataTable(DataTable table) {
+			var csvData = new CsvData();
 
 			foreach (DataColumn column in table.Columns)
-				file.Headers.Add(column.ColumnName);
+				csvData.Headers.Add(column.ColumnName);
 
 			foreach (DataRow row in table.Rows) {
 				var record = new CsvRecord();
@@ -167,20 +167,20 @@ data 1,""data, 2"",data 3
 						record.Fields.Add(o.ToString());
 				}
 
-				file.Records.Add(record);
+				csvData.Records.Add(record);
 			}
 
-			return file;
+			return csvData;
 		}
 
-		private CsvFile CreatecsvFile(List<string> headers, List<string> fields) {
-			var csvFile = new CsvFile();
+		private CsvData CreatecsvData(List<string> headers, List<string> fields) {
+			var csvData = new CsvData();
 
-			headers.ForEach(header => csvFile.Headers.Add(header));
-			CsvRecord record = new CsvRecord();
+			headers.ForEach(header => csvData.Headers.Add(header));
+			var record = new CsvRecord();
 			fields.ForEach(field => record.Fields.Add(field));
-			csvFile.Records.Add(record);
-			return csvFile;
+			csvData.Records.Add(record);
+			return csvData;
 		}
 
 

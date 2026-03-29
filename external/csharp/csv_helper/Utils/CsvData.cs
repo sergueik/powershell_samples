@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace CsvHelper {
+namespace Utils {
 
     [Serializable]
-    public sealed class CsvFile {
+    public sealed class CsvData {
     	
         private readonly List<string> headers = new List<string>();
 
@@ -130,7 +130,7 @@ namespace CsvHelper {
         public void Populate(string filePath, Encoding encoding, bool hasHeaderRow, bool trimColumns) {
             using (var reader = new CsvReader(filePath, encoding){HasHeaderRow = hasHeaderRow, TrimColumns = trimColumns})
             {
-                PopulateCsvFile(reader);
+                PopulateCsvData(reader);
             }
         }
 
@@ -145,7 +145,7 @@ namespace CsvHelper {
         public void Populate(Stream stream, Encoding encoding, bool hasHeaderRow, bool trimColumns) {
             using (var reader = new CsvReader(stream, encoding){HasHeaderRow = hasHeaderRow, TrimColumns = trimColumns})
             {
-                PopulateCsvFile(reader);
+                PopulateCsvData(reader);
             }
         }
 
@@ -160,11 +160,11 @@ namespace CsvHelper {
         public void Populate(bool hasHeaderRow, string csvContent, Encoding encoding, bool trimColumns) {
             using (var reader = new CsvReader(encoding, csvContent){HasHeaderRow = hasHeaderRow, TrimColumns = trimColumns})
             {
-                PopulateCsvFile(reader);
+                PopulateCsvData(reader);
             }
         }
 
-        private void PopulateCsvFile(CsvReader reader) {
+        private void PopulateCsvData(CsvReader reader) {
             headers.Clear();
             records.Clear();
 

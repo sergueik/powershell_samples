@@ -4,7 +4,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-using CsvHelper;
+using Utils;
 using NUnit.Framework;
 using System.Linq;
 
@@ -80,10 +80,10 @@ data 1,""data, 2"",data 3
 		[Test]
 		public void TestAppendToFile() {
 			File.WriteAllText(FilePath, TEST_DATA_1, Encoding.Default);
-			var file = new CsvFile();
-			file.Populate(true, TEST_DATA_1);
+			var csvData = new CsvData();
+			csvData.Populate(true, TEST_DATA_1);
 			using (var writer = new CsvWriter()) {
-				writer.AppendCsv(file, FilePath, Encoding.Default);
+				writer.AppendCsv(csvData, FilePath, Encoding.Default);
 			}
 			using (var reader = new CsvReader(FilePath, Encoding.Default)) {
 				var records = new List<List<string>>();
@@ -92,10 +92,10 @@ data 1,""data, 2"",data 3
 
 				Assert.IsTrue(records.Count == 3);
 
-				CsvFile csvFile = CreateCsvFile(records[0], records[2]);
-				VerifyTestData1(csvFile.Headers, csvFile.Records);
-				csvFile = CreateCsvFile(records[0], records[1]);
-				VerifyTestData1(csvFile.Headers, csvFile.Records);
+				csvData = CreateCsvData(records[0], records[2]);
+				VerifyTestData1(csvData.Headers, csvData.Records);
+				csvData = CreateCsvData(records[0], records[1]);
+				VerifyTestData1(csvData.Headers, csvData.Records);
 			}
 		}
 
@@ -103,21 +103,21 @@ data 1,""data, 2"",data 3
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void TestBadAppendToFile() {
 			File.WriteAllText(FilePath, TEST_DATA_1, Encoding.Default);
-			var file = new CsvFile();
-			file.Populate(true, TEST_DATA_7);
+			var csvData = new CsvData();
+			csvData.Populate(true, TEST_DATA_7);
 			using (var writer = new CsvWriter()) {
-				writer.AppendCsv(file, FilePath, Encoding.Default);
+				writer.AppendCsv(csvData, FilePath, Encoding.Default);
 			}
 		}
 		
-		private CsvFile CreateCsvFile(List<string> headers, List<string> fields) {
-			var csvFile = new CsvFile();
+		private CsvData CreateCsvData(List<string> headers, List<string> fields) {
+			var csvData = new CsvData();
 
-			headers.ForEach(header => csvFile.Headers.Add(header));
+			headers.ForEach(header => csvData.Headers.Add(header));
 			CsvRecord record = new CsvRecord();
 			fields.ForEach(field => record.Fields.Add(field));
-			csvFile.Records.Add(record);
-			return csvFile;
+			csvData.Records.Add(record);
+			return csvData;
 		}
 
 	

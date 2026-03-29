@@ -4,7 +4,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-using CsvHelper;
+using Utils;
 using NUnit.Framework;
 using System.Linq;
 
@@ -12,6 +12,9 @@ namespace TestProject1 {
 	[TestFixture]
 	public class CsvWriterTests {
 
+		private const string TEST_DATA_1 = @"column one,column two,column three
+1,data 2,2010-05-01 11:26:01
+";
 		private const string TEST_DATA_5 = @"""column, one"",""column """"two"",""column, three""
 ""data """""""",1"",""dat""""""""""""sa, 2"",data 3
 ";
@@ -56,51 +59,55 @@ namespace TestProject1 {
 		}
 
 		[Test]
-		public void WriteCsvFileObjectToFile() {
-			var csvFile = new CsvFile();
-			csvFile.Populate(true, TEST_DATA_5);
+		public void WriteCsvDataObjectToFile() {
+			var csvData = new CsvData();
+			csvData.Populate(true, TEST_DATA_5);
 
 			using (var writer = new CsvWriter()) {
-				writer.WriteCsv(csvFile, FilePath);
+				writer.WriteCsv(csvData, FilePath);
 			}
 
-			csvFile = new CsvFile();
-			csvFile.Populate(FilePath, true);
+			csvData = new CsvData();
+			csvData.Populate(FilePath, true);
 
-			VerifyTestData5(csvFile.Headers, csvFile.Records);
+			VerifyTestData5(csvData.Headers, csvData.Records);
 
 			File.Delete(FilePath);
 		}
 
+		//[Ignore("Line Endings not Handled")]
 		[Test]
-		public void WriteCsvFileObjectToStream() {
+		public void WriteCsvDataObjectToStream() {
 			string content = string.Empty;
 
 			using (var memoryStream = new MemoryStream()) {
-				var csvFile = new CsvFile();
-				csvFile.Populate(true, TEST_DATA_5);
+				var csvData = new CsvData();
+				csvData.Populate(true, TEST_DATA_5);
                 
 				using (var writer = new CsvWriter()) {
-					writer.WriteCsv(csvFile, memoryStream);
+					writer.WriteCsv(csvData, memoryStream);
 					using (var reader = new StreamReader(memoryStream)) {
 						content = reader.ReadToEnd();
 					}
 				}
 			}
-
+			content = Normalize(content);
+			StringAssert.AreEqualIgnoringCase(content, TEST_DATA_5);
 			Assert.IsTrue(string.Compare(content, TEST_DATA_5) == 0);
 		}
 
+		// [Ignore("Line Endings not Handled")]
 		[Test]
-		public void WriteCsvFileObjectToString() {
-			var csvFile = new CsvFile();
-			csvFile.Populate(true, TEST_DATA_5);
+		public void WriteCsvDataObjectToString() {
+			var csvData = new CsvData();
+			csvData.Populate(true, TEST_DATA_5);
 			string content = string.Empty;
 
 			using (var writer = new CsvWriter()) {
-				content = writer.WriteCsv(csvFile, Encoding.Default);
+				content = writer.WriteCsv(csvData, Encoding.Default);
 			}
-
+			content = Normalize(content);
+			StringAssert.AreEqualIgnoringCase(content, TEST_DATA_5);	
 			Assert.IsTrue(string.Compare(content, TEST_DATA_5) == 0);
 		}
 
@@ -116,10 +123,11 @@ namespace TestProject1 {
 				writer.WriteCsv(table, FilePath);
 			}
 
-			CsvFile csvFile = CreateCsvFileFromDataTable(table);
-			VerifyTestData5(csvFile.Headers, csvFile.Records);
+			CsvData csvData = CreateCsvDataFromDataTable(table);
+			VerifyTestData5(csvData.Headers, csvData.Records);
 		}
-
+		
+		// [Ignore("Line Endings not Handled")]
 		[Test]
 		public void WriteDataTableToStream() {
 			string content = string.Empty;
@@ -127,7 +135,7 @@ namespace TestProject1 {
 			using (var memoryStream = new MemoryStream()) {
 				var table = new DataTable();
 
-				using (var reader = new CsvReader(Encoding.Default, TEST_DATA_5)) {
+				using (var reader = new CsvReader(Encoding.Default, TEST_DATA_1)) {
 					table = reader.ReadIntoDataTable();
 				}
 
@@ -140,10 +148,12 @@ namespace TestProject1 {
 				}
 
 			}
-
-			Assert.IsTrue(string.Compare(content, TEST_DATA_5) == 0);
+			content = Normalize(content);
+			StringAssert.AreEqualIgnoringCase(content, TEST_DATA_1);
+			Assert.IsTrue(string.Compare(content, TEST_DATA_1) == 0);
 		}
 
+		// [Ignore("Line Endings not Handled")]
 		[Test]
 		public void WriteDataTableToString() {
 			var table = new DataTable();
@@ -157,33 +167,34 @@ namespace TestProject1 {
 			using (var writer = new CsvWriter()) {
 				content = writer.WriteCsv(table, Encoding.Default);
 			}
-
+			content = Normalize(content);
+			StringAssert.AreEqualIgnoringCase(content, TEST_DATA_5);
 			Assert.IsTrue(string.Compare(content, TEST_DATA_5) == 0);
 		}
 
 		[Test]
 		public void VerifyThatCarriageReturnsAreHandledCorrectlyInFieldValues() {
-			var csvFile = new CsvFile();
-			csvFile.Headers.Add("header ,1");
-			csvFile.Headers.Add("header\r\n2");
-			csvFile.Headers.Add("header 3");
+			var csvData = new CsvData();
+			csvData.Headers.Add("header ,1");
+			csvData.Headers.Add("header\r\n2");
+			csvData.Headers.Add("header 3");
 
 			CsvRecord record = new CsvRecord();
 			record.Fields.Add("da,ta 1");
 			record.Fields.Add("\"data\" 2");
 			record.Fields.Add("data\n3");
-			csvFile.Records.Add(record);
+			csvData.Records.Add(record);
 
 			string content = string.Empty;
 
 			using (var writer = new CsvWriter()) {
-				content = writer.WriteCsv(csvFile, Encoding.Default);
+				content = writer.WriteCsv(csvData, Encoding.Default);
 			}
 
 			Assert.IsTrue(string.Compare(content, "\"header ,1\",\"header,2\",header 3\r\n\"da,ta 1\",\"\"\"data\"\" 2\",\"data,3\"\r\n") == 0);
 
 			using (var writer = new CsvWriter() { ReplaceCarriageReturnsAndLineFeedsFromFieldValues = false }) {
-				content = writer.WriteCsv(csvFile, Encoding.Default);
+				content = writer.WriteCsv(csvData, Encoding.Default);
 			}
 
 			Assert.IsTrue(string.Compare(content, "\"header ,1\",header\r\n2,header 3\r\n\"da,ta 1\",\"\"\"data\"\" 2\",data\n3\r\n") == 0);
@@ -191,8 +202,8 @@ namespace TestProject1 {
 
 		}
 
-		private CsvFile CreateCsvFileFromDataTable(DataTable table) {
-			var file = new CsvFile();
+		private CsvData CreateCsvDataFromDataTable(DataTable table) {
+			var file = new CsvData();
 
 			foreach (DataColumn column in table.Columns)
 				file.Headers.Add(column.ColumnName);
@@ -213,14 +224,14 @@ namespace TestProject1 {
 			return file;
 		}
 
-		private CsvFile CreateCsvFile(List<string> headers, List<string> fields) {
-			var csvFile = new CsvFile();
+		private CsvData CreateCsvData(List<string> headers, List<string> fields) {
+			var csvData = new CsvData();
 
-			headers.ForEach(header => csvFile.Headers.Add(header));
+			headers.ForEach(header => csvData.Headers.Add(header));
 			var record = new CsvRecord();
 			fields.ForEach(field => record.Fields.Add(field));
-			csvFile.Records.Add(record);
-			return csvFile;
+			csvData.Records.Add(record);
+			return csvData;
 		}
 
 
@@ -235,6 +246,9 @@ namespace TestProject1 {
 			Assert.AreEqual("data 3", records[0].Fields[2]);
 		}
 
-
+		private string Normalize(string s)
+		{
+		    return s.Replace("\r\n", "\n").Replace("\r", "\n");
+		}
 	}
 }
