@@ -26,7 +26,13 @@ Successfully installed 'SQLDatabase.Net 2.0.1.0'.
 > NOTE it installs the dll into a different directory than what one would guess from filename
 
 but on some nodes Nuget __2.6.4__ is unable to restore package on its own
+```cmd
+C:\developer\sergueik\powershell_samples\external\csharp\basic-sqldb-explorer> "C:\Program Files (x86)\SharpDevelop\5.1\AddIns\Misc\PackageManagement\NuGet.exe" restore C:\developer\sergueik\powershell_samples\external\csharp\basic-sqldb-explorer\basic-sqldb-explorer.sln
+Unable to find version '2.0.1.0' of package 'SQLDatabase.Net'.
+Exited with code: 1
 
+```
+download and install package:
 
 ```sh
 curl -skLo ~/Downloads/sqldatabase.net.2.0.1.nupkg https://www.nuget.org/api/v2/package/SQLDatabase.Net/2.0.1

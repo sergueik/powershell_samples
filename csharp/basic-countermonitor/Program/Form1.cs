@@ -17,7 +17,7 @@ namespace Program {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
-			Thread thread = new Thread(new ThreadStart(StartCalculation));
+			var thread = new Thread(new ThreadStart(StartCalculation));
 			thread.Start();
 		}
 
@@ -122,5 +122,19 @@ namespace Program {
 				Console.Error.WriteLine(String.Format("Exception writing \"{0}\": ", resultFile) + e.ToString());
 			}
 		}
+
+		private void OpenFileAction() {
+			var openFileDialog = new OpenFileDialog() {
+				Filter = "Text|*.txt",
+				// ShowPinnedPlaces = true,
+				// ShowPreview = true
+				// 'System.Windows.Forms.OpenFileDialog' does not contain a definition for 'ShowPinnedPlaces' (CS0117)
+			};
+			if (openFileDialog.ShowDialog() == DialogResult.OK) {
+				resultFile = openFileDialog.FileName;
+			}
+		}
+
+	
 	}
 }

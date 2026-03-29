@@ -1,6 +1,70 @@
 ### Info
 
+#### Available Counters 
+`Process.Explorer`:
+```text
+% Processor Time
+% User Time
+% Privileged Time
+Virtual Bytes Peak
+Virtual Bytes
+Page Faults/sec
+Working Set Peak
+Working Set
+Page File Bytes Peak
+Page File Bytes
+Private Bytes
+Thread Count
+Priority Base
+Elapsed Time
+ID Process
+Creating Process ID
+Pool Paged Bytes
+Pool Nonpaged Bytes
+Handle Count
+IO Read Operations/sec
+IO Write Operations/sec
+IO Data Operations/sec
+IO Other Operations/sec
+IO Read Bytes/sec
+IO Write Bytes/sec
+IO Data Bytes/sec
+IO Other Bytes/sec
+Working Set - Private
+```
+Counter Category `Process`:
+```
+% Processor Time
+% User Time
+% Privileged Time
+Virtual Bytes Peak
+Virtual Bytes
+Page Faults/sec
+Working Set Peak
+Working Set
+Page File Bytes Peak
+Page File Bytes
+Private Bytes
+Thread Count
+Priority Base
+Elapsed Time
+ID Process
+Creating Process ID
+Pool Paged Bytes
+Pool Nonpaged Bytes
+Handle Count
+IO Read Operations/sec
+IO Write Operations/sec
+IO Data Operations/sec
+IO Other Operations/sec
+IO Read Bytes/sec
+IO Write Bytes/sec
+IO Data Bytes/sec
+IO Other Bytes/sec
+Working Set - Private
 
+
+```
 ### See Also:
    * example code from [Updating Your Form from Another Thread without Creating Delegates for Every Type of Update](https://www.codeproject.com/Articles/52752/Updating-Your-Form-from-Another-Thread-without-Cre)
 
