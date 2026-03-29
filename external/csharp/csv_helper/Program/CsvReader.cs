@@ -7,8 +7,6 @@ using System.Text;
 namespace CsvHelper {
 	public sealed class CsvReader : IDisposable {
 
-		#region Members
-
 		private FileStream _fileStream;
 		private Stream _stream;
 		private StreamReader _streamReader;
@@ -18,35 +16,24 @@ namespace CsvHelper {
 		private readonly StringBuilder _columnBuilder = new StringBuilder(100);
 		private readonly Type _type = Type.File;
 
-		#endregion Members
-
-		#region Properties
-
 		public bool TrimColumns { get; set; }
 
 		public bool HasHeaderRow { get; set; }
+		private List<string> fields = new List<string>();
 
-		public List<string> Fields { get; private set; }
+		public List<string> Fields { get {return fields; } }
 
 		public int? FieldCount {
 			get {
-				return (Fields != null ? Fields.Count : (int?)null);
+				return (fields != null ? fields.Count : (int?)null);
 			}
 		}
-
-		#endregion Properties
-
-		#region Enums
 
 		private enum Type {
 			File,
 			Stream,
 			String
 		}
-
-		#endregion Enums
-
-		#region Constructors
 
 		public CsvReader(string filePath) {
 			_type = Type.File;
@@ -72,10 +59,6 @@ namespace CsvHelper {
 			_type = Type.String;
 			Initialise(encoding, csvContent);  
 		}
-
-		#endregion Constructors
-
-		#region Methods
 
 		private void Initialise(string filePath, Encoding encoding) {
 			if (!File.Exists(filePath))
@@ -109,7 +92,7 @@ namespace CsvHelper {
 		}
 
 		public bool ReadNextRecord() {
-			Fields = null;
+			fields = null;
 			string line = _streamReader.ReadLine();
 
 			if (line == null)
@@ -124,14 +107,14 @@ namespace CsvHelper {
 		}
 
 		public DataTable ReadIntoDataTable(System.Type[] columnTypes) {
-			DataTable dataTable = new DataTable();
+			var dataTable = new DataTable();
 			bool addedHeader = false;
 			_stream.Position = 0;
 
 			while (ReadNextRecord()) {
 				if (!addedHeader) {
-					for (int i = 0; i < Fields.Count; i++)
-						dataTable.Columns.Add(Fields[i], (columnTypes.Length > 0 ? columnTypes[i] : typeof(string)));
+					for (int i = 0; i < fields.Count; i++)
+						dataTable.Columns.Add(fields[i], (columnTypes.Length > 0 ? columnTypes[i] : typeof(string)));
 
 					addedHeader = true;
 					continue;
@@ -139,8 +122,8 @@ namespace CsvHelper {
 
 				DataRow row = dataTable.NewRow();
 
-				for (int i = 0; i < Fields.Count; i++)
-					row[i] = Fields[i];
+				for (int i = 0; i < fields.Count; i++)
+					row[i] = fields[i];
 
 				dataTable.Rows.Add(row);
 			}
@@ -149,7 +132,7 @@ namespace CsvHelper {
 		}
 
 		private void ParseLine(string line) {
-			Fields = new List<string>();
+			fields = new List<string>();
 			bool inColumn = false;
 			bool inQuotes = false;
 			_columnBuilder.Remove(0, _columnBuilder.Length);
@@ -187,7 +170,7 @@ namespace CsvHelper {
 
 				// If we are no longer in the column clear the builder and add the columns to the list
 				if (!inColumn) {
-					Fields.Add(TrimColumns ? _columnBuilder.ToString().Trim() : _columnBuilder.ToString());
+					fields.Add(TrimColumns ? _columnBuilder.ToString().Trim() : _columnBuilder.ToString());
 					_columnBuilder.Remove(0, _columnBuilder.Length);
 				} else // append the current column
                     _columnBuilder.Append(character);
@@ -195,7 +178,7 @@ namespace CsvHelper {
 
 			// If we are still inside a column add a new one
 			if (inColumn)
-				Fields.Add(TrimColumns ? _columnBuilder.ToString().Trim() : _columnBuilder.ToString());   
+				fields.Add(TrimColumns ? _columnBuilder.ToString().Trim() : _columnBuilder.ToString());   
 		}
 
 		public void Dispose() {
@@ -224,8 +207,6 @@ namespace CsvHelper {
 				_stream.Dispose();
 			}
 		}
-
-		#endregion Methods
 
 	}
 }

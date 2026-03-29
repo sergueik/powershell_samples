@@ -7,16 +7,10 @@ using System.Text;
 
 namespace CsvHelper {
 	public sealed class CsvWriter : IDisposable {
-
-		#region Members
-
 		private StreamWriter _streamWriter;
 		private bool _replaceCarriageReturnsAndLineFeedsFromFieldValues = true;
 		private string _carriageReturnAndLineFeedReplacement = ",";
 
-		#endregion Members
-
-		#region Properties
 
 		public bool ReplaceCarriageReturnsAndLineFeedsFromFieldValues {
 			get {
@@ -35,12 +29,6 @@ namespace CsvHelper {
 			}
 		}
 
-		#endregion Properties
-
-		#region Methods
-
-		#region CsvFile write methods
-
 		public void WriteCsv(CsvFile csvFile, string filePath) {
 			WriteCsv(csvFile, filePath, null);
 		}
@@ -49,7 +37,7 @@ namespace CsvHelper {
 			if (File.Exists(filePath))
 				File.Delete(filePath);
 
-			using (StreamWriter writer = new StreamWriter(filePath, false, encoding ?? Encoding.Default)) {
+			using (var writer = new StreamWriter(filePath, false, encoding ?? Encoding.Default)) {
 				WriteToStream(csvFile, writer);
 				writer.Flush();
 				writer.Close();
@@ -71,13 +59,13 @@ namespace CsvHelper {
 		public string WriteCsv(CsvFile csvFile, Encoding encoding) {
 			string content = string.Empty;
 
-			using (MemoryStream memoryStream = new MemoryStream()) {
-				using (StreamWriter writer = new StreamWriter(memoryStream, encoding ?? Encoding.Default)) {
+			using (var memoryStream = new MemoryStream()) {
+				using (var writer = new StreamWriter(memoryStream, encoding ?? Encoding.Default)) {
 					WriteToStream(csvFile, writer);
 					writer.Flush();
 					memoryStream.Position = 0;
 
-					using (StreamReader reader = new StreamReader(memoryStream, encoding ?? Encoding.Default)) {
+					using (var reader = new StreamReader(memoryStream, encoding ?? Encoding.Default)) {
 						content = reader.ReadToEnd();
 						writer.Close();
 						reader.Close();
@@ -89,10 +77,6 @@ namespace CsvHelper {
 			return content;
 		}
 
-		#endregion CsvFile write methods
-
-		#region DataTable write methods
-
 		public void WriteCsv(DataTable dataTable, string filePath) {
 			WriteCsv(dataTable, filePath, null);
 		}
@@ -101,7 +85,7 @@ namespace CsvHelper {
 			if (File.Exists(filePath))
 				File.Delete(filePath);
 
-			using (StreamWriter writer = new StreamWriter(filePath, false, encoding ?? Encoding.Default)) {
+			using (var writer = new StreamWriter(filePath, false, encoding ?? Encoding.Default)) {
 				WriteToStream(dataTable, writer);
 				writer.Flush();
 				writer.Close();
@@ -123,13 +107,13 @@ namespace CsvHelper {
 		public string WriteCsv(DataTable dataTable, Encoding encoding) {
 			string content = string.Empty;
 
-			using (MemoryStream memoryStream = new MemoryStream()) {
-				using (StreamWriter writer = new StreamWriter(memoryStream, encoding ?? Encoding.Default)) {
+			using (var memoryStream = new MemoryStream()) {
+				using (var writer = new StreamWriter(memoryStream, encoding ?? Encoding.Default)) {
 					WriteToStream(dataTable, writer);
 					writer.Flush();
 					memoryStream.Position = 0;
 
-					using (StreamReader reader = new StreamReader(memoryStream, encoding ?? Encoding.Default)) {
+					using (var reader = new StreamReader(memoryStream, encoding ?? Encoding.Default)) {
 						content = reader.ReadToEnd();
 						writer.Close();
 						reader.Close();
@@ -140,8 +124,6 @@ namespace CsvHelper {
 
 			return content;
 		}
-
-		#endregion DataTable write methods
 
 		private void WriteToStream(CsvFile csvFile, TextWriter writer) {
 			if (csvFile.Headers.Count > 0)
@@ -191,8 +173,6 @@ namespace CsvHelper {
 			_streamWriter.Close();
 			_streamWriter.Dispose();
 		}
-
-		#endregion Methods
 
 	}
 }
