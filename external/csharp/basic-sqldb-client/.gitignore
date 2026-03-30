@@ -1,0 +1,18 @@
+# driver executables may be copied into project
+
+**/*.exe
+**/*.dll
+**/*.zip
+**/*.tar
+**/*.tar.gz
+**/*.jar
+**/*.msi
+**/*.wixobj
+**/*.wixobj.*
+**/*.FileList*.txt
+**/bin
+**/obj
+**/*.suo
+**/*.user
+**/.nuget
+**/packages/**
