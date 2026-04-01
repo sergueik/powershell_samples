@@ -4,7 +4,9 @@ using System.Threading;
 using NUnit.Framework;
 using System.Collections;
 using System.Reflection;
+
 using Utils;
+using TestUtils;
 
 namespace Test {
 
@@ -30,7 +32,6 @@ namespace Test {
 				value = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User);
 				if (value == null)
 					value = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);	
-			              	
 				Console.Error.WriteLine(String.Format("environment: {0}: {1}", name, value));
 				StringAssert.Contains(value, result); 
 			});

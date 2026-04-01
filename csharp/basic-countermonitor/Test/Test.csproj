@@ -44,6 +44,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="CsvTests.cs" />
     <Compile Include="EnvVarsTest.cs" />
     <Compile Include="ProcessInfoTest.cs" />
   </ItemGroup>
@@ -51,6 +52,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TestUtils\TestUtils.csproj">
+      <Project>{f7cf2221-6c80-4298-8d52-b00881aae3a5}</Project>
+      <Name>TestUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{0A243A71-7518-442D-B63A-1888982DDEE6}</Project>
       <Name>Utils</Name>

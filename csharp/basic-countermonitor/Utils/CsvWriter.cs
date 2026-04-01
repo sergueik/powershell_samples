@@ -180,14 +180,14 @@ namespace Utils
 
 			writer.WriteLine();
 		}
-		public void AppendCsv(CsvData csvData, string filePath, Encoding encoding = null, bool writeHeaderIfNew = true)
-		{
+
+		public void AppendCsv(CsvData csvData, string filePath, Encoding encoding = null, bool writeHeaderIfNew = true) {
 			bool fileExists = File.Exists(filePath);
+			bool append = true;
 			if (!fileExists)  {
 				 WriteCsv(csvData, filePath, encoding);
 				 return;
 			}
-			bool append = true;
 			IList<string> existingHeaders = ReadHeader(filePath, encoding);
 			
 			if (!HeadersMatch(existingHeaders, csvData.Headers)) {

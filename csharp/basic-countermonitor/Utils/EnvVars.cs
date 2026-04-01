@@ -21,7 +21,7 @@ namespace Utils {
 				string varName = match.Groups[1].Success
                     ? match.Groups[1].Value
                     : match.Groups[2].Value;
-
+				// TODO: Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
 				string value = Environment.GetEnvironmentVariable( varName, EnvironmentVariableTarget.User) ;
 				if (value == null) 
 					value =  Environment.GetEnvironmentVariable( varName,  EnvironmentVariableTarget.Process);	

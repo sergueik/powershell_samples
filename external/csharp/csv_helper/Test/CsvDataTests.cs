@@ -132,6 +132,9 @@ data 1,""data, 2"",data 3
 			var record = new CsvRecord();
 			fields.ForEach(field => record.Fields.Add(field));
 			csvData.Records.Add(record);
+			Console.Error.WriteLine("Headers:" + string.Join(", ",csvData.Headers));
+			Assert.That(csvData.Records[0].Fields, Is.EquivalentTo( fields.ToArray() ));
+			Console.Error.WriteLine("Record: " + string.Join(", ",csvData.Records[0].Fields));
 		}
 
 		[Test]

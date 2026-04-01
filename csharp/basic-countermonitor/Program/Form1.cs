@@ -109,6 +109,24 @@ namespace Program {
 
 		private void Commit() {
 			try {
+				
+				var headers = new List<string> { "TimeStamp", "Value" };
+			double averageData = AverageDataInterval(1);
+			var fields = new List<string> {
+				DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+				averageData.ToString("F2")
+			};
+			var csvData = new CsvData();
+
+			headers.ForEach(header => csvData.Headers.Add(header));
+			var record = new CsvRecord();
+			fields.ForEach(field => record.Fields.Add(field));
+			csvData.Records.Add(record);
+			var filePath = EnvVars.ResolveEnvVars(@"${temp}\loadaverage.csv");
+			using (var writer = new CsvWriter()) {
+				writer.AppendCsv(csvData, filePath);
+			}
+
 				var fileHelper = new Utils.FileHelper();
 				
 				fileHelper.Retries = retries;
