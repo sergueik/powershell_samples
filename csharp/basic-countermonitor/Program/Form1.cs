@@ -5,44 +5,146 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Linq;
 using System;
-using Utils;
+using Microsoft.VisualBasic.Devices;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
 using System.Timers;
 
-namespace Program {
-	public partial class Form1 : Form {
+using Utils;
+
+namespace Program
+{
+	public partial class Form1 : Form
+	{
+
+		private Boolean debug;
+		private Boolean noop;
+		private string resultFile = @"c:\temp\loadaveragecounterservice.txt";
+		private string result;
+		private ComputerInfo computerInfo = null;
+		private int autoAverageInterval = 60000;
+		private int collectInterval = 1000;
+		private Random rand = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
+		private int retries = 2;
+		private static int capacity = 900;
+		// NOTE: the default value os
+		// categoryNAme, counterName and instanceName about to be overwrittedn my app config values
+		private string categoryName = "Memory";
+		private string counterName = "Available Bytes";
+		private string instanceName = "";
+
+
 		public Form1() {
+			
+			buffer = new CircularBuffer<Data>(capacity);
+			computerInfo = new ComputerInfo();
+			ulong free = computerInfo.AvailablePhysicalMemory;
+			appSettings = ConfigurationManager.AppSettings;
+			if (appSettings.AllKeys.Contains("Debug")) {
+				debug = Boolean.Parse(appSettings["Debug"]);
+			}
+			if (appSettings.AllKeys.Contains("Noop")) {
+				noop = Boolean.Parse(appSettings["Noop"]);
+			}
+
+			if (appSettings.AllKeys.Contains("Retries")) {
+				retries = int.Parse(appSettings["Retries"]);
+			}
+			
+			if (appSettings.AllKeys.Contains("CollectInterval")) {
+				collectInterval = int.Parse(appSettings["CollectInterval"]);
+			}
+
+			if (appSettings.AllKeys.Contains("AutoAverageInterval")) {
+				autoAverageInterval = int.Parse(appSettings["autoAverageInterval"]);
+			}
+
+			if (appSettings.AllKeys.Contains("CategoryName")) {
+				categoryName = appSettings["CategoryName"];
+			}
+			if (appSettings.AllKeys.Contains("CounterName")) {
+				counterName = appSettings["CounterName"];
+			}
+			if (appSettings.AllKeys.Contains("InstanceName")) {
+				instanceName = appSettings["InstanceName"];
+			}
+			if (appSettings.AllKeys.Contains("Debug")) {
+				debug = Boolean.Parse(appSettings["Debug"]);
+			}
+			if (appSettings.AllKeys.Contains("Noop")) {
+				noop = Boolean.Parse(appSettings["Noop"]);
+			}
+
+			if (appSettings.AllKeys.Contains("Retries")) {
+				retries = int.Parse(appSettings["Retries"]);
+			}
+			
+			if (appSettings.AllKeys.Contains("CollectInterval")) {
+				collectInterval = int.Parse(appSettings["CollectInterval"]);
+			}
+
+			if (appSettings.AllKeys.Contains("AutoAverageInterval")) {
+				autoAverageInterval = int.Parse(appSettings["autoAverageInterval"]);
+			}
+
+			if (appSettings.AllKeys.Contains("CategoryName")) {
+				categoryName = appSettings["CategoryName"];
+			}
+			if (appSettings.AllKeys.Contains("CounterName")) {
+				counterName = appSettings["CounterName"];
+			}
+			if (appSettings.AllKeys.Contains("InstanceName")) {
+				instanceName = appSettings["InstanceName"];
+			}
+
+
+			resultFile = EnvVars.ResolveEnvVars((appSettings.AllKeys.Contains("Datafile")) ? appSettings["Datafile"] : @"${temp}\loadaverage.txt");
+
 			InitializeComponent();
 		}
 
-		private void button1_Click(object sender, EventArgs e) {
+		private void button1_Click(object sender, EventArgs e)
+		{
 			var thread = new Thread(new ThreadStart(StartCalculation));
 			thread.Start();
+
+			timer1.Interval = collectInterval;
+			timer1.Enabled = true;
+			timer1.Elapsed += new ElapsedEventHandler(OnElapsedTimer1);
+			timer1.Start();
+			
+			timer2.Interval = autoAverageInterval;
+			timer2.Elapsed += new ElapsedEventHandler(OnElapsedTimer2);
+			timer2.Enabled = true;
+			timer2.Start();
+
 		}
 
+		private Action<Control> setEnabled = (Control control) => control.Enabled = true;
 		public void StartCalculation() {
-			button1.SafeInvoke(d => d.Enabled = false);
+			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.control?view=netframework-4.5
+			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.control.invoke?view=netframework-4.5
+			// https://learn.microsoft.com/en-us/dotnet/api/system.delegate?view=netframework-4.5
+			button1.SafeInvoke((Control control) => control.Enabled = false);
 
 			for (int i = 0; i <= 1000; i++) {                
 				Thread.Sleep(1000);
-				string textForLabel = ((float)i/10).ToString("F2") + " %";
-				CollectMetrics();
-				if (i%10 == 0) {
-					AverageData();
-					Commit();
-				}
+				string textForLabel = ((float)i / 10).ToString("F2") + " %";
 				lblProcent.SafeInvoke(d => d.Text = textForLabel);
 				progressBar1.SafeInvoke(d => d.Value = i);
 				string labelText = lblProcent.SafeInvoke(d => d.Text);
-				this.SafeInvoke(d => d.SetText("test", "test1"));
 			}
-			button1.SafeInvoke(d => d.Enabled = true);
-		}
+			button1.SafeInvoke((Control control) => control.Enabled = true);
 
-		public void SetText(string test1, string test2)
-		{
-
+			if (timer2 != null) {
+				timer1.Stop();
+				timer1.Enabled = false;
+			}
+			if (timer2 != null) {
+				timer2.Stop();
+				timer2.Enabled = false;
+			}
 		}
 		
 		private void CollectMetrics() {
@@ -51,7 +153,7 @@ namespace Program {
 			row.TimeStamp = DateTime.Now;
 			if (noop) {
 				if (debug)
-				value = rand.Next(0, 10);
+					value = rand.Next(0, 10);
 			} else {
 				try {
 					// https://learn.microsoft.com/en-us/windows/win32/perfctrs/performance-counters-reference
@@ -72,29 +174,15 @@ namespace Program {
 				Console.Error.WriteLine("Collected data: " + row.ToString() + ((noop) ? "\r\n" + "NOOP: " + noop : ""));
 		}
 
-
 		private void OnElapsedTimer1(object source, ElapsedEventArgs args) {
 			CollectMetrics();
 		}
 
-		private void AverageData() {
-			var intervals = new int[] { 1, 3, 5 };
-			var messages = new List<string>();
-			foreach (int minutes in intervals) {
-				double average = AverageDataInterval(minutes);
-				var message = String.Format("LOAD{0}MIN: {1, 4:f2}", minutes, average);
-				messages.Add(message);
-			}
-			result = String.Join("\n", messages);
-		}
-
-
-		private double AverageDataInterval(int minutes) {
+		private double AverageDataInterval(int interval) {
 			var rows = buffer.ToList();
-			float interval = 1F * minutes;
 			var now = DateTime.Now;
 			var values = (from row in rows
-			              where ((now - row.TimeStamp).TotalMinutes) <= interval
+			              where ((now - row.TimeStamp).TotalMilliseconds) <= (float)interval
 			              select row.Value);
 			var average = values.Average();
 			var message = String.Format("LOAD{0, 1:f0}MIN: {1, 4:f2}", interval, average);
@@ -104,14 +192,13 @@ namespace Program {
 		}
 
 		private void OnElapsedTimer2(object source, ElapsedEventArgs args) {
-				AverageData();
+			Commit();
 		}
 
 		private void Commit() {
-			try {
 				
-				var headers = new List<string> { "TimeStamp", "Value" };
-			double averageData = AverageDataInterval(1);
+			var headers = new List<string> { "TimeStamp", "Value" };
+			double averageData = AverageDataInterval(this.autoAverageInterval);
 			var fields = new List<string> {
 				DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
 				averageData.ToString("F2")
@@ -127,21 +214,10 @@ namespace Program {
 				writer.AppendCsv(csvData, filePath);
 			}
 
-				var fileHelper = new Utils.FileHelper();
-				
-				fileHelper.Retries = retries;
-				fileHelper.FilePath = resultFile;
-				fileHelper.Interval = 500;
-				fileHelper.Text = result;
-				fileHelper.WriteContents();
-				Console.Error.WriteLine(String.Format("FiileHelper {0}",resultFile));
-			} catch (Exception e) {
-				// Cannot load Counter Name data because an invalid index '♀ßÇü♦♂ ' was read from the registry.
-				Console.Error.WriteLine(String.Format("Exception writing \"{0}\": ", resultFile) + e.ToString());
-			}
 		}
 
-		private void OpenFileAction() {
+		private void OpenFileAction()
+		{
 			var openFileDialog = new OpenFileDialog() {
 				Filter = "Text|*.txt",
 				// ShowPinnedPlaces = true,

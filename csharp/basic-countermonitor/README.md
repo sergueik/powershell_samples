@@ -132,6 +132,8 @@ So what you’re highlighting is a truly exceptional paradox in Microsoft histor
 ### Usage
 
 * rebuild the complex project in the IDE or commandline
+> NOTE - is *script execution policy* is tight, still can paste individual command in the console
+
 
 ```powershell
 remove-item -recurse -force Utils/obj,Utils/bin/,Program/bin/,Program/obj/,Test/bin/,Test/obj/ -erroraction SilentlyContinue
@@ -142,6 +144,8 @@ $framework_path = 'c:\Windows\Microsoft.NET\Framework\v4.0.30319'
 $env:path="${env:path};${framework_path}"
 msbuild.exe -p:FrameworkPathOverride="${framework_path}" $buildfile /p:Configuration=Release /p:Platform="Any CPU" /t:"Clean,Build"
 ```
+> NOTE without the `/v:diag` flag __MSbuild__ may silently abort executions when there are problems creaing the illusion it has run but nothing is produced
+
 See [stackoverflow](https://stackoverflow.com/questions/3155492/how-do-i-specify-the-platform-for-msbuild) discussion
 alternatively
 ```powershell
