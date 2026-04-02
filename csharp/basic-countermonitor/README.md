@@ -20,6 +20,23 @@ TimeStamp,Value
 
 ![chart](screenshots/capture-chart.png)
 
+the curve proves
+
+From the timestamps:
+
+21:22:51 → 21:27:53
+Available memory falls from 7.67 GB → 647 MB
+21:27:53 → 21:29:03
+Rapid recovery back to ~1.97 GB
+21:29:03 → 21:31:04
+Stable plateau around 1.9–2.0 GB
+21:31:14 onward
+Strong recovery to 8.77 GB
+
+This is a textbook workload signature
+
+this took only 58 samples (technically more, because some averaging performed but still ):
+
 ```cmd
 type %temp%\loadaverage.csv | c:\Windows\system32\find.exe /v /c ""
 ```
@@ -112,6 +129,76 @@ Historically, they monetized and controlled access via licensing, Fusion, WPA, I
 Suddenly, the GAC becomes free infrastructure — no gate, no enforcement, no direct profit.
 
 So what you’re highlighting is a truly exceptional paradox in Microsoft history: they accidentally (or perhaps naively) created something “as open as Unix” inside Windows, but without any financial benefit — a rare crack in the otherwise highly controlled ecosystem.
+### Usage
+
+* rebuild the complex project in the IDE or commandline
+
+```powershell
+remove-item -recurse -force Utils/obj,Utils/bin/,Program/bin/,Program/obj/,Test/bin/,Test/obj/ -erroraction SilentlyContinue
+```
+```powershell
+$buildfile = 'basic-countermonitor.sln'
+$framework_path = 'c:\Windows\Microsoft.NET\Framework\v4.0.30319'
+$env:path="${env:path};${framework_path}"
+msbuild.exe -p:FrameworkPathOverride="${framework_path}" $buildfile /p:Configuration=Release /p:Platform="Any CPU" /t:"Clean,Build"
+```
+See [stackoverflow](https://stackoverflow.com/questions/3155492/how-do-i-specify-the-platform-for-msbuild) discussion
+alternatively
+```powershell
+$buildfile = 'basic-countermonitor.sln'
+$framework_path = 'c:\Windows\Microsoft.NET\Framework\v4.0.30319'
+$msbuild = "${framework_path}\MSBuild.exe"
+invoke-expression -command "$msbuild -p:FrameworkPathOverride=""${framework_path}"" $buildfile  /p:Configuration=Release /p:Platform=""Any CPU"" /t:Clean,Build"
+```
+```powershell
+cmd %%-/c tree.com
+```
+```text
+C:.
+├───Installer
+├───Program
+│   ├───bin
+│   │   └───Release
+│   ├───obj
+│   │   └───x86
+│   │       └───Release
+│   └───Properties
+├───screenshots
+├───Setup
+│   └───images
+├───Test
+│   ├───bin
+│   │   └───Release
+│   ├───obj
+│   │   └───Release
+│   └───Properties
+└───Utils
+    ├───bin
+    │   └───Release
+    └───obj
+        └───x86
+            └───Release
+```
+- the exact  path to `msbuild.exe` may vary with Windows release. To find, inspect the output of
+
+
+```powershell
+get-childitem -path 'C:\Windows\Microsoft.NET' -name 'msbuild.exe' -recurse
+```
+
+will get something like
+
+```text
+
+assembly\GAC_32\MSBuild\v4.0_4.0.0.0__b03f5f7f11d50a3a\MSBuild.exe
+assembly\GAC_64\MSBuild\v4.0_4.0.0.0__b03f5f7f11d50a3a\MSBuild.exe
+Framework\v2.0.50727\MSBuild.exe
+Framework\v3.5\MSBuild.exe
+Framework\v4.0.30319\MSBuild.exe
+Framework64\v2.0.50727\MSBuild.exe
+Framework64\v3.5\MSBuild.exe
+Framework64\v4.0.30319\MSBuild.exe
+```
 
 ### See Also:
    * example code from [Updating Your Form from Another Thread without Creating Delegates for Every Type of Update](https://www.codeproject.com/Articles/52752/Updating-Your-Form-from-Another-Thread-without-Cre)

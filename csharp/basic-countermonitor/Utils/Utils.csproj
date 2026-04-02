@@ -22,6 +22,14 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -42,8 +50,6 @@
     <Compile Include="Data.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FileHelper.cs" />
-    <Compile Include="JSONParser.cs" />
-    <Compile Include="JSONWriter.cs" />
     <Compile Include="ProcessInfo.cs" />
   </ItemGroup>
   <ItemGroup>
