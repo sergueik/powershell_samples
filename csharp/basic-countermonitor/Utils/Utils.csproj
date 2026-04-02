@@ -49,7 +49,6 @@
     <Compile Include="EnvVars.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="FileHelper.cs" />
     <Compile Include="ProcessInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -22,10 +22,10 @@ namespace Utils {
             }
         }
 
-        public int RecordCount {   
+        public int RecordCount {
             get
             {
-                return records.Count;   
+                return records.Count;
             }
         }
 
@@ -76,7 +76,7 @@ namespace Utils {
                 int fieldIndex = -1;
 
                 for (int index = 0; index < headers.Count; index++){
-                    if (string.Compare(headers[index], fieldName) != 0) 
+                    if (string.Compare(headers[index], fieldName) != 0)
                         continue;
 
                     fieldIndex = index;
@@ -188,7 +188,7 @@ namespace Utils {
     }
 
     [Serializable]
-    public sealed class CsvRecords : List<CsvRecord> {  
+    public sealed class CsvRecords : List<CsvRecord> {
     }
 
     [Serializable]

@@ -5,10 +5,10 @@ using System.ComponentModel;
 namespace Program {
 	public static class ExtensionMethod {
 		public static TResult SafeInvoke<T, TResult>(this T iSynchronizeInvoke, Func<T, TResult> call) where T : ISynchronizeInvoke  {
-			if (iSynchronizeInvoke.InvokeRequired) { 
-				IAsyncResult result = iSynchronizeInvoke.BeginInvoke(call, new object[] { iSynchronizeInvoke }); 
+			if (iSynchronizeInvoke.InvokeRequired) {
+				IAsyncResult result = iSynchronizeInvoke.BeginInvoke(call, new object[] { iSynchronizeInvoke });
 				object endResult = iSynchronizeInvoke.EndInvoke(result);
-				return (TResult)endResult; 
+				return (TResult)endResult;
 			} else
 				return call(iSynchronizeInvoke);
 		}

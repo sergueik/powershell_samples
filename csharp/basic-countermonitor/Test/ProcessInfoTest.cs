@@ -40,7 +40,7 @@ namespace Test {
 				Console.Error.WriteLine(String.Format("Found {0} instances of {1}:", processes.Length, appName));
 				foreach (Process process in processes) {
 					Console.Error.WriteLine(String.Format("Process name: {0}, ID: {1}", process.ProcessName, process.Id));
-					// You can access other properties, e.g., process.WorkingSet64 to read it directly 
+					// You can access other properties, e.g., process.WorkingSet64 to read it directly
 					// or process.MainModule.FileName to get the full path
 					pid = process.Id;
 					// long memoryMb = process.WorkingSet64 / 1024 / 1024;
@@ -71,7 +71,7 @@ namespace Test {
 			}
 			var counterCategory = new PerformanceCounterCategory("Process");
 			Console.Error.WriteLine("Counter Category Process:");
-			// 
+			//
 			foreach (string counterName in counterCategory.GetCounters("_Total").Select(( PerformanceCounter p) => p.CounterName)) {
 				Console.Error.WriteLine(counterName);
 			}

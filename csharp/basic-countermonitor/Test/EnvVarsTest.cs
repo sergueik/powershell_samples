@@ -33,7 +33,7 @@ namespace Test {
 				if (value == null)
 					value = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);	
 				Console.Error.WriteLine(String.Format("environment: {0}: {1}", name, value));
-				StringAssert.Contains(value, result); 
+				StringAssert.Contains(value, result);
 			});
 			StringAssert.DoesNotMatch(@"\$(?:\{(?:env:)?(\w+)\}|(\w+))", result);
 		}

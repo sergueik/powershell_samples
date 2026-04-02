@@ -22,7 +22,6 @@ namespace Program {
 		private System.Timers.Timer timer1;
 		private System.Timers.Timer timer2;
 
-		
 		// NOTE: Process\Working Set	
 		protected override void Dispose(bool disposing) {
 			if (disposing && (components != null)) {
@@ -45,7 +44,7 @@ namespace Program {
 			timer2 = new System.Timers.Timer();
 			button1 = new Button();
 			progressBar1 = new ProgressBar();
-			lblProcent = new Label();
+			label1 = new Label();
 			((System.ComponentModel.ISupportInitialize)(timer1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(timer2)).BeginInit();
 			this.SuspendLayout();
@@ -74,18 +73,18 @@ namespace Program {
 			progressBar1.Size = new Size(418, 31);
 			progressBar1.TabIndex = 1;
 
-			lblProcent.AutoSize = true;
-			lblProcent.Location = new Point(460, 78);
-			lblProcent.Margin = new Padding(6, 0, 6, 0);
-			lblProcent.Name = "lblProcent";
-			lblProcent.Size = new Size(41, 25);
-			lblProcent.TabIndex = 2;
-			lblProcent.Text = "0%";
+			label1.AutoSize = true;
+			label1.Location = new Point(460, 78);
+			label1.Margin = new Padding(6, 0, 6, 0);
+			label1.Name = "label";
+			label1.Size = new Size(41, 25);
+			label1.TabIndex = 2;
+			label1.Text = "0%";
 
 			this.AutoScaleDimensions = new SizeF(11F, 24F);
 			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new Size(549, 133);
-			this.Controls.Add(lblProcent);
+			this.Controls.Add(label1);
 			this.Controls.Add(progressBar1);
 			this.Controls.Add(button1);
 			this.Margin = new Padding(6, 6, 6, 6);
@@ -101,7 +100,7 @@ namespace Program {
 		
 		// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.progressbar?view=netframework-4.5
 		private ProgressBar progressBar1;
-		private Label lblProcent;
+		private Label label1;
 		private Button button1;
 	}
 }

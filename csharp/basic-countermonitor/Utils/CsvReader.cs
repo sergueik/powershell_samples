@@ -57,7 +57,7 @@ namespace Utils {
 
 		public CsvReader(Encoding encoding, string csvContent) {
 			_type = Type.String;
-			Initialise(encoding, csvContent);  
+			Initialise(encoding, csvContent);
 		}
 
 		private void Initialise(string filePath, Encoding encoding) {
@@ -88,7 +88,7 @@ namespace Utils {
 			_streamWriter = new StreamWriter(_memoryStream);
 			_streamWriter.Write(csvContent);
 			_streamWriter.Flush();
-			Initialise(_memoryStream, encoding);           
+			Initialise(_memoryStream, encoding);
 		}
 
 		public bool ReadNextRecord() {
@@ -178,7 +178,7 @@ namespace Utils {
 
 			// If we are still inside a column add a new one
 			if (inColumn)
-				fields.Add(TrimColumns ? _columnBuilder.ToString().Trim() : _columnBuilder.ToString());   
+				fields.Add(TrimColumns ? _columnBuilder.ToString().Trim() : _columnBuilder.ToString());
 		}
 
 		public void Dispose() {

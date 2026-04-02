@@ -24,7 +24,7 @@ namespace Utils
 		}
 		public string CarriageReturnAndLineFeedReplacement {
 			get {
-				return _carriageReturnAndLineFeedReplacement;   
+				return _carriageReturnAndLineFeedReplacement;
 			}
 			set {
 				_carriageReturnAndLineFeedReplacement = value;
@@ -172,9 +172,9 @@ namespace Utils
 					fieldValue = fieldValue.Replace("\n", CarriageReturnAndLineFeedReplacement);
 				}
 
-				writer.Write(string.Format("{0}{1}{0}{2}", 
+				writer.Write(string.Format("{0}{1}{0}{2}",
 					(quotesRequired || escapeQuotes ? "\"" : string.Empty),
-					fieldValue, 
+					fieldValue,
 					(i < (fields.Count - 1) ? "," : string.Empty)));
 			}
 
