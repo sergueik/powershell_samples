@@ -51,11 +51,5 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="ProcessInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TestUtils\TestUtils.csproj">
-      <Project>{f7cf2221-6c80-4298-8d52-b00881aae3a5}</Project>
-      <Name>TestUtils</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

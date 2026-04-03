@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Linq;
 using System;
-using Microsoft.VisualBasic.Devices;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
@@ -19,7 +18,6 @@ namespace Program {
 
 		private Boolean debug;
 		private string dataFile = @"c:\temp\loadaveragecounterservice.txt";
-		private ComputerInfo computerInfo = null;
 		private int averageInterval = 60000;
 		private int collectInterval = 1000;
 		private Random rand = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);

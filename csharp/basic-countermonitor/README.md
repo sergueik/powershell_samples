@@ -158,30 +158,14 @@ invoke-expression -command "$msbuild -p:FrameworkPathOverride=""${framework_path
 cmd %%-/c tree.com
 ```
 ```text
-C:.
-├───Installer
+├───packages
+│   └───NUnit.2.6.4
+│       └───lib
 ├───Program
-│   ├───bin
-│   │   └───Release
-│   ├───obj
-│   │   └───x86
-│   │       └───Release
-│   └───Properties
 ├───screenshots
-├───Setup
-│   └───images
 ├───Test
-│   ├───bin
-│   │   └───Release
-│   ├───obj
-│   │   └───Release
-│   └───Properties
+├───TestUtils
 └───Utils
-    ├───bin
-    │   └───Release
-    └───obj
-        └───x86
-            └───Release
 ```
 - the exact  path to `msbuild.exe` may vary with Windows release. To find, inspect the output of
 
