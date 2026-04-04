@@ -3,31 +3,33 @@ using System.Collections.Generic;
 using System.Threading;
 using NUnit.Framework;
 using System.Diagnostics;
+
 using System.Linq;
 using System.Collections;
 using System.Reflection;
+using System.IO;
 
 using Utils;
 using TestUtils;
 
-namespace Test {
+namespace Test
+{
 
 	[TestFixture]
-	public class ProcessInfoTest {
+	public class ProcessInfoTest
+	{
 		
 		private string result = null;
 		private string appName = "VirtualBox";
 		private int pid = -1;
 		private PerformanceCounter performanceCounter = null;
+
 		[SetUp]
 		public void setUp()
 		{
-
 			performanceCounter = new PerformanceCounter();
 			performanceCounter.CategoryName = "Process";
-			performanceCounter.CounterName = "Working Set";
-
-			
+			performanceCounter.CounterName = "Working Set";			
 		}
 
 		[Test]
@@ -60,7 +62,6 @@ namespace Test {
 			}
 		}
 
-		// [Ignore]
 		[Test]
 		public void test2()
 		{
@@ -75,6 +76,47 @@ namespace Test {
 			foreach (string counterName in counterCategory.GetCounters("_Total").Select(( PerformanceCounter p) => p.CounterName)) {
 				Console.Error.WriteLine(counterName);
 			}
+		}
+
+		[Ignore("unstable - windows processes")]
+		[Test]
+		public void test3() {
+			string tempFile = Path.GetTempFileName();
+			try {
+				File.WriteAllText(tempFile, "");
+				var processStartInfo = new ProcessStartInfo {
+					FileName = "notepad.exe",
+					Arguments = " " + tempFile, // Example command
+					UseShellExecute = false,
+					CreateNoWindow = true,
+					WindowStyle = ProcessWindowStyle.Hidden
+				};
+
+				using (Process process = Process.Start(processStartInfo)) {
+					process.WaitForInputIdle(); // Blocks until the window is ready for input
+					var value = tempFile.Replace(@"\", @"\\");
+					var results = Utils.ProcessInfo.getProcessIDsByCommandLine(processStartInfo.FileName, value);
+					Assert.NotNull(results);
+					Console.Error.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
+					Assert.Greater(results.Count, 0 );
+					
+					process.Kill();
+		            process.WaitForExit(2000);
+				}
+			} finally {
+				if (File.Exists(tempFile))
+					File.Delete(tempFile);
+			}
+
+		}
+
+		[Test]
+		public void test4() {
+			string value = "notepad.exe";
+			List<int> results = Utils.ProcessInfo.getProcessIDsByCommandLine("", value);
+			Assert.NotNull(results);
+			Console.Error.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
+			Assert.Greater(results.Count, 0 );
 		}
 	}
 }

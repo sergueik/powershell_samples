@@ -88,17 +88,17 @@ namespace Program {
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.control?view=netframework-4.5
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.control.invoke?view=netframework-4.5
 			// https://learn.microsoft.com/en-us/dotnet/api/system.delegate?view=netframework-4.5
-			button1.SafeInvoke((Control control) => control.Enabled = false);
+			button1.safeInvoke((Control control) => control.Enabled = false);
 
 			for (int i = 0; i <= rounds; i++) {
 				Thread.Sleep(collectInterval);
 				// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.Label?view=netframework-4.5
-				label1.SafeInvoke((Label label) => label.Text = ((float)i / 10).ToString("F2") + " %");
+				label1.safeInvoke((Label label) => label.Text = ((float)i / 10).ToString("F2") + " %");
 				// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.ProgressBar?view=netframework-4.5
-				progressBar1.SafeInvoke((ProgressBar progressBar) => progressBar.Value = i);
-				string labelText = label1.SafeInvoke((Label label) => label.Text);
+				progressBar1.safeInvoke((ProgressBar progressBar) => progressBar.Value = i);
+				string labelText = label1.safeInvoke((Label label) => label.Text);
 			}
-			button1.SafeInvoke((Control control) => control.Enabled = true);
+			button1.safeInvoke((Control control) => control.Enabled = true);
 
 			if (timer2 != null) {
 				timer1.Stop();
@@ -157,8 +157,7 @@ namespace Program {
 
 		}
 
-		private void OpenFileAction()
-		{
+		private void OpenFileAction() {
 			var openFileDialog = new OpenFileDialog() {
 				Filter = "Text|*.txt",
 				// ShowPinnedPlaces = true,

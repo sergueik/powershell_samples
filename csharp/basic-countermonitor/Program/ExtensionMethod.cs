@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Program {
 	public static class ExtensionMethod {
-		public static TResult SafeInvoke<T, TResult>(this T iSynchronizeInvoke, Func<T, TResult> call) where T : ISynchronizeInvoke  {
+		public static TResult safeInvoke<T, TResult>(this T iSynchronizeInvoke, Func<T, TResult> call) where T : ISynchronizeInvoke  {
 			if (iSynchronizeInvoke.InvokeRequired) {
 				IAsyncResult result = iSynchronizeInvoke.BeginInvoke(call, new object[] { iSynchronizeInvoke });
 				object endResult = iSynchronizeInvoke.EndInvoke(result);
@@ -13,7 +13,7 @@ namespace Program {
 				return call(iSynchronizeInvoke);
 		}
 
-		public static void SafeInvoke<T>(this T iSynchronizeInvoke, Action<T> call) where T : ISynchronizeInvoke {
+		public static void safeInvoke<T>(this T iSynchronizeInvoke, Action<T> call) where T : ISynchronizeInvoke {
 			if (iSynchronizeInvoke.InvokeRequired)
 				iSynchronizeInvoke.BeginInvoke(call, new object[] { iSynchronizeInvoke });
 			else
