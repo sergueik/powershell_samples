@@ -45,6 +45,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CsvTests.cs" />
+    <Compile Include="DiscoverTest.cs" />
     <Compile Include="EnvVarsTest.cs" />
     <Compile Include="ProcessInfoTest.cs" />
   </ItemGroup>

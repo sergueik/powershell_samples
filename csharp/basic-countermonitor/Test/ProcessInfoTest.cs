@@ -12,12 +12,10 @@ using System.IO;
 using Utils;
 using TestUtils;
 
-namespace Test
-{
+namespace Test {
 
 	[TestFixture]
-	public class ProcessInfoTest
-	{
+	public class ProcessInfoTest {
 		
 		private string result = null;
 		private string appName = "VirtualBox";
@@ -25,8 +23,7 @@ namespace Test
 		private PerformanceCounter performanceCounter = null;
 
 		[SetUp]
-		public void setUp()
-		{
+		public void setUp() {
 			performanceCounter = new PerformanceCounter();
 			performanceCounter.CategoryName = "Process";
 			performanceCounter.CounterName = "Working Set";			

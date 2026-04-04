@@ -46,6 +46,7 @@
     <Compile Include="CsvWriter.cs" />
     <Compile Include="CsvReader.cs" />
     <Compile Include="CsvData.cs" />
+    <Compile Include="Discover.cs" />
     <Compile Include="EnvVars.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="Extensions.cs" />
