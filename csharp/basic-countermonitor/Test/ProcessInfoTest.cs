@@ -45,7 +45,7 @@ namespace Test {
 					// long memoryMb = process.WorkingSet64 / 1024 / 1024;
 					Console.Error.WriteLine(String.Format("pid={0} | Memory={1}", process.Id, process.WorkingSet64));
 				}
-				result = Utils.ProcessInfo.getProcessInstanceName(pid);
+				result = ProcessInfo.getProcessInstanceName(pid);
 				Assert.IsNotNull(result);
 				StringAssert.IsMatch(String.Format(@"{0}(?:#\d+)?", appName), result);
 			
@@ -92,7 +92,7 @@ namespace Test {
 				using (Process process = Process.Start(processStartInfo)) {
 					process.WaitForInputIdle(); // Blocks until the window is ready for input
 					var value = tempFile.Replace(@"\", @"\\");
-					var results = Utils.ProcessInfo.getProcessIDsByCommandLine(processStartInfo.FileName, value);
+					var results = ProcessInfo.getProcessIDsByCommandLine(processStartInfo.FileName, value);
 					Assert.NotNull(results);
 					Console.Error.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
 					Assert.Greater(results.Count, 0 );
@@ -110,7 +110,7 @@ namespace Test {
 		[Test]
 		public void test4() {
 			string value = "notepad.exe";
-			List<int> results = Utils.ProcessInfo.getProcessIDsByCommandLine("", value);
+			List<int> results = ProcessInfo.getProcessIDsByCommandLine("", value);
 			Assert.NotNull(results);
 			Console.Error.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
 			Assert.Greater(results.Count, 0 );

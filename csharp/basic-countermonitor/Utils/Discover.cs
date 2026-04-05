@@ -25,7 +25,7 @@ namespace Utils {
 			this.argument = argument;
 		}
 		
-		public void StartPolling() {
+		public void startPolling() {
 			timer = new System.Timers.Timer();
 			timer.Interval = this.interval; // every 500 ms
 			timer.Elapsed += new ElapsedEventHandler(onTimerElapsed);
@@ -33,16 +33,19 @@ namespace Utils {
 			Console.Error.WriteLine("started timer with interval: " + this.interval);
 		}
 
+		public void stop() {
+				timer.Stop();
+				timer.Dispose();
+				timer = null;
+		}
+
 		private void onTimerElapsed(object source, ElapsedEventArgs args) {
 			Console.Error.WriteLine("timer elapsed");
 			bool done = this.checkCondition(this.argument);
 			Console.Error.WriteLine("done: " + done);
 
-			if (done) {
-				timer.Stop();
-				timer.Dispose();
-				timer = null;
-			}
+			if (done) 
+				stop();
 		}
 	}
 }

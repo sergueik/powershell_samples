@@ -26,7 +26,7 @@ namespace Test {
 		
 		[Test]
 		public void test1() {
-			discover.StartPolling();
+			discover.startPolling();
 			Thread.Sleep(1500);
 			Assert.AreEqual(10, cnt);
 		}
@@ -46,6 +46,19 @@ namespace Test {
 				discover = new Discover(interval, checkCondition, "                ");
 			});
 			Assert.That(exception.Message, Is.EqualTo("invalid argument"));
+		}
+
+		[Test]
+		public void test4() {
+			checkCondition = (string value)=>ProcessInfo.getProcessIDsByCommandLine(null, value).Count !=0 ;
+			discover = new Discover(interval, checkCondition, argument);
+			discover.startPolling();
+			discover.stop();
+			int id= 12345;
+			checkCondition = (string value)=>ProcessInfo.getProcessInstanceName(value).Length !=0 ;
+			discover = new Discover(interval, checkCondition, id.ToString());
+			discover.startPolling();
+			discover.stop();
 		}
 	}
 }

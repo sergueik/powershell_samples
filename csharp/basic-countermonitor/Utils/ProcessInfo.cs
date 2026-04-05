@@ -21,7 +21,11 @@ namespace Utils {
 
 			return null;
 		}
-
+		public static string getProcessInstanceName(string value) {
+			int id = 0;
+			Int32.TryParse(value, out id);
+			return getProcessInstanceName(id);
+		}
 		public static List<int> getProcessIDsByCommandLine(string filename, string value) {
 		 var results = new List<int>();
 			// https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-process

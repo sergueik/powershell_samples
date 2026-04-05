@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace TestUtils {
 	public static class ListExtensions {
-		public static void Shuffle<T>(this IList<T> list) {
-			for (int i = list.Count - 1; i > 0; i--) {
-				int j = new Random().Next(i + 1);
+		public static void Shuffle<T>(this IList<T> values) {
+			for (int count = values.Count - 1; count > 0; count--) {
+				int randomIndex = new Random().Next(count + 1);
 
-				T temp = list[i];
-				list[i] = list[j];
-				list[j] = temp;
+				T value = values[count];
+				values[count] = values[randomIndex];
+				values[randomIndex] = value;
 			}
 		}
 
