@@ -63,32 +63,13 @@ namespace Utils {
 		// This is useful to detect some long running operation has finished
 		public void startPollingForResult() {
 			start(this.resultPoll);
-
-			/*
-			timer = new System.Timers.Timer();
-			timer.Interval = this.interval;
-			timer.Elapsed += new ElapsedEventHandler(resultPoll);
-			timer.Start();
-			Console.Error.WriteLine("started timer with interval: " + this.interval);
-		*/
 		}
 
 		private void resultPoll(object sender, ElapsedEventArgs e) {
 			Console.Error.WriteLine("timer elapsed");
-			string result = getResult(this.argument);
-			Console.Error.WriteLine(String.Format("result: {0}", result));
-			if (!string.IsNullOrEmpty(result)) {
-				this.result = result;
-				stop();
-			}
-		}
-
-		// advanced - unused
-		private void resultAdvancedPoll(object sender, ElapsedEventArgs e)
-		{
 			timer.Stop();
-
 			string result = getResult(argument);
+			Console.Error.WriteLine(String.Format("result: {0}", result));
 
 			if (!string.IsNullOrEmpty(result)) {
 				this.result = result;
@@ -101,13 +82,6 @@ namespace Utils {
 		// This is useful to detect some long running operation has finished
 		public void startCheckingIfFinished() {
 			start(this.checkIfFinished);
-			/*
-			timer = new System.Timers.Timer();
-			timer.Interval = this.interval;
-			timer.Elapsed += new ElapsedEventHandler(checkIfFinished);
-			timer.Start();
-			Console.Error.WriteLine("started timer with interval: " + this.interval);
-		*/
 		}
 
 		private void checkIfFinished(object source, ElapsedEventArgs args) {
