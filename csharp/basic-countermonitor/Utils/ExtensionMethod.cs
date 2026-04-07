@@ -2,7 +2,7 @@
 using System.Linq;
 using System.ComponentModel;
 
-namespace Program {
+namespace Utils {
 	public static class ExtensionMethod {
 		public static TResult safeInvoke<T, TResult>(this T iSynchronizeInvoke, Func<T, TResult> call) where T : ISynchronizeInvoke  {
 			if (iSynchronizeInvoke.InvokeRequired) {
