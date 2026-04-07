@@ -32,6 +32,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Automation" />
@@ -43,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CircularBuffer.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="CsvWriter.cs" />
     <Compile Include="CsvReader.cs" />
     <Compile Include="CsvData.cs" />

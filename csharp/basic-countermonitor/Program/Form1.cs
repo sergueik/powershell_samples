@@ -29,10 +29,17 @@ namespace Program {
 		private string counterName = "Available Bytes";
 		private string instanceName = "";
 
-		public Form1() {
+		public Form1()
+		{
 
 			buffer = new CircularBuffer<Data>(capacity);
 			appSettings = ConfigurationManager.AppSettings;
+			
+			var customSettings =
+				(Utils.CustomSettingsSection)ConfigurationManager.GetSection("customSettings");
+			Console.WriteLine(customSettings.Add.Name);
+			Console.WriteLine(customSettings.Add.Text);
+			
 			if (appSettings.AllKeys.Contains("Debug")) {
 				debug = Boolean.Parse(appSettings["Debug"]);
 			}
@@ -73,7 +80,7 @@ namespace Program {
 
 			timer1.Interval = collectInterval;
 			timer1.Enabled = true;
-			timer1.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args)  => CollectMetrics());
+			timer1.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => CollectMetrics());
 			timer1.Start();
 			
 			timer2.Interval = averageInterval;
