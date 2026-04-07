@@ -188,6 +188,47 @@ Framework64\v3.5\MSBuild.exe
 Framework64\v4.0.30319\MSBuild.exe
 ```
 
+### Client
+
+
+when subject application maven is used it becomes a little messy:
+```cmd
+mvn spring-boot:run
+```
+runs `java.exa` somewhat 
+
+to find out explore it
+
+```cmd
+set LOG=%TEMP%\output.txt
+wmic.exe /output:%LOG% path win32_process where (commandline like "%java.exe%" and name != "wmic.exe") get processid,name,commandlinewmic.exe /output:%LOG% path win32_process where (commandline like "%java.exe%" and name != "wmic.exe") get processid,name,commandline
+```
+> NOTE: there isn't native `/noheaders` or `/output:noheaders` switch `wmic.exe` would recognize. The stabdard hack is to use 
+```cmd
+more.com +1 %LOG%
+```
+To inspect the `java` command line it is key to know the subject application Spring Application class (for __Spring Framework__ apps)
+or the project directory
+
+```cmd
+set MAIN_CLASS=example.Application
+more.com +1 %LOG% | findstr -i %MAIN_CLASS%
+```
+
+```cmd
+set PROJECT_DIR=basic-way2automation
+more.com +1 %LOG% | findstr -i %PROJECT_DIR%\target
+```
+when __Spring Boot__ applcation is run via `java.exe -jar`, naturally to filter by the application jar name:
+
+```cmd
+set APPLICATION_JAR=example.way2automation.jar
+more.com +1 %LOG% | findstr -i %APPLICATION_JAR%
+```
+
+> NOTE:  the `wmic.exe` does not honor the column order requsted
+
+![wmic](screenshots/capture-wmic.png)
 ### See Also:
    * example code from [Updating Your Form from Another Thread without Creating Delegates for Every Type of Update](https://www.codeproject.com/Articles/52752/Updating-Your-Form-from-Another-Thread-without-Cre)
 
