@@ -21,16 +21,22 @@ namespace Program {
 		private Discover discover1 = null;
 		private int interval = 100;
 		private int cnt = 0;
-		private string argument;
+		private string argument1;
+		private string argument2;
 
 		public Form1() {
 			appSettings = ConfigurationManager.AppSettings;
-			if (appSettings.AllKeys.Contains("Argument")) {
-				argument = appSettings["Argument"];
+			if (appSettings.AllKeys.Contains("Argument1")) {
+				argument1 = appSettings["Argument1"];
+			}
+
+			if (appSettings.AllKeys.Contains("Argument2")) {
+				argument2 = appSettings["Argument2"];
 			}
 
 			InitializeComponent();
-			this.textbox1.Text = argument;
+			this.textbox1.Text = argument1;
+			this.textbox2.Text = argument2;
 
 		}
 
@@ -39,23 +45,34 @@ namespace Program {
 			Application.Run(new Form1());
 		}
 
-		void Label1Click(object sender, EventArgs e) {
-		}
-
 		private void button1_Click(object sender, EventArgs e) {
-			button1.safeInvoke((Control control) => control.Enabled = false);
-			textbox2.safeInvoke((TextBox textbox) => textbox.Text = "");
+			string text = textbox3.safeInvoke((TextBox textbox) => textbox.Text);
 
-			Func<string, string> getResult = (string arg) => {
-				cnt++;
-				Console.Error.WriteLine("cnt :" + cnt);
-				return cnt == 10 ? "DONE" : "";	};
-			discover1 = new Discover(  interval, getResult,argument);
+			button1.safeInvoke((Control control) => control.Enabled = false);
+			textbox3.safeInvoke((TextBox textbox) => textbox.Text = "");
+
+			if (textbox2.Text != null) {
+				Func<string, string, string> getResult = (string argument1, string argument2) => {
+					cnt++;
+					Thread.Sleep(100);
+					Console.Error.WriteLine("cnt :" + cnt);
+					return cnt == 10 ? "DONE" : "";
+				};
+				discover1 = new Discover(interval, getResult, textbox1.Text, textbox2.Text);
+			} else {
+				Func<string, string> getResult = (string argument) => {
+					cnt++;
+					Thread.Sleep(100);
+					Console.Error.WriteLine("cnt :" + cnt);
+					return cnt == 10 ? "DONE" : "";
+				};
+				discover1 = new Discover(interval, getResult, textbox1.Text);
+			}
 			cnt = 0;
 			discover1.startPollingForResult();
-		
 			Thread.Sleep(2500);
-			textbox2.safeInvoke((TextBox textbox) => textbox.Text = discover1.Result);
+		
+			textbox3.safeInvoke((TextBox textbox) => textbox.Text = discover1.Result);
 			button1.safeInvoke((Control control) => control.Enabled = true);
 		}
 

@@ -11,43 +11,90 @@ namespace Utils {
 
 		private int interval;
 		private System.Timers.Timer timer;
-		private string argument;
-		private Predicate<string> checkCondition = null;
-		private Func<string, string> getResult = null;
+		private string argument1;
+		private string argument2;
+		private Predicate<string> checkCondition1 = null;
+		private Func<string, string> getResult1 = null;
+		// While the built-in Predicate<T> delegate exists, it is limited to exactly one input parameter.
+		// For two or more parameters, you must use the Func delegate
+		private Func<string, string, bool> checkCondition2 = null;
+		Func<string, string, string> getResult2 = null;
 		private string result;
 		public string Result { get { 
 				Console.Error.WriteLine(String.Format("result: {0}", this.result));
 				return result;}
 		}
 	
-		public Discover(int interval, Func<string, string> getResult, string argument) {
+		public Discover(int interval, Func<string, string> getResult1, string argument1) {
 			if (interval <= 0) {
 				throw new ArgumentException("invalid interval");
 			}
-			if (argument == null || argument.Trim().Length == 0) {
+			if (argument1 == null || argument1.Trim().Length == 0) {
 				throw new ArgumentException("invalid argument");
 			}
-			if (getResult == null) {
+			if (getResult1 == null) {
 				throw new ArgumentException("invalid getResult");
 			}
 			this.interval = interval;
-			this.getResult = getResult;
-			this.argument = argument;			
+			this.getResult1 = getResult1;
+			this.argument1 = argument1;			
 		}
 
-		public Discover(int interval, Predicate<string> checkCondition, string argument) {
+	
+		public Discover(int interval, Func<string, string, string> getResult2, string argument1, string argument2) {
 			if (interval <= 0) {
 				throw new ArgumentException("invalid interval");
 			}
-			if (argument == null || argument.Trim().Length == 0) {
+			if (argument1 == null || argument1.Trim().Length == 0) {
 				throw new ArgumentException("invalid argument");
 			}
-			if (checkCondition == null) {
+			if (argument2 == null || argument2.Trim().Length == 0) {
+				throw new ArgumentException("invalid argument");
+			}
+			if (getResult2 == null) {
+				throw new ArgumentException("invalid getResult");
+			}
+			this.interval = interval;
+			this.getResult2 = getResult2;
+			this.argument1 = argument1;			
+			this.argument2 = argument2;			
+		}
+
+		public Discover(int interval, Func<string, string, bool> checkCondition2, string argument1, string argument2) {
+			if (interval <= 0) {
+				throw new ArgumentException("invalid interval");
+			}
+			if (argument1 == null || argument1.Trim().Length == 0) {
+				throw new ArgumentException("invalid argument");
+			}
+			if (argument2 == null || argument2.Trim().Length == 0) {
+				throw new ArgumentException("invalid argument");
+			}
+			if (checkCondition2 == null) {
+				throw new ArgumentException("invalid checkCondition");
+			}
+			if (argument2 == null || argument2.Trim().Length == 0) {
+				throw new ArgumentException("invalid argument");
+			}
+			this.interval = interval;
+			this.checkCondition2 = checkCondition2;
+			this.argument1 = argument1;			
+			this.argument2 = argument2;			
+		}
+
+		public Discover(int interval, Predicate<string> checkCondition1, string argument1) {
+			if (interval <= 0) {
+				throw new ArgumentException("invalid interval");
+			}
+			if (argument1 == null || argument1.Trim().Length == 0) {
+				throw new ArgumentException("invalid argument");
+			}
+			if (checkCondition1 == null) {
 				throw new ArgumentException("invalid checkCondition");
 			}
 			this.interval = interval;
-			this.checkCondition = checkCondition;
-			this.argument = argument;
+			this.checkCondition1 = checkCondition1;
+			this.argument1 = argument1;
 		}
 
 		private void start(ElapsedEventHandler handler) {
@@ -68,7 +115,7 @@ namespace Utils {
 		private void resultPoll(object sender, ElapsedEventArgs e) {
 			Console.Error.WriteLine("timer elapsed");
 			timer.Stop();
-			string result = getResult(argument);
+			string result = getResult2 == null? getResult1(this.argument1):getResult2(this.argument1,this.argument2);
 			Console.Error.WriteLine(String.Format("result: {0}", result));
 
 			if (!string.IsNullOrEmpty(result)) {
@@ -86,7 +133,7 @@ namespace Utils {
 
 		private void checkIfFinished(object source, ElapsedEventArgs args) {
 			Console.Error.WriteLine("timer elapsed");
-			bool done = this.checkCondition(this.argument);
+			bool done = checkCondition2 == null ?  checkCondition1(argument1)  : checkCondition2(argument1,argument2);
 			Console.Error.WriteLine(done ?"not done" : "done");
 
 			if (done) {
