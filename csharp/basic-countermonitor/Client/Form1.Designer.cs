@@ -45,7 +45,9 @@ namespace Program {
 			this.label1.Size = new System.Drawing.Size(180, 39);
 			this.label1.TabIndex = 2;
 			this.label1.Text = "Argument 1";
-
+			// this.label1.FormBorderStyle = FormBorderStyle.None;
+			
+			
 			this.textbox1.Location = new System.Drawing.Point(245, 82);
 			this.textbox1.Name = "textbox1";
 			this.textbox1.Size = new System.Drawing.Size(317, 29);

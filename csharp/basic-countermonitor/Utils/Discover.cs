@@ -46,10 +46,10 @@ namespace Utils {
 				throw new ArgumentException("invalid interval");
 			}
 			if (argument1 == null || argument1.Trim().Length == 0) {
-				throw new ArgumentException("invalid argument");
+				throw new ArgumentException("invalid argument 1");
 			}
 			if (argument2 == null || argument2.Trim().Length == 0) {
-				throw new ArgumentException("invalid argument");
+				throw new ArgumentException("invalid argument 2");
 			}
 			if (getResult2 == null) {
 				throw new ArgumentException("invalid getResult");

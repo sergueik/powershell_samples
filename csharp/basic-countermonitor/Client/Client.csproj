@@ -82,11 +82,6 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.Designer.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{0A243A71-7518-442D-B63A-1888982DDEE6}</Project>
       <Name>Utils</Name>

@@ -11,6 +11,8 @@ namespace Test {
 		private int interval = 100;
 		private int cnt = 0;
 		private string argument;
+		private string argument1;
+		private string argument2;
 		private Predicate<string> checkCondition;
 
 		[SetUp]
@@ -70,6 +72,24 @@ namespace Test {
 				Console.Error.WriteLine("cnt :" + cnt);
 				return cnt == 10 ? "DONE" : "";	};
 			var discover2 = new Discover(  interval, getResult,argument);
+			cnt = 0;
+			discover2.startPollingForResult();
+		
+			Thread.Sleep(2500);
+		
+			Assert.AreEqual("DONE", discover2.Result);
+		}
+		[Test]
+		public void test6() {
+			argument1 = "argument1";
+			argument2 = "argument2";
+			Func<string, string, string> getResult2 = (string arg1,string arg2) => {
+				cnt++;
+				Console.Error.WriteLine(String.Format("argument1: {0}| arguhment2: {1}|cnt : {2}" , arg1,  arg2, cnt));
+				return cnt == 10 ? "DONE" : "";	};
+			// NOTE: variable name
+			// 'argument1,2' conflicts with the declaration 'Test.DiscoverTest.argument1,2' (CS0135)
+			var discover2 = new Discover(  interval, getResult2,argument1,argument2);
 			cnt = 0;
 			discover2.startPollingForResult();
 		
