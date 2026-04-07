@@ -37,8 +37,10 @@ namespace Program {
 			
 			var customSettings =
 				(Utils.CustomSettingsSection)ConfigurationManager.GetSection("customSettings");
-			Console.WriteLine(customSettings.Add.Name);
-			Console.WriteLine(customSettings.Add.Text);
+			
+			foreach (CustomSettingElement customSettingElement in customSettings.Settings) {
+				Console.WriteLine(String.Format("{0} => {1}", customSettingElement.Name, customSettingElement.Text));
+			}
 			
 			if (appSettings.AllKeys.Contains("Debug")) {
 				debug = Boolean.Parse(appSettings["Debug"]);
