@@ -1,5 +1,24 @@
+#Copyright (c) 2026 Serguei Kouzmine
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
 param(
-[switch]$debug # currently unused
+  [switch]$debug # currently unused
 )
 
 $cnt = 0
@@ -205,3 +224,44 @@ timer elapsed
 result:
 it is not working
 #>
+
+# clean demonstration of PowerShell delegate marshaling vs. runspace affinity under asynchronous .NET callbacks
+# Powershell script block converted to dynamic adapter stub the delegate is invoked from ThreadPool, dispatched Elapsed event class
+# that is a foreign CLR thread lacking the original PowerShell execution context\\\
+# as a result one does not get the classic detached confession:
+# There is no Runspace available to run scripts in this thread
+# but Instead the script behaves as if the body never mutates state
+# That happens because the delegate wrapper can still execute minimal scriptblock logic, but the semantic environment is degraded:
+
+# * no stable pipeline
+# * no guaranteed host output routing
+# * script scope rebinding may not behave as expected
+# * write-output has nowhere meaningful to emit
+# * stateful script scope access becomes unreliable
+
+# root cause: runspace affinity
+#
+# PowerShell is not thread-agnostic.
+# 
+# A scriptblock is bound to a Runspace, which includes:
+# 
+
+# * session state
+# * variables
+# * host streams
+# * module scope
+# * output pipes
+# * error routing
+
+# NOTE regarding debuggig -  not possible:
+# The line especially demonstrates the context problem:
+#  write-output ('cnt: {0}' -f $script:cnt)
+#  Inside asynchronous delegate execution there is no caller pipeline collecting output.
+# So even if the scriptblock executes, this output is effectively discarded
+# do not mutate external script scope from asynchronous callbacks
+# failing test always has value, but the unexpectedly failing test is often worth disproportionately more
+# urprisingly deep lesson to take from this bug, and in this specific case the “Dennis blackboard punishment” is academically justified 😄
+# “I promise to always stick to functional programming.”
+# A surprising red test is like speeding in a school zone: the penalty doubles because the lesson must stick
+# In software terms:
+# unexpected red tests are tuition fees paid directly to understanding.
