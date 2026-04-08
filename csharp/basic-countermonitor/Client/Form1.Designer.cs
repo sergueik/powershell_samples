@@ -47,6 +47,16 @@ namespace Program {
 			this.label1.Text = "Argument 1";
 			// this.label1.FormBorderStyle = FormBorderStyle.None;
 			
+			// hack to manage border around the Windows Forms TextBox
+			/*
+				Panel panel = new Panel();
+				panel.BorderStyle = BorderStyle.FixedSingle;
+				panel.Padding = new Padding(1);
+	
+				this.textbox1 = new TextBox();
+				this.textbox1.BorderStyle = BorderStyle.None;
+				this.textbox1.Dock = DockStyle.Fill;
+			*/
 			
 			this.textbox1.Location = new System.Drawing.Point(245, 82);
 			this.textbox1.Name = "textbox1";

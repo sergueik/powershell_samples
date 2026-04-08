@@ -18,7 +18,6 @@ namespace Utils {
 						return instance;
 				}
 			}
-
 			return null;
 		}
 		public static string getProcessInstanceName(string value) {
@@ -32,7 +31,7 @@ namespace Utils {
 			// NOTE: take advantage of WMI pseudo-SQL WQL LIKE with %value% wildcard matching against Win32_Process.CommandLine
 			// to locate the target ProcessId by partial command-line contents.
 			// NOTE: preserve WMI vendor class/property mixed camel snake style for readability.
-			var query = String.Format("SELECT Name, Caption, ProcessId, CommandLine FROM Win32_Process WHERE CommandLine LIKE '%{0}%'", value);
+			var query = String.Format("SELECT Name, Caption, ProcessId, CommandLine FROM Win32_Process WHERE CommandLine LIKE '%{0}%' AND CommandLine LIKE '%{1}%'", filename, value);
 			Console.Error.WriteLine(String.Format("query: {0}",query));
 			// NOTE: 
 			// The WMIC.exe command

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 
 using NUnit.Framework;
 using Utils;
@@ -96,6 +98,63 @@ namespace Test {
 			Thread.Sleep(2500);
 		
 			Assert.AreEqual("DONE", discover2.Result);
+		}
+
+		[Test]
+		public void test7() {
+			
+			var jar = "example.way2automation.jar";
+			Func<string, string, string> getResult2 = (string argument1,string argument2) => {
+				List<int>results = ProcessInfo.getProcessIDsByCommandLine(argument1, argument2);
+				if (results.Count > 1)
+				{
+				} else
+					Console.Error.WriteLine(String.Format("filename: {0}| variable: {1}|pid : {2}" , argument1,  argument2, results[0]));
+				return results[0].ToString();	};
+			// NOTE:
+			// var discover2 = new Discover(  interval, ProcessInfo.getProcessIDsByCommandLine,argument1,argument2);
+			// The call is ambiguous between the following methods or properties:
+			// 'Utils.Discover.Discover(int, System.Func<string,string,string>, string, string)' and
+			// 'Utils.Discover.Discover(int, System.Func<string,string,bool>, string, string)' (CS0121)
+			var discover2 = new Discover(  interval, getResult2,"java",jar); 
+			// NOTE: not "java.exe"
+			cnt = 0;
+			discover2.startPollingForResult();
+		
+			Thread.Sleep(2500);
+		
+			StringAssert.IsMatch("[1-9][09]*",  discover2.Result);
+
+		}
+		/*
+		 NOTE: - these are all wrong
+		 where.exe java.exe
+C:\Program Files\Common Files\Oracle\Java\javapath\java.exe
+C:\Program Files (x86)\Common Files\Oracle\Java\javapath\java.exe
+		 */
+		[Test]
+		public void test8() {
+			
+			var mainClass = "example.Application";
+			Func<string, string, string> getResult2 = (string argument1,string argument2) => {
+				List<int>results = ProcessInfo.getProcessIDsByCommandLine(argument1, argument2);
+				if (results.Count > 1)
+				{
+				} else
+					Console.Error.WriteLine(String.Format("filename: {0}| variable: {1}|pid : {2}" , argument1,  argument2, results[0]));
+				return results[0].ToString();	};
+			// NOTE:
+			// var discover2 = new Discover(  interval, ProcessInfo.getProcessIDsByCommandLine,argument1,argument2);
+			// The call is ambiguous between the following methods or properties:
+			// 'Utils.Discover.Discover(int, System.Func<string,string,string>, string, string)' and
+			// 'Utils.Discover.Discover(int, System.Func<string,string,bool>, string, string)' (CS0121)
+			var discover2 = new Discover(  interval, getResult2,"java.exe",mainClass);
+			// this finds the java.exe process launched by maven
+			cnt = 0;
+			discover2.startPollingForResult();
+		
+			Thread.Sleep(2500);
+			StringAssert.IsMatch("[1-9][09]*",  discover2.Result);
 		}
 	}
 }
