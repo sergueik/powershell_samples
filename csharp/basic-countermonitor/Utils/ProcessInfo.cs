@@ -11,7 +11,7 @@ namespace Utils {
 				new PerformanceCounterCategory("Process");
 
 			foreach (string instance in performanceCounterCategory.GetInstanceNames()) {
-				Console.Error.WriteLine(String.Format("Counter: {0}", instance));
+				// Console.Error.WriteLine(String.Format("Counter: {0}", instance));
 				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instance, true)) {
 					int rawValue = (int)performanceCounter.RawValue;
 
@@ -22,9 +22,31 @@ namespace Utils {
 			return null;
 		}
 		public static string getProcessInstanceName(string value) {
-			int id = 0;
-			Int32.TryParse(value, out id);
-			return getProcessInstanceName(id);
+			int pid = 0;
+			Int32.TryParse(value, out pid);
+			return getProcessInstanceName(pid);
+		}
+		public static string getProcessInstanceName(string name, int pid) {
+			var performanceCounterCategory =
+				new PerformanceCounterCategory("Process");
+
+			foreach (string instance in performanceCounterCategory.GetInstanceNames()) {
+				// Console.Error.WriteLine(String.Format("Counter: {0}", instance));
+				if (instance.IndexOf(name) == -1)
+					continue;
+				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instance, true)) {
+					int rawValue = (int)performanceCounter.RawValue;
+
+					if (rawValue == pid)
+						return instance;
+				}
+			}
+			return null;
+		}
+		public static string getProcessInstanceName(string name, string value) {
+			int pid = 0;
+			Int32.TryParse(value, out pid);
+			return getProcessInstanceName(name, pid);
 		}
 		public static List<int> getProcessIDsByCommandLine(string filename, string value) {
 		 var results = new List<int>();
