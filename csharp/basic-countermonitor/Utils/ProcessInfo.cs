@@ -11,6 +11,7 @@ namespace Utils {
 				new PerformanceCounterCategory("Process");
 
 			foreach (string instance in performanceCounterCategory.GetInstanceNames()) {
+				Console.Error.WriteLine(String.Format("Counter: {0}", instance));
 				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instance, true)) {
 					int rawValue = (int)performanceCounter.RawValue;
 
