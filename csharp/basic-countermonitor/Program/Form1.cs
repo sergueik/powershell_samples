@@ -34,14 +34,14 @@ namespace Program {
 
 			buffer = new CircularBuffer<Data>(capacity);
 			appSettings = ConfigurationManager.AppSettings;
-			
+
 			var customSettings =
 				(Utils.CustomSettingsSection)ConfigurationManager.GetSection("customSettings");
-			
+
 			foreach (CustomSettingElement customSettingElement in customSettings.Settings) {
 				Console.WriteLine(String.Format("{0} => {1}", customSettingElement.Name, customSettingElement.Text));
 			}
-			
+
 			if (appSettings.AllKeys.Contains("Debug")) {
 				debug = Boolean.Parse(appSettings["Debug"]);
 			}
@@ -70,7 +70,7 @@ namespace Program {
 			if (appSettings.AllKeys.Contains("Rounds")) {
 				rounds = int.Parse(appSettings["Rounds"]);
 			}
-			
+
 			dataFile = EnvVars.ResolveEnvVars((appSettings.AllKeys.Contains("Datafile")) ? appSettings["Datafile"] : @"${temp}\loadaverage.csv");
 
 			InitializeComponent();
@@ -84,7 +84,7 @@ namespace Program {
 			timer1.Enabled = true;
 			timer1.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => CollectMetrics());
 			timer1.Start();
-			
+
 			timer2.Interval = averageInterval;
 			timer2.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => Commit());
 			timer2.Enabled = true;
@@ -118,7 +118,7 @@ namespace Program {
 				timer2.Enabled = false;
 			}
 		}
-		
+
 		private void CollectMetrics() {
 			float value = 0;
 			var row = new Data();
@@ -140,7 +140,7 @@ namespace Program {
 		}
 
 		private void Commit() {
-				
+
 			var rows = buffer.ToList();
 			var now = DateTime.Now;
 			var values = (from row in rows
@@ -178,6 +178,6 @@ namespace Program {
 			}
 		}
 
-	
+
 	}
 }

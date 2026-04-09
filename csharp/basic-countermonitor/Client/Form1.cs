@@ -53,6 +53,36 @@ namespace Program {
 			string name = null;
 			string mainClass = null;
 			string pid = null;
+			string counter = null;
+
+			name = textbox1.Text;
+			mainClass = textbox2.Text;
+			List<int> results = ProcessInfo.getProcessIDsByCommandLine(name, mainClass);
+			Debug.WriteLine("Results : {0} rows", results.Count); 
+			if (results.Count > 1) {
+			} else if (results.Count > 0){
+				pid = results[0].ToString();
+				Debug.WriteLine(String.Format("name: {0}| variable: {1}|pid: {2}", name, mainClass, results[0]));
+			}
+			// Assert.NotNull(pid);
+			// StringAssert.IsMatch("[1-9][09]*", pid);
+			counter = ProcessInfo.getProcessInstanceName(name, pid);
+			// Assert.NotNull(counter);
+			// StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", name), counter);
+			status = String.Format("name: {0} pid:{1} counter:{2}", name, pid, counter);
+			textbox3.safeInvoke((TextBox textbox) => textbox.Text = status);
+			Debug.WriteLine(status);
+	
+		}
+
+		// async does  not work
+		private void button1_Async_Click(object sender, EventArgs e)
+		{
+			string text = textbox3.safeInvoke((TextBox textbox) => textbox.Text);
+			string status = null;
+			string name = null;
+			string mainClass = null;
+			string pid = null;
 			string result = null;
 
 			button1.safeInvoke((Control control) => control.Enabled = false);

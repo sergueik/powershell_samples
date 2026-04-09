@@ -7,17 +7,19 @@ using System.Collections.Specialized;
 namespace Utils {
 	public class ProcessInfo {
 		public static string getProcessInstanceName(int pid) {
-			Console.Error.WriteLine(String.Format("Searching Perfoerance Counter for process with pid: {0}", pid));
+			Console.Error.WriteLine(String.Format("Searching Performance Counter for process with pid: {0}", pid));
+			Debug.WriteLine(String.Format("Searching Performance Counter for process with pid: {0}", pid));
 			var performanceCounterCategory =
 				new PerformanceCounterCategory("Process");
 
-			foreach (string instance in performanceCounterCategory.GetInstanceNames()) {
-				Console.Error.WriteLine(String.Format("Counter: {0}", instance));
-				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instance, true)) {
+			foreach (string instanceName in performanceCounterCategory.GetInstanceNames()) {
+				Console.Error.WriteLine(String.Format("Counter: {0}", instanceName));
+				Debug.WriteLine(String.Format("Counter: {0}", instanceName));
+				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instanceName, true)) {
 					int rawValue = (int)performanceCounter.RawValue;
 
 					if (rawValue == pid)
-						return instance;
+						return instanceName;
 				}
 			}
 			return null;
@@ -28,6 +30,7 @@ namespace Utils {
 			return getProcessInstanceName(pid);
 		}
 		public static string getProcessInstanceName(string name, int pid) {
+			Debug.WriteLine(String.Format("Searching Performance Counter for process with name: {0} pid: {1}", name, pid));
 			Console.Error.WriteLine(String.Format("Searching Performance Counter for process with name: {0} pid: {1}", name, pid));
 			var performanceCounterCategory =
 				new PerformanceCounterCategory("Process");
@@ -36,6 +39,7 @@ namespace Utils {
 				if (instanceName.IndexOf(name) == -1)
 					continue;
 				Console.Error.WriteLine(String.Format("Counter: {0}", instanceName));
+				Debug.WriteLine(String.Format("Counter: {0}", instanceName));
 				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instanceName, true)) {
 					int rawValue = (int)performanceCounter.RawValue;
 
@@ -58,7 +62,7 @@ namespace Utils {
 			// NOTE: preserve WMI vendor class/property mixed camel snake style for readability.
 			var query = String.Format("SELECT Name, Caption, ProcessId, CommandLine FROM Win32_Process WHERE CommandLine LIKE '%{0}%' AND CommandLine LIKE '%{1}%'", filename, value);
 			Console.Error.WriteLine(String.Format("query: {0}",query));
-			
+			Debug.WriteLine(String.Format("query: {0}",query));
 			// NOTE: 
 			// The WMIC.exe command
 			// wmic:root\cli>path win32_process get commandline,caption,name,processid where (processid=30448)
@@ -68,7 +72,7 @@ namespace Utils {
 				using (var managementObjectSearcher = new ManagementObjectSearcher(query))
 				using (var managementObjectCollection = managementObjectSearcher.Get()) {
 					Console.Error.WriteLine(String.Format("examine the results: {0} rows" , managementObjectCollection.Count));
-
+					Debug.WriteLine(String.Format("examine the results: {0} rows" , managementObjectCollection.Count));
 					foreach (ManagementBaseObject managementBaseObject in managementObjectCollection) {
 						Console.Error.WriteLine(String.Format("name: {0}|caption: {1}|commandline: {2}", managementBaseObject["Name"], managementBaseObject["Caption"], managementBaseObject["CommandLine"]));
 						/*
