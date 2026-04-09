@@ -36,14 +36,14 @@ namespace Test {
 			Process[] processes = Process.GetProcessesByName(appName);
 
 			if (processes.Length > 0) {
-				Console.Error.WriteLine(String.Format("Found {0} instances of {1}:", processes.Length, appName));
+				Debug.WriteLine(String.Format("Found {0} instances of {1}:", processes.Length, appName));
 				foreach (Process process in processes) {
-					Console.Error.WriteLine(String.Format("Process name: {0}, ID: {1}", process.ProcessName, process.Id));
+					Debug.WriteLine(String.Format("Process name: {0}, ID: {1}", process.ProcessName, process.Id));
 					// You can access other properties, e.g., process.WorkingSet64 to read it directly
 					// or process.MainModule.FileName to get the full path
 					pid = process.Id;
 					// long memoryMb = process.WorkingSet64 / 1024 / 1024;
-					Console.Error.WriteLine(String.Format("pid={0} | Memory={1}", process.Id, process.WorkingSet64));
+					Debug.WriteLine(String.Format("pid={0} | Memory={1}", process.Id, process.WorkingSet64));
 				}
 				result = ProcessInfo.getPerformanceCountertInstance(pid);
 				Assert.IsNotNull(result);
@@ -53,7 +53,7 @@ namespace Test {
 				performanceCounter.InstanceName = result;
 				var rawValue = (long)performanceCounter.RawValue;
 				var computedValue = performanceCounter.NextValue();
-				Console.Error.WriteLine(String.Format("Instance:{0} | Raw Value:{1} | Computed Value:{2}", result, rawValue, computedValue));
+				Debug.WriteLine(String.Format("Instance:{0} | Raw Value:{1} | Computed Value:{2}", result, rawValue, computedValue));
 			} else {
 				Console.WriteLine(String.Format("{0} is not currently running.", appName));
 			}
@@ -63,15 +63,15 @@ namespace Test {
 		public void test2()
 		{
 			// https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountercategory?view=netframework-4.5
-			Console.Error.WriteLine("Process.Explorer:");
+			Debug.WriteLine("Process.Explorer:");
 			foreach (var performanceCounter in new PerformanceCounterCategory("Process").GetCounters("explorer")) {
-				Console.Error.WriteLine(performanceCounter.CounterName);
+				Debug.WriteLine(performanceCounter.CounterName);
 			}
 			var counterCategory = new PerformanceCounterCategory("Process");
-			Console.Error.WriteLine("Counter Category Process:");
+			Debug.WriteLine("Counter Category Process:");
 			//
 			foreach (string counterName in counterCategory.GetCounters("_Total").Select(( PerformanceCounter p) => p.CounterName)) {
-				Console.Error.WriteLine(counterName);
+				Debug.WriteLine(counterName);
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace Test {
 					var value = tempFile.Replace(@"\", @"\\");
 					var results = ProcessInfo.getProcessIDByCommandLine(processStartInfo.FileName, value);
 					Assert.NotNull(results);
-					Console.Error.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
+					Debug.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
 					Assert.Greater(results.Count, 0 );
 
 					process.Kill();
@@ -112,7 +112,7 @@ namespace Test {
 			string value = "notepad.exe";
 			List<int> results = ProcessInfo.getProcessIDByCommandLine("", value);
 			Assert.NotNull(results);
-			Console.Error.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
+			Debug.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
 			Assert.Greater(results.Count, 0 );
 		}
 
@@ -125,14 +125,14 @@ namespace Test {
 			if (results.Count > 1) {
 			} else {
 				pid = results[0].ToString();
-				Console.Error.WriteLine(String.Format("name: {0}| variable: {1}|pid: {2}", name, mainClass, results[0]));
+				Debug.WriteLine(String.Format("name: {0}| variable: {1}|pid: {2}", name, mainClass, results[0]));
 			}
 			Assert.NotNull(pid);
 			StringAssert.IsMatch("[1-9][09]*", pid);
 			var counter = ProcessInfo.getPerformanceCountertInstance(name, pid);
 			Assert.NotNull(counter);
 			StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", name), counter);
-			Console.Error.WriteLine(String.Format("Found performance counter for process name: {0} id:{1} counter:{2}", name, pid, counter));
+			Debug.WriteLine(String.Format("Found performance counter for process name: {0} id:{1} counter:{2}", name, pid, counter));
 		}
 
 		[Test]
@@ -144,14 +144,14 @@ namespace Test {
 			if (results.Count > 1) {
 			} else {
 				pid = results[0].ToString();
-				Console.Error.WriteLine(String.Format("name: {0}| variable: {1}|pid: {2}", name, jar, results[0]));
+				Debug.WriteLine(String.Format("name: {0}| variable: {1}|pid: {2}", name, jar, results[0]));
 			}
 			Assert.NotNull(pid);
 			StringAssert.IsMatch("[1-9][09]*", pid);
 			var counter = ProcessInfo.getPerformanceCountertInstance(name, pid);
 			Assert.NotNull(counter);
 			StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", name), counter);
-			Console.Error.WriteLine(String.Format("Found performance counter for process name: {0} id:{1} counter:{2}", name, pid, counter));
+			Debug.WriteLine(String.Format("Found performance counter for process name: {0} id:{1} counter:{2}", name, pid, counter));
 		}
 	}
 }

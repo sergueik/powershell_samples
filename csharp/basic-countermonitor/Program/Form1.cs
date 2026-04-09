@@ -132,7 +132,7 @@ namespace Program {
 				// value = (long)performanceCounter.RawValue;
 				value = performanceCounter.NextValue();
 			} catch (InvalidOperationException e) {
-				Console.Error.WriteLine(String.Format("Exception reading \"{0}\\{1}\\{2}\": {3}", categoryName, counterName, "0", e.ToString()));
+				Debug.WriteLine(String.Format("Exception reading \"{0}\\{1}\\{2}\": {3}", categoryName, counterName, "0", e.ToString()));
 				return;
 			}
 			row.Value = value;
@@ -143,11 +143,20 @@ namespace Program {
 
 			var rows = buffer.ToList();
 			var now = DateTime.Now;
-			var values = (from row in rows
-			              where ((now - row.TimeStamp).TotalMilliseconds) <= (float)this.averageInterval
-			              select row.Value);
-			double average = values.Average();
-			Console.Error.WriteLine(String.Format("{0} from {1} samples", average, values.Count()));
+			double average = 0;
+			IEnumerable<float> values  = null;
+			try {
+				values = (from row in rows
+				              where ((now - row.TimeStamp).TotalMilliseconds) <= (float)this.averageInterval
+				              select row.Value);
+				average = values.Average();
+			} catch(InvalidOperationException e) {
+				// System.InvalidOperationException: Sequence contains no elements
+				Debug.WriteLine(String.Format("Exception: {0}", e.ToString()));
+			} catch(Exception e) {
+				Debug.WriteLine(String.Format("Exception: {0}", e.ToString()));
+			}
+			Debug.WriteLine(String.Format("{0} from {1} samples", average, values.Count()));
 
 			var fields = new List<string> {
 				DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),

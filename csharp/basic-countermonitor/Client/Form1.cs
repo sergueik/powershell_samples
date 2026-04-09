@@ -118,7 +118,7 @@ namespace Program {
 				Func<string, string> getResult = (string argument) => {
 					cnt++;
 					Thread.Sleep(100);
-					Console.Error.WriteLine("cnt :" + cnt);
+					Debug.WriteLine("cnt :" + cnt);
 					return cnt == 10 ? "DONE" : "";
 				};
 				discover1 = new Discover(interval, getResult, textbox1.Text);

@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
+
+using NUnit.Framework;
 
 using Utils;
 using TestUtils;
@@ -32,7 +33,7 @@ namespace Test {
 				value = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User);
 				if (value == null)
 					value = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);	
-				Console.Error.WriteLine(String.Format("environment: {0}: {1}", name, value));
+				Debug.WriteLine(String.Format("environment: {0}: {1}", name, value));
 				StringAssert.Contains(value, result);
 			});
 			StringAssert.DoesNotMatch(@"\$(?:\{(?:env:)?(\w+)\}|(\w+))", result);
@@ -43,7 +44,7 @@ namespace Test {
 
 			input = "${env:UNKNOWN}";
 			result = EnvVars.ResolveEnvVars(input);
-			Console.Error.WriteLine(String.Format(@"Result: ""{0}""",result));
+			Debug.WriteLine(String.Format(@"Result: ""{0}""",result));
 			Assert.AreEqual(String.Empty, result);
 		}
 		
@@ -55,7 +56,7 @@ namespace Test {
 			input = String.Format("${{env:{0}}}", name);
 			// Retrieve a user-level variable
 			result = EnvVars.ResolveEnvVars(input);
-			Console.Error.WriteLine("Result: " + result);
+			Debug.WriteLine("Result: " + result);
 			Assert.IsNotNull(result);
 
 			value = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User);

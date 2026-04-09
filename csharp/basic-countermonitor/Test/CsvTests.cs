@@ -3,8 +3,10 @@ using System.Configuration;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-using NUnit.Framework;
+using System.Diagnostics;
 using System.Linq;
+
+using NUnit.Framework;
 
 using Utils;
 using TestUtils;
@@ -70,9 +72,9 @@ namespace Test
 			headers.Shuffle();
 			Assert.That(csvData.Headers, Is.EquivalentTo(headers.ToArray()));          	
 			fields.Shuffle();
-			Console.Error.WriteLine("Headers:" + string.Join(", ", csvData.Headers));
+			Debug.WriteLine("Headers:" + string.Join(", ", csvData.Headers));
 			Assert.That(csvData.Records[0].Fields, Is.EquivalentTo(fields.ToArray()));
-			Console.Error.WriteLine("Record: " + string.Join(", ", csvData.Records[0].Fields));
+			Debug.WriteLine("Record: " + string.Join(", ", csvData.Records[0].Fields));
 		}
 		
 		[Test]

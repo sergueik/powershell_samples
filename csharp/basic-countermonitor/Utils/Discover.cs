@@ -22,7 +22,7 @@ namespace Utils {
 		Func<string, string, string> getResult2 = null;
 		private string result;
 		public string Result { get { 
-				Console.Error.WriteLine(String.Format("result: {0}", this.result));
+				Debug.WriteLine(String.Format("result: {0}", this.result));
 				return result;}
 		}
 	
@@ -99,7 +99,7 @@ namespace Utils {
 		}
 
 		private void start(ElapsedEventHandler handler) {
-			Console.Error.WriteLine("started timer with interval: " + interval);
+			Debug.WriteLine("started timer with interval: " + interval);
 			// Debug.WriteLine("started timer with interval: " + interval);
 			timer = new System.Timers.Timer();
 			timer.Interval = interval;
@@ -115,11 +115,11 @@ namespace Utils {
 		}
 
 		private void resultPoll(object sender, ElapsedEventArgs e) {
-			Console.Error.WriteLine("timer elapsed");
+			Debug.WriteLine("timer elapsed");
 			// Debug.WriteLine("timer elapsed");
 			timer.Stop();
 			string result = getResult2 == null? getResult1(this.argument1):getResult2(this.argument1,this.argument2);
-			Console.Error.WriteLine(String.Format("result: {0}", result));
+			Debug.WriteLine(String.Format("result: {0}", result));
 
 			if (!string.IsNullOrEmpty(result)) {
 				this.result = result;
@@ -135,9 +135,9 @@ namespace Utils {
 		}
 
 		private void checkIfFinished(object source, ElapsedEventArgs args) {
-			Console.Error.WriteLine("timer elapsed");
+			Debug.WriteLine("timer elapsed");
 			bool done = checkCondition2 == null ?  checkCondition1(argument1)  : checkCondition2(argument1,argument2);
-			Console.Error.WriteLine(done ?"not done" : "done");
+			Debug.WriteLine(done ?"not done" : "done");
 
 			if (done) {
 				stop();

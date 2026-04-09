@@ -86,7 +86,7 @@ namespace Protractor.TestUtils
 		private void Process(HttpListenerContext context) {
 			string filename = context.Request.Url.AbsolutePath;
 			string query = context.Request.Url.Query;
-			// Console.Error.WriteLine(String.Format("Processing {0}", context.Request.Url.LocalPath));
+			// Debug.WriteLine(String.Format("Processing {0}", context.Request.Url.LocalPath));
 			filename = filename.Substring(1); // chop the oot portion of the request path
 			if (string.IsNullOrEmpty(filename)) {
 				foreach (string indexFile in indexFiles) {					
