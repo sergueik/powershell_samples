@@ -57,7 +57,9 @@
     <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CircularBuffer.cs" />
     <Compile Include="CircularProgressControl.cs" />
+    <Compile Include="Data.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
