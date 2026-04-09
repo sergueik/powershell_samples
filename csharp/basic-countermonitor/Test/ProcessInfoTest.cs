@@ -45,7 +45,7 @@ namespace Test {
 					// long memoryMb = process.WorkingSet64 / 1024 / 1024;
 					Console.Error.WriteLine(String.Format("pid={0} | Memory={1}", process.Id, process.WorkingSet64));
 				}
-				result = ProcessInfo.getProcessInstanceName(pid);
+				result = ProcessInfo.getPerformanceCountertInstance(pid);
 				Assert.IsNotNull(result);
 				StringAssert.IsMatch(String.Format(@"{0}(?:#\d+)?", appName), result);
 
@@ -92,7 +92,7 @@ namespace Test {
 				using (Process process = Process.Start(processStartInfo)) {
 					process.WaitForInputIdle(); // Blocks until the window is ready for input
 					var value = tempFile.Replace(@"\", @"\\");
-					var results = ProcessInfo.getProcessIDsByCommandLine(processStartInfo.FileName, value);
+					var results = ProcessInfo.getProcessIDByCommandLine(processStartInfo.FileName, value);
 					Assert.NotNull(results);
 					Console.Error.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
 					Assert.Greater(results.Count, 0 );
@@ -110,7 +110,7 @@ namespace Test {
 		[Test]
 		public void test4() {
 			string value = "notepad.exe";
-			List<int> results = ProcessInfo.getProcessIDsByCommandLine("", value);
+			List<int> results = ProcessInfo.getProcessIDByCommandLine("", value);
 			Assert.NotNull(results);
 			Console.Error.WriteLine("Results: " + String.Join(",", results) + " (" + results.Count + ")");
 			Assert.Greater(results.Count, 0 );
@@ -121,7 +121,7 @@ namespace Test {
 			var name = "java";
 			var mainClass = "example.Application";
 			var pid = "";
-			List<int> results = ProcessInfo.getProcessIDsByCommandLine(name, mainClass);
+			List<int> results = ProcessInfo.getProcessIDByCommandLine(name, mainClass);
 			if (results.Count > 1) {
 			} else {
 				pid = results[0].ToString();
@@ -129,7 +129,7 @@ namespace Test {
 			}
 			Assert.NotNull(pid);
 			StringAssert.IsMatch("[1-9][09]*", pid);
-			var counter = ProcessInfo.getProcessInstanceName(name, pid);
+			var counter = ProcessInfo.getPerformanceCountertInstance(name, pid);
 			Assert.NotNull(counter);
 			StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", name), counter);
 			Console.Error.WriteLine(String.Format("Found performance counter for process name: {0} id:{1} counter:{2}", name, pid, counter));
@@ -140,7 +140,7 @@ namespace Test {
 			var name = "java";
 			var jar = "example.way2automation.jar";
 			var pid = "";
-			List<int> results = ProcessInfo.getProcessIDsByCommandLine(name, jar);
+			List<int> results = ProcessInfo.getProcessIDByCommandLine(name, jar);
 			if (results.Count > 1) {
 			} else {
 				pid = results[0].ToString();
@@ -148,7 +148,7 @@ namespace Test {
 			}
 			Assert.NotNull(pid);
 			StringAssert.IsMatch("[1-9][09]*", pid);
-			var counter = ProcessInfo.getProcessInstanceName(name, pid);
+			var counter = ProcessInfo.getPerformanceCountertInstance(name, pid);
 			Assert.NotNull(counter);
 			StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", name), counter);
 			Console.Error.WriteLine(String.Format("Found performance counter for process name: {0} id:{1} counter:{2}", name, pid, counter));

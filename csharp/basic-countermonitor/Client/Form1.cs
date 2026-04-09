@@ -57,7 +57,7 @@ namespace Program {
 
 			name = textbox1.Text;
 			mainClass = textbox2.Text;
-			List<int> results = ProcessInfo.getProcessIDsByCommandLine(name, mainClass);
+			List<int> results = ProcessInfo.getProcessIDByCommandLine(name, mainClass);
 			Debug.WriteLine("Results : {0} rows", results.Count); 
 			if (results.Count > 1) {
 			} else if (results.Count > 0){
@@ -66,7 +66,7 @@ namespace Program {
 			}
 			// Assert.NotNull(pid);
 			// StringAssert.IsMatch("[1-9][09]*", pid);
-			counter = ProcessInfo.getProcessInstanceName(name, pid);
+			counter = ProcessInfo.getPerformanceCountertInstance(name, pid);
 			// Assert.NotNull(counter);
 			// StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", name), counter);
 			status = String.Format("name: {0} pid:{1} counter:{2}", name, pid, counter);
@@ -92,7 +92,7 @@ namespace Program {
 				name = textbox1.Text;
 				mainClass = textbox2.Text;
 				Func<string, string, string> getResult2 = (string argument1, string argument2) => {
-					List<int> results = ProcessInfo.getProcessIDsByCommandLine(argument1, argument2);
+					List<int> results = ProcessInfo.getProcessIDByCommandLine(argument1, argument2);
 					if (results.Count > 1) {
 						// TODO: handle this
 					} else {
@@ -109,7 +109,7 @@ namespace Program {
 				status = String.Format("name: {0}| variable: {1}|pid: {2}", name, mainClass, pid);
 				textbox3.safeInvoke((TextBox textbox) => textbox.Text = status);
 				Debug.WriteLine(status);
-				result = ProcessInfo.getProcessInstanceName(name, pid);
+				result = ProcessInfo.getPerformanceCountertInstance(name, pid);
 				status = String.Format("name: {0} pid:{1} counter:{2}", name, pid, result);
 				textbox3.safeInvoke((TextBox textbox) => textbox.Text = status);
 				Debug.WriteLine(status);

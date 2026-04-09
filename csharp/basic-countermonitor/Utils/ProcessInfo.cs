@@ -6,14 +6,14 @@ using System.Collections.Specialized;
 
 namespace Utils {
 	public class ProcessInfo {
-		public static string getProcessInstanceName(int pid) {
+		public static string getPerformanceCountertInstance(int pid) {
 			Console.Error.WriteLine(String.Format("Searching Performance Counter for process with pid: {0}", pid));
 			Debug.WriteLine(String.Format("Searching Performance Counter for process with pid: {0}", pid));
 			var performanceCounterCategory =
 				new PerformanceCounterCategory("Process");
 
 			foreach (string instanceName in performanceCounterCategory.GetInstanceNames()) {
-				Console.Error.WriteLine(String.Format("Counter: {0}", instanceName));
+				Console.Error.WriteLine(String.Format("instanceName: {0}", instanceName));
 				Debug.WriteLine(String.Format("Counter: {0}", instanceName));
 				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instanceName, true)) {
 					int rawValue = (int)performanceCounter.RawValue;
@@ -24,12 +24,12 @@ namespace Utils {
 			}
 			return null;
 		}
-		public static string getProcessInstanceName(string value) {
+		public static string getPerformanceCountertInstance(string value) {
 			int pid = 0;
 			Int32.TryParse(value, out pid);
-			return getProcessInstanceName(pid);
+			return getPerformanceCountertInstance(pid);
 		}
-		public static string getProcessInstanceName(string name, int pid) {
+		public static string getPerformanceCountertInstance(string name, int pid) {
 			Debug.WriteLine(String.Format("Searching Performance Counter for process with name: {0} pid: {1}", name, pid));
 			Console.Error.WriteLine(String.Format("Searching Performance Counter for process with name: {0} pid: {1}", name, pid));
 			var performanceCounterCategory =
@@ -49,12 +49,12 @@ namespace Utils {
 			}
 			return null;
 		}
-		public static string getProcessInstanceName(string name, string value) {
+		public static string getPerformanceCountertInstance(string name, string value) {
 			int pid = 0;
 			Int32.TryParse(value, out pid);
-			return getProcessInstanceName(name, pid);
+			return getPerformanceCountertInstance(name, pid);
 		}
-		public static List<int> getProcessIDsByCommandLine(string filename, string value) {
+		public static List<int> getProcessIDByCommandLine(string filename, string value) {
 		 var results = new List<int>();
 			// https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-process
 			// NOTE: take advantage of WMI pseudo-SQL WQL LIKE with %value% wildcard matching against Win32_Process.CommandLine
