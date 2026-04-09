@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Timers;
+using System.Diagnostics;
 
 
 namespace Utils {
@@ -98,13 +99,14 @@ namespace Utils {
 		}
 
 		private void start(ElapsedEventHandler handler) {
+			Console.Error.WriteLine("started timer with interval: " + interval);
+			// Debug.WriteLine("started timer with interval: " + interval);
 			timer = new System.Timers.Timer();
 			timer.Interval = interval;
 			timer.AutoReset = true;
 			timer.Elapsed += handler;
 			timer.Start();
 
-			Console.Error.WriteLine("started timer with interval: " + interval);
 		}
 
 		// This is useful to detect some long running operation has finished
@@ -114,6 +116,7 @@ namespace Utils {
 
 		private void resultPoll(object sender, ElapsedEventArgs e) {
 			Console.Error.WriteLine("timer elapsed");
+			// Debug.WriteLine("timer elapsed");
 			timer.Stop();
 			string result = getResult2 == null? getResult1(this.argument1):getResult2(this.argument1,this.argument2);
 			Console.Error.WriteLine(String.Format("result: {0}", result));

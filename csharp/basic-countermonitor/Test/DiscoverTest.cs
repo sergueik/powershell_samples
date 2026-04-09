@@ -124,6 +124,7 @@ namespace Test {
 		
 			Thread.Sleep(2500);
 		
+			Assert.NotNull(discover2.Result);
 			StringAssert.IsMatch("[1-9][09]*",  discover2.Result);
 			Console.Error.WriteLine(String.Format("Found pid of process {0} with argument {1}: {2}", name, jar, discover2.Result));
 
@@ -156,6 +157,7 @@ C:\Program Files (x86)\Common Files\Oracle\Java\javapath\java.exe
 			discover2.startPollingForResult();
 		
 			Thread.Sleep(2500);
+			Assert.NotNull(discover2.Result);
 			StringAssert.IsMatch("[1-9][09]*",  discover2.Result);
 			Console.Error.WriteLine(String.Format("Found pid of process {0} with argument {1}: {2}", name, mainClass, discover2.Result));
 		}
@@ -175,6 +177,7 @@ C:\Program Files (x86)\Common Files\Oracle\Java\javapath\java.exe
 			var discover2 = new Discover(  interval, getResult2,"java.exe",mainClass);
 			discover2.startPollingForResult();
 			Thread.Sleep(2500);
+			Assert.NotNull(discover2.Result);
 			StringAssert.IsMatch("[1-9][09]*",  discover2.Result);
 			var pid = discover2.Result;
 			var result = ProcessInfo.getProcessInstanceName(pid);
@@ -197,13 +200,15 @@ C:\Program Files (x86)\Common Files\Oracle\Java\javapath\java.exe
 			var discover2 = new Discover(  interval, getResult2,"java.exe",mainClass);
 			discover2.startPollingForResult();
 			Thread.Sleep(2500);
+			Assert.NotNull(discover2.Result);
 			StringAssert.IsMatch("[1-9][09]*",  discover2.Result);
 			var pid = discover2.Result;
-			Console.Error.WriteLine(String.Format("Finding performance counter for process id {0}",pid));
+			Console.Error.WriteLine(String.Format("Finding performance counter for process name:{0} id: {1}","java", pid));
 			Func<string, string, string> getResult3 = (string argument1,String argument2) => ProcessInfo.getProcessInstanceName(argument1,argument2);			
 			var discover3 = new Discover( interval, getResult3, "java", pid);
 			Thread.Sleep(2500);
-			StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", "java"), "java", discover3.Result);
+			Assert.NotNull(discover3.Result);
+			StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", "java"), discover3.Result);
 			Console.Error.WriteLine(String.Format("Found performance counter for process {0} with pid {1}: {2}", "java", pid, discover3.Result));
 			
 		}
@@ -222,11 +227,36 @@ C:\Program Files (x86)\Common Files\Oracle\Java\javapath\java.exe
 			var discover2 = new Discover(  interval, getResult2,name,jar); 
 			discover2.startPollingForResult();
 			Thread.Sleep(2500);
+			Assert.NotNull(discover2.Result);
 			StringAssert.IsMatch("[1-9][09]*",  discover2.Result);
 			var pid = discover2.Result;
 			var result = ProcessInfo.getProcessInstanceName(name, pid);
 			StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", name),  result);
 			Console.Error.WriteLine(String.Format("Found performance counter for process {0} with pid {1}: {2}", name, pid, result));
+		}
+
+		[Test]
+		public void test12() {
+			
+			var name = "java";
+			var mainClass = "example.Application";
+			Func<string, string, string> getResult2 = (string argument1,string argument2) => {
+				Console.Error.WriteLine("test 12");
+				List<int>results = ProcessInfo.getProcessIDsByCommandLine(argument1, argument2);
+				if (results.Count > 1)
+				{
+				} else
+					Console.Error.WriteLine(String.Format("filename: {0}| variable: {1}|pid: {2}" , argument1,  argument2, results[0]));
+				return results[0].ToString();	};
+			var discover2 = new Discover(  interval, getResult2, name + ".exe",mainClass);
+			discover2.startPollingForResult();
+			Thread.Sleep(2500);
+			Assert.NotNull(discover2.Result);
+			StringAssert.IsMatch("[1-9][09]*",  discover2.Result);
+			var pid = discover2.Result;
+			var result = ProcessInfo.getProcessInstanceName(name, pid);
+			StringAssert.IsMatch(String.Format("{0}(?:#[1-9][09]*)?", name),  result);
+			Console.Error.WriteLine(String.Format("Found performance counter for process name: {0} id:{1} counter:{2}",name, pid, result));
 		}
 
 	}

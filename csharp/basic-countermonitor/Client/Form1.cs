@@ -11,6 +11,7 @@ using System.Threading;
 using System.Text;
 using System.IO;
 using System.ComponentModel;
+using System.Diagnostics;
 using Utils;
 
 namespace Program {
@@ -45,20 +46,44 @@ namespace Program {
 			Application.Run(new Form1());
 		}
 
-		private void button1_Click(object sender, EventArgs e) {
+		private void button1_Click(object sender, EventArgs e)
+		{
 			string text = textbox3.safeInvoke((TextBox textbox) => textbox.Text);
+			string status = null;
+			string name = null;
+			string mainClass = null;
+			string pid = null;
+			string result = null;
 
 			button1.safeInvoke((Control control) => control.Enabled = false);
 			textbox3.safeInvoke((TextBox textbox) => textbox.Text = "");
 
 			if (textbox2.Text != null) {
-				Func<string, string, string> getResult = (string argument1, string argument2) => {
-					cnt++;
-					Thread.Sleep(100);
-					Console.Error.WriteLine("cnt :" + cnt);
-					return cnt == 10 ? "DONE" : "";
+				name = textbox1.Text;
+				mainClass = textbox2.Text;
+				Func<string, string, string> getResult2 = (string argument1, string argument2) => {
+					List<int> results = ProcessInfo.getProcessIDsByCommandLine(argument1, argument2);
+					if (results.Count > 1) {
+						// TODO: handle this
+					} else {
+						status = String.Format("name: {0}| variable: {1}|pid: {2}", argument1, argument2, results[0]);
+						Debug.WriteLine(status);
+						textbox3.safeInvoke((TextBox textbox) => textbox.Text = status);
+					}
+					return results[0].ToString();
 				};
-				discover1 = new Discover(interval, getResult, textbox1.Text, textbox2.Text);
+				var discover2 = new Discover(interval, getResult2, name + ".exe", mainClass);
+				discover2.startPollingForResult();
+				Thread.Sleep(2500);
+				pid = discover2.Result;
+				status = String.Format("name: {0}| variable: {1}|pid: {2}", name, mainClass, pid);
+				textbox3.safeInvoke((TextBox textbox) => textbox.Text = status);
+				Debug.WriteLine(status);
+				result = ProcessInfo.getProcessInstanceName(name, pid);
+				status = String.Format("name: {0} pid:{1} counter:{2}", name, pid, result);
+				textbox3.safeInvoke((TextBox textbox) => textbox.Text = status);
+				Debug.WriteLine(status);
+
 			} else {
 				Func<string, string> getResult = (string argument) => {
 					cnt++;
@@ -67,12 +92,8 @@ namespace Program {
 					return cnt == 10 ? "DONE" : "";
 				};
 				discover1 = new Discover(interval, getResult, textbox1.Text);
-			}
-			cnt = 0;
-			discover1.startPollingForResult();
-			Thread.Sleep(2500);
-		
-			textbox3.safeInvoke((TextBox textbox) => textbox.Text = discover1.Result);
+			}		
+			// textbox3.safeInvoke((TextBox textbox) => textbox.Text = discover1.Result);
 			button1.safeInvoke((Control control) => control.Enabled = true);
 		}
 

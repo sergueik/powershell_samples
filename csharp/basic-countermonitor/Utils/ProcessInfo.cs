@@ -7,11 +7,12 @@ using System.Collections.Specialized;
 namespace Utils {
 	public class ProcessInfo {
 		public static string getProcessInstanceName(int pid) {
+			Console.Error.WriteLine(String.Format("Searching Perfoerance Counter for process with pid: {0}", pid));
 			var performanceCounterCategory =
 				new PerformanceCounterCategory("Process");
 
 			foreach (string instance in performanceCounterCategory.GetInstanceNames()) {
-				// Console.Error.WriteLine(String.Format("Counter: {0}", instance));
+				Console.Error.WriteLine(String.Format("Counter: {0}", instance));
 				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instance, true)) {
 					int rawValue = (int)performanceCounter.RawValue;
 
@@ -27,18 +28,19 @@ namespace Utils {
 			return getProcessInstanceName(pid);
 		}
 		public static string getProcessInstanceName(string name, int pid) {
+			Console.Error.WriteLine(String.Format("Searching Performance Counter for process with name: {0} pid: {1}", name, pid));
 			var performanceCounterCategory =
 				new PerformanceCounterCategory("Process");
 
-			foreach (string instance in performanceCounterCategory.GetInstanceNames()) {
-				// Console.Error.WriteLine(String.Format("Counter: {0}", instance));
-				if (instance.IndexOf(name) == -1)
+			foreach (string instanceName in performanceCounterCategory.GetInstanceNames()) {
+				if (instanceName.IndexOf(name) == -1)
 					continue;
-				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instance, true)) {
+				Console.Error.WriteLine(String.Format("Counter: {0}", instanceName));
+				using (var performanceCounter = new PerformanceCounter("Process", "ID Process", instanceName, true)) {
 					int rawValue = (int)performanceCounter.RawValue;
 
 					if (rawValue == pid)
-						return instance;
+						return instanceName;
 				}
 			}
 			return null;
@@ -56,6 +58,7 @@ namespace Utils {
 			// NOTE: preserve WMI vendor class/property mixed camel snake style for readability.
 			var query = String.Format("SELECT Name, Caption, ProcessId, CommandLine FROM Win32_Process WHERE CommandLine LIKE '%{0}%' AND CommandLine LIKE '%{1}%'", filename, value);
 			Console.Error.WriteLine(String.Format("query: {0}",query));
+			
 			// NOTE: 
 			// The WMIC.exe command
 			// wmic:root\cli>path win32_process get commandline,caption,name,processid where (processid=30448)
@@ -67,6 +70,14 @@ namespace Utils {
 					Console.Error.WriteLine(String.Format("examine the results: {0} rows" , managementObjectCollection.Count));
 
 					foreach (ManagementBaseObject managementBaseObject in managementObjectCollection) {
+						Console.Error.WriteLine(String.Format("name: {0}|caption: {1}|commandline: {2}", managementBaseObject["Name"], managementBaseObject["Caption"], managementBaseObject["CommandLine"]));
+						/*
+							Console.Error.WriteLine("properties:");
+							var propertyDataEnumerator  = managementBaseObject.Properties.GetEnumerator();
+							while (propertyDataEnumerator.MoveNext()) {
+								Console.Error.WriteLine("property:" + propertyDataEnumerator.Current.Name);
+							}
+						*/
 						// Extract the ProcessId property
 						if (managementBaseObject["ProcessId"] != null) {
 							Console.Error.WriteLine(String.Format("Collected the result: {0}", managementBaseObject["ProcessId"]));
@@ -75,7 +86,7 @@ namespace Utils {
 					}
 				}
 			} catch (ManagementException e) {
-				Console.Error.WriteLine(String.Format("ManagementException  occurred while querying WMI: {0}", e.Message));
+				Console.Error.WriteLine(String.Format("ManagementException occurred while querying WMI: {0}", e.Message));
 			}
 			return results;
 		}

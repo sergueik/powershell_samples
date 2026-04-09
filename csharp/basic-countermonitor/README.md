@@ -195,7 +195,8 @@ when subject application maven is used it becomes a little messy:
 ```cmd
 mvn spring-boot:run
 ```
-runs `java.exa` somewhat 
+runs `java.exa` somewhat differently - with a very long `classpath` argument including the project `target\classes` path, and all dependencies from `$HOME\.m2\repository` and the jar main class invoked explicilty:
+
 
 to find out explore it
 
@@ -235,7 +236,8 @@ more.com +1 %LOG% | findstr -i %APPLICATION_JAR%
   * https://stackoverflow.com/questions/661561/how-do-i-update-the-gui-from-another-thread
   * [effective way to wrire](https://www.codeproject.com/Articles/37642/Avoiding-InvokeRequired) `InvokeRequired` delegates
   * [how to use InvokeRequired](https://stackoverflow.com/questions/15580494)
-
-
+  * https://learn.microsoft.com/en-us/dotnet/desktop/winforms/how-to-change-the-borders-of-windows-forms?view=netframework-4.5
+  * https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.textbox?view=netframework-4.5
+ 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
