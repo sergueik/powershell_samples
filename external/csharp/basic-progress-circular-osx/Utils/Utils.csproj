@@ -60,6 +60,7 @@
     <Compile Include="CircularBuffer.cs" />
     <Compile Include="CircularProgressControl.cs" />
     <Compile Include="Data.cs" />
+    <Compile Include="ExtensionMethod.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

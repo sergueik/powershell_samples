@@ -1,13 +1,10 @@
 using System;
 using System.Windows.Forms;
 
-namespace Program
-{
-    static class Program
-    {
+namespace Program {
+    static class Program {
         [STAThread]
-        static void Main()
-        {
+        static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

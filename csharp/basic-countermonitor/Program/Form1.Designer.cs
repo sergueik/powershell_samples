@@ -58,7 +58,7 @@ namespace Program {
 			timer2.SynchronizingObject = this;
 
 			button1.Location = new Point(26, 22);
-			button1.Margin = new Padding(6, 6, 6, 6);
+			button1.Margin = new Padding(6);
 			button1.Name = "button1";
 			button1.Size = new Size(182, 42);
 			button1.TabIndex = 0;
@@ -67,7 +67,7 @@ namespace Program {
 			button1.Click += new System.EventHandler(button1_Click);
 
 			progressBar1.Location = new Point(26, 76);
-			progressBar1.Margin = new Padding(6, 6, 6, 6);
+			progressBar1.Margin = new Padding(6);
 			progressBar1.Maximum = 1000;
 			progressBar1.Name = "progressBar1";
 			progressBar1.Size = new Size(418, 31);
@@ -76,7 +76,7 @@ namespace Program {
 			label1.AutoSize = true;
 			label1.Location = new Point(460, 78);
 			label1.Margin = new Padding(6, 0, 6, 0);
-			label1.Name = "label";
+			label1.Name = "label1";
 			label1.Size = new Size(41, 25);
 			label1.TabIndex = 2;
 			label1.Text = "0%";
@@ -87,7 +87,7 @@ namespace Program {
 			this.Controls.Add(label1);
 			this.Controls.Add(progressBar1);
 			this.Controls.Add(button1);
-			this.Margin = new Padding(6, 6, 6, 6);
+			this.Margin = new Padding(6);
 			this.Name = "Form1";
 			this.Text = "Form1";
 			((System.ComponentModel.ISupportInitialize)(timer1)).EndInit();
@@ -97,7 +97,6 @@ namespace Program {
 
 		}
 
-		
 		// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.progressbar?view=netframework-4.5
 		private ProgressBar progressBar1;
 		private Label label1;

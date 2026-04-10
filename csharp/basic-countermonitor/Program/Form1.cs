@@ -29,8 +29,7 @@ namespace Program {
 		private string counterName = "Available Bytes";
 		private string instanceName = "";
 
-		public Form1()
-		{
+		public Form1() {
 
 			buffer = new CircularBuffer<Data>(capacity);
 			appSettings = ConfigurationManager.AppSettings;
@@ -186,7 +185,5 @@ namespace Program {
 				dataFile = openFileDialog.FileName;
 			}
 		}
-
-
 	}
 }
