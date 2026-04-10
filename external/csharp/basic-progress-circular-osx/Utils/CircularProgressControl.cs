@@ -1,15 +1,40 @@
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
-using System.Text;
+using System.Linq;
+
+using System.Timers;
 using System.Windows.Forms;
+using System;
 
 namespace Utils
 {
     public partial class CircularProgressControl : UserControl
     {
 
+        private string result;
+		public string Result { get { 
+			Debug.WriteLine(String.Format("result: {0}", this.result));
+			return result;}
+		}
+		private CircularBuffer<Data> buffer;
+
+		private System.Timers.Timer timer1;
+		private System.Timers.Timer timer2;
+
+		private Boolean debug;
+		private int averageInterval = 30000;
+		private int collectInterval = 1000;
+		private static int capacity = 900;
+		// NOTE: the default value os
+		// categoryNAme, counterName and instanceName about to be overwrittedn my app config values
+		private string categoryName = "Memory";
+		private string counterName = "Available Bytes";
+		private string instanceName = "";
+
+
+
+		
         private const int DEFAULT_INTERVAL = 60;
         private readonly Color DEFAULT_TICK_COLOR = Color.FromArgb(58, 58, 58);
         private const int DEFAULT_TICK_WIDTH = 2;
@@ -36,7 +61,7 @@ namespace Utils
         int m_SpokesCount = 0;
         int m_AngleIncrement = 0;
         int m_AlphaDecrement = 0;
-        Timer m_Timer = null;
+        System.Windows.Forms.Timer m_Timer = null;
 
         public int Interval
         {
@@ -108,7 +133,7 @@ namespace Utils
             m_Pen = new Pen(TickColor, DEFAULT_TICK_WIDTH);
             m_Pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
             m_Pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
-            m_Timer = new Timer();
+            m_Timer = new System.Windows.Forms.Timer();
             m_Timer.Interval = this.Interval;
             m_Timer.Tick += new EventHandler(OnTimerTick);
         }
@@ -196,11 +221,30 @@ namespace Utils
 
         public void Start()
         {
+        				
+			timer1 = new System.Timers.Timer();
+			timer2 = new System.Timers.Timer();
+
+        	buffer = new CircularBuffer<Data>(capacity);
+
             if (m_Timer != null)
             {
                 m_Timer.Interval = this.Interval;
                 m_Timer.Enabled = true;
             }
+            // planted the code responsible for metric collection
+            
+				timer1.Interval = collectInterval;
+				timer1.Enabled = true;
+				timer1.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => CollectMetrics());
+				timer1.Start();
+
+				timer2.Interval = averageInterval;
+				timer2.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => Commit());
+				timer2.Enabled = true;
+				timer2.Start();
+	
+            
         }
 
         public void Stop()
@@ -209,7 +253,56 @@ namespace Utils
             {
                 m_Timer.Enabled = false;
             }
+			if (timer2 != null) {
+					timer1.Stop();
+					timer1.Enabled = false;
+				}
+				if (timer2 != null) {
+					timer2.Stop();
+					timer2.Enabled = false;
+				}
+            
         }
-    }
+ 		private void CollectMetrics() {
+			float value = 0;
+			var row = new Data();
+			row.TimeStamp = DateTime.Now;
+			try {
+				// https://learn.microsoft.com/en-us/windows/win32/perfctrs/performance-counters-reference
+				var performanceCounter = new PerformanceCounter();
+				performanceCounter.CategoryName = this.categoryName;
+				performanceCounter.CounterName = this.counterName;
+				performanceCounter.InstanceName = instanceName == "" ? null : instanceName;
+				// value = (long)performanceCounter.RawValue;
+				value = performanceCounter.NextValue();
+			} catch (InvalidOperationException e) {
+				Debug.WriteLine(String.Format("Exception reading \"{0}\\{1}\\{2}\": {3}", categoryName, counterName, "0", e.ToString()));
+				return;
+			}
+			row.Value = value;
+			buffer.AddLast(row);
+		}
+        
+		private void Commit() {
+
+			var rows = buffer.ToList();
+			var now = DateTime.Now;
+			double average = 0;
+			IEnumerable<float> values = null;
+
+			try {
+				values = (from row in rows
+				          where ((now - row.TimeStamp).TotalMilliseconds) <= (float)this.averageInterval
+				          select row.Value);
+				average = values.Average();
+				this.result = String.Format("{0} from {1} samples", average, values.Count());
+				Debug.WriteLine(this.result);
+
+			} catch (Exception e) {
+				// System.InvalidOperationException: Sequence contains no elements
+				Debug.WriteLine(String.Format("Exception: {0}", e.ToString()));
+			}
+		}
+   }
 }
 
