@@ -14,7 +14,7 @@ namespace Utils
 
         private string result;
 		public string Result { get { 
-			Debug.WriteLine(String.Format("result: {0}", this.result));
+			System.Diagnostics.Debug.WriteLine(String.Format("result: {0}", this.result));
 			return result;}
 		}
 		private CircularBuffer<Data> buffer;
@@ -31,9 +31,6 @@ namespace Utils
 		private string categoryName = "Memory";
 		private string counterName = "Available Bytes";
 		private string instanceName = "";
-
-
-
 		
         private const int DEFAULT_INTERVAL = 60;
         private readonly Color DEFAULT_TICK_COLOR = Color.FromArgb(58, 58, 58);
@@ -43,6 +40,13 @@ namespace Utils
         private Size MINIMUM_CONTROL_SIZE = new Size(28, 28);
         private const int MINIMUM_PEN_WIDTH = 2;
 
+        public string CategoryName {get; set;}
+        public string CounterName {get; set;}
+        public string InstanceName {get; set;}
+        public int AverageInterval {get; set;}
+        public int CollectInterval {get; set;}
+        public int Capacity {get; set;}
+        public Boolean Debug {get; set;}
 
         public enum Direction
         {
@@ -225,7 +229,7 @@ namespace Utils
 			timer1 = new System.Timers.Timer();
 			timer2 = new System.Timers.Timer();
 
-        	buffer = new CircularBuffer<Data>(capacity);
+        	buffer = new CircularBuffer<Data>(this.Capacity);
 
             if (m_Timer != null)
             {
@@ -234,12 +238,12 @@ namespace Utils
             }
             // planted the code responsible for metric collection
             
-				timer1.Interval = collectInterval;
+				timer1.Interval = this.CollectInterval;
 				timer1.Enabled = true;
 				timer1.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => CollectMetrics());
 				timer1.Start();
 
-				timer2.Interval = averageInterval;
+				timer2.Interval = this.AverageInterval;
 				timer2.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => Commit());
 				timer2.Enabled = true;
 				timer2.Start();
@@ -253,7 +257,7 @@ namespace Utils
             {
                 m_Timer.Enabled = false;
             }
-			if (timer2 != null) {
+			if (timer1 != null) {
 					timer1.Stop();
 					timer1.Enabled = false;
 				}
@@ -270,13 +274,14 @@ namespace Utils
 			try {
 				// https://learn.microsoft.com/en-us/windows/win32/perfctrs/performance-counters-reference
 				var performanceCounter = new PerformanceCounter();
-				performanceCounter.CategoryName = this.categoryName;
-				performanceCounter.CounterName = this.counterName;
-				performanceCounter.InstanceName = instanceName == "" ? null : instanceName;
+				performanceCounter.CategoryName = this.CategoryName;
+				performanceCounter.CounterName = this.CounterName;
+				performanceCounter.InstanceName = this.InstanceName == "" ? null : this.InstanceName;
 				// value = (long)performanceCounter.RawValue;
 				value = performanceCounter.NextValue();
 			} catch (InvalidOperationException e) {
-				Debug.WriteLine(String.Format("Exception reading \"{0}\\{1}\\{2}\": {3}", categoryName, counterName, "0", e.ToString()));
+				if (this.Debug)
+					System.Diagnostics.Debug.WriteLine(String.Format("Exception reading \"{0}\\{1}\\{2}\": {3}", this.CategoryName, this.CounterName, "0", e.ToString()));
 				return;
 			}
 			row.Value = value;
@@ -292,15 +297,17 @@ namespace Utils
 
 			try {
 				values = (from row in rows
-				          where ((now - row.TimeStamp).TotalMilliseconds) <= (float)this.averageInterval
+				          where ((now - row.TimeStamp).TotalMilliseconds) <= (float)this.AverageInterval
 				          select row.Value);
 				average = values.Average();
 				this.result = String.Format("{0} from {1} samples", average, values.Count());
-				Debug.WriteLine(this.result);
+				if (this.Debug)
+					System.Diagnostics.Debug.WriteLine(this.result);
 
 			} catch (Exception e) {
 				// System.InvalidOperationException: Sequence contains no elements
-				Debug.WriteLine(String.Format("Exception: {0}", e.ToString()));
+				if (this.Debug)
+					System.Diagnostics.Debug.WriteLine(String.Format("Exception: {0}", e.ToString()));
 			}
 		}
    }
