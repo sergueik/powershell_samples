@@ -20,7 +20,10 @@ param (
   [int] $processid = 42068,
   [string] $value = 'example.Appication',
   [string] $name = 'java.exe',
-  [switch]$debug # currently unused
+  [string] $category = 'Process',
+  [string] $counter = 'Working Set', 
+  [string] $instance = 'java',
+  [switch] $debug # currently unused
 )
 
 [bool]$debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $DebugPreference -eq 'Continue'
@@ -50,7 +53,7 @@ namespace Utils
     {
 
         private string result;
-		public string Result { get { 
+		public string Result { get {
 			Console.Error.WriteLine(String.Format("result: {0}", this.result));
 			return result;}
 		}
@@ -68,7 +71,7 @@ namespace Utils
 		private string categoryName = "Memory";
 		private string counterName = "Available Bytes";
 		private string instanceName = "";
-		
+
         private const int DEFAULT_INTERVAL = 60;
         private readonly Color DEFAULT_TICK_COLOR = Color.FromArgb(58, 58, 58);
         private const int DEFAULT_TICK_WIDTH = 2;
@@ -125,7 +128,7 @@ namespace Utils
         public Color TickColor { get; set; }
         public Direction Rotation { get; set; }
         private bool m_clockwise;
-        public bool Clockwise 
+        public bool Clockwise
         {
             get
             {
@@ -134,9 +137,9 @@ namespace Utils
             set
             {
                 m_clockwise = value;
-                if (m_clockwise){ 
+                if (m_clockwise){
                    this.Rotation = Direction.CLOCKWISE;
-                } else { 
+                } else {
                    this.Rotation = Direction.ANTICLOCKWISE;
                  }
             }
@@ -158,7 +161,7 @@ namespace Utils
         {
             this.DoubleBuffered = true;
 
-            
+
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = Color.Transparent;
             this.TickColor = DEFAULT_TICK_COLOR;
@@ -207,7 +210,7 @@ namespace Utils
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
-            // Since the Rendering of the spokes is dependent upon the current size of the 
+            // Since the Rendering of the spokes is dependent upon the current size of the
             // control, the following calculation needs to be done within the Paint eventhandler.
             int alpha = m_AlphaStartValue;
             int angle = m_StartAngle;
@@ -262,7 +265,7 @@ namespace Utils
 
         public void Start()
         {
-        				
+
 			timer1 = new System.Timers.Timer();
 			timer2 = new System.Timers.Timer();
 
@@ -274,7 +277,7 @@ namespace Utils
                 m_Timer.Enabled = true;
             }
             // planted the code responsible for metric collection
-            
+
 				timer1.Interval = this.collectInterval;
 				timer1.Enabled = true;
 				timer1.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => CollectMetrics());
@@ -284,8 +287,8 @@ namespace Utils
 				timer2.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => Commit());
 				timer2.Enabled = true;
 				timer2.Start();
-	
-            
+
+
         }
 
         public void Stop()
@@ -302,7 +305,7 @@ namespace Utils
 					timer2.Stop();
 					timer2.Enabled = false;
 				}
-            
+
         }
  		private void CollectMetrics() {
 			float value = 0;
@@ -324,7 +327,7 @@ namespace Utils
 			row.Value = value;
 			buffer.AddLast(row);
 		}
-        
+
 		private void Commit() {
 
 			var rows = buffer.ToList();
@@ -660,7 +663,7 @@ namespace Utils
 				}
 			}
 		}
-	}	
+	}
 }
 
 
@@ -697,7 +700,7 @@ function get_process_id_by_commandline {
 }
 
 
-function get_performance_counter {
+function get_performance_counter_instance {
   param (
     [int] $processid = -1,
     [string] $name = 'chrome'
@@ -721,6 +724,12 @@ function get_performance_counter {
 }
 
 
+$processid = get_process_id_by_commandline -name $name -value $value
+write-output ('processid: {0}' -f $processid)
+# NOTE:
+$name = 'java'
+$instance = get_performance_counter_instance -processid $processid -name $name
+write-output ('peformance counter instance: {0}' -f $instance )
 
 @( 'System.Drawing','System.Windows.Forms') | ForEach-Object { [void][System.Reflection.Assembly]::LoadWithPartialName($_) }
 $f = New-Object System.Windows.Forms.Form
@@ -732,14 +741,14 @@ $f.ClientSize = New-Object System.Drawing.Size (257,119)
 $button1 = New-Object System.Windows.Forms.Button
 $label = New-Object System.Windows.Forms.Label
 $cbc1 = New-Object Utils.CircularProgressControl
-$cbc1.CategoryName = "Memory"  # this.categoryName;
-$cbc1.CounterName = "Available Bytes"# this.counterName
-$cbc1.InstanceName = "" # this.instanceName;
-
-$cbc1.AverageInterval = 30000 # this.averageInterval;
-$cbc1.CollectInterval = 1000 # this.collectInterval;
-$cbc1.Capacity = 900 # this.capacity;
-$cbc1.Debug = $debug_flag
+$cbc1.CategoryName = $category
+$cbc1.CounterName = $counter
+$cbc1.InstanceName = $instance
+write-output ('\{0}({1})\{2}' -f $category, $instance,$counter)
+$cbc1.AverageInterval = 30000
+$cbc1.CollectInterval = 1000
+$cbc1.Capacity = 900
+$cbc1.Debug = $true
 
 $f.SuspendLayout()
 

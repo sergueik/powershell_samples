@@ -139,7 +139,7 @@ function get_process_id_by_commandline {
 }
 
 
-function get_performance_counter {
+function get_performance_counter_instance {
   param (
     [int] $processid = -1,
     [string] $name = 'chrome'
@@ -167,5 +167,5 @@ $processid = get_process_id_by_commandline -name $name -value $value
 write-output ('processid: {0}' -f $processid)
 # NOTE:
 $name = 'java'
-$result = get_performance_counter -processid $processid -name $name
-write-output ('peformance counter instance: {0}' -f $result)
+$instance = get_performance_counter_instance -processid $processid -name $name
+write-output ('peformance counter instance: {0}' -f $instance)
