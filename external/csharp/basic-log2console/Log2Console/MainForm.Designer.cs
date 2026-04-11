@@ -103,10 +103,8 @@ namespace Log2Console
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.copyLogDetailBtn = new System.Windows.Forms.ToolStripButton();
             this.tabExceptions = new System.Windows.Forms.TabPage();
-            this.tbExceptions = new RichTextBoxLinks.RichTextBoxEx();
             this.tabSource = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.textEditorSourceCode = new ICSharpCode.TextEditor.TextEditorControl();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel5 = new System.Windows.Forms.ToolStripLabel();
             this.lbFileName = new System.Windows.Forms.ToolStripLabel();
@@ -784,29 +782,6 @@ namespace Log2Console
             this.copyLogDetailBtn.Text = "Copy";
             this.copyLogDetailBtn.Click += new System.EventHandler(this.copyLogDetailBtn_Click);
             // 
-            // tabExceptions
-            // 
-            this.tabExceptions.Controls.Add(this.tbExceptions);
-            this.tabExceptions.Location = new System.Drawing.Point(4, 22);
-            this.tabExceptions.Name = "tabExceptions";
-            this.tabExceptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabExceptions.Size = new System.Drawing.Size(981, 168);
-            this.tabExceptions.TabIndex = 2;
-            this.tabExceptions.Text = "Exceptions";
-            this.tabExceptions.UseVisualStyleBackColor = true;
-            // 
-            // tbExceptions
-            // 
-            this.tbExceptions.BackColor = System.Drawing.SystemColors.Window;
-            this.tbExceptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbExceptions.Location = new System.Drawing.Point(3, 3);
-            this.tbExceptions.Name = "tbExceptions";
-            this.tbExceptions.ReadOnly = true;
-            this.tbExceptions.Size = new System.Drawing.Size(975, 162);
-            this.tbExceptions.TabIndex = 0;
-            this.tbExceptions.Text = "";
-            this.tbExceptions.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.TbExceptionsLinkClicked);
-            // 
             // tabSource
             // 
             this.tabSource.Controls.Add(this.panel1);
@@ -820,23 +795,12 @@ namespace Log2Console
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.textEditorSourceCode);
-            this.panel1.Controls.Add(this.toolStrip1);
+                     this.panel1.Controls.Add(this.toolStrip1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(975, 162);
             this.panel1.TabIndex = 1;
-            // 
-            // textEditorSourceCode
-            // 
-            this.textEditorSourceCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditorSourceCode.IsReadOnly = false;
-            this.textEditorSourceCode.LineViewerStyle = ICSharpCode.TextEditor.Document.LineViewerStyle.FullRow;
-            this.textEditorSourceCode.Location = new System.Drawing.Point(0, 25);
-            this.textEditorSourceCode.Name = "textEditorSourceCode";
-            this.textEditorSourceCode.Size = new System.Drawing.Size(975, 137);
-            this.textEditorSourceCode.TabIndex = 0;
             // 
             // toolStrip1
             // 
@@ -861,17 +825,7 @@ namespace Log2Console
             // 
             this.lbFileName.Name = "lbFileName";
             this.lbFileName.Size = new System.Drawing.Size(0, 22);
-            // 
-            // btnOpenFileInVS
-            // 
-            this.btnOpenFileInVS.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnOpenFileInVS.Image = global::Log2Console.Properties.Resources.saveas16;
-            this.btnOpenFileInVS.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnOpenFileInVS.Name = "btnOpenFileInVS";
-            this.btnOpenFileInVS.Size = new System.Drawing.Size(23, 22);
-            this.btnOpenFileInVS.Text = "Export Logs...";
-            this.btnOpenFileInVS.Click += new System.EventHandler(this.btnOpenFileInVS_Click);
-            // 
+                     // 
             // logDetailSplitter
             // 
             this.logDetailSplitter.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -1101,7 +1055,7 @@ namespace Log2Console
         private System.Windows.Forms.TabControl tabControlDetail;
         private System.Windows.Forms.TabPage tabMessage;
         private System.Windows.Forms.TabPage tabSource;
-        private ICSharpCode.TextEditor.TextEditorControl textEditorSourceCode;
+
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.ColumnHeader columnHeader8;
@@ -1112,7 +1066,6 @@ namespace Log2Console
         private ToolStrip logDetailToolStrip;
         private ToolStripButton btnOpenFileInVS;
         private TabPage tabExceptions;
-        private RichTextBoxLinks.RichTextBoxEx tbExceptions;
         private ToolStripButton quickLoadBtn;
         private OpenFileDialog openFileDialog1;
         private ToolStripButton dactivateSourcesBtn;

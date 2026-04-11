@@ -709,8 +709,7 @@ namespace Log2Console
             if (logMsgItem == null)
             {
                 logDetailTextBox.Text = string.Empty;
-                PopulateExceptions(null);
-                OpenSourceFile(null, 0);
+      
             }
             else
             {
@@ -726,69 +725,9 @@ namespace Log2Console
                 }
 
 
-                // Append exception
-                tbExceptions.Text = string.Empty;
-                if (UserSettings.Instance.ShowMsgDetailsException &&
-                    !String.IsNullOrEmpty(logMsgItem.Message.ExceptionString))
-                {
-                    //sb.AppendLine(logMsgItem.Message.ExceptionString);            
-                    if (!string.IsNullOrEmpty(logMsgItem.Message.ExceptionString))
-                    {
-                        PopulateExceptions(logMsgItem.Message.ExceptionString);
-                    }
-                }
-
 
                 logDetailTextBox.ForeColor = logMsgItem.Message.Level.Color;
                 logDetailTextBox.Rtf = sb.ToString();
-
-                OpenSourceFile(logMsgItem.Message.SourceFileName, logMsgItem.Message.SourceFileLineNr);
-            }
-        }
-
-        private void OpenSourceFile(string fileName, uint line)
-        {
-            if (string.IsNullOrEmpty(fileName))
-            {
-                textEditorSourceCode.Visible = false;
-                lbFileName.Text = string.Empty;
-                return;
-            }
-
-            textEditorSourceCode.Visible = true;
-            try
-            {
-                if (!File.Exists(fileName))
-                {
-                    //If the file cannot be found, try to locate it using the source code mapping configuration
-                    var mappedFile = TryToLocateSourceFile(fileName);
-                    if (string.IsNullOrEmpty(mappedFile))
-                    {
-                        textEditorSourceCode.Visible = false;
-                        lbFileName.Text = fileName + " not found...";
-                        return;
-                    }
-
-                    if (!File.Exists(mappedFile))
-                    {
-                        textEditorSourceCode.Visible = false;
-                        lbFileName.Text = mappedFile + " not found...";
-                        return;
-                    }
-
-                    fileName = mappedFile;
-                }
-
-                if (line > 1)
-                    line--;
-                textEditorSourceCode.LoadFile(fileName);
-                textEditorSourceCode.ActiveTextAreaControl.TextArea.Caret.Line = (int)line;
-                textEditorSourceCode.ActiveTextAreaControl.TextArea.Caret.UpdateCaretPosition();
-                lbFileName.Text = fileName + ":" + line;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(string.Format("Message: {0}, Stack Trace: {1}", ex.Message, ex.StackTrace), "Error opening source file");
             }
         }
 
@@ -806,28 +745,7 @@ namespace Log2Console
             return null;
         }
 
-        private void PopulateExceptions(string exceptions)
-        {
-            if (string.IsNullOrEmpty(exceptions))
-            {
-                tbExceptions.Text = string.Empty;
-                return;
-            }
-
-            string[] lines = exceptions.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
-            foreach (var line in lines)
-            {
-                if (!ParseCSharpStackTraceLine(line))
-                {
-                    //No supported exception stack traces is detected
-                    tbExceptions.SelectedText = line;
-                }
-                //else if (Add other Parsers Here...)
-
-                tbExceptions.SelectedText = "\r\n";
-            }
-        }
-
+    
         private bool ParseCSharpStackTraceLine(string line)
         {
             bool stackTraceFileDetected = false;
@@ -856,12 +774,7 @@ namespace Log2Console
                             if (uint.TryParse(lineNrString, out parsedLineNr))
                             {
                                 int fileLine = (int)parsedLineNr;
-                                stackTraceFileDetected = true;
-
-                                tbExceptions.SelectedText = line.Substring(0, startOfFileIndex - 1) + " ";
-                                tbExceptions.InsertLink(string.Format("{0} line:{1}",
-                                                                fileName, fileLine));
-                            }
+                                stackTraceFileDetected = true;                            }
                         }
                     }
                 }
@@ -1211,22 +1124,6 @@ namespace Log2Console
 
         }
 
-
-        private void btnOpenFileInVS_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var processInfo = new ProcessStartInfo("devenv",
-                                                       string.Format("/edit \"{0}\" /command \"Edit.Goto {1}\"",
-                                                                     textEditorSourceCode.FileName, 0));
-                var process = Process.Start(processInfo);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error opening file in Visual Studio");
-            }
-        }
-
         private void TbExceptionsLinkClicked(object sender, LinkClickedEventArgs e)
         {
             string exception = e.LinkText;
@@ -1238,7 +1135,6 @@ namespace Log2Console
                     int lineNr;
                     int.TryParse(exceptionPair[1], out lineNr);
 
-                    OpenSourceFile(exceptionPair[0], (uint)lineNr);
                     tabControlDetail.SelectedTab = tabSource;
                 }
             }
