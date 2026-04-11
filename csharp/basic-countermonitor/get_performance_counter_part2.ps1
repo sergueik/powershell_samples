@@ -44,6 +44,7 @@ using System.Windows.Forms;
 using System;
 
 namespace Utils
+
 {
     public partial class CircularProgressControl : UserControl
     {
@@ -58,15 +59,16 @@ namespace Utils
 		private System.Timers.Timer timer1;
 		private System.Timers.Timer timer2;
 
+		private Boolean debug = true;
 		private int averageInterval = 30000;
 		private int collectInterval = 1000;
-		private static int capacity = 900;
+		private int capacity = 900;
 		// NOTE: the default value os
 		// categoryNAme, counterName and instanceName about to be overwrittedn my app config values
 		private string categoryName = "Memory";
 		private string counterName = "Available Bytes";
 		private string instanceName = "";
-
+		
         private const int DEFAULT_INTERVAL = 60;
         private readonly Color DEFAULT_TICK_COLOR = Color.FromArgb(58, 58, 58);
         private const int DEFAULT_TICK_WIDTH = 2;
@@ -75,6 +77,13 @@ namespace Utils
         private Size MINIMUM_CONTROL_SIZE = new Size(28, 28);
         private const int MINIMUM_PEN_WIDTH = 2;
 
+        public string CategoryName {get; set;}
+        public string CounterName {get; set;}
+        public string InstanceName {get; set;}
+        public int AverageInterval {get; set;}
+        public int CollectInterval {get; set;}
+        public int Capacity {get; set;}
+        public Boolean Debug {get; set;}
 
         public enum Direction
         {
@@ -257,7 +266,7 @@ namespace Utils
 			timer1 = new System.Timers.Timer();
 			timer2 = new System.Timers.Timer();
 
-        	buffer = new CircularBuffer<Data>(capacity);
+        	buffer = new CircularBuffer<Data>(this.capacity);
 
             if (m_Timer != null)
             {
@@ -266,12 +275,12 @@ namespace Utils
             }
             // planted the code responsible for metric collection
             
-				timer1.Interval = collectInterval;
+				timer1.Interval = this.collectInterval;
 				timer1.Enabled = true;
 				timer1.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => CollectMetrics());
 				timer1.Start();
 
-				timer2.Interval = averageInterval;
+				timer2.Interval = this.averageInterval;
 				timer2.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => Commit());
 				timer2.Enabled = true;
 				timer2.Start();
@@ -285,7 +294,7 @@ namespace Utils
             {
                 m_Timer.Enabled = false;
             }
-			if (timer2 != null) {
+			if (timer1 != null) {
 					timer1.Stop();
 					timer1.Enabled = false;
 				}
@@ -304,11 +313,12 @@ namespace Utils
 				var performanceCounter = new PerformanceCounter();
 				performanceCounter.CategoryName = this.categoryName;
 				performanceCounter.CounterName = this.counterName;
-				performanceCounter.InstanceName = instanceName == "" ? null : instanceName;
+				performanceCounter.InstanceName = this.instanceName == "" ? null : this.InstanceName;
 				// value = (long)performanceCounter.RawValue;
 				value = performanceCounter.NextValue();
 			} catch (InvalidOperationException e) {
-				Console.Error.WriteLine(String.Format("Exception reading \"{0}\\{1}\\{2}\": {3}", categoryName, counterName, "0", e.ToString()));
+				if (this.debug)
+					Console.Error.WriteLine(String.Format("Exception reading \"{0}\\{1}\\{2}\": {3}", this.categoryName, this.counterName, "0", e.ToString()));
 				return;
 			}
 			row.Value = value;
@@ -328,14 +338,17 @@ namespace Utils
 				          select row.Value);
 				average = values.Average();
 				this.result = String.Format("{0} from {1} samples", average, values.Count());
-				Console.Error.WriteLine(this.result);
+				if (this.debug)
+					Console.Error.WriteLine(this.result);
 
 			} catch (Exception e) {
 				// System.InvalidOperationException: Sequence contains no elements
-				Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
+				if (this.debug)
+					Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
 			}
 		}
    }
+
 	public class Data{
 		public DateTime TimeStamp { get; set; }
 		public float Value { get; set; }
@@ -719,6 +732,15 @@ $f.ClientSize = New-Object System.Drawing.Size (257,119)
 $button1 = New-Object System.Windows.Forms.Button
 $label = New-Object System.Windows.Forms.Label
 $cbc1 = New-Object Utils.CircularProgressControl
+$cbc1.CategoryName = "Memory"  # this.categoryName;
+$cbc1.CounterName = "Available Bytes"# this.counterName
+$cbc1.InstanceName = "" # this.instanceName;
+
+$cbc1.AverageInterval = 30000 # this.averageInterval;
+$cbc1.CollectInterval = 1000 # this.collectInterval;
+$cbc1.Capacity = 900 # this.capacity;
+$cbc1.Debug = $debug_flag
+
 $f.SuspendLayout()
 
 $label.AutoSize = $true
