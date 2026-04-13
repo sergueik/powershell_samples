@@ -84,8 +84,4 @@ echo "[INFO] found PID=$PID"
 echo "[INFO] collecting memory and disk I/O counters to file every ${INTERVAL}s max ${COUNT} times"
 echo "[INFO] writing pidstat output to $OUTFILE"
 
-pidstat -H -r -d -p "$PID" "$INTERVAL" "$COUNT" | \
-  awk 'NR<=3 || /^[0-9]/ { printf "%s | rss=%7.1f MB | vsz=%8.1f MB | majflt/s=%5s | cmd=%s
-", $1, $7/1024, $6/1024, $5, $9 }' | \
-  tee "$OUTFILE"
-
+pidstat -H -r -d -p "$PID" "$INTERVAL" "$COUNT" | awk 'NR<=3 || /^[0-9]/ { printf( "%s | rss=%7.1f MB | vsz=%8.1f MB | majflt/s=%5s | cmd=%s\n", $1, $7/1024, $6/1024, $5, $9 ); fflush()}' | tee "$OUTFILE"
