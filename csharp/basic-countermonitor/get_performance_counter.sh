@@ -21,6 +21,7 @@ VALUE=""
 INTERVAL=30
 COUNT=20
 OUTFILE="pidstat_mem.log"
+FORMAT="pretty"
 
 usage() {
   cat <<'EOF'
@@ -32,6 +33,7 @@ Required:
   -value    Main class, jar name, or any unique command-line fragment
 
 Optional:
+  -f        Output format: pretty|csv (default: pretty)
   -i        Sampling interval in seconds (default: 30)
   -c        Number of samples (default: 20)
   -o        Output log file (default: pidstat_mem.log)
@@ -39,7 +41,7 @@ Optional:
 EOF
 }
 
-while getopts ":n:v:i:c:o:h-:" opt; do
+while getopts ":n:v:f:i:c:o:h-:" opt; do
   case "$opt" in
     -)
       case "${OPTARG}" in
@@ -50,6 +52,7 @@ while getopts ":n:v:i:c:o:h-:" opt; do
       ;;
     n) NAME="$OPTARG" ;;
     v) VALUE="$OPTARG" ;;
+    f) FORMAT="$OPTARG" ;;
     i) INTERVAL="$OPTARG" ;;
     c) COUNT="$OPTARG" ;;
     o) OUTFILE="$OPTARG" ;;
@@ -81,7 +84,12 @@ if [[ -z "$PID" ]]; then
 fi
 
 echo "[INFO] found PID=$PID"
-echo "[INFO] collecting memory and disk I/O counters to file every ${INTERVAL}s max ${COUNT} times"
+echo "[INFO] collecting process memory counters to file every ${INTERVAL}s max ${COUNT} times"
 echo "[INFO] writing pidstat output to $OUTFILE"
 
-pidstat -H -r -d -p "$PID" "$INTERVAL" "$COUNT" | awk 'NR<=3 || /^[0-9]/ { printf( "%s | rss=%7.1f MB | vsz=%8.1f MB | majflt/s=%5s | cmd=%s\n", $1, $7/1024, $6/1024, $5, $9 ); fflush()}' | tee "$OUTFILE"
+if [[ "$FORMAT" == "csv" ]]; then  
+    echo "time,rss_mb,vsz_mb" | tee "$OUTFILE" /dev/stderr > /dev/null
+    pidstat -H -r -p "$PID" "$INTERVAL" "$COUNT" | awk '/^[0-9]/ { printf "%s,%.1f,%.1f\n", $1, $7/1024, $6/1024; fflush() }' | tee -a "$OUTFILE" /dev/stderr > /dev/null
+else
+  pidstat -H -r -p "$PID" "$INTERVAL" "$COUNT" | awk ' /UID/ { next } /^[0-9]/ {printf( "%s | rss=%7.1f MB | vsz=%8.1f MB | majflt/s=%5s | cmd=%s\n", $1, $7/1024, $6/1024, $5, $9 ); fflush();}' | tee "$OUTFILE"
+fi
