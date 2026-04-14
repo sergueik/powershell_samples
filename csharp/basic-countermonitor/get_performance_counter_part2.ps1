@@ -18,7 +18,7 @@
 
 param (
   [int] $processid = 42068,
-  [string] $value = 'example.Appication',
+  [string] $value = 'example.Application',
   [string] $name = 'java.exe',
   [string] $category = 'Process',
   [string] $counter = 'Working Set', 
@@ -27,6 +27,8 @@ param (
 )
 
 [bool]$debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $DebugPreference -eq 'Continue'
+$debug_flag = $true
+# for running commandline-less
 if ($debug_flag){
   $DebugPreference = 'Continue'
 }
