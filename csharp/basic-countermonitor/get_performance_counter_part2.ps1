@@ -685,15 +685,16 @@ function get_process_id_by_commandline {
   write-debug ('{0} rows' -f $data.Count)
   if ($data.Count -gt 0 ) {
     0..($data.Count-1) | foreach-object {
-       $cnt = $_
-       write-debug $data[$cnt].CommandLine
+      $cnt = $_
 
-       if ($data[$cnt].CommandLine -match 'example.Application') {
-         $result = $data[$cnt].ProcessId
-         write-debug ('CommanLine matched "{0}"' -f $value )
-         write-debug ('name: {0} processid: {1}' -f $data[$cnt].Name, $data[$cnt].ProcessId ) | format-list
-       }
-
+      if ($data[$cnt].CommandLine -match $value) {
+        $result = $data[$cnt].ProcessId
+        write-debug ('CommanLine matched "{0}"' -f $value )
+        write-debug ('name: {0} processid: {1}' -f $data[$cnt].Name, $data[$cnt].ProcessId ) | format-list
+      } else {
+        write-debug ('CommanLine NOT matched "{0}"' -f $value )
+        write-debug $data[$cnt].CommandLine
+      }
     }
   }
   $result
@@ -764,7 +765,7 @@ $button1.Name = 'button1'
 $button1.Size = New-Object System.Drawing.Size (75,23)
 $button1.TabIndex = 0
 $button1.Text = 'Start'
-$button1.UseVisualStyleBackColor = true
+$button1.UseVisualStyleBackColor = $true
 $button1.add_click.Invoke({
     param(
       [object]$sender,

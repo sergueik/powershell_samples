@@ -55,7 +55,7 @@ function get_process_id_by_commandline_debug {
   #>
   write-output  'take 1'
   $data = get-WmiObject -Class Win32_Process -filter "Name = 'java.exe'"|
-  where-object { $_.commandline -match 'Example.application' }  |
+  where-object { $_.commandline -match $value }  |
   Select-Object Name, ProcessId, CommandLine
   write-output ('name: {0} processid: {1}' -f $data.Name, $data.ProcessId )  | format-list
   # [string]$filter=
@@ -89,7 +89,7 @@ function get_process_id_by_commandline_debug {
        $cnt = $_
        write-debug $data[$cnt].CommandLine
 
-       if ($data[$cnt].CommandLine -match 'example.Application') {
+       if ($data[$cnt].CommandLine -match $value) {
          write-output ('CommanLine matched "{0}"' -f $value )
          write-output ('name: {0} processid: {1}' -f $data[$cnt].Name, $data[$cnt].ProcessId )  | format-list
        }
@@ -124,15 +124,17 @@ function get_process_id_by_commandline {
   write-debug ('{0} rows' -f $data.Count)
   if ($data.Count -gt 0 ) {
     0..($data.Count-1) | foreach-object {
-       $cnt = $_
-       write-debug $data[$cnt].CommandLine
+      $cnt = $_
+      write-debug $data[$cnt].CommandLine
 
-       if ($data[$cnt].CommandLine -match 'example.Application') {
-         $result = $data[$cnt].ProcessId
-         write-debug ('CommanLine matched "{0}"' -f $value )
-         write-debug ('name: {0} processid: {1}' -f $data[$cnt].Name, $data[$cnt].ProcessId ) | format-list
-       }
-
+      if ($data[$cnt].CommandLine -match $value) {
+        $result = $data[$cnt].ProcessId
+        write-debug ('CommanLine matched: "{0}"' -f $value )
+        write-debug ('name: {0} processid: {1}' -f $data[$cnt].Name, $data[$cnt].ProcessId ) | format-list
+      } else {
+        write-debug ('CommanLine matched "{0}"' -f $value )
+        write-debug $data[$cnt].CommandLine
+      }
     }
   }
   $result
