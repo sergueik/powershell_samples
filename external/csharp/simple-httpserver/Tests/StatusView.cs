@@ -9,18 +9,15 @@ namespace MiniHttpdConsole
 		List<StatusItem> items = new List<StatusItem>();
 		Dictionary<string, StatusItem> itemsByName = new Dictionary<string, StatusItem>();
 
-		public StatusItem this[string name]
-		{
-			get
-			{
+		public StatusItem this[string name] {
+			get {
 				return itemsByName[name];
 			}
 		}
 
 		string title;
 
-		public string Title
-		{
+		public string Title {
 			get { return title; }
 			set { title = value; }
 		}
@@ -76,23 +73,20 @@ namespace MiniHttpdConsole
 
 		string name;
 
-		public string Name
-		{
+		public string Name {
 			get { return name; }
 		}
 
 		string description;
 
-		public string Description
-		{
+		public string Description {
 			get { return description; }
 			set { description = value; }
 		}
 
 		bool enabled = true;
 
-		public bool Enabled
-		{
+		public bool Enabled {
 			get { return enabled; }
 			set { enabled = value; }
 		}
@@ -115,8 +109,7 @@ namespace MiniHttpdConsole
 				return;
 
 			string value = GetValue().ToString();
-			if (!onlyIfChanged || (!string.Equals(value, lastValue)))
-			{
+			if (!onlyIfChanged || (!string.Equals(value, lastValue))) {
 				if (string.IsNullOrEmpty(description))
 					Console.WriteLine(value);
 				else

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GrafanaSimpleDataSource.Data\GrafanaSimpleDataSource.Data.csproj" />
+    <ProjectReference Include="..\Techtoniq.Core.Lib.Temporal\Techtoniq.Core.Lib.Temporal.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /Y &quot;$(TargetDir)*.dll&quot; &quot;$(SolutionDir)Src\AzureFunctionApp\DataSources&quot;&#xD;&#xA;del &quot;$(SolutionDir)Src\AzureFunctionApp\DataSources\GrafanaSimpleDataSource.Data.dll&quot;&#xD;&#xA;" />
+  </Target>
+
+</Project>

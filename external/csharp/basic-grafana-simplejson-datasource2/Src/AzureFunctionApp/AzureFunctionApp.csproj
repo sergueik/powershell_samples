@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\Matt\Documents\dev\Techtoniq\GrafanaSimpleJsonDataSourceExample\Src\AzureFunctionApp\AzureFunctionApp.xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="DataSources\**" />
+    <EmbeddedResource Remove="DataSources\**" />
+    <None Remove="DataSources\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AzureExtensions.Swashbuckle" Version="3.2.2" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GrafanaSimpleDataSource.Data\GrafanaSimpleDataSource.Data.csproj" />
+    <ProjectReference Include="..\Techtoniq.Core.Lib.DynamicPlugin\Techtoniq.Core.Lib.DynamicPlugin.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+</Project>

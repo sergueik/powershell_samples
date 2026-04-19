@@ -49,6 +49,8 @@ control firewall.cpl
 
 ![Control Panel Rule Information](https://github.com/sergueik/powershell_samples/blob/master/external/csharp/simple-httpserver/screenshots/control_panel_capture.png)
 
+copy the `rrdJFlot.html` and `example4.rrd` from [sergueik/springboot_study](https://github.com/sergueik/springboot_study/tree/master/basic-rrd-js) (replica of [javascriptrrd](http://javascriptrrd.sourceforge.net/) Javascript library for rrdtool graphs Project )
+
 Open web url `http://localhost:9091/src/examples/` and navigate to page `http://localhost:9091/src/examples/rrdJFlot.html` where enter imported file URL
 `/data/example_rrds/example4.rrd`
 

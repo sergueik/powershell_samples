@@ -44,6 +44,14 @@ Connected to 127.0.0.1 on port 15555.
 Can not start process. The debugger's protocol is incompatible with the debuggee. (Exception from HRESULT: 0x8013134B)
 ```
 is probably because the project targets the incorrect version of .Net Framework (__4.0__ insted of __4.5__)
+### See Also
+
+  * [perjahn/simplesource](https://github.com/perjahn/simplesource) - simple Grafana data source, in C# - uses using `Microsoft.AspNetCore.Hosting`, `Microsoft.Extensions.Hosting` etc. presumably for routing   
+  * [Galileo9517/GrafanaGenericSimpleJsonDataSource](https://github.com/Galileo9517/GrafanaGenericSimpleJsonDataSource) .NET Core sample for JSON DataSource for Grafana - depends heavily on aspnetcore assemblies
+  * [techtoniq/GrafanaSimpleJsonDataSourceExample](https://github.com/techtoniq/GrafanaSimpleJsonDataSourceExample) - C# Azure Function data source providing data to the SimpleJson plugin for Grafana
+  * [JSON API Grafana Datasource](https://grafana.com/grafana/plugins/simpod-json-datasource) 
+  * [SimpleJson](https://grafana.com/grafana/plugins/grafana-simple-json-datasource) Simple JSON Datasource - a generic backend datasource - *__DEPRECATED and NO LONGER MAINTAINED__ by the Grafana team*
+
 ### Author
 
 [Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)

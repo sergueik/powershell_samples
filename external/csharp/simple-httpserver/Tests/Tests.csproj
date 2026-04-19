@@ -76,9 +76,9 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Utils\MiniHttpd.csproj">
-      <Project>{b3b936ad-395d-49a7-8e1e-a8051fa40ab9}</Project>
-      <Name>MiniHttpd</Name>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{4fa45fb4-1b9b-4d5d-a2df-a8169e6ea43d}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

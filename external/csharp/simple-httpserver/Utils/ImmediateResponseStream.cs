@@ -14,34 +14,26 @@ namespace MiniHttpd
 
 		long bytesSent;
 
-		public long BytesSent
-		{
-			get
-			{
+		public long BytesSent {
+			get {
 				return bytesSent;
 			}
 		}
 
-		public override bool CanRead
-		{
-			get
-			{
+		public override bool CanRead {
+			get {
 				return false;
 			}
 		}
 
-		public override bool CanWrite
-		{
-			get
-			{
+		public override bool CanWrite {
+			get {
 				return true;
 			}
 		}
 
-		public override bool CanSeek
-		{
-			get
-			{
+		public override bool CanSeek {
+			get {
 				return false;
 			}
 		}
@@ -51,22 +43,17 @@ namespace MiniHttpd
 
 		}
 
-		public override long Length
-		{
-			get
-			{
+		public override long Length {
+			get {
 				throw new NotSupportedException();
 			}
 		}
 
-		public override long Position
-		{
-			get
-			{
+		public override long Position {
+			get {
 				throw new NotSupportedException();
 			}
-			set
-			{
+			set {
 				throw new NotSupportedException();
 			}
 		}

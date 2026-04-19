@@ -5,9 +5,6 @@ using Microsoft.Win32;
 
 namespace MiniHttpd
 {
-	/// <summary>
-	/// Provides a reference of common MIME content-types, and retrieves additional types from the Windows registry if available.
-	/// </summary>
 	public sealed class ContentTypes
 	{
 		private ContentTypes()
@@ -17,9 +14,9 @@ namespace MiniHttpd
 		static Hashtable InitContentTypes()
 		{
 			Hashtable extensionTypes = new Hashtable(
-				new CaseInsensitiveHashCodeProvider(CultureInfo.InvariantCulture),
-				new CaseInsensitiveComparer(CultureInfo.InvariantCulture)
-				);
+				                           new CaseInsensitiveHashCodeProvider(CultureInfo.InvariantCulture),
+				                           new CaseInsensitiveComparer(CultureInfo.InvariantCulture)
+			                           );
 			#region Extensions from http://www.utoronto.ca/webdocs/HTMLdocs/Book/Book-3ed/appb/mimetype.html
 			extensionTypes.Add(".bin", "application/octet-stream");
 			extensionTypes.Add(".uu", "application/octet-stream");
@@ -90,29 +87,16 @@ namespace MiniHttpd
 
 		static Hashtable extensionTypes = InitContentTypes();
 
-		/// <summary>
-		/// Get a MIME content-type from a file extension.
-		/// </summary>
-		/// <param name="extension">A file extension.</param>
-		/// <returns>A MIME compatible file file-type.</returns>
 		public static string GetExtensionType(string extension)
 		{
 			string ret = extensionTypes[extension] as string;
-			if(ret == null)
-			{
-				try
-				{
+			if (ret == null) {
+				try {
 					ret = GetContentTypeFromRegistry(extension);
-				}
-				catch(MemberAccessException)
-				{
-				}
-				catch(NotImplementedException)
-				{
-				}
-				finally
-				{
-					if(ret != null)
+				} catch (MemberAccessException) {
+				} catch (NotImplementedException) {
+				} finally {
+					if (ret != null)
 						extensionTypes[extension] = ret;
 				}
 			}
@@ -123,10 +107,10 @@ namespace MiniHttpd
 		{
 			RegistryKey classroot = Registry.ClassesRoot;
 			RegistryKey extkey = classroot.OpenSubKey(extension, false);
-			if(extkey == null)
+			if (extkey == null)
 				return null;
 			object type = extkey.GetValue("Content Type");
-			if(!(type is string))
+			if (!(type is string))
 				return null;
 			return type as string;
 		}

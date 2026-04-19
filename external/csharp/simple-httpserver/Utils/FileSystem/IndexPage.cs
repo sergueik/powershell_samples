@@ -4,21 +4,12 @@ using System.IO;
 
 namespace MiniHttpd
 {
-	/// <summary>
-	/// The default index page used by <see cref="HttpWebServer"/>.
-	/// </summary>
 	public class IndexPage : IFile
 	{
 
 		#region IFile Members
-
-		/// <summary>
-		/// Gets the MIME type of the content.
-		/// </summary>
-		public string ContentType
-		{
-			get
-			{
+		public string ContentType {
+			get {
 				return ContentTypes.GetExtensionType(".htm");
 			}
 		}
@@ -28,16 +19,15 @@ namespace MiniHttpd
 			IDirectory directory,
 			ICollection dirs,
 			ICollection files
-			)
+		)
 		{
 
 			writer.WriteLine("<h2>Index of " + HttpWebServer.GetDirectoryPath(directory) + "</h2>");
 
-			if(directory.Parent != null)
+			if (directory.Parent != null)
 				writer.WriteLine("<a href=\"..\">[..]</a><br>");
 
-			foreach(IDirectory dir in dirs)
-			{
+			foreach (IDirectory dir in dirs) {
 				//if(dir is IPhysicalResource)
 				//	if((File.GetAttributes((dir as IPhysicalResource).Path) & FileAttributes.Hidden) != 0)
 				//		continue;
@@ -45,8 +35,7 @@ namespace MiniHttpd
 				writer.WriteLine("<a href=\"" + UrlEncoding.Encode(dir.Name) + "/\">[" + dir.Name + "]</a><br>");
 			}
 
-			foreach(IFile file in files)
-			{
+			foreach (IFile file in files) {
 				//if(file is IPhysicalResource)
 				//	if((File.GetAttributes((file as IPhysicalResource).Path) & FileAttributes.Hidden) != 0)
 				//		continue;
@@ -54,22 +43,14 @@ namespace MiniHttpd
 			}
 		}
 
-		/// <summary>
-		/// Called when the file is requested by a client.
-		/// </summary>
-		/// <param name="request">The <see cref="HttpRequest"/> requesting the file.</param>
-		/// <param name="directory">The <see cref="IDirectory"/> of the parent directory.</param>
 		public void OnFileRequested(HttpRequest request, IDirectory directory)
 		{
 			ICollection dirs;
 			ICollection files;
-			try
-			{
+			try {
 				dirs = directory.GetDirectories();
 				files = directory.GetFiles();
-			}
-			catch(UnauthorizedAccessException)
-			{
+			} catch (UnauthorizedAccessException) {
 				throw new HttpRequestException("403");
 			}
 
@@ -91,24 +72,14 @@ namespace MiniHttpd
 			writer.Flush();
 		}
 
-		/// <summary>
-		/// Gets name of the page. This value is always <c>null</c>.
-		/// </summary>
-		public string Name
-		{
-			get
-			{
+		public string Name {
+			get {
 				return null;
 			}
 		}
 
-		/// <summary>
-		/// Gets the parent directory. This value is always <c>null</c>.
-		/// </summary>
-		public IDirectory Parent
-		{
-			get
-			{
+		public IDirectory Parent {
+			get {
 				return null;
 			}
 		}
@@ -117,9 +88,6 @@ namespace MiniHttpd
 
 		#region IDisposable Members
 
-		/// <summary>
-		/// Dispose IndexPage.
-		/// </summary>
 		public virtual void Dispose()
 		{
 		}

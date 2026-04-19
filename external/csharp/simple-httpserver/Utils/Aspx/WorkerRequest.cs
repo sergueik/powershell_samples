@@ -10,9 +10,6 @@ using System.Web.Configuration;
 
 namespace MiniHttpd.Aspx
 {
-	/// <summary>
-	/// Summary description for WorkerRequest.
-	/// </summary>
 	internal class WorkerRequest : HttpWorkerRequest
 	{
 		public WorkerRequest(HttpRequest request, DriveFile file, string virtualDir, string physicalDir)
@@ -110,10 +107,9 @@ namespace MiniHttpd.Aspx
 			byte[] buffer = new byte[1024];
 			int readLength;
 
-			while((readLength = stream.Read(buffer, 0, (int)(length < buffer.Length ? length : buffer.Length))) != 0)
-			{
+			while ((readLength = stream.Read(buffer, 0, (int)(length < buffer.Length ? length : buffer.Length))) != 0) {
 				request.Response.ResponseContent.Write(buffer, 0, readLength);
-				length-=readLength;
+				length -= readLength;
 			}
 		}
 
@@ -129,8 +125,7 @@ namespace MiniHttpd.Aspx
 
 		public override void SendResponseFromMemory(byte[] data, int length)
 		{
-			if(firstSend)
-			{
+			if (firstSend) {
 				request.Response.BeginImmediateResponse();
 				firstSend = false;
 			}
@@ -139,15 +134,14 @@ namespace MiniHttpd.Aspx
 
 		public override void SendResponseFromMemory(System.IntPtr data, int length)
 		{
-			if(firstSend)
-			{
+			if (firstSend) {
 				request.Response.BeginImmediateResponse();
 				firstSend = false;
 			}
 
 			byte[] buf = new byte[length];
 			System.Runtime.InteropServices.Marshal.Copy(data, buf, 0, length);
-			SendResponseFromMemory (buf, length);
+			SendResponseFromMemory(buf, length);
 		}
 
 		public override void SendStatus(int statusCode, string statusDescription)
@@ -221,9 +215,9 @@ namespace MiniHttpd.Aspx
 			ArrayList ret = new ArrayList();
 			string[] keys = request.Headers.AllKeys;
 
-			foreach(string key in keys)
-				if(HttpWorkerRequest.GetKnownRequestHeaderIndex(key) < 0)
-					ret.Add(new string[] {key, request.Headers[key]});
+			foreach (string key in keys)
+				if (HttpWorkerRequest.GetKnownRequestHeaderIndex(key) < 0)
+					ret.Add(new string[] { key, request.Headers[key] });
 
 			return ret.ToArray(typeof(string[])) as string[][];
 		}
@@ -252,7 +246,7 @@ namespace MiniHttpd.Aspx
 		public override string MapPath(string virtualPath)
 		{
 			IPhysicalResource resource = (request.Server as AspxWebServer).NavigateToUrl(virtualPath) as IPhysicalResource;
-			if(resource == null)
+			if (resource == null)
 				return null;
 			return resource.Path;
 		}
@@ -263,18 +257,14 @@ namespace MiniHttpd.Aspx
 			return string.Empty;
 		}
 
-		public override string MachineConfigPath
-		{
-			get
-			{
+		public override string MachineConfigPath {
+			get {
 				return Path.Combine(Path.Combine(Path.GetDirectoryName(typeof(object).Assembly.Location.Replace('/', '\\')), "Config"), "machine.config");
 			}
 		}
 
-		public override string MachineInstallDirectory
-		{
-			get
-			{
+		public override string MachineInstallDirectory {
+			get {
 				return System.Threading.Thread.GetDomain().GetData(".hostingInstallDir").ToString();
 			}
 		}

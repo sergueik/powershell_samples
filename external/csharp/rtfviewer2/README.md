@@ -118,8 +118,9 @@ or [FileHelper.com](https://filehelper.com/view) or [RTF File Viewer](https://ch
   * Document AST to markup format [renderer](https://github.com/Hypario/Constructeur)
   * __DocSharp__ [bundle](https://github.com/manfromarce/DocSharp) - pure C# library to convert between document formats without Office interop or native dependencies. Notably, the `DocSharp.Markdown` also available in [nuget](https://www.nuget.org/packages/DocSharp.Markdown) is capable of converting the __Markdown__ to __DOCX__ or __RTF__ using custom [Markdig]() renderers loaded through __C#__ __10__ [project file reference](https://github.com/manfromarce/DocSharp/blob/main/src/DocSharp.Markdown/DocSharp.Markdown.csproj#L29). Project appears to be alive, and has [supported features](https://github.com/manfromarce/DocSharp/blob/main/documentation/Supported_features.MD) documented.
 
-* [md2smf](https://github.com/ogoine/md2smf) pure Python tool for converting a markdown manuscript into an RTF file in Standard Manuscript Format. Has a number of embedded __RTF__ [Templates](https://github.com/ogoine/md2smf/blob/master/rtf_builder.py#L122)
+  * [md2smf](https://github.com/ogoine/md2smf) pure Python tool for converting a markdown manuscript into an RTF file in Standard Manuscript Format. Has a number of embedded __RTF__ [Templates](https://github.com/ogoine/md2smf/blob/master/rtf_builder.py#L122)
 
+  * [microsoft/markitdown](https://github.com/microsoft/markitdown) a Python tool for converting files and office documents to Markdown - now offers an MCP (Model Context Protocol) server for integration with LLM applications like [Claude Desktop](https://claude-desktop-apps.gitlab.io/claude-desktop-apps/) [claude-desktop-debuan](https://github.com/aaddrick/claude-desktop-debian) or [aider](https://github.com/Aider-AI/aider). 
 ### Example to Navigate
 
 | Syntax      | Description |

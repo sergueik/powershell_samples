@@ -8,7 +8,8 @@ namespace MiniHttpd
 	internal class ChunkedStream : ImmediateResponseStream
 	{
 
-		public ChunkedStream(Stream outputStream) : base(outputStream)
+		public ChunkedStream(Stream outputStream)
+			: base(outputStream)
 		{
 		}
 
@@ -17,7 +18,7 @@ namespace MiniHttpd
 			byte[] lengthLine = Encoding.UTF8.GetBytes(count.ToString("x", CultureInfo.InvariantCulture) + "\r\n");
 			base.outputStream.Write(lengthLine, 0, lengthLine.Length);
 			base.Write(buffer, offset, count, false);
-			base.outputStream.Write(new byte[] {13, 10}, 0, 2);
+			base.outputStream.Write(new byte[] { 13, 10 }, 0, 2);
 			base.outputStream.Flush();
 		}
 	}

@@ -40,7 +40,7 @@ namespace MiniHttpdConsole
                 httpWebServer =  new HttpWebServer(9091);
             }
             */
-httpWebServer =  new HttpWebServer(port);
+			httpWebServer = new HttpWebServer(port);
 			ConsoleWriter writer = new ConsoleWriter();
 			httpWebServer.Log = writer;
 			writer.OnWrite += new ConsoleWriter.WriteEventHandler(writer_OnWrite);
@@ -51,36 +51,26 @@ httpWebServer =  new HttpWebServer(port);
 
 			ParseArguments(args);
 
-			if (silent)
-			{
+			if (silent) {
 				Console.SetOut(System.IO.TextWriter.Null);
 				Console.SetError(System.IO.TextWriter.Null);
-				try
-				{
+				try {
 					httpWebServer.Start();
-					while(httpWebServer.IsRunning)
+					while (httpWebServer.IsRunning)
 						System.Threading.Thread.Sleep(1000);
 					return;
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					Console.Error.WriteLine(e);
 					return;
-				}
-				finally
-				{
+				} finally {
 				}
 			}
 
-			if (autoStart)
-			{
-				try
-				{
+			if (autoStart) {
+				try {
 					httpWebServer.Start();
 					Console.WriteLine();
-				}
-				catch(Exception e)
-				{
+				} catch (Exception e) {
 					Console.Error.WriteLine(e);
 				}
 			}
@@ -110,17 +100,39 @@ httpWebServer =  new HttpWebServer(port);
 		{
 			status.Title = "MiniHttpd";
 
-			status.AddItem(new StatusItem(null, delegate { return httpWebServer.IsRunning ? "Running" : "Stopped"; }));
-			status.AddItem(new StatusItem("Server URL", delegate { return httpWebServer.ServerUri; }));
-			status.AddItem(new StatusItem("Root type", delegate { return httpWebServer.Root.GetType().Name; }));
-			status.AddItem(new StatusItem("RootDir", "Root directory", delegate { return httpWebServer.Root is DriveDirectory ? (httpWebServer.Root as DriveDirectory).Path : null; }));
-			status["RootDir"].Showing += delegate { status["RootDir"].Enabled = httpWebServer.Root is DriveDirectory; };
-			status.AddItem(new StatusItem("Auto start", delegate { return autoStart; }));
-			status.AddItem(new StatusItem("Index page", delegate { return httpWebServer.IndexPage.GetType().Name; }));
-			status.AddItem(new StatusItem("Log to screen", delegate { return logToScreen; }));
-			status.AddItem(new StatusItem("Log to file", delegate { return logWriter != null; }));
-			status.AddItem(new StatusItem("Log connections", delegate { return httpWebServer.LogConnections; }));
-			status.AddItem(new StatusItem("Log requests", delegate { return httpWebServer.LogRequests; }));
+			status.AddItem(new StatusItem(null, delegate {
+				return httpWebServer.IsRunning ? "Running" : "Stopped";
+			}));
+			status.AddItem(new StatusItem("Server URL", delegate {
+				return httpWebServer.ServerUri;
+			}));
+			status.AddItem(new StatusItem("Root type", delegate {
+				return httpWebServer.Root.GetType().Name;
+			}));
+			status.AddItem(new StatusItem("RootDir", "Root directory", delegate {
+				return httpWebServer.Root is DriveDirectory ? (httpWebServer.Root as DriveDirectory).Path : null;
+			}));
+			status["RootDir"].Showing += delegate {
+				status["RootDir"].Enabled = httpWebServer.Root is DriveDirectory;
+			};
+			status.AddItem(new StatusItem("Auto start", delegate {
+				return autoStart;
+			}));
+			status.AddItem(new StatusItem("Index page", delegate {
+				return httpWebServer.IndexPage.GetType().Name;
+			}));
+			status.AddItem(new StatusItem("Log to screen", delegate {
+				return logToScreen;
+			}));
+			status.AddItem(new StatusItem("Log to file", delegate {
+				return logWriter != null;
+			}));
+			status.AddItem(new StatusItem("Log connections", delegate {
+				return httpWebServer.LogConnections;
+			}));
+			status.AddItem(new StatusItem("Log requests", delegate {
+				return httpWebServer.LogRequests;
+			}));
 		}
 
 		private void InitMainMenu()
@@ -129,24 +141,28 @@ httpWebServer =  new HttpWebServer(port);
 
 			menu.AddItem(new MenuItem(
 				"u", "Show server status",
-				delegate { status.ShowValues(); }));
+				delegate {
+					status.ShowValues();
+				}));
 
 			menu.AddItem(new MenuItem(
 				"a", "Toggle auto start server on load",
-				delegate { autoStart = !autoStart; },
-				delegate { return autoStart; }));
+				delegate {
+					autoStart = !autoStart;
+				},
+				delegate {
+					return autoStart;
+				}));
 
 			menu.AddItem(new MenuItem(
 				"s", "Start server",
-				delegate
-				{
+				delegate {
 					if (httpWebServer.IsRunning)
 						httpWebServer.Stop();
 					else
 						httpWebServer.Start();
 				}));
-			menu["s"].Showing += delegate
-			{
+			menu["s"].Showing += delegate {
 				if (httpWebServer.IsRunning)
 					menu["s"].Description = "Stop server";
 				else
@@ -155,74 +171,112 @@ httpWebServer =  new HttpWebServer(port);
 
 			menu.AddItem(new MenuItem(
 				"b", "Browse file tree",
-				delegate { BrowseTree(); }));
+				delegate {
+					BrowseTree();
+				}));
 
 			menu.AddItem(new MenuItem(
 				"r", "Toggle root folder type",
-				delegate { ToogleRootFolderType(); },
-				delegate { return httpWebServer.Root.GetType().Name; }));
+				delegate {
+					ToogleRootFolderType();
+				},
+				delegate {
+					return httpWebServer.Root.GetType().Name;
+				}));
 
 			menu.AddItem(new MenuItem(
 				"t", "Set root path",
 				new EventHandler<MenuItemSelectedEventArgs>(SetRootPath),
-				delegate { return httpWebServer.Root is IPhysicalResource ? (httpWebServer.Root as IPhysicalResource).Path : "None"; }));
+				delegate {
+					return httpWebServer.Root is IPhysicalResource ? (httpWebServer.Root as IPhysicalResource).Path : "None";
+				}));
 
 			menu.AddItem(new MenuItem(
 				"i", "Toggle index page style",
-				delegate
-				{
+				delegate {
 					if (httpWebServer.IndexPage is IndexPageEx)
 						httpWebServer.IndexPage = new IndexPage();
 					else
 						httpWebServer.IndexPage = new IndexPageEx();
 				},
-				delegate { return httpWebServer.IndexPage.GetType().Name; }));
+				delegate {
+					return httpWebServer.IndexPage.GetType().Name;
+				}));
 
 			menu.AddItem(new MenuItem(
 				"n", "Set host name",
 				new EventHandler<MenuItemSelectedEventArgs>(SetHostName),
-				delegate { return httpWebServer.HostName; }));
+				delegate {
+					return httpWebServer.HostName;
+				}));
 
 			menu.AddItem(new MenuItem(
 				"p", "Set port",
 				new EventHandler<MenuItemSelectedEventArgs>(SelectPort),
-				delegate { return httpWebServer.Port; }));
+				delegate {
+					return httpWebServer.Port;
+				}));
 
 			menu.AddItem(new MenuItem(
 				"h", "Help",
-				delegate { ShowHelp(); }));
+				delegate {
+					ShowHelp();
+				}));
 
 			menu.AddItem(new MenuItem(
 				"ls", "Log to screen",
-				delegate { logToScreen = !logToScreen; },
-				delegate { return logToScreen; }));
+				delegate {
+					logToScreen = !logToScreen;
+				},
+				delegate {
+					return logToScreen;
+				}));
 
 			menu.AddItem(new MenuItem(
 				"lf", "Log to file",
-				delegate { ToggleLogWriter(); },
-				delegate { return logWriter != null; }));
+				delegate {
+					ToggleLogWriter();
+				},
+				delegate {
+					return logWriter != null;
+				}));
 
 			menu.AddItem(new MenuItem(
 				"lc", "Log connections",
-				delegate { httpWebServer.LogConnections = !httpWebServer.LogConnections; },
-				delegate { return httpWebServer.LogConnections; }));
+				delegate {
+					httpWebServer.LogConnections = !httpWebServer.LogConnections;
+				},
+				delegate {
+					return httpWebServer.LogConnections;
+				}));
 
 			menu.AddItem(new MenuItem(
 				"lr", "Log requests",
-				delegate { httpWebServer.LogRequests = !httpWebServer.LogRequests; },
-				delegate { return httpWebServer.LogRequests; }));
+				delegate {
+					httpWebServer.LogRequests = !httpWebServer.LogRequests;
+				},
+				delegate {
+					return httpWebServer.LogRequests;
+				}));
 
 			menu.AddItem(new MenuItem(
 				"w", "Save settings",
-				delegate { SaveSettings(); }));
+				delegate {
+					SaveSettings();
+				}));
 
 			menu.AddItem(new MenuItem(
 				"wq", "Save settings and quit",
-				delegate { SaveSettings(); menu.Stop(); }));
+				delegate {
+					SaveSettings();
+					menu.Stop();
+				}));
 
 			menu.AddItem(new MenuItem(
 				"q!", "Discard changes and quit",
-				delegate { menu.Stop(); }));
+				delegate {
+					menu.Stop();
+				}));
 		}
 
 		private void ToggleLogWriter()
@@ -235,12 +289,9 @@ httpWebServer =  new HttpWebServer(port);
 
 		void ToggleLogWriter(bool logToFile)
 		{
-			if (logToFile)
-			{
-				if (logWriter == null)
-				{
-					try
-					{
+			if (logToFile) {
+				if (logWriter == null) {
+					try {
 						FileStream stream = new FileStream("MiniHttpd.log", FileMode.Append, FileAccess.Write, FileShare.Read, 128);
 						logWriter = new StreamWriter(stream);
 						logWriter.AutoFlush = true;
@@ -248,14 +299,11 @@ httpWebServer =  new HttpWebServer(port);
 						logWriter.WriteLine("-------------------------------------------------------");
 						logWriter.WriteLine("* Beginning log at " + DateTime.Now);
 						logWriter.WriteLine("-------------------------------------------------------");
+					} catch {
 					}
-					catch { }
 				}
-			}
-			else
-			{
-				if (logWriter != null)
-				{
+			} else {
+				if (logWriter != null) {
 					logWriter.Close();
 					logWriter = null;
 				}
@@ -265,31 +313,26 @@ httpWebServer =  new HttpWebServer(port);
 		private void SetRootPath(object sender, MenuItemSelectedEventArgs e)
 		{
 			string path = e.Args;
-			if (e.Args == null)
-			{
+			if (e.Args == null) {
 				Console.Write("Enter path: ");
 				path = Console.ReadLine();
 			}
 			rootPath = path;
-			if(httpWebServer.Root is DriveDirectory)
+			if (httpWebServer.Root is DriveDirectory)
 				httpWebServer.Root = new DriveDirectory(path);
 		}
 
 		private void ToogleRootFolderType()
 		{
-			if (httpWebServer.Root is VirtualDirectory)
-			{
+			if (httpWebServer.Root is VirtualDirectory) {
 				BinaryFormatter formatter = new BinaryFormatter();
 				serializedVirtualRoot = new MemoryStream();
 				formatter.Serialize(serializedVirtualRoot, httpWebServer.Root);
 				httpWebServer.Root = new DriveDirectory(rootPath);
-			}
-			else
-			{
+			} else {
 				if (serializedVirtualRoot == null)
 					httpWebServer.Root = new VirtualDirectory();
-				else
-				{
+				else {
 					BinaryFormatter formatter = new BinaryFormatter();
 					serializedVirtualRoot.Seek(0, SeekOrigin.Begin);
 					httpWebServer.Root = formatter.Deserialize(serializedVirtualRoot) as VirtualDirectory;
@@ -312,7 +355,7 @@ httpWebServer =  new HttpWebServer(port);
 			Console.WriteLine();
 			Console.WriteLine("Usage:");
 			Console.WriteLine(Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location) +
-				" [-s] [-l] [-p port] [-r path] [-n name]");
+			" [-s] [-l] [-p port] [-r path] [-n name]");
 			Console.WriteLine("-s\tStart server in silent mode.");
 			Console.WriteLine("-l\tLog to file.");
 			Console.WriteLine("-p\tSelect a port.");
@@ -322,12 +365,9 @@ httpWebServer =  new HttpWebServer(port);
 
 		private void ParseArguments(string[] args)
 		{
-			for (int i = 0; i < args.Length; i++)
-			{
-				try
-				{
-					switch (args[i])
-					{
+			for (int i = 0; i < args.Length; i++) {
+				try {
+					switch (args[i]) {
 						case "-s":
 							silent = true;
 							break;
@@ -337,7 +377,7 @@ httpWebServer =  new HttpWebServer(port);
 							httpWebServer.LogRequests = true;
 							break;
 						case "-p":
-							if (i + 1== args.Length)
+							if (i + 1 == args.Length)
 								throw new Exception("Parameter required for switch -p");
 							httpWebServer.Port = int.Parse(args[++i]);
 							break;
@@ -354,9 +394,7 @@ httpWebServer =  new HttpWebServer(port);
 						default:
 							throw new Exception("Invalid argument: " + args[i]);
 					}
-				}
-				catch(Exception e)
-				{
+				} catch (Exception e) {
 					Console.Error.WriteLine(e.Message);
 				}
 			}
@@ -366,102 +404,86 @@ httpWebServer =  new HttpWebServer(port);
 		{
 			XmlDocument doc;
 			XmlElement docElement;
-			try
-			{
+			try {
 				doc = new XmlDocument();
 				doc.Load("MiniHttpdSettings.xml");
 
 				docElement = doc.DocumentElement;
-			}
-			catch
-			{
+			} catch {
 				return;
 			}
 
-			try
-			{
+			try {
 				rootPath = docElement["RootFolder"].InnerText;
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				DirectoryType type = (DirectoryType)Enum.Parse(typeof(DirectoryType), docElement["RootType"].InnerText);
 				if ((httpWebServer.Root is VirtualDirectory && type == DirectoryType.Drive) ||
-					httpWebServer.Root is DriveDirectory && type == DirectoryType.Virtual)
+				    httpWebServer.Root is DriveDirectory && type == DirectoryType.Virtual)
 					ToogleRootFolderType();
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				serializedVirtualRoot = new MemoryStream(Convert.FromBase64String(docElement["VirtualDir"].InnerText));
-				if (httpWebServer.Root is VirtualDirectory)
-				{
+				if (httpWebServer.Root is VirtualDirectory) {
 					BinaryFormatter formatter = new BinaryFormatter();
 					serializedVirtualRoot.Seek(0, SeekOrigin.Begin);
 					httpWebServer.Root = formatter.Deserialize(serializedVirtualRoot) as VirtualDirectory;
 				}
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				httpWebServer.Port = int.Parse(docElement["Port"].InnerText);
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				autoStart = bool.Parse(docElement["AutoStart"].InnerText);
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				httpWebServer.LogConnections = bool.Parse(docElement["LogConnections"].InnerText);
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				httpWebServer.LogRequests = bool.Parse(docElement["LogRequests"].InnerText);
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				ToggleLogWriter(bool.Parse(docElement["LogToFile"].InnerText));
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				logToScreen = bool.Parse(docElement["LogToScreen"].InnerText);
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				httpWebServer.HostName = docElement["HostName"].InnerText;
+			} catch {
 			}
-			catch { }
 
-			try
-			{
+			try {
 				IndexPageStyle style = (IndexPageStyle)Enum.Parse(typeof(IndexPageStyle), docElement["IndexPageStyle"].InnerText);
 				if (style == IndexPageStyle.Basic)
 					httpWebServer.IndexPage = new IndexPage();
 				else
 					httpWebServer.IndexPage = new IndexPageEx();
+			} catch {
 			}
-			catch { }
 		}
 
 		private void SaveSettings()
 		{
-			try
-			{
+			try {
 				XmlDocument doc = new XmlDocument();
 				doc.AppendChild(doc.CreateElement("MiniHttpdSettings"));
 				XmlElement element;
@@ -470,15 +492,12 @@ httpWebServer =  new HttpWebServer(port);
 				element = doc.CreateElement("VirtualDir");
 				docElement.AppendChild(element);
 
-				if (httpWebServer.Root is VirtualDirectory)
-				{
+				if (httpWebServer.Root is VirtualDirectory) {
 					serializedVirtualRoot = new System.IO.MemoryStream();
 					BinaryFormatter formatter = new BinaryFormatter();
 					formatter.Serialize(serializedVirtualRoot, httpWebServer.Root);
 					element.InnerText = Convert.ToBase64String(serializedVirtualRoot.ToArray());
-				}
-
-				else
+				} else
 					element.InnerText = Convert.ToBase64String(serializedVirtualRoot.ToArray());
 
 				element = doc.CreateElement("RootFolder");
@@ -525,20 +544,19 @@ httpWebServer =  new HttpWebServer(port);
 				Console.WriteLine("Settings saved");
 			}
 #if !DEBUG
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				Console.Error.WriteLine("Error saving settings: ");
 				Console.Error.WriteLine(e.ToString());
 			}
 #endif
-			finally { }
+			finally {
+			}
 		}
 
 		private void SetHostName(object sender, MenuItemSelectedEventArgs e)
 		{
 			string input = e.Args;
-			if (e.Args == null)
-			{
+			if (e.Args == null) {
 				Console.Write("Enter host name: ");
 				input = Console.ReadLine();
 			}
@@ -550,14 +568,12 @@ httpWebServer =  new HttpWebServer(port);
 
 		private void SelectPort(object sender, MenuItemSelectedEventArgs e)
 		{
-			if (httpWebServer.IsRunning)
-			{
+			if (httpWebServer.IsRunning) {
 				Console.Error.WriteLine("Port cannot be changed while the server is running.");
 				return;
 			}
 			string input = e.Args;
-			if (e.Args == null)
-			{
+			if (e.Args == null) {
 				Console.Write("Enter port: ");
 				input = Console.ReadLine();
 			}

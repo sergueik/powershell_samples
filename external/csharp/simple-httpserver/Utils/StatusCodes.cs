@@ -1,11 +1,16 @@
 using System.Collections;
 
-namespace MiniHttpd {
-	public class StatusCodes {
-		private StatusCodes() { }
+namespace MiniHttpd
+{
+	public class StatusCodes
+	{
+		private StatusCodes()
+		{
+		}
 		static Hashtable descriptions = InitDescriptions();
 
-		static Hashtable InitDescriptions() {
+		static Hashtable InitDescriptions()
+		{
 			var d = new Hashtable();
 			d.Add("100", "Continue");
 			d.Add("101", "Switching Protocols");
@@ -50,7 +55,8 @@ namespace MiniHttpd {
 			return d;
 		}
 
-		static public string GetDescription(string codeNum) {
+		static public string GetDescription(string codeNum)
+		{
 			return descriptions[codeNum] as string;
 		}
 	}

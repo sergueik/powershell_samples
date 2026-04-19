@@ -43,11 +43,19 @@ namespace MiniHttpdConsole
 				new EventHandler<MenuItemSelectedEventArgs>(Location)));
 
 			menu.AddItem(new MenuItem(
-				"q", "Return to main menu", delegate { menu.Stop(); }));
+				"q", "Return to main menu", delegate {
+				menu.Stop();
+			}));
 
-			menu["mkdir"].Showing += delegate { menu["mkdir"].Enabled = current is VirtualDirectory; };
-			menu["add"].Showing += delegate { menu["add"].Enabled = current is VirtualDirectory; };
-			menu["link"].Showing += delegate { menu["link"].Enabled = current is VirtualDirectory; };
+			menu["mkdir"].Showing += delegate {
+				menu["mkdir"].Enabled = current is VirtualDirectory;
+			};
+			menu["add"].Showing += delegate {
+				menu["add"].Enabled = current is VirtualDirectory;
+			};
+			menu["link"].Showing += delegate {
+				menu["link"].Enabled = current is VirtualDirectory;
+			};
 		}
 
 		void Mkdir(object sender, MenuItemSelectedEventArgs e)
@@ -59,8 +67,7 @@ namespace MiniHttpdConsole
 			string name;
 			if (e.Args != null)
 				name = e.Args;
-			else
-			{
+			else {
 				Console.Write("Enter directory name: ");
 				name = Console.ReadLine();
 			}
@@ -73,8 +80,7 @@ namespace MiniHttpdConsole
 			string path;
 			if (e.Args != null)
 				path = e.Args;
-			else
-			{
+			else {
 				Console.WriteLine("Enter path: ");
 				path = Console.ReadLine();
 			}
@@ -103,8 +109,7 @@ namespace MiniHttpdConsole
 			string path;
 			if (e.Args != null)
 				path = e.Args;
-			else
-			{
+			else {
 				Console.Write("Enter path: ");
 				path = Console.ReadLine();
 			}
@@ -128,8 +133,7 @@ namespace MiniHttpdConsole
 			string path;
 			if (e.Args != null)
 				path = e.Args;
-			else
-			{
+			else {
 				Console.Write("Enter path: ");
 				path = Console.ReadLine();
 			}
@@ -165,8 +169,7 @@ namespace MiniHttpdConsole
 			string path;
 			if (e.Args != null)
 				path = e.Args;
-			else
-			{
+			else {
 				Console.Write("Enter path: ");
 				path = Console.ReadLine();
 			}
@@ -189,15 +192,12 @@ namespace MiniHttpdConsole
 			//TODO: enhance this for multiple nodes
 			if (path == "..")
 				return directory.Parent;
-			else if (path == "/")
-			{
+			else if (path == "/") {
 				if (directory.Parent == null)
 					return directory;
 				else
 					return NavigateTo(directory.Parent, "/");
-			}
-			else
-			{
+			} else {
 				IResource resource = directory.GetDirectory(path);
 				if (resource != null)
 					return resource;

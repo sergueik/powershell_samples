@@ -3,11 +3,7 @@ using System.IO;
 using System.Web;
 using System.Web.Hosting;
 
-namespace MiniHttpd.Aspx
-{
-	/// <summary>
-	/// Summary description for AspxAppHost.
-	/// </summary>
+namespace MiniHttpd.Aspx {
 	internal class AspxAppHost : MarshalByRefObject
 	{
 		public void ProcessRequest(HttpRequest request, DriveFile file, string virtualPath, string physicalDir)
