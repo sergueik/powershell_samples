@@ -6,15 +6,14 @@ using System.Diagnostics;
 
 namespace Utils {
 	
-	public class CircularBuffer<T> : IEnumerator<T> {
+	public class CircularBuffer<T> : IEnumerable<T> {
 		internal T[] _array;
 		internal Int32 _start;
 		internal Int32 _end;
 		private Int32 _size;
 		private Boolean _isDynamic;
 		private Boolean _isInfinite;
-		private Int32 _currentPosition = -1;
-		private Int32 _numOfElementsProcessed = 0;
+
 		public CircularBuffer() : this(0, true, false) {
 		}
 
@@ -132,32 +131,15 @@ namespace Utils {
 			}
 		}
 
-		void IDisposable.Dispose() {
-			_currentPosition = -1;
-			_numOfElementsProcessed = 0;
+		IEnumerator IEnumerable.GetEnumerator(){		
+		    return GetEnumerator();
 		}
 
-		public bool MoveNext() {
-			if (_currentPosition == -1) {
-				_currentPosition = _start;
-				_numOfElementsProcessed++;
-			} else {
-				_currentPosition = GetNextPosition(_currentPosition);
-				_numOfElementsProcessed++;
-			}
-			return (_numOfElementsProcessed <= Size);
+		public IEnumerator<T> GetEnumerator(){
+		    for (int i = 0; i < _size; i++){
+        		yield return this[i];
+    		}
 		}
-
-		public void Reset() {
-			_start = 0;
-			_end = 0;
-			_size = 0;
-		}
-
-		public IEnumerator<T> GetEnumerator() {
-			return this;
-		}
-
 		public T this[Int32 index] {
 			get {
 				if (index >= 0 && index < _size) {
@@ -270,22 +252,6 @@ namespace Utils {
 		private Boolean IsFull {
 			get {
 				return _size == Capacity;
-			}
-		}
-
-		object IEnumerator.Current {
-			get {
-				return Current;
-			}
-		}
-
-		public T Current {
-			get {
-				try {
-					return _array[_currentPosition];
-				} catch (IndexOutOfRangeException) {
-					throw new InvalidOperationException();
-				}
 			}
 		}
 	}
