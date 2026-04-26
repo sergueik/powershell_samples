@@ -44,6 +44,42 @@ Connected to 127.0.0.1 on port 15555.
 Can not start process. The debugger's protocol is incompatible with the debuggee. (Exception from HRESULT: 0x8013134B)
 ```
 is probably because the project targets the incorrect version of .Net Framework (__4.0__ insted of __4.5__)
+### Running on Wine
+
+```sh
+scp -r ./ConsoleClient/bin/Debug/* sergueik@192.168.12.151:src/springboot_study/basic-wine-ndp/app
+```
+```sh
+docker build -t basic-wine-ndp -f Dockerfile .
+```
+```sh
+docker run -it --name basic-wine-ndp basic-wine-ndp shell
+```
+```sh
+docker cp app  basic-wine-ndp:/tmp
+docker exec -it basic-wine-ndp sh
+```
+```sh
+apt-get install net-tools netcat-openbsd
+```
+```sh
+netstat -ant 
+```
+```text
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State
+tcp        0      0 127.0.0.1:15555         0.0.0.0:*               LISTEN
+tcp        0      0 172.17.0.2:48342        151.101.194.132:80      TIME_WAIT
+```
+```sh
+nc 127.0.0.1 15555
+
+```
+```text
+Hello World!
+
+```
+
 ### See Also
 
   * [perjahn/simplesource](https://github.com/perjahn/simplesource) - simple Grafana data source, in C# - uses using `Microsoft.AspNetCore.Hosting`, `Microsoft.Extensions.Hosting` etc. presumably for routing   
