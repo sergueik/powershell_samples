@@ -60,6 +60,35 @@ curl -s http://localhost:8001/users/GetUserByTheirId/1
 {"Id":1,"UserName":"Charles Bensi"}
 
 ```
+### Running in Wine
+
+```sh
+# wine ./RESTServerConsoleHost.exe
+```
+```text
+error: XDG_RUNTIME_DIR not set in the environment.
+
+Unhandled Exception: System.Net.HttpListenerException: Path not found
+   at System.Net.HttpListener.CreateRequestQueueHandle()
+   at System.Net.HttpListener.Start()
+   at RESTServer.HttpServer.<Run>d__0.MoveNext() in c:\developer\sergueik\powers
+hell_samples\external\csharp\standalone-restserver\RESTServer\HttpServer.cs:line
+ 39
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.<ThrowAsync>b__1(Ob
+ject state)
+   at System.Threading.QueueUserWorkItemCallback.WaitCallback_Context(Object sta
+te)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionCo
+ntext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, C
+ontextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.QueueUserWorkItemCallback.System.Threading.IThreadPoolWor
+kItem.ExecuteWorkItem()
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading._ThreadPoolWaitCallback.PerformWaitCallback
+
+```
 ### See Also
 
   * https://www.codeproject.com/Articles/1190475/Porting-a-NET-Framework-Library-to-NET-Core

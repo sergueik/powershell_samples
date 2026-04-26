@@ -412,6 +412,72 @@ Hashed bucket: f62abcff7b6d1647d3ae6e7c16c84495
 
 this is being detected by the script and it quits when run by non-elevated user
 
+### Running on Wine
+
+```sh
+# wine ConsoleClient.exe
+```
+```text
+error: XDG_RUNTIME_DIR not set in the environment.
+Using document root path: Z:\tmp\app
+Using port: 36757
+
+Unhandled Exception: System.Net.HttpListenerException: Path not found
+   at System.Net.HttpListener.CreateRequestQueueHandle()
+   at System.Net.HttpListener.Start()
+   at Utils.SimpleHTTPServer.Listen() in c:\developer\sergueik\powershell_sample
+s\csharp\basic-configserver\Utils\SimpleHTTPServer.cs:line 63
+   at System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionCo
+ntext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, C
+ontextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, C
+ontextCallback callback, Object state)
+   at System.Threading.ThreadHelper.ThreadStart()
+
+```
+
+This is strongly associated with `HttpListener` depending on Windows __HTTP Server__ __API__ (`HTTP.sys`, `httpapi.dll`, kernel-side request queue infrastructure).
+
+__Wine__ does not fully implement this behavior, especially for classic __.NET Framework__ __4.x__ apps using native `System.Net.HttpListener`. 
+
+The call to `CreateRequestQueueHandle()` is where NDP tries to create the underlying Windows __HTTP request queue__, and __Wine__ often returns effectively "path not found" or similar or related unsupported-operation failure.
+
+This indicates trouble with internal Windows __HTTP__ subsystem abstraction that is missing.
+
+i`HttpListener` on __.NET Framework__ is not a pure managed socket listener.
+
+It relies on:
+
+  * `HTTP.sys`
+  * __URL__ __ACL__ registration (`netsh http add urlacl`)
+  * Windows kernel __HTTP__ request queues
+
+Wine cannot fully emulate that stack.
+
+It is not uncommon to see variations of:
+
+  * `HttpListenerException`: `Access denied`
+  * `HttpListenerException`: `Path not found`
+  * `PlatformNotSupportedException`
+  * silent hang on `.Start()`
+
+all from the same root cause.
+
+
+Sometimes __Mono__ on __Linux__ works better than __Wine__ + __.NET Framework__:
+```
+mono ConsoleClient.exe
+```
+instead of
+```
+wine ConsoleClient.exe
+```
+especially if the app was built with compatibility in mind.
+
+But if it directly depends on full Framework `HttpListener`, Mono may still fail differently.
+
 ### Author
 
 

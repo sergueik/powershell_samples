@@ -64,6 +64,31 @@ requesting the page `http://localhost:9001/login/camellabs/camellabs` results in
 The message with To 'http://localhost:9001/login/camellabs/camellabs' cannot be processed at the receiver, due to an 
 AddressFilter mismatch at the EndpointDispatcher. Check that the sender and receiver's EndpointAddresses agree.
 ```
+### Running in Wine
+```sh
+#  wine restservice.exe
+```
+```text
+error: XDG_RUNTIME_DIR not set in the environment.
+
+Unhandled Exception: System.NotSupportedException: The requested security package is not supported.
+   at System.Net.SSPIWrapper.GetVerifyPackageInfo(SSPIInterface secModule, String packageName, Boolean throwIfMissing)
+   at System.Net.NTAuthentication.Initialize(Boolean isServer, String package, NetworkCredential credential, String spn, ContextFlags requestedContextFlags, ChannelBinding channelBinding)
+   at System.Net.AuthenticationManager.get_SspSupportsExtendedProtection()
+   at System.Net.AuthenticationManager.get_OSSupportsExtendedProtection()
+   at System.ServiceModel.Channels.SharedHttpTransportManager.OnOpen()
+   at System.ServiceModel.Channels.TransportManager.Open(TransportChannelListener channelListener)
+   at System.ServiceModel.Channels.TransportManagerContainer.Open(SelectTransportManagersCallback selectTransportManagerCallback)
+   at System.ServiceModel.Channels.TransportChannelListener.OnOpen(TimeSpan timeout)
+   at System.ServiceModel.Channels.HttpChannelListener`1.OnOpen(TimeSpan timeout)
+   at System.ServiceModel.Channels.CommunicationObject.Open(TimeSpan timeout)
+   at System.ServiceModel.Dispatcher.ChannelDispatcher.OnOpen(TimeSpan timeout)
+   at System.ServiceModel.Channels.CommunicationObject.Open(TimeSpan timeout)
+   at System.ServiceModel.ServiceHostBase.OnOpen(TimeSpan timeout)
+   at System.ServiceModel.Channels.CommunicationObject.Open(TimeSpan timeout)
+   at System.ServiceModel.Channels.CommunicationObject.Open()
+   at Service.Program.Main(String[] args) in c:\developer\sergueik\powershell_samples\external\csharp\restservice\Program\Program.cs:line 17
+```
 ### See Also
 
  * [Configuring HTTP and HTTPS](https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/configuring-http-and-https?redirectedfrom=MSDN)

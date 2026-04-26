@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}"
 EndProject
+Project("{c0aeee84-0ad6-4a5a-a27f-3b74a3a39251}") = "ConsoleClient", "ConsoleClient\ConsoleClient.csproj", "{435df0d4-4469-4336-a15f-685fea7fac46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -27,5 +29,9 @@ Global
 		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Debug|x86.Build.0 = Debug|x86
 		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Release|x86.ActiveCfg = Release|x86
 		{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}.Release|x86.Build.0 = Release|x86
+		{435df0d4-4469-4336-a15f-685fea7fac46}.Debug|x86.ActiveCfg = Debug|x86
+		{435df0d4-4469-4336-a15f-685fea7fac46}.Debug|x86.Build.0 = Debug|x86
+		{435df0d4-4469-4336-a15f-685fea7fac46}.Release|x86.ActiveCfg = Release|x86
+		{435df0d4-4469-4336-a15f-685fea7fac46}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 EndGlobal

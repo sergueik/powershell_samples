@@ -98,8 +98,8 @@ NOTE: an interesting gap:
   * [datalust/seq-examples](https://github.com/datalust/seq-examples) - examples. Note: `/tree/main/client` - is lacking Java
   * [datalust/seq-forwarder](https://github.com/datalust/seq-forwarder) - local collection and reliable forwarding of log data to Seq, still in __c#__
   * [serilogj/serilogj](https://github.com/serilogj/serilogj) - A direct Java port of .NET's Serilog
-  * []()
-  * []()
+  * [datalust/seq-app-echo](https://github.com/datalust/seq-app-echo) seq based echo server - Seq app that pipes its input to its output; useful for sending alert notifications to the event stream
+  * [datalust/seq-app-filearchive](https://github.com/datalust/seq-app-filearchive) write incoming events into rolling text files
   * []()
 
 

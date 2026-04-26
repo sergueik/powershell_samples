@@ -47,6 +47,7 @@ namespace Utils {
 			tcpListener.Start();
 			int unusedPort = ((IPEndPoint)tcpListener.LocalEndpoint).Port;
 			tcpListener.Stop();
+			Console.Error.WriteLine(String.Format("Using port: {0}", unusedPort));
 			this.Initialize(documentRoot, unusedPort);
 		}
 
@@ -58,7 +59,9 @@ namespace Utils {
 
 		private void Listen() {
 			listener = new HttpListener();
-			listener.Prefixes.Add("http://*:" + port.ToString() + "/");
+			// NOTE: for Wine probing may try to change temporarily to:
+			listener.Prefixes.Add("http://127.0.0.1:" + port.ToString() + "/");
+			// listener.Prefixes.Add("http://*:" + port.ToString() + "/");
 			listener.Start();
 			while (true) {
 				try {
