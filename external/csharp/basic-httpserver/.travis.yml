@@ -1,0 +1,39 @@
+jdk:
+  - oraclejdk8
+mono: 
+  - latest
+
+language: csharp
+solution: ./HTTPServer/HTTPServer.sln
+
+notifications:
+  email:
+    recipients:
+      - 875974254@qq.com
+      - qinyuanpei@163.com
+    on_success: change # default: change
+    on_failure: always # default: always
+
+install:
+  - cd ./HTTPServer
+  - nuget restore ./HTTPServer.sln # restore nuget
+#  - nuget install NUnit.Runners -Version 3.8.0 -OutputDirectory ./TestRunner # install nunit
+
+script:
+  - msbuild /p:Configuration=Release HTTPServer.sln
+#  - mono ./TestRunner/NUnit.ConsoleRunner.3.8.0/tools/nunit3-console.exe ./HTTPServerLib.UnitTest/bin/Release/HttpServerLib.UnitTest.dll
+#  - sonar-scanner -Dsonar.verbose=true -X
+
+branches:
+  only:
+    - master
+
+addons:
+  sonarcloud:
+    organization: "qinyuanpei-github" 
+    token: db795a28468dc7c12805b330afed53d362fdd2d9
+    
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
+
