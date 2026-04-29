@@ -64,7 +64,8 @@ namespace HTTPServerLib
             //Request Body
             Body = GetRequestBody(rows);
             var contentLength = GetHeader(RequestHeaders.ContentLength);
-            if (int.TryParse(contentLength, out var length) && Body.Length != length)
+            var length= 0;
+            if (int.TryParse(contentLength, out length) && Body.Length != length)
             {
                 do
                 {

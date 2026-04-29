@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 using HTTPServerLib;
 using HttpServer;
 
-namespace HTTPServerLib
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
+namespace HTTPServerLib {
+    class Program {
+        static void Main(string[] args) {
             ExampleServer server = new ExampleServer("0.0.0.0", 4050);
-            server.SetRoot(@"D:\Hexo\public");
+            server.SetRoot(System.IO.Directory.GetCurrentDirectory());
             server.Logger = new ConsoleLogger();
             server.Start();
         }
