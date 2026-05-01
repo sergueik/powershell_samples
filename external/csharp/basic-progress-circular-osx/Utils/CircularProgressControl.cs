@@ -7,13 +7,11 @@ using System.Timers;
 using System.Windows.Forms;
 using System;
 
-namespace Utils
-{
-    public partial class CircularProgressControl : UserControl
-    {
+namespace Utils {
+    public partial class CircularProgressControl : UserControl {
 
         private string result;
-		public string Result { get { 
+		public string Result { get {
 			System.Diagnostics.Debug.WriteLine(String.Format("result: {0}", this.result));
 			return result;}
 		}
@@ -26,30 +24,50 @@ namespace Utils
 		private int averageInterval = 30000;
 		private int collectInterval = 1000;
 		private static int capacity = 900;
-		// NOTE: the default value os
-		// categoryNAme, counterName and instanceName about to be overwrittedn my app config values
+		// NOTE: the default values of
+		// averageInterval, collectInterval, categoryNAme, counterName, and instanceName about to be overwrittedn with app config values
 		private string categoryName = "Memory";
 		private string counterName = "Available Bytes";
 		private string instanceName = "";
-		
-        private const int DEFAULT_INTERVAL = 60;
-        private readonly Color DEFAULT_TICK_COLOR = Color.FromArgb(58, 58, 58);
-        private const int DEFAULT_TICK_WIDTH = 2;
-        private const int MINIMUM_INNER_RADIUS = 4;
-        private const int MINIMUM_OUTER_RADIUS = 8;
-        private Size MINIMUM_CONTROL_SIZE = new Size(28, 28);
-        private const int MINIMUM_PEN_WIDTH = 2;
 
-        public string CategoryName {get; set;}
-        public string CounterName {get; set;}
-        public string InstanceName {get; set;}
-        public int AverageInterval {get; set;}
-        public int CollectInterval {get; set;}
-        public int Capacity {get; set;}
-        public Boolean Debug {get; set;}
+		private const int DEFAULT_INTERVAL = 60;
+		private readonly Color DEFAULT_TICK_COLOR = Color.FromArgb(58, 58, 58);
+		private const int DEFAULT_TICK_WIDTH = 2;
+		private const int MINIMUM_INNER_RADIUS = 4;
+		private const int MINIMUM_OUTER_RADIUS = 8;
+		private Size MINIMUM_CONTROL_SIZE = new Size(28, 28);
+		private const int MINIMUM_PEN_WIDTH = 2;
 
-        public enum Direction
-        {
+		public string CategoryName {
+			get { return categoryName; }
+			set  { categoryName = value; }
+		}
+		public string CounterName {
+			get { return counterName; }
+			set  { counterName = value; }
+		}
+		public string InstanceName {
+			get { return instanceName; }
+			set  { instanceName = value; }
+		}
+		public int AverageInterval {
+			get { return averageInterval; }
+			set  { averageInterval = value; }
+		}
+		public int CollectInterval {
+			get { return collectInterval; }
+			set  { collectInterval = value; }
+		}
+		public int Capacity {
+			get { return capacity; }
+			set  { capacity = value; }
+		}
+		public Boolean Debug {
+			get { return debug; }
+			set  { debug = value; }
+		}
+
+        public enum Direction {
             CLOCKWISE,
             ANTICLOCKWISE
         }
@@ -67,20 +85,14 @@ namespace Utils
         int m_AlphaDecrement = 0;
         System.Windows.Forms.Timer m_Timer = null;
 
-        public int Interval
-        {
-            get
-            {
+        public int Interval {
+            get {
                 return m_Interval;
             }
-            set
-            {
-                if (value > 0)
-                {
+            set {
+                if (value > 0) {
                     m_Interval = value;
-                }
-                else
-                {
+                } else {
                     m_Interval = DEFAULT_INTERVAL;
                 }
             }
@@ -88,40 +100,33 @@ namespace Utils
         public Color TickColor { get; set; }
         public Direction Rotation { get; set; }
         private bool m_clockwise;
-        public bool Clockwise 
-        {
-            get
-            {
+        public bool Clockwise {
+            get {
                 return m_clockwise;
             }
-            set
-            {
+            set {
                 m_clockwise = value;
-                if (m_clockwise){ 
+                if (m_clockwise){
                    this.Rotation = Direction.CLOCKWISE;
-                } else { 
+                } else {
                    this.Rotation = Direction.ANTICLOCKWISE;
-                 }
+                }
             }
         }
 
-        public int StartAngle
-        {
-            get
-            {
+        public int StartAngle {
+            get {
                 return m_StartAngle;
             }
-            set
-            {
+            set {
                 m_StartAngle = value;
             }
         }
 
-        public CircularProgressControl()
-        {
+        public CircularProgressControl() {
             this.DoubleBuffered = true;
 
-            
+
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = Color.Transparent;
             this.TickColor = DEFAULT_TICK_COLOR;
@@ -142,17 +147,13 @@ namespace Utils
             m_Timer.Tick += new EventHandler(OnTimerTick);
         }
 
-        void OnTimerTick(object sender, EventArgs e)
-        {
-            if (Rotation == Direction.CLOCKWISE)
-            {
+        void OnTimerTick(object sender, EventArgs e) {
+            if (Rotation == Direction.CLOCKWISE) {
                 m_StartAngle += m_AngleIncrement;
 
                 if (m_StartAngle >= 360)
                     m_StartAngle = 0;
-            }
-            else if (Rotation == Direction.ANTICLOCKWISE)
-            {
+            } else if (Rotation == Direction.ANTICLOCKWISE) {
                 m_StartAngle -= m_AngleIncrement;
 
                 if (m_StartAngle <= -360)
@@ -162,15 +163,14 @@ namespace Utils
             Invalidate();
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
+        protected override void OnPaint(PaintEventArgs e) {
             // All the paintin will be handled by us.
             //base.OnPaint(e);
 
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
-            // Since the Rendering of the spokes is dependent upon the current size of the 
+            // Since the Rendering of the spokes is dependent upon the current size of the
             // control, the following calculation needs to be done within the Paint eventhandler.
             int alpha = m_AlphaStartValue;
             int angle = m_StartAngle;
@@ -191,8 +191,7 @@ namespace Utils
                 m_OuterRadius = MINIMUM_OUTER_RADIUS;
 
             // Render the spokes
-            for (int i = 0; i < m_SpokesCount; i++)
-            {
+            for (int i = 0; i < m_SpokesCount; i++) {
                 PointF pt1 = new PointF(m_InnerRadius * (float)Math.Cos(ConvertDegreesToRadians(angle)), m_InnerRadius * (float)Math.Sin(ConvertDegreesToRadians(angle)));
                 PointF pt2 = new PointF(m_OuterRadius * (float)Math.Cos(ConvertDegreesToRadians(angle)), m_OuterRadius * (float)Math.Sin(ConvertDegreesToRadians(angle)));
 
@@ -218,56 +217,53 @@ namespace Utils
             }
         }
 
-        private double ConvertDegreesToRadians(int degrees)
-        {
+        private double ConvertDegreesToRadians(int degrees) {
             return ((Math.PI / (double)180) * degrees);
         }
 
-        public void Start()
-        {
-        				
+		public void Start() {	
 			timer1 = new System.Timers.Timer();
 			timer2 = new System.Timers.Timer();
 
-        	buffer = new CircularBuffer<Data>(this.Capacity);
+			buffer = new CircularBuffer<Data>(this.Capacity);
 
-            if (m_Timer != null)
-            {
-                m_Timer.Interval = this.Interval;
-                m_Timer.Enabled = true;
-            }
-            // planted the code responsible for metric collection
-            
-				timer1.Interval = this.CollectInterval;
-				timer1.Enabled = true;
-				timer1.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => CollectMetrics());
-				timer1.Start();
+			if (m_Timer != null) {
+				m_Timer.Interval = this.Interval;
+				m_Timer.Enabled = true;
+			}
+			// planted the code responsible for metric collection
 
-				timer2.Interval = this.AverageInterval;
-				timer2.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => Commit());
-				timer2.Enabled = true;
-				timer2.Start();
-	
-            
-        }
+			timer1.Interval = this.CollectInterval;
+			timer1.Enabled = true;
+			timer1.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => CollectMetrics());
+			// ASPNet.Core version (unfinished)
+			//while (await timer1.Elapsed(source, args)){
+			//	CollectMetrics();
+			//}
+			timer1.Start();
 
-        public void Stop()
-        {
-            if (m_Timer != null)
-            {
+			timer2.Interval = this.AverageInterval;
+			timer2.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs args) => Commit());
+			timer2.Enabled = true;
+			timer2.Start();
+
+		}
+
+        public void Stop() {
+            if (m_Timer != null) {
                 m_Timer.Enabled = false;
             }
 			if (timer1 != null) {
-					timer1.Stop();
-					timer1.Enabled = false;
-				}
-				if (timer2 != null) {
-					timer2.Stop();
-					timer2.Enabled = false;
-				}
-            
+				timer1.Stop();
+				timer1.Enabled = false;
+			}
+			if (timer2 != null) {
+				timer2.Stop();
+				timer2.Enabled = false;
+			}
         }
- 		private void CollectMetrics() {
+
+        private void CollectMetrics() {
 			float value = 0;
 			var row = new Data();
 			row.TimeStamp = DateTime.Now;
@@ -287,7 +283,7 @@ namespace Utils
 			row.Value = value;
 			buffer.AddLast(row);
 		}
-        
+
 		private void Commit() {
 
 			var rows = buffer.ToList();
