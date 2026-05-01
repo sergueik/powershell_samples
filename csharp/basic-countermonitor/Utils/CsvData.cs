@@ -7,7 +7,7 @@ namespace Utils {
 
     [Serializable]
     public sealed class CsvData {
-    	
+
         private readonly List<string> headers = new List<string>();
 
         private readonly CsvRecords records = new CsvRecords();

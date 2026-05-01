@@ -7,8 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Utils {
 	public class EnvVars {
-		
-		private static string result = null;
+
 		private static readonly Regex regex =
             new Regex(@"\$(?:\{(?:env:)?(\w+)\}|(\w+))",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -24,7 +23,7 @@ namespace Utils {
 				// TODO: Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
 				string value = Environment.GetEnvironmentVariable( varName, EnvironmentVariableTarget.User) ;
 				if (value == null)
-					value =  Environment.GetEnvironmentVariable( varName,  EnvironmentVariableTarget.Process);	
+					value =  Environment.GetEnvironmentVariable( varName,  EnvironmentVariableTarget.Process);
 				return value == null ? string.Empty : value;
 			});
 		}

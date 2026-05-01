@@ -189,11 +189,11 @@ namespace Utils
 				 return;
 			}
 			IList<string> existingHeaders = ReadHeader(filePath, encoding);
-			
+
 			if (!HeadersMatch(existingHeaders, csvData.Headers)) {
 				throw new InvalidOperationException(
 					String.Format("CSV headers mismatch. existing: [{0}] new: [{1}]", string.Join(",", existingHeaders), string.Join(",", csvData.Headers)));
-			}		
+			}
 			using (var writer = new StreamWriter(filePath, append, encoding ?? Encoding.Default)) {
 				if (!fileExists && writeHeaderIfNew && csvData.Headers.Count > 0) {
 					WriteRecord(csvData.Headers, writer);
@@ -202,7 +202,7 @@ namespace Utils
 				csvData.Records.ForEach(record => WriteRecord(record.Fields, writer));
 			}
 		}
-		
+
 		private IList<string> ReadHeader(string filePath, Encoding encoding)
 		{
 			using (var reader = new StreamReader(filePath, encoding ?? Encoding.Default)) {

@@ -44,7 +44,7 @@ namespace Utils {
 				Console.Error.WriteLine(String.Format("result: {0}", this.result));
 				return result;}
 		}
-	
+
 		public Discover(int interval, Func<string, string> getResult, string argument) {
 			if (interval <= 0) {
 				throw new ArgumentException("invalid interval");
@@ -57,7 +57,7 @@ namespace Utils {
 			}
 			this.interval = interval;
 			this.getResult = getResult;
-			this.argument = argument;			
+			this.argument = argument;
 		}
 
 		public Discover(int interval, Predicate<string> checkCondition, string argument) {
@@ -100,7 +100,7 @@ namespace Utils {
 			}
 		}
 
-		
+
 		// This is useful to detect some long running operation has finished
 		public void startCheckingIfFinished() {
 			start(this.checkIfFinished);
@@ -157,7 +157,7 @@ try {
    # Windows powershell 5.1 does not support the C-style ternary operator: it is for 7.x+ only
    # return ( $script:cnt -ge 10 )? 'DONE': ''
    if ( $script:cnt -ge 10 ) {
-     return  'DONE' 
+     return  'DONE'
    } else {
      return ''
    }
@@ -204,7 +204,7 @@ try {
 $script:cnt = 0
 $discover.startPollingForResult()
 start-sleep -seconds 3
-if ($discover.Result -eq 'DONE') { 
+if ($discover.Result -eq 'DONE') {
   write-output 'it is working'
 } else {
   write-output 'it is not working'
@@ -242,9 +242,9 @@ it is not working
 # root cause: runspace affinity
 #
 # PowerShell is not thread-agnostic.
-# 
+#
 # A scriptblock is bound to a Runspace, which includes:
-# 
+#
 
 # * session state
 # * variables

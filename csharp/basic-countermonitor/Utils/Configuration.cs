@@ -28,7 +28,7 @@ namespace Utils {
             return ((CustomSettingElement)element).Name;
         }
 
-    	public CustomSettingElement this[int index]{ 
+    	public CustomSettingElement this[int index]{
     		get { return (CustomSettingElement) BaseGet(index);}
     	}
     }

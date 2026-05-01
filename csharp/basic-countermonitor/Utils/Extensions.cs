@@ -11,7 +11,7 @@ namespace Utils {
 		private static string result = null;
 		private static Regex regex;
 		private static MatchCollection matches;
-	
+
 		public static string FindMatch(this string text, string matchPattern, string matchTag) {
 			result = null;
 			regex = new Regex(matchPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -27,7 +27,7 @@ namespace Utils {
 			}
 			return result;
 		}
-	
+
 		public static string FindMatch(this string text, string matchPattern) {
 			string generated_tag = matchPattern.FindMatch("(?:<(?<result>[^>]+)>)", "result");
 			result = null;

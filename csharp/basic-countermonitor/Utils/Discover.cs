@@ -21,11 +21,11 @@ namespace Utils {
 		private Func<string, string, bool> checkCondition2 = null;
 		Func<string, string, string> getResult2 = null;
 		private string result;
-		public string Result { get { 
+		public string Result { get {
 				Debug.WriteLine(String.Format("result: {0}", this.result));
 				return result;}
 		}
-	
+
 		public Discover(int interval, Func<string, string> getResult1, string argument1) {
 			if (interval <= 0) {
 				throw new ArgumentException("invalid interval");
@@ -38,10 +38,10 @@ namespace Utils {
 			}
 			this.interval = interval;
 			this.getResult1 = getResult1;
-			this.argument1 = argument1;			
+			this.argument1 = argument1;
 		}
 
-	
+
 		public Discover(int interval, Func<string, string, string> getResult2, string argument1, string argument2) {
 			if (interval <= 0) {
 				throw new ArgumentException("invalid interval");
@@ -57,8 +57,8 @@ namespace Utils {
 			}
 			this.interval = interval;
 			this.getResult2 = getResult2;
-			this.argument1 = argument1;			
-			this.argument2 = argument2;			
+			this.argument1 = argument1;
+			this.argument2 = argument2;
 		}
 
 		public Discover(int interval, Func<string, string, bool> checkCondition2, string argument1, string argument2) {
@@ -79,8 +79,8 @@ namespace Utils {
 			}
 			this.interval = interval;
 			this.checkCondition2 = checkCondition2;
-			this.argument1 = argument1;			
-			this.argument2 = argument2;			
+			this.argument1 = argument1;
+			this.argument2 = argument2;
 		}
 
 		public Discover(int interval, Predicate<string> checkCondition1, string argument1) {
@@ -128,7 +128,7 @@ namespace Utils {
 				timer.Start();
 			}
 		}
-		
+
 		// This is useful to detect some long running operation has finished
 		public void startCheckingIfFinished() {
 			start(this.checkIfFinished);

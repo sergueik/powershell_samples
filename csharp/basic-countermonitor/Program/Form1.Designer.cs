@@ -16,91 +16,58 @@ namespace Program {
 
 		private IContainer components = null;
 		// 15 minute worth of data
-		private CircularBuffer<Data> buffer;
 		private NameValueCollection appSettings;
+			private Boolean debug;
+		private string dataFile = @"c:\temp\loadaveragecounterservice.txt";
+		private int averageInterval = 60000;
+		private int collectInterval = 1000;
+		private int rounds = 100;
+		private int capacity = 900;
+		private string categoryName = "Memory";
+		private string counterName = "Available Bytes";
+		private string instanceName = "";
+		// NOTE: the default values of
+		// dataFile,  averageInterval, collectInterval, categoryNAme, counterName, and instanceName about to be overwrittedn with app config values
 
-		private System.Timers.Timer timer1;
-		private System.Timers.Timer timer2;
-
-		// NOTE: Process\Working Set	
 		protected override void Dispose(bool disposing) {
 			if (disposing && (components != null)) {
 				components.Dispose();
-			}
-			if(timer1!=null) {
-				timer1.Stop();
-				timer1.Enabled = false;
-			}
-			if(timer2!=null) {
-				timer2.Stop();
-				timer2.Enabled = false;
 			}
 
 			base.Dispose(disposing);
 		}
 
-		private void InitializeComponent()	{
-			timer1 = new System.Timers.Timer();
-			timer2 = new System.Timers.Timer();
-			button1 = new Button();
-			progressBar1 = new ProgressBar();
-			label1 = new Label();
-			((System.ComponentModel.ISupportInitialize)(timer1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(timer2)).BeginInit();
+		private void InitializeComponent() {
+			this.userControl = new Utils.UserControl1();
+
+			this.userControl.Location = new System.Drawing.Point(0, 0);
+			userControl.CounterName = this.counterName;
+			userControl.CategoryName = this.categoryName;
+			userControl.InstanceName = this.instanceName;
+
+			userControl.AverageInterval = this.averageInterval;
+			userControl.CollectInterval = this.collectInterval;
+			userControl.Capacity = this.capacity;
+			userControl.Debug = this.debug;
+			userControl.DataFile = this.dataFile;
+			userControl.Rounds = this.rounds;
+
 			this.SuspendLayout();
-
-			timer1.Enabled = true;
-			timer1.Interval = 1000D;
-			timer1.SynchronizingObject = this;
-
-			timer2.Enabled = true;
-			timer2.Interval = 60000D;
-			timer2.SynchronizingObject = this;
-
-			button1.Location = new Point(26, 22);
-			button1.Margin = new Padding(6);
-			button1.Name = "button1";
-			button1.Size = new Size(182, 42);
-			button1.TabIndex = 0;
-			button1.Text = "Start Calculation";
-			button1.UseVisualStyleBackColor = true;
-			button1.Click += new System.EventHandler(button1_Click);
-
-			progressBar1.Location = new Point(26, 76);
-			progressBar1.Margin = new Padding(6);
-			progressBar1.Maximum = 1000;
-			progressBar1.Name = "progressBar1";
-			progressBar1.Size = new Size(418, 31);
-			progressBar1.TabIndex = 1;
-
-			label1.AutoSize = true;
-			label1.Location = new Point(460, 78);
-			label1.Margin = new Padding(6, 0, 6, 0);
-			label1.Name = "label1";
-			label1.Size = new Size(41, 25);
-			label1.TabIndex = 2;
-			label1.Text = "0%";
 
 			this.AutoScaleDimensions = new SizeF(11F, 24F);
 			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new Size(549, 133);
-			this.Controls.Add(label1);
-			this.Controls.Add(progressBar1);
-			this.Controls.Add(button1);
+			this.Controls.Add(userControl);
+
 			this.Margin = new Padding(6);
 			this.Name = "Form1";
 			this.Text = "Form1";
-			((System.ComponentModel.ISupportInitialize)(timer1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(timer2)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 
-		// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.progressbar?view=netframework-4.5
-		private ProgressBar progressBar1;
-		private Label label1;
-		private Button button1;
+		private UserControl1 userControl;
 	}
 }
 

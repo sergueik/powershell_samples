@@ -21,14 +21,15 @@ param (
   [string] $value = 'example.Application',
   [string] $name = 'java.exe',
   [string] $category = 'Process',
-  [string] $counter = 'Working Set', 
+  [string] $counter = 'Working Set',
   [string] $instance = 'java',
   [switch] $debug # currently unused
 )
 
 [bool]$debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $DebugPreference -eq 'Continue'
-$debug_flag = $true
-# for running commandline-less
+# TODO: enable
+# $debug_flag = $true
+# for running commandline-less Powershell ISE
 if ($debug_flag){
   $DebugPreference = 'Continue'
 }

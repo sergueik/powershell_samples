@@ -87,7 +87,7 @@ echo "[INFO] found PID=$PID"
 echo "[INFO] collecting process memory counters to file every ${INTERVAL}s max ${COUNT} times"
 echo "[INFO] writing pidstat output to $OUTFILE"
 
-if [[ "$FORMAT" == "csv" ]]; then  
+if [[ "$FORMAT" == "csv" ]]; then
     echo "time,rss_mb,vsz_mb" | tee "$OUTFILE" /dev/stderr > /dev/null
     pidstat -H -r -p "$PID" "$INTERVAL" "$COUNT" | awk '/^[0-9]/ { printf "%s,%.1f,%.1f\n", $1, $7/1024, $6/1024; fflush() }' | tee -a "$OUTFILE" /dev/stderr > /dev/null
 else

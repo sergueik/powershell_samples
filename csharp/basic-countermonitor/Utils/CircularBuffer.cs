@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 
 namespace Utils {
-	
+
 	public class CircularBuffer<T> : IEnumerable<T> {
 		internal T[] _array;
 		internal Int32 _start;
@@ -131,7 +131,7 @@ namespace Utils {
 			}
 		}
 
-		IEnumerator IEnumerable.GetEnumerator(){		
+		IEnumerator IEnumerable.GetEnumerator(){
 		    return GetEnumerator();
 		}
 

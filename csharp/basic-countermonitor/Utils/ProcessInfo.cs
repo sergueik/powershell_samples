@@ -59,7 +59,7 @@ namespace Utils {
 			// NOTE: preserve WMI vendor class/property mixed camel snake style for readability.
 			var query = String.Format("SELECT Name, Caption, ProcessId, CommandLine FROM Win32_Process WHERE CommandLine LIKE '%{0}%' AND CommandLine LIKE '%{1}%'", filename, value);
 			Debug.WriteLine(String.Format("query: {0}", query));
-			// NOTE: 
+			// NOTE:
 			// The WMIC.exe command
 			// wmic:root\cli>path win32_process get commandline,caption,name,processid where (processid=30448)
 			// returns an "Invalid GET Expression" error
