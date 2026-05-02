@@ -12,29 +12,29 @@ using System.Collections.Generic;
 
 namespace Utils {
 	partial class UserControl1 {
-    private System.ComponentModel.IContainer components = null;
- 		private System.Timers.Timer timer1;
+		private System.ComponentModel.IContainer components = null;
+		private System.Timers.Timer timer1;
 		private System.Timers.Timer timer2;
 
-    protected override void Dispose(bool disposing) {
-      if (disposing && (components != null)) {
-        components.Dispose();
-      }
-		if(timer1!=null) {
+		protected override void Dispose(bool disposing) {
+			if (disposing && (components != null)) {
+				components.Dispose();
+			}
+			if (timer1 != null) {
 				timer1.Stop();
 				timer1.Enabled = false;
 			}
-			if(timer2!=null) {
+			if (timer2 != null) {
 				timer2.Stop();
 				timer2.Enabled = false;
 			}
-      base.Dispose(disposing);
-    }
+			base.Dispose(disposing);
+		}
 
-    private void InitializeComponent() {
-		timer1 = new System.Timers.Timer();
+		private void InitializeComponent() {
+			timer1 = new System.Timers.Timer();
 			timer2 = new System.Timers.Timer();
-  		timer1.Enabled = true;
+			timer1.Enabled = true;
 			timer1.Interval = 1000D;
 			timer1.SynchronizingObject = this;
 
@@ -63,8 +63,8 @@ namespace Utils {
 			progressBar1.Size = new Size(418, 31);
 			progressBar1.TabIndex = 1;
 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			button1.Location = new Point(26, 22);
 			button1.Margin = new Padding(6);
 			button1.Name = "button1";
@@ -91,7 +91,7 @@ namespace Utils {
 
 			this.AutoScaleDimensions = new SizeF(11F, 24F);
 			this.AutoScaleMode = AutoScaleMode.Font;
-      // this.Size = new System.Drawing.Size(274, 27);
+			// this.Size = new System.Drawing.Size(274, 27);
 			this.ClientSize = new Size(549, 133);
 			this.Controls.Add(label1);
 			this.Controls.Add(progressBar1);
@@ -100,15 +100,15 @@ namespace Utils {
 			((System.ComponentModel.ISupportInitialize)(timer2)).EndInit();
 
 
-      this.Name = "UserControl1";
-      this.ResumeLayout(false);
-      this.PerformLayout();
-    }
+			this.Name = "UserControl1";
+			this.ResumeLayout(false);
+			this.PerformLayout();
+		}
 
 		// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.progressbar?view=netframework-4.5
 		private ProgressBar progressBar1;
 		private Label label1;
 		private Button button1;
 
-  }
+	}
 }

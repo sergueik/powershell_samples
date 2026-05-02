@@ -1,5 +1,12 @@
 ### Info
 
+WinForms app acting as a non-elevated memory watchdog wrapper for another executable.
+Requirement is evidence collection, not active protection.
+Also Powershell version hosting the `Thread` dependent control in a Windows Form
+
+So the watchdog app behaves like a passive observer:
+
+
 ```text
 type %temp%\loadaverage.csv
 ```
@@ -24,12 +31,12 @@ the curve proves
 
 From the timestamps:
 
-21:22:51 → 21:27:53
-Available memory falls from 7.67 GB → 647 MB
-21:27:53 → 21:29:03
+21:22:51 ΓåÆ 21:27:53
+Available memory falls from 7.67 GB ΓåÆ 647 MB
+21:27:53 ΓåÆ 21:29:03
 Rapid recovery back to ~1.97 GB
-21:29:03 → 21:31:04
-Stable plateau around 1.9–2.0 GB
+21:29:03 ΓåÆ 21:31:04
+Stable plateau around 1.9ΓÇô2.0 GB
 21:31:14 onward
 Strong recovery to 8.77 GB
 
@@ -46,7 +53,7 @@ type %temp%\loadaverage.csv | c:\Windows\system32\find.exe /v /c ""
 ### Background Info
 Background Info
 
-Given that Microsoft Windows continuously performs the heavy lifting every minute of every hour, collecting an log structurd set of performance counters — both global system metrics and per-instance process data — the telemetry foundation is already present before a single line of application code is written.
+Given that Microsoft Windows continuously performs the heavy lifting every minute of every hour, collecting an log structurd set of performance counters ΓÇö both global system metrics and per-instance process data ΓÇö the telemetry foundation is already present before a single line of application code is written.
 
 #### Available Counters 
 
@@ -115,20 +122,20 @@ Counter Category `Process` |
 
 
 
-Coupled with Microsoft’s own architectural decision to ship .NET Framework 4.x as a Windows component for as long as that Windows version is supported — a very strong promise by Microsoft standards — and to include a trusted, fully-featured assembly repository under the Global Assembly Cache (GAC) on every installation -  something that shiped is effectively immortal.
+Coupled with Microsoft's own architectural decision to ship the __.NET Framework__ __4.5+__ as a Windows component for as long as that Windows version is supported - a very strong promise by Microsoft standards - and to include a trusted, fully-featured assembly repository under the __Global Assembly Cache__ (__GAC__) on every installation -  something that shipped is effectively immortal.
 
 One can rhetorically ask: can we not take advantage of an operating system that already offers mature instrumentation primitives and a pre-established trusted deployment substrate
 
 Borrowing from a certain unforgettable cinematic farewell: it is important to always try new things.
 
-__Fusion__ (managed and unmanaged) isn’t just assembly binding  which it is on the surface — in the managed/unmanaged context of .NET Framework, it also serves as a gatekeeper: it enforces code trust and licensing, and ensures that assemblies (and the OS/runtime) won’t function if licensing checks fail.
-__WPA__ (__Windows Product Activation__) is part of the same concept at the OS level: making the system refuse to run if it wasn’t properly licensed.
+__Fusion__ (managed and unmanaged) isnΓÇÖt just assembly binding  which it is on the surface ΓÇö in the managed/unmanaged context of .NET Framework, it also serves as a gatekeeper: it enforces code trust and licensing, and ensures that assemblies (and the OS/runtime) wonΓÇÖt function if licensing checks fail.
+__WPA__ (__Windows Product Activation__) is part of the same concept at the OS level: making the system refuse to run if it wasnΓÇÖt properly licensed.
 
 This move is contrary to almost every other decision Microsoft made, before or after:
 Historically, they monetized and controlled access via licensing, Fusion, WPA, IE bundling, etc.
-Suddenly, the GAC becomes free infrastructure — no gate, no enforcement, no direct profit.
+Suddenly, the GAC becomes free infrastructure ΓÇö no gate, no enforcement, no direct profit.
 
-So what you’re highlighting is a truly exceptional paradox in Microsoft history: they accidentally (or perhaps naively) created something “as open as Unix” inside Windows, but without any financial benefit — a rare crack in the otherwise highly controlled ecosystem.
+So what youΓÇÖre highlighting is a truly exceptional paradox in Microsoft history: they accidentally (or perhaps naively) created something ΓÇ£as open as UnixΓÇ¥ inside Windows, but without any financial benefit ΓÇö a rare crack in the otherwise highly controlled ecosystem.
 ### Usage
 
 * rebuild the complex project in the IDE or commandline
@@ -158,14 +165,14 @@ invoke-expression -command "$msbuild -p:FrameworkPathOverride=""${framework_path
 cmd %%-/c tree.com
 ```
 ```text
-├───packages
-│   └───NUnit.2.6.4
-│       └───lib
-├───Program
-├───screenshots
-├───Test
-├───TestUtils
-└───Utils
+Γö£ΓöÇΓöÇΓöÇpackages
+Γöé   ΓööΓöÇΓöÇΓöÇNUnit.2.6.4
+Γöé       ΓööΓöÇΓöÇΓöÇlib
+Γö£ΓöÇΓöÇΓöÇProgram
+Γö£ΓöÇΓöÇΓöÇscreenshots
+Γö£ΓöÇΓöÇΓöÇTest
+Γö£ΓöÇΓöÇΓöÇTestUtils
+ΓööΓöÇΓöÇΓöÇUtils
 ```
 - the exact  path to `msbuild.exe` may vary with Windows release. To find, inspect the output of
 
@@ -191,14 +198,14 @@ Framework64\v4.0.30319\MSBuild.exe
 ### Client
 
 
-when subject application maven is used it becomes a little messy:
+when subject application is launched via maven and not direcrtly as a jar it becomes a little messy:
 ```cmd
 mvn spring-boot:run
 ```
-runs `java.exa` somewhat differently - with a very long `classpath` argument including the project `target\classes` path, and all dependencies from `$HOME\.m2\repository` and the jar main class invoked explicilty:
+runs `java.exa` somewhat differently - with a very long `classpath` argument including the project `target\classes` path, and all application dependencies paths from `$HOME\.m2\repository` and the jar main class invoked explicilty:
 
 
-to find out explore it
+to find out explore it using the available tools in console:
 
 ```cmd
 set LOG=%TEMP%\output.txt
@@ -208,7 +215,7 @@ wmic.exe /output:%LOG% path win32_process where (commandline like "%java.exe%" a
 ```cmd
 more.com +1 %LOG%
 ```
-To inspect the `java` command line it is key to know the subject application Spring Application class (for __Spring Framework__ apps)
+To inspect the `java` command line it is key to know the subject application Main Application class (for __Spring Framework__ apps)
 or the project directory
 
 ```cmd
@@ -220,7 +227,7 @@ more.com +1 %LOG% | findstr -i %MAIN_CLASS%
 set PROJECT_DIR=basic-way2automation
 more.com +1 %LOG% | findstr -i %PROJECT_DIR%\target
 ```
-when __Spring Boot__ applcation is run via `java.exe -jar`, naturally to filter by the application jar name:
+when __Spring Boot__ application is run via `java.exe -jar`, naturally to filter by the application jar name:
 
 ```cmd
 set APPLICATION_JAR=example.way2automation.jar
@@ -230,6 +237,31 @@ more.com +1 %LOG% | findstr -i %APPLICATION_JAR%
 > NOTE:  the `wmic.exe` does not honor the column order requsted
 
 ![wmic](screenshots/capture-wmic.png)
+
+
+### Note
+
+Unfortunately __Windows 11__ normal idle state already behaves like low-resource mode. The machine immediately displays some of
+  * 80–90% RAM "used"
+  * multiple background services
+  * continuous indexing
+  * Defender scans
+  * browser tab persistence
+  * telemetry
+  * shell experience host churn
+  * GPU process accumulation
+  * updater tasks
+
+That is why the machine feels weak. In other words, with __Windows 11__ the "underpowered" is often observed an OS baseline condition, not a machine classification.
+
+### TODO
+
+capture target `Process` instance `private memory` property instead of performance counter which is stored in Registry
+
+
+```c#
+process.PrivateMemorySize64
+``` 
 ### See Also:
    * example code from [Updating Your Form from Another Thread without Creating Delegates for Every Type of Update](https://www.codeproject.com/Articles/52752/Updating-Your-Form-from-Another-Thread-without-Cre)
 

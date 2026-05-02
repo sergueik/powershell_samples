@@ -736,15 +736,15 @@ $instance = get_performance_counter_instance -processid $processid -name $name
 write-output ('peformance counter instance: {0}' -f $instance )
 
 @( 'System.Drawing','System.Windows.Forms') | ForEach-Object { [void][System.Reflection.Assembly]::LoadWithPartialName($_) }
-$f = New-Object System.Windows.Forms.Form
-$f.AutoScaleDimensions = New-Object System.Drawing.SizeF (6.0,13.0)
+$f = new-object System.Windows.Forms.Form
+$f.AutoScaleDimensions = new-object System.Drawing.SizeF (6.0,13.0)
 $f.AutoScaleMode = [System.Windows.Forms.AutoScaleMode]::Font
 $f.BackColor = [System.Drawing.Color]::LightGray
-$f.ClientSize = New-Object System.Drawing.Size (257,119)
+$f.ClientSize = new-object System.Drawing.Size (257,119)
 
-$button1 = New-Object System.Windows.Forms.Button
-$label = New-Object System.Windows.Forms.Label
-$cbc1 = New-Object Utils.CircularProgressControl
+$button1 = new-object System.Windows.Forms.Button
+$label = new-object System.Windows.Forms.Label
+$cbc1 = new-object Utils.CircularProgressControl
 $cbc1.CategoryName = $category
 $cbc1.CounterName = $counter
 $cbc1.InstanceName = $instance
@@ -763,9 +763,9 @@ $label.Name = "label1"
 $label.Size = new-object System.Drawing.Size(224, 27)
 $label.TabIndex = 2
 
-$button1.Location = New-Object System.Drawing.Point (170,40)
+$button1.Location = new-object System.Drawing.Point (170,40)
 $button1.Name = 'button1'
-$button1.Size = New-Object System.Drawing.Size (75,23)
+$button1.Size = new-object System.Drawing.Size (75,23)
 $button1.TabIndex = 0
 $button1.Text = 'Start'
 $button1.UseVisualStyleBackColor = $true
@@ -789,11 +789,11 @@ $button1.add_click.Invoke({
 
 $cbc1.BackColor = [System.Drawing.Color]::Transparent
 $cbc1.Interval = 60
-$cbc1.Location = New-Object System.Drawing.Point (10,20)
-$cbc1.MinimumSize = New-Object System.Drawing.Size (56,56)
+$cbc1.Location = new-object System.Drawing.Point (10,20)
+$cbc1.MinimumSize = new-object System.Drawing.Size (56,56)
 $cbc1.Name = "circularProgressControl1"
 $cbc1.Clockwise = $true
-$cbc1.Size = New-Object System.Drawing.Size (56,56)
+$cbc1.Size = new-object System.Drawing.Size (56,56)
 $cbc1.StartAngle = 270
 $cbc1.TabIndex = 1
 $cbc1.TickColor = [System.Drawing.Color]::DarkBlue
