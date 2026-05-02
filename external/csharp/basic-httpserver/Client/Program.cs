@@ -19,7 +19,7 @@ namespace HttpClient
             requestStream.Write(data, 0, data.Length);
             var response = request.GetResponse();
 
-            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            using (var reader = new StreamReader(response.GetResponseStream()))
             {
                 var content = reader.ReadToEnd();
             }
