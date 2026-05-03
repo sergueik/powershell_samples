@@ -42,6 +42,7 @@
     <Compile Include="ActionResult.cs" />
     <Compile Include="BaseHeader.cs" />
     <Compile Include="HeadersHelper.cs" />
+    <Compile Include="MimeTypes.cs" />
     <Compile Include="RequestHeaders.cs" />
     <Compile Include="HttpRequest.cs" />
     <Compile Include="HttpResponse.cs" />

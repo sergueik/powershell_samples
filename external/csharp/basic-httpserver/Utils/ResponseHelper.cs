@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Linq;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -51,6 +51,11 @@ namespace Utils {
         }
 
         private static string GetMimeFromFile(string filePath) {
+			if (Type.GetType("Mono.Runtime") != null)
+				// Embedded statement cannot be a declaration or labeled statement (CS1023)             	// by filename
+				// var mime = "";
+				return MimeTypes.getMimeType(filePath);
+	    
             IntPtr mimeout;
             if (!File.Exists(filePath))
                 throw new FileNotFoundException(string.Format("File {0} can't be found at server.", filePath));
