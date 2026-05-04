@@ -59,61 +59,53 @@ namespace Utils
 			return response;
 		}
 
+		const int S_OK = 0;
+
 		private static string GetMimeFromFile(string filePath) {
 			string mime = "application/octet-stream";
-			int MaxContent = 0;
-			byte[] buf = { };
-			string head = null;
+			int read;
+			if (!File.Exists(filePath))
+				throw new FileNotFoundException(string.Format("File {0} can't be found at server.", filePath));
+
+			int MaxContent = (int)new FileInfo(filePath).Length;
+			if (MaxContent > 4096)
+				MaxContent = 4096;
+			byte[] buf = new byte[MaxContent];
+
+			using (FileStream fs = File.OpenRead(filePath)) {
+				read = fs.Read(buf, 0, MaxContent);
+				fs.Close();
+			}
 			if (Type.GetType("Mono.Runtime") != null) {
 
 				mime = MimeTypes.getMimeType(filePath);
-				if (!File.Exists(filePath))
-					throw new FileNotFoundException(string.Format("File {0} can't be found at server.", filePath));
-
-				MaxContent = (int)new FileInfo(filePath).Length;
-				if (MaxContent > 4096)
-					MaxContent = 4096;
-				buf = new byte[MaxContent];
-
-				using (FileStream fs = File.OpenRead(filePath)) {
-					fs.Read(buf, 0, MaxContent);
-					fs.Close();
-				}
 				if (mime == "application/octet-stream" || mime == "text/plain") {
 					// NOTE: Encoding.Default is locale-dependent
-					head = System.Text.Encoding.ASCII.GetString(buf).TrimStart('\0', ' ', '\t', '\r', '\n').ToLowerInvariant();
+					string head = System.Text.Encoding.ASCII.GetString(buf, 0, read).TrimStart('\0', ' ', '\t', '\r', '\n').ToLowerInvariant();
 
 					if (head.StartsWith("<!doctype html") || head.StartsWith("<html"))
 						mime = "text/html";
 				}
-				return mime; 
+				return mime;
 			} else {
-			
+
 				IntPtr mimeout;
-				if (!File.Exists(filePath))
-					throw new FileNotFoundException(string.Format("File {0} can't be found at server.", filePath));
+				int result = FindMimeFromData(IntPtr.Zero, filePath, buf, read, null, 0, out mimeout, 0);
 
-				MaxContent = (int)new FileInfo(filePath).Length;
-				if (MaxContent > 4096)
-					MaxContent = 4096;
-				buf = new byte[MaxContent];
+				if (result == S_OK && mimeout != IntPtr.Zero) {
 
-				using (FileStream fs = File.OpenRead(filePath)) {
-					fs.Read(buf, 0, MaxContent);
-					fs.Close();
+					mime = Marshal.PtrToStringUni(mimeout);
+					Marshal.FreeCoTaskMem(mimeout);
+				} else {
+					mime = "application/octet-stream";
+					// throw aggressively only when debugging
+					// throw Marshal.GetExceptionForHR(result);
 				}
-
-				int result = FindMimeFromData(IntPtr.Zero, filePath, buf, MaxContent, null, 0, out mimeout, 0);
-				if (result != 0)
-					throw Marshal.GetExceptionForHR(result);
-
-				mime = Marshal.PtrToStringUni(mimeout);
-				Marshal.FreeCoTaskMem(mimeout);
 			}
 			Console.Error.WriteLine(String.Format("Mime of {0} : {1}", filePath, mime));
-            
 			return mime;
 		}
+
 		// https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/ms775107(v=vs.85)
 		// https://github.com/wine-mirror/wine/blob/71e7a2e81eec9155d5d0745b491e1cbfab3bf742/dlls/urlmon/mimefilter.c#L657
 		// NOTE: the Windows FindMimeFromData does not rely on a fixed "256 bytes rule"
@@ -124,10 +116,10 @@ namespace Utils
 		[DllImport("urlmon.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = false)]
 		static extern int FindMimeFromData(IntPtr pBC,
 			[MarshalAs(UnmanagedType.LPWStr)] string pwzUrl,
-			[MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.I1, SizeParamIndex = 3)] 
+			[MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.I1, SizeParamIndex = 3)]
               byte[] pBuffer,
 			int cbSize,
-			[MarshalAs(UnmanagedType.LPWStr)]  
+			[MarshalAs(UnmanagedType.LPWStr)]
               string pwzMimeProposed,
 			int dwMimeFlags,
 			out IntPtr ppwzMimeOut,
