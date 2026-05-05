@@ -1,4 +1,4 @@
-namespace JsonnetBinding
+namespace Utils
 {
     /// <summary>
     /// Callback used to load imports.

@@ -1,6 +1,6 @@
 using System;
 
-namespace JsonnetBinding
+namespace Utils
 {
     /// <summary>
     /// Exception thrown when an error is returned from a Jsonnet call.

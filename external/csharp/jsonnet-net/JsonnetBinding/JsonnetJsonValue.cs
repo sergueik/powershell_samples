@@ -1,6 +1,6 @@
 using System;
 
-namespace JsonnetBinding
+namespace Utils
 {
     /// <summary>
     /// Strongly-typed equivalent to IntPtr to represent the opaque JsonnetJsonValue type.

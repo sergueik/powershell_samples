@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace JsonnetBinding
+namespace Utils
 {
 	public class JsonnetVm
 	{
@@ -16,7 +16,13 @@ namespace JsonnetBinding
         
 		public JsonnetVm()
 		{
+						try {
+
 			_handle = NativeMethods.jsonnet_make();
+					} catch (Exception ex) {
+				Console.WriteLine(ex.ToString());
+				throw;
+			}	
 		}
 
 		/// <summary>

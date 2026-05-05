@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32.SafeHandles;
 
-namespace JsonnetBinding
+namespace Utils
 {
     /// <summary>
     /// Safe handle implementation for a pointer to the JsonnetVm struct.

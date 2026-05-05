@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace JsonnetBinding
+namespace Utils
 {
     /// <summary>
     /// PInvoke calls for libjsonnet. See jsonnet.h for reference:

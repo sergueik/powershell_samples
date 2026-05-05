@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace JsonnetBinding
+namespace Utils
 {
     /// <summary>
     /// Helper methods for converting JsonnetJsonValues to and from managed objects.  
