@@ -86,13 +86,15 @@ Archive:  /c/Users/kouzm/Downloads/nunit-runners.zip
 cp -rf /tmp/tools/* /c/tools/nunit/
 ```
 ```cmd
+pushd JsonnetBinding.Tests\bin\Debug
+set PATH=%PATH%;c:\tools\nunit
 nunit3-console.exe Tests.dll --labels=All --trace=Debug
 ```
 ```
 NUnit Console 3.16.3 (Release)
 Copyright (c) 2022 Charlie Poole, Rob Prouse
 Tuesday, May 5, 2026 6:18:54 PM
-
+\bin\Debug
 labels=All is deprecated and will be removed in a future release. Please use labels=Before instead.
 
 Runtime Environment
@@ -118,6 +120,126 @@ Test Run Summary
 
 Results (nunit3) saved as TestResult.xml
 ```
+### Building in console 
+
+* download Nunit [3.5.x](https://www.nuget.org/packages/NUnit/3.5.0):
+```sh
+curl -skLo ~/Downloads/nunit.zip https://www.nuget.org/api/v2/package/NUnit/3.5.0
+mkdir -p packages/NUnit.3.5.0/lib/
+unzip -jx ~/Downloads/nunit.zip lib/net45/* -d packages/NUnit.3.5.0/lib
+```
+* temporarily update the project file `` from
+
+```xml
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+
+```
+to
+```xml
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.3.4.0\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+```
+* build application and tests
+```powershell
+$env:path="${env:path};c:\Windows\Microsoft.NET\Framework\v4.0.30319"
+msbuild.exe .\JsonnetBinding.sln /t:Clean,Build
+```
+* try to rerun tests
+```cmd
+pushd JsonnetBinding.Tests\bin\Debug
+set PATH=%PATH%;c:\tools\nunit
+nunit3-console.exe Tests.dll --labels=All --trace=Debug
+```
+```text
+NUnit Console 3.16.3 (Release)
+Copyright (c) 2022 Charlie Poole, Rob Prouse
+Wednesday, May 6, 2026 8:51:15 AM
+
+labels=All is deprecated and will be removed in a future release. Please use labels=Before instead.
+
+Runtime Environment
+   OS Version: Microsoft Windows NT 6.2.9200.0
+   Runtime: .NET Framework CLR v4.0.30319.42000
+
+Test Files
+    Tests.dll
+
+
+Errors, Failures and Warnings
+
+1) Invalid : C:\developer\sergueik\powershell_samples\external\csharp\jsonnet-net\JsonnetBinding.Tests\bin\Debug\Tests.dll
+No suitable tests found in 'C:\developer\sergueik\powershell_samples\external\csharp\jsonnet-net\JsonnetBinding.Tests\bin\Debug\Tests.dll'.
+Either assembly contains no tests or proper test driver has not been found.
+
+Test Run Summary
+  Overall result: Failed
+  Test Count: 0, Passed: 0, Failed: 0, Warnings: 0, Inconclusive: 0, Skipped: 0
+  Start time: 2026-05-06 12:51:15Z
+    End time: 2026-05-06 12:51:15Z
+    Duration: 0.430 seconds
+```
+```text
+C:\developer\sergueik\powershell_samples\external\csharp\jsonnet-net\JsonnetBinding.Tests\bin\Debug>nunit3-console.exe Tests.dll --labels=All --trace=Debug
+NUnit Console 3.16.3 (Release)
+Copyright (c) 2022 Charlie Poole, Rob Prouse
+Wednesday, May 6, 2026 9:15:54 AM
+
+labels=All is deprecated and will be removed in a future release. Please use labels=Before instead.
+
+Runtime Environment
+   OS Version: Microsoft Windows NT 6.2.9200.0
+   Runtime: .NET Framework CLR v4.0.30319.42000
+
+Test Files
+    Tests.dll
+
+=> JsonnetBinding.Tests.JsonnetVmTest
+System.BadImageFormatException: An attempt was made to load a program with an incorrect format. (Exception from HRESULT: 0x8007000B)
+   at Utils.NativeMethods.jsonnet_make()
+   at Utils.JsonnetVm..ctor() in c:\developer\sergueik\powershell_samples\external\csharp\jsonnet-net\JsonnetBinding\JsonnetVm.cs:line 21
+
+Errors, Failures and Warnings
+
+1) SetUp Error : JsonnetBinding.Tests.JsonnetVmTest
+System.BadImageFormatException : An attempt was made to load a program with an incorrect format. (Exception from HRESULT: 0x8007000B)
+   at Utils.NativeMethods.jsonnet_make()
+   at Utils.JsonnetVm..ctor() in c:\developer\sergueik\powershell_samples\external\csharp\jsonnet-net\JsonnetBinding\JsonnetVm.cs:line 24
+   at JsonnetBinding.Tests.JsonnetVmTest..ctor() in c:\developer\sergueik\powershell_samples\external\csharp\jsonnet-net\JsonnetBinding.Tests\JsonnetVmTest.cs:line 10
+
+Run Settings
+    DisposeRunners: True
+    InternalTraceLevel: Debug
+    WorkDirectory: C:\developer\sergueik\powershell_samples\external\csharp\jsonnet-net\JsonnetBinding.Tests\bin\Debug
+    ImageRuntimeVersion: 4.0.30319
+    ImageTargetFrameworkName: .NETFramework,Version=v4.5
+    ImageRequiresX86: False
+    ImageRequiresDefaultAppDomainAssemblyResolver: False
+    TargetRuntimeFramework: net-4.5
+    NumberOfTestWorkers: 16
+
+Test Run Summary
+  Overall result: Failed
+  Test Count: 12, Passed: 0, Failed: 12, Warnings: 0, Inconclusive: 0, Skipped: 0
+    Failed Tests - Failures: 0, Errors: 12, Invalid: 0
+  Start time: 2026-05-06 13:15:54Z
+    End time: 2026-05-06 13:15:56Z
+    Duration: 1.241 seconds
+
+Results (nunit3) saved as TestResult.xml
+```
+
+### Summa	ry
+
+As you know, I have worked my entire life, very hard... to achieve one goal. And that goal, which I have in fact, achieved...
 
 ### See Also
   * https://nunit.org/nunitv2/docs/2.6.4/installation.html

@@ -7,10 +7,10 @@ using Utils;
 namespace JsonnetBinding.Tests {
 	[TestFixture]
 	public class JsonnetVmTest {
-		protected static JsonnetVm Vm = null;
-		
-		[TestFixtureSetUp]
-		public static void Setup() {
+		protected JsonnetVm Vm = new JsonnetVm();
+	/*	
+		[OneTimeSetUp]
+		public void Setup() {
 			try {
 				Vm = new JsonnetVm();
 			} catch (Exception ex) {
@@ -19,7 +19,7 @@ namespace JsonnetBinding.Tests {
 			}	
 		}
 
-
+*/
 		[Test]
 		public void EvaluateFile()
 		{
