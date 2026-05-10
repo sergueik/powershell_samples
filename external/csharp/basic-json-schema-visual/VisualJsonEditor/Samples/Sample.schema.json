@@ -1,90 +1,46 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+
   "type": "object",
-  "title": "Person",
-  "required": [
-    "StringValue",
-    "BoolValue",
-    "NumberValue",
-    "DateTimeValue",
-    "DateValue",
-    "TimeValue",
-    "IntegerValue",
-    "Test",
-    "List"
-  ],
+  "required": ["transactionId", "customer", "account", "amount"],
+
   "properties": {
-    "StringValue": {
+
+    "transactionId": {
       "type": "string",
-      "default": "n/a"
+      "minLength": 1
     },
-    "StringValueFormatByte": {
-      "type": "string",
-      "format": "byte"
-    },
-    "BoolValue": {
-      "type": "boolean"
-    },
-    "NumberValue": {
-      "type": "number",
-      "minimum": -1
-    },
-    "DateTimeValue": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "DateValue": {
-      "type": "string",
-      "format": "date"
-    },
-    "TimeValue": {
-      "type": "string",
-      "format": "time"
-    },
-    "IntegerValue": {
-      "type": "integer",
-      "minimum": 0
-    },
-    "EnumValue": {
-      "type": "string",
-      "enum": [ "one", "two", "three" ],
-      "x-enumNames": [ "One", "Two", "Three" ]
-    },
-    "Test": {
+
+    "customer": {
       "type": "object",
-      "required": [
-        "Abc",
-        "Def",
-        "Geh"
-      ],
+      "required": ["customerId", "name"],
       "properties": {
-        "Abc": {
-          "type": "string"
-        },
-        "Def": {
-          "type": "string"
-        },
-        "Geh": {
-          "type": "string"
-        }
-      }
+        "customerId": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "additionalProperties": false
     },
-    "List": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "Abc": {
-            "type": "string",
-            "minLength": 1
-          },
-          "Def": {
-            "type": "string"
-          },
-          "Geh": {
-            "type": "string"
-          }
+
+    "account": {
+      "type": "object",
+      "required": ["accountType", "balance"],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": ["basic", "premium"]
+        },
+        "balance": {
+          "type": "number"
         }
-      }
+      },
+      "additionalProperties": false
+    },
+
+    "amount": {
+      "type": "number",
+      "minimum": 0
     }
-  }
+  },
+
+  "additionalProperties": false
 }
