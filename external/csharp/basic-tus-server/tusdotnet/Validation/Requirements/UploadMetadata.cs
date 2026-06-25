@@ -1,0 +1,38 @@
+﻿using System.Threading.Tasks;
+using tusdotnet.Adapters;
+using tusdotnet.Constants;
+using tusdotnet.Helpers;
+using tusdotnet.Parsers;
+
+namespace tusdotnet.Validation.Requirements
+{
+    internal sealed class UploadMetadata : Requirement
+    {
+        public override Task Validate(ContextAdapter context)
+        {
+            var hasHeader = context.Request.Headers.TryGetValue(
+                HeaderConstants.UploadMetadata,
+                out var uploadMetadataHeader
+            );
+
+            if (!hasHeader)
+            {
+                context.ParsedRequest.Metadata = [];
+                return TaskHelper.Completed;
+            }
+
+            var metadataParserResult = MetadataParser.ParseAndValidate(
+                context.Configuration.MetadataParsingStrategy,
+                uploadMetadataHeader
+            );
+
+            if (metadataParserResult.Success)
+            {
+                context.ParsedRequest.Metadata = metadataParserResult.Metadata;
+                return TaskHelper.Completed;
+            }
+
+            return BadRequest(metadataParserResult.ErrorMessage);
+        }
+    }
+}

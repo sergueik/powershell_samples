@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using tusdotnet.Constants;
+
+namespace tusdotnet.Adapters
+{
+    internal sealed class RequestHeaders
+    {
+        public string ContentType => this[HeaderConstants.ContentType];
+
+        public string TusResumable => this[HeaderConstants.TusResumable];
+
+        public string UploadChecksum => this[HeaderConstants.UploadChecksum];
+
+        public string UploadConcat => this[HeaderConstants.UploadConcat];
+
+        public string UploadDeferLength => this[HeaderConstants.UploadDeferLength];
+
+        public long UploadLength => _uploadLength.Value;
+
+        public string UploadMetadata => this[HeaderConstants.UploadMetadata];
+
+        public long UploadOffset => _uploadOffset.Value;
+
+        public string XHttpMethodOveride => this[HeaderConstants.XHttpMethodOveride];
+
+        private readonly Lazy<long> _uploadLength;
+        private readonly Lazy<long> _uploadOffset;
+        private readonly Dictionary<string, string> _headers;
+
+        public RequestHeaders()
+        {
+            _uploadLength = new Lazy<long>(() => ParseUploadLength());
+            _uploadOffset = new Lazy<long>(() => long.Parse(this[HeaderConstants.UploadOffset]));
+        }
+
+        private RequestHeaders(Dictionary<string, string> headers)
+            : this()
+        {
+            _headers = headers;
+        }
+
+        public string this[string key]
+        {
+            get => _headers.TryGetValue(key, out var value) ? value : null;
+            set { _headers[key] = value; }
+        }
+
+        public bool ContainsKey(string key) => _headers.ContainsKey(key);
+
+        public bool TryGetValue(string key, out string value) =>
+            _headers.TryGetValue(key, out value);
+
+        public void Remove(string key) => _headers.Remove(key);
+
+        private long ParseUploadLength()
+        {
+            return _headers.ContainsKey(HeaderConstants.UploadDeferLength)
+                ? -1
+                : long.Parse(this[HeaderConstants.UploadLength] ?? "-1");
+        }
+
+        public static RequestHeaders FromDictionary(Dictionary<string, string> dictionary)
+        {
+            var headers = new RequestHeaders(dictionary);
+            return headers;
+        }
+    }
+}
