@@ -1,4 +1,4 @@
-#Copyright (c) 2014 Serguei Kouzmine
+#Copyright (c) 2014,2026 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,6 @@
 
 Add-Type -TypeDefinition @"
 
-// "
 using System;
 using System.Windows.Forms;
 public class Win32Window : IWin32Window
@@ -58,8 +57,158 @@ public class Win32Window : IWin32Window
 }
 
 "@ -ReferencedAssemblies 'System.Windows.Forms.dll'
+# see also: 
+# https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_type_operators?view=powershell-5.1
+if ( -not ('DropDownTreeView.DropDownTreeNode' -as [type]) ) {
+Add-Type -typeDefinition @'
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Drawing;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Data;
+using System.Runtime.Serialization;
+
+// origin: http://www.codeproject.com/Articles/14544/A-TreeView-Control-with-ComboBox-Dropdown-Nodes
+namespace DropDownTreeView
+{
+		// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.treenode?view=netframework-4.5
+    public class DropDownTreeNode : TreeNode
+    {
+        public DropDownTreeNode()
+            : base()
+        {
+        }
+
+        public DropDownTreeNode(string text)
+            : base(text)
+        {
+        }
+
+        public DropDownTreeNode(string text, TreeNode[] children)
+            : base(text, children)
+        {
+        }
+
+        public DropDownTreeNode(SerializationInfo serializationInfo, StreamingContext context)
+            : base(serializationInfo, context)
+        {
+        }
+
+        public DropDownTreeNode(string text, int imageIndex, int selectedImageIndex)
+            : base(text, imageIndex, selectedImageIndex)
+        {
+        }
+
+        public DropDownTreeNode(string text, int imageIndex, int selectedImageIndex, TreeNode[] children)
+            : base(text, imageIndex, selectedImageIndex, children)
+        {
+        }
+
+        private ComboBox m_ComboBox = new ComboBox();
+        public ComboBox ComboBox
+        {
+            get
+            {
+                this.m_ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                return this.m_ComboBox;
+            }
+            set
+            {
+                this.m_ComboBox = value;
+                this.m_ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            }
+        }
+    }
+
+    public class DropDownTreeView : TreeView
+    {
+        public DropDownTreeView()
+            : base()
+        {
+        }
+        private DropDownTreeNode m_CurrentNode = null;
 
 
+        protected override void OnNodeMouseClick(TreeNodeMouseClickEventArgs e)
+        {
+            // Are we dealing with a dropdown node?
+            if (e.Node is DropDownTreeNode)
+            {
+                this.m_CurrentNode = (DropDownTreeNode)e.Node;
+
+                // Need to add the node's ComboBox to the TreeView's list of controls for it to work
+                this.Controls.Add(this.m_CurrentNode.ComboBox);
+
+                // Set the bounds of the ComboBox, with a little adjustment to make it look right
+                this.m_CurrentNode.ComboBox.SetBounds(
+                    this.m_CurrentNode.Bounds.X - 1,
+                    this.m_CurrentNode.Bounds.Y - 2,
+                    this.m_CurrentNode.Bounds.Width + 25,
+                    this.m_CurrentNode.Bounds.Height);
+
+                // Listen to the SelectedValueChanged event of the node's ComboBox
+                this.m_CurrentNode.ComboBox.SelectedValueChanged += new EventHandler(ComboBox_SelectedValueChanged);
+                this.m_CurrentNode.ComboBox.DropDownClosed += new EventHandler(ComboBox_DropDownClosed);
+
+                // Now show the ComboBox
+                this.m_CurrentNode.ComboBox.Show();
+                this.m_CurrentNode.ComboBox.DroppedDown = true;
+            }
+            base.OnNodeMouseClick(e);
+        }
+
+        void ComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            HideComboBox();
+        }
+
+        void ComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            HideComboBox();
+            // MessageBox.Show(this.SelectedNode.Text.ToString());
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            HideComboBox();
+            base.OnMouseWheel(e);
+        }
+
+        private void HideComboBox()
+        {
+            if (this.m_CurrentNode != null)
+            {
+                // Unregister the event listener
+								// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.combobox.selectedindexchanged?view=netframework-4.5
+                this.m_CurrentNode.ComboBox.SelectedValueChanged -= ComboBox_SelectedValueChanged;
+								// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.combobox.dropdownclosed?view=netframework-4.5
+                this.m_CurrentNode.ComboBox.DropDownClosed -= ComboBox_DropDownClosed;
+
+                // Copy the selected text from the ComboBox to the TreeNode
+                this.m_CurrentNode.Text = this.m_CurrentNode.ComboBox.Text;
+
+                // Hide the ComboBox
+                this.m_CurrentNode.ComboBox.Hide();
+                this.m_CurrentNode.ComboBox.DroppedDown = false;
+
+                // Remove the control from the TreeView's list of currently-displayed controls
+                this.Controls.Remove(this.m_CurrentNode.ComboBox);
+
+                // And return to the default state (no ComboBox displayed)
+                this.m_CurrentNode = null;
+            }
+        }
+    }
+}
+
+
+'@ -ReferencedAssemblies 'System.Windows.Forms.dll','System.Drawing.dll','System.Data.dll'
+}
+<#
 $shared_assemblies = @(
   'DropDownTreeView.dll'
 )
@@ -68,7 +217,7 @@ $shared_assemblies_folder = 'c:\developer\sergueik\csharp\SharedAssemblies'
 pushd $shared_assemblies_folder
 $shared_assemblies | ForEach-Object { Unblock-File -Path $_; Add-Type -Path $_ }
 popd
-
+#>
 
 # http://www.codeproject.com/Articles/14544/A-TreeView-Control-with-ComboBox-Dropdown-Nodes
 
@@ -132,25 +281,81 @@ function PromptTreeView
       [System.Windows.Forms.TreeNode]$tn1 = New-Object System.Windows.Forms.TreeNode ("Node")
 
       [DropDownTreeView.DropDownTreeNode]$dtn1 = New-Object DropDownTreeView.DropDownTreeNode ("Credentials")
-      $dtn1.ComboBox.Items.AddRange(@( "LocalService","LocalSystem ","NetworkService"))
+      $dtn1.ComboBox.Items.AddRange(@( "LocalService","LocalSystem","NetworkService"))
       $dtn1.ComboBox.SelectedIndex = 0
 
       [DropDownTreeView.DropDownTreeNode]$dtn2 = New-Object DropDownTreeView.DropDownTreeNode ("Install")
       $installs = @( 'Typical','Compact','Custom')
       $dtn2.ComboBox.Items.AddRange($installs)
       $dtn2.ComboBox.SelectedIndex = 0
-      $handler_combobox_closed = {
+      $handler1_combobox_closed = {
+        param(
+          [object]$sender,
+          [System.EventArgs]$eventargs
+        )
+        try {
+
+          [System.Windows.Forms.ComboBox]$cb = $sender
+					$text = $cb.SelectedItem.ToString() 
+          # [System.Windows.Forms.MessageBox]::Show(('Credentials -> "{0}"' -f $selectedItemText ))
+					write-host ('Selected Item Text: {0}' -f $text)
+          [System.Windows.Forms.MessageBox]::Show(('Credentials -> "{0}"' -f $text ))
+					# https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.treenode.nodes?view=netframework-4.5
+	  			# write-host ('dtn1: {0}' -f $dtn1.GetTypeName())
+					if ($dtn1 -ne $null) {
+	  				#  write-host ('{0}' -f $dtn1.Nodes)
+	          $dtn1.Nodes.Clear()
+ 			  	}
+
+          if ($selectedItemText -eq 'LocalService' ) {
+             [DropDownTreeView.DropDownTreeNode]$x1 = New-Object DropDownTreeView.DropDownTreeNode ('Lime')
+             [void]$dnt1.Nodes.Add($x1)
+             [DropDownTreeView.DropDownTreeNode]$x2 = New-Object DropDownTreeView.DropDownTreeNode ('Leaf')
+             [void]$dnt1.Nodes.Add($x2)
+             [DropDownTreeView.DropDownTreeNode]$x3 = New-Object DropDownTreeView.DropDownTreeNode ('Land')
+             [void]$dnt1.Nodes.Add($x3)
+          } 
+          if ($selectedItemText -eq 'LocalSystem') {
+             [System.Windows.Forms.TreeNode]$x1 = New-Object System.Windows.Forms.TreeNode('Salt')
+             [void]$dnt1.Nodes.Add($x1)
+						 write-host $x1
+             [System.Windows.Forms.TreeNode]$x2 = New-Object System.Windows.Forms.TreeNode('Smell')
+             [void]$dnt1.Nodes.Add($x2)
+          } 
+
+          if ($selectedItemText -eq 'NetworkService') { 
+          [DropDownTreeView.DropDownTreeNode]$x1 = New-Object DropDownTreeView.DropDownTreeNode ('New')
+             [void]$dnt1.Nodes.Add($x1)
+             [DropDownTreeView.DropDownTreeNode]$x2 = New-Object DropDownTreeView.DropDownTreeNode ('North')
+             [void]$dnt1.Nodes.Add($x2)
+             [DropDownTreeView.DropDownTreeNode]$x3 = New-Object DropDownTreeView.DropDownTreeNode ('Near')
+             [void]$dnt1.Nodes.Add($x3)
+             [DropDownTreeView.DropDownTreeNode]$x4 = New-Object DropDownTreeView.DropDownTreeNode ('Nick')
+             [void]$dnt1.Nodes.Add($x4)
+
+          } 
+					$dtn1.Expand()
+          # $caller.Message += ('{0},' -f $cb.SelectedItem.ToString())
+        } catch [exception]{
+				  write-host $_.exception.message
+				# You cannot call a method on a null-valued expression.
+        }
+      }
+
+      $handler2_combobox_closed = {
         param(
           [object]$sender,
           [System.EventArgs]$eventargs
         )
         try {
           [System.Windows.Forms.ComboBox]$cb = $sender
-          [System.Windows.Forms.MessageBox]::Show($cb.SelectedItem.ToString())
-          # $caller.Message += ('{0},' -f $cb.SelectedItem.ToString())
+          $text = $cb.SelectedItem.ToString() 
+          # [System.Windows.Forms.MessageBox]::Show(('Credentials -> "{0}"' -f $selectedItemText ))
+					write-host ('Selected Item Text: {0}' -f $text)
         } catch [exception]{
         }
       }
+
 
 
       $t.Nodes.Add($tn1)
@@ -158,10 +363,10 @@ function PromptTreeView
       $t.Nodes.Add($dtn1)
 
       $combobox1_DropDownClosed = $dtn1.ComboBox.add_DropDownClosed
-      $combobox1_DropDownClosed.Invoke($handler_combobox_closed)
+      $combobox1_DropDownClosed.Invoke($handler1_combobox_closed)
 
       $combobox2_DropDownClosed = $dtn2.ComboBox.add_DropDownClosed
-      $combobox2_DropDownClosed.Invoke($handler_combobox_closed)
+      $combobox2_DropDownClosed.Invoke($handler2_combobox_closed)
 
     })
 
