@@ -11,15 +11,16 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
   </PropertyGroup>
- <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-  <DebugSymbols>true</DebugSymbols>
-  <OutputPath>bin\x64\Debug\</OutputPath>
-  <DefineConstants>DEBUG;TRACE</DefineConstants>
-  <DebugType>full</DebugType>
-  <PlatformTarget>x64</PlatformTarget>
-  <ErrorReport>prompt</ErrorReport>
-  <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-</PropertyGroup> <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -30,6 +31,9 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -38,10 +42,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ProcessRunner.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="FileHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="DictionaryExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="ElevationChecker.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="ListExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FindMatchExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

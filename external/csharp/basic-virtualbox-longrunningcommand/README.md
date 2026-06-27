@@ -278,3 +278,98 @@ x86 (32-bit)
 ```
 Unknown machine type: -31132
 ```
+
+
+
+### Script Execution
+
+```cmd
+pushd "c:\Program Files\Oracle\VirtualBox"
+set PASSWORD=...
+set VM={7e261a39-d356-4eb1-a8ed-75675b149241}
+VBoxManage.exe guestcontrol %VM% run --username sergueik --password %PASSWORD% --exe /bin/sh -- -c "uname -a"
+```
+- trouble composing command to test:
+```text
+/bin/sh: 0: cannot open uname -a: No such file
+```
+```cmd
+set VM={7e261a39-d356-4eb1-a8ed-75675b149241}
+set PASSWORD=...
+VBoxManage.exe guestcontrol %VM% run --username sergueik --password %PASSWORD% --exe /bin/sh -- -c ""uname -a""
+```
+```text
+/bin/sh: 0: cannot open uname: No such file
+```
+```powershell
+.\VBoxManage.exe guestcontrol $env:VM run --username sergueik --password $env:PASSWORD --exe /bin/whoami
+```
+```text
+sergueik
+```
+```powershell
+VBoxManage.exe guestcontrol %VM% run --username sergueik --password %PASSWORD% --exe /bin/w
+```
+```text
+ 18:14:04 up  4:12,  1 user,  load average: 0.02, 0.02, 0.00
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+sergueik tty7     :0               14:02    4:12m 14.32s  0.27s xfce4-session
+```
+```cmd
+VBoxManage.exe guestcontrol %VM% run --username sergueik --password %PASSWORD% --exe whoami
+```
+```text
+VBoxManage.exe: error: No such file or directory on guest
+VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
+VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
+```
+
+```cmd
+VBoxManage.exe guestcontrol %VM% run --username sergueik --password %PASSWORD% --exe /tmp/a.sh
+```
+```
+this is a test
+```
+
+```cmd
+VBoxManage.exe guestcontrol %VM% run --username sergueik --password %PASSWORD% --exe /tmp/a.sh sample
+```
+```text
+this is a test with argument: none received
+```
+
+```sh
+#!/bin/sh
+ARG=${1:-'none received'}
+echo -n 'this is a test with argument: ' 
+echo $ARG
+```
+
+```powershell
+pushd "c:\Program Files\Oracle\VirtualBox"
+$env:PASSWORD=
+$env:VM='{7e261a39-d356-4eb1-a8ed-75675b149241}'
+.\VBoxManage.exe guestcontrol $env:VM run --username sergueik --password $env:PASSWORD --exe /bin/sh -- -c "uname -a"
+```
+```powershell
+.\VBoxManage.exe guestcontrol $env:VM run --username sergueik --password $env:PASSWORD --exe "/bin/sh -- -c 'uname -a'"
+```
+```text
+VBoxManage.exe: error: No such file or directory on guest
+VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
+VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
+```
+
+```cmd
+VBoxManage.exe guestcontrol %VM% run --username sergueik --password %PASSWORD% --exe /bin/sh -- /bin/sh -c "/tmp/a.sh sample"
+```
+```text
+this is a test with argument: sample
+```
+
+```powershell
+.\VBoxManage.exe guestcontrol $env:VM run --username sergueik --password $env:PASSWORD  --exe /bin/sh -- /bin/sh -c "/tmp/a.sh 'sample aergument with spaces'"
+```
+```text
+this is a test with argument: sample aergument with spaces
+```

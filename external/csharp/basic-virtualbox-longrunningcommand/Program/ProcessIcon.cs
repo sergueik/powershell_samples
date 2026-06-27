@@ -65,8 +65,14 @@ namespace Program
 			if (appSettings.AllKeys.Contains("FileName")) {
 				fileName = appSettings["FileName"];
 			}
-			if (appSettings.AllKeys.Contains("Arguments1")) {
-				arguments = appSettings["Arguments1"];
+			if (appSettings.AllKeys.Contains("Arguments4")) {
+				arguments = appSettings["Arguments4"];
+				var macro = arguments.FindMatch(@"(?<vm>%VM%)");
+				arguments = arguments.Replace(macro, "{7e261a39-d356-4eb1-a8ed-75675b149241}");
+				macro = arguments.FindMatch(@"(?<username>%USERNAME%)");
+				arguments = arguments.Replace(macro, "sergueik");
+				macro = arguments.FindMatch(@"(?<username>%PASSWORD%)");
+				arguments = arguments.Replace(macro, "password");
 			}
 			if (appSettings.AllKeys.Contains("ToolPath")) {
 				toolPath = Environment.ExpandEnvironmentVariables(appSettings["ToolPath"]);
@@ -115,8 +121,7 @@ namespace Program
 		}
 	
 	
-		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
-		{
+		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs) {
 			myTimer.Stop();
 			nScanCounter++;
 			Debug.WriteLine(String.Format("Counter: {0}", nScanCounter.ToString()));
@@ -129,23 +134,21 @@ namespace Program
 			notifyIcon.Visible = true;
 			var processRunner = new ProcessRunner();
 			// NOTE: can not run under SharpDevelop: the %PROGRAMFILES% will expand to C:\Program Files (x86) 
-			Debug.WriteLine(String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath, fileName)));
-			Debug.WriteLine(String.Format("arguments: {0}", arguments));
+			// Debug.WriteLine(String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath, fileName)));
+			// Debug.WriteLine(String.Format("arguments: {0}", arguments));
 			processRunner.Run(String.Format(@"{0}\{1}", toolPath, fileName), arguments);
-			Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDOUT:", String.Join("", processRunner.StandardOutput)));
-			Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDERR:", String.Join("", processRunner.StandardError)));
+			// Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDOUT:", String.Join("", processRunner.StandardOutput)));
+			// Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDERR:", String.Join("", processRunner.StandardError)));
 			var fileHelper = new FileHelper();
 				
 			fileHelper.Retries = retries;
 			fileHelper.FilePath = logFile;
 			fileHelper.Interval = 500;
 			fileHelper.Append = true;
-			fileHelper.Text = String.Format(@"{0} ""{1}""\n", "STDOUT:", String.Join("", processRunner.StandardOutput));
+			fileHelper.Text = String.Format("{0} \"{1}\"\n", "STDOUT:", String.Join("", processRunner.StandardOutput));
 
-			// fileHelper.Text = String.Format(@"{0} ""{1}""", "STDOUT:", String.Join("", processRunner.StandardOutput));
-			// fileHelper.Text = String.Format(@"{0} ""{1}""", "STDERR:", String.Join("", processRunner.StandardError));
 			fileHelper.WriteContents();
-			Thread.Sleep(1000);
+			// Thread.Sleep(1000);
 			is_busy = !is_busy;
 			notifyIcon.Visible = false;
 			if (is_busy)
