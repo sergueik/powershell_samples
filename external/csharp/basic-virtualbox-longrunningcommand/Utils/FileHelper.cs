@@ -31,7 +31,8 @@ namespace Utils {
 						bytes = Encoding.ASCII.GetBytes(Text);
 						// stream.Lock(0, bytes.Length);
 						// have to truncate
-						stream.SetLength(0);
+						if (!this.Append)
+							stream.SetLength(0);
 						if (Debug)
 							Console.Error.WriteLine(String.Format("Writing text {0}.", Text));
 						stream.Write(bytes, 0, bytes.Length);

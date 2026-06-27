@@ -256,3 +256,25 @@ Exception calling "GetAssemblyName" with "1" argument(s): "Could not load file o
 ```
 x86 (32-bit)
 ```
+
+
+
+```powershell
+$env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework64\v4.0.30319"
+```
+```powershell
+cd C:\developer\sergueik\powershell_samples\external\csharp\basic-virtualbox-longrunningcommand
+msbuild.exe .\basic-virtualbox-longrunningcommand.sln "/p:Platform=x64" /detailedsummary /t:clean,build
+```
+```powershell
+..\..\..\binary_check.ps1 -filename VboxManageSystemTrayApp.exe
+```
+```
+x86 (32-bit)
+```
+```
+ .\binary_check.ps1 .\Program\bin\x64\Debug\VboxManageSystemTrayApp.exe
+```
+```
+Unknown machine type: -31132
+```

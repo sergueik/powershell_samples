@@ -140,7 +140,7 @@ namespace Program
 			fileHelper.FilePath = logFile;
 			fileHelper.Interval = 500;
 			fileHelper.Append = true;
-			fileHelper.Text = String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath, fileName));
+			fileHelper.Text = String.Format(@"{0} ""{1}""\n", "STDOUT:", String.Join("", processRunner.StandardOutput));
 
 			// fileHelper.Text = String.Format(@"{0} ""{1}""", "STDOUT:", String.Join("", processRunner.StandardOutput));
 			// fileHelper.Text = String.Format(@"{0} ""{1}""", "STDERR:", String.Join("", processRunner.StandardError));
