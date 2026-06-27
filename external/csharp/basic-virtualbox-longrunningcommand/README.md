@@ -223,3 +223,36 @@ but XML 1.0 the only allowed are:
 |`&gt;`  |&gt;    |
 |`&quot;`|"       |
 |`&apos;`|'       |
+
+
+### Building and Running in Console
+
+```powershell
+$env:PATH="${env:PATH};c:\windows\microsoft.net\Framework\v4.0.30319"
+msbuild.exe .\basic-virtualbox-longrunningcommand.sln "/p:Platform=Any CPU"
+```
+
+```powershell
+.\Program\bin\Debug\VboxManageSystemTrayApp.exe
+```
+
+```powershell
+type $env:temp\v*txt
+```
+
+```text
+STDERR: "Exception: The system cannot find the file specified"
+```
+```
+[System.Reflection.AssemblyName]::GetAssemblyName('VboxManageSystemTrayApp.exe')
+```
+```txt
+Exception calling "GetAssemblyName" with "1" argument(s): "Could not load file or assembly 'VboxManageSystemTrayApp.exe' or one of its dependencies. The system cannot find the file specified."
+```
+
+```powershell
+..\..\..\binary_check.ps1 -filename VboxManageSystemTrayApp.exe
+```
+```
+x86 (32-bit)
+```

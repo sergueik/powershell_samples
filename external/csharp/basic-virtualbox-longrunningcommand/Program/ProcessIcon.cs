@@ -13,14 +13,19 @@ using System.Linq;
 
 using Utils;
 
-namespace Program {
+namespace Program
+{
 
-	class ProcessIcon : IDisposable {
+	class ProcessIcon : IDisposable
+	{
 		private NameValueCollection appSettings;
 		private Boolean debug;
+		static int retries = 2;
 		private int collectInterval = 1000;
+		private int waitInterval = 120000;
 		private string vmName = "";
 		private string toolPath = null;
+		private string logFile = null;
 		private string fileName = null;
 		private string arguments = null;
 		
@@ -34,7 +39,8 @@ namespace Program {
 		private Icon idle_icon;
 		private Icon busy_icon;
 
-		public ProcessIcon() {
+		public ProcessIcon()
+		{
 			notifyIcon = new NotifyIcon();
 
 			appSettings = ConfigurationManager.AppSettings;
@@ -49,6 +55,9 @@ namespace Program {
 			if (appSettings.AllKeys.Contains("CollectInterval")) {
 				collectInterval = int.Parse(appSettings["CollectInterval"]);
 			}
+			if (appSettings.AllKeys.Contains("WaitInterval")) {
+				waitInterval = int.Parse(appSettings["WaitInterval"]);
+			}
 
 			if (appSettings.AllKeys.Contains("VmName")) {
 				vmName = appSettings["VmName"];
@@ -60,16 +69,19 @@ namespace Program {
 				arguments = appSettings["Arguments1"];
 			}
 			if (appSettings.AllKeys.Contains("ToolPath")) {
-				var rawToolPath = appSettings["ToolPath"];
-
-				toolPath = Environment.ExpandEnvironmentVariables(rawToolPath);
+				toolPath = Environment.ExpandEnvironmentVariables(appSettings["ToolPath"]);
 				Debug.WriteLine(String.Format("Expanded Path: {0}", toolPath));
 			} else {
 				Debug.WriteLine("could not resolve toolpath");
 			}
+			
+			if (appSettings.AllKeys.Contains("LogFile")) {
+				logFile = Environment.ExpandEnvironmentVariables(appSettings["LogFile"]);
+			}
 		}
 
-		public void Display() {
+		public void Display()
+		{
 			notifyIcon.MouseClick += new MouseEventHandler(ni_MouseClick);
 			
 			idle_icon = Resources.idle_icon;
@@ -85,7 +97,7 @@ namespace Program {
 			notifyIcon.Visible = true;
 			notifyIcon.ContextMenuStrip = new ContextMenus().Create();
 			myTimer.Tick += new EventHandler(TimerEventProcessor);
-			myTimer.Interval = 5000;
+			myTimer.Interval = collectInterval;
 			myTimer.Start();
 		}
 
@@ -103,7 +115,8 @@ namespace Program {
 		}
 	
 	
-		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs) {
+		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
+		{
 			myTimer.Stop();
 			nScanCounter++;
 			Debug.WriteLine(String.Format("Counter: {0}", nScanCounter.ToString()));
@@ -116,11 +129,22 @@ namespace Program {
 			notifyIcon.Visible = true;
 			var processRunner = new ProcessRunner();
 			// NOTE: can not run under SharpDevelop: the %PROGRAMFILES% will expand to C:\Program Files (x86) 
-			Debug.WriteLine(String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath,fileName)));
+			Debug.WriteLine(String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath, fileName)));
 			Debug.WriteLine(String.Format("arguments: {0}", arguments));
-			processRunner.Run(String.Format(@"{0}\{1}", toolPath,fileName), arguments);
-			Debug.WriteLine(String.Format(@"{0} ""{1}""","STDOUT:" , String.Join("", processRunner.StandardOutput)));
-			Debug.WriteLine(String.Format(@"{0} ""{1}""","STDERR:" , String.Join("", processRunner.StandardError)));
+			processRunner.Run(String.Format(@"{0}\{1}", toolPath, fileName), arguments);
+			Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDOUT:", String.Join("", processRunner.StandardOutput)));
+			Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDERR:", String.Join("", processRunner.StandardError)));
+			var fileHelper = new FileHelper();
+				
+			fileHelper.Retries = retries;
+			fileHelper.FilePath = logFile;
+			fileHelper.Interval = 500;
+			fileHelper.Append = true;
+			fileHelper.Text = String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath, fileName));
+
+			// fileHelper.Text = String.Format(@"{0} ""{1}""", "STDOUT:", String.Join("", processRunner.StandardOutput));
+			// fileHelper.Text = String.Format(@"{0} ""{1}""", "STDERR:", String.Join("", processRunner.StandardError));
+			fileHelper.WriteContents();
 			Thread.Sleep(1000);
 			is_busy = !is_busy;
 			notifyIcon.Visible = false;
