@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SystemTrayApp.Properties;
+using Program.Properties;
 using System.Drawing;
 
-namespace SystemTrayApp {
+namespace Program {
 	class ContextMenus {
 		bool isAboutLoaded = false;
 
 		public ContextMenuStrip Create() {
-			ContextMenuStrip menu = new ContextMenuStrip();
+			var menu = new ContextMenuStrip();
 			ToolStripMenuItem item;
 			ToolStripSeparator sep;
 

@@ -2,17 +2,31 @@
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SystemTrayApp.Properties;
+using Program.Properties;
 using System.Threading;
 using System.Reflection;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.Timers;
+using System.Linq;
 
-namespace SystemTrayApp {
-	// alternatiely may extend System.Windows.Forms.ApplicationContext
-	// alternatibely may extend System.Windows.Forms.Form
+using Utils;
+
+namespace Program {
+
 	class ProcessIcon : IDisposable {
+		private NameValueCollection appSettings;
+		private Boolean debug;
+		private int collectInterval = 1000;
+		private string vmName = "";
+		private string toolPath = null;
+		private string fileName = null;
+		private string arguments = null;
+		
 		NotifyIcon notifyIcon;
-		// 'Timer' is an ambiguous reference between
-		// 'System.Windows.Forms.Timer' and 'System.Threading.Timer'
+		// NOTE: Timer is an ambiguous reference between
+		// System.Windows.Forms.Timer and System.Threading.Timer
 		System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
 		bool is_busy = false;
 		int nScanCounter = 1;
@@ -22,6 +36,37 @@ namespace SystemTrayApp {
 
 		public ProcessIcon() {
 			notifyIcon = new NotifyIcon();
+
+			appSettings = ConfigurationManager.AppSettings;
+			// NOTE: 
+			// System.Array does not contain a definition for 'Contains' and no extension method 'Contains' accepting a first argument of type 'System.Array' could be found 
+			// need to add System.Linq (CS1061)
+			
+			if (appSettings.AllKeys.Contains("Debug")) {
+				debug = Boolean.Parse(appSettings["Debug"]);
+			}
+
+			if (appSettings.AllKeys.Contains("CollectInterval")) {
+				collectInterval = int.Parse(appSettings["CollectInterval"]);
+			}
+
+			if (appSettings.AllKeys.Contains("VmName")) {
+				vmName = appSettings["VmName"];
+			}
+			if (appSettings.AllKeys.Contains("FileName")) {
+				fileName = appSettings["FileName"];
+			}
+			if (appSettings.AllKeys.Contains("Arguments1")) {
+				arguments = appSettings["Arguments1"];
+			}
+			if (appSettings.AllKeys.Contains("ToolPath")) {
+				var rawToolPath = appSettings["ToolPath"];
+
+				toolPath = Environment.ExpandEnvironmentVariables(rawToolPath);
+				Debug.WriteLine(String.Format("Expanded Path: {0}", toolPath));
+			} else {
+				Debug.WriteLine("could not resolve toolpath");
+			}
 		}
 
 		public void Display() {
@@ -33,7 +78,7 @@ namespace SystemTrayApp {
 			// https://learn.microsoft.com/en-us/dotnet/api/system.reflection.assemblydescriptionattribute?view=netframework-4.5
 			// https://learn.microsoft.com/en-us/dotnet/api/system.reflection.assemblytitleattribute?view=netframework-4.5
 			// https://learn.microsoft.com/en-us/dotnet/api/system.attribute.getcustomattribute?view=netframework-4.5
-			string assemblyTitle = ((AssemblyTitleAttribute) Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyTitleAttribute), false)).Title;
+			string assemblyTitle = ((AssemblyTitleAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyTitleAttribute), false)).Title;
 			// System.ArgumentOutOfRangeException: Text length must be less than 64 characters long.
 		
 			notifyIcon.Text = (assemblyTitle.Length > 64) ? (assemblyTitle.Substring(0, 61) + "...") : assemblyTitle;
@@ -44,23 +89,24 @@ namespace SystemTrayApp {
 			myTimer.Start();
 		}
 
-		public void Dispose() {
+		public void Dispose()
+		{
 			notifyIcon.Visible = false;
 			notifyIcon.Dispose();
 		}
 
-		void ni_MouseClick(object sender, MouseEventArgs e) {
+		void ni_MouseClick(object sender, MouseEventArgs e)
+		{
 			if (e.Button == MouseButtons.Left) {
 				Process.Start("explorer", null);
 			}
 		}
 	
 	
-		private void TimerEventProcessor(Object myObject,
-			EventArgs myEventArgs) {
+		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs) {
 			myTimer.Stop();
 			nScanCounter++;
-			Console.Write("{0}\r", nScanCounter.ToString());
+			Debug.WriteLine("{0}", nScanCounter.ToString());
 			is_busy = !is_busy;
 			notifyIcon.Visible = false;
 			if (is_busy)
@@ -68,7 +114,9 @@ namespace SystemTrayApp {
 			else
 				notifyIcon.Icon = idle_icon;
 			notifyIcon.Visible = true;
-
+			// var processRunner = new ProcessRunner();
+			// processRunner.Run(String.Format(@"{0}\{1}", toolPath,fileName), arguments);
+			// Debug.WriteLine(String.Join("", processRunner.StandardOutput));
 			Thread.Sleep(1000);
 			is_busy = !is_busy;
 			notifyIcon.Visible = false;

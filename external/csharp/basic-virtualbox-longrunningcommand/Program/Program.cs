@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SystemTrayApp {
+namespace Program {
 	static class Program {
 		[STAThread]
 		static void Main() {
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			using (ProcessIcon pi = new ProcessIcon()) {
-				pi.Display();
-
+			using (var processIcon = new ProcessIcon()) {
+				processIcon.Display();
 				Application.Run();
 			}
 		}

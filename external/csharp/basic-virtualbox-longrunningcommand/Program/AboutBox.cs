@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace SystemTrayApp {
+namespace Program {
 	partial class AboutBox : Form {
 		public AboutBox() {
 			InitializeComponent();

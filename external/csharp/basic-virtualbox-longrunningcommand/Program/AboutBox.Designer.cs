@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace SystemTrayApp {
+namespace Program {
 	partial class AboutBox {
 		private TableLayoutPanel tableLayoutPanel;
 		private PictureBox logoPictureBox;
@@ -158,7 +158,7 @@ namespace SystemTrayApp {
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "About SystemTrayApp";
+			this.Text = "About VboxManageSystemTrayApp";
 			this.tableLayoutPanel.ResumeLayout(false);
 			this.tableLayoutPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).EndInit();

@@ -1,7 +1,5 @@
 using System.Security.Principal;
 
-using NUnit.Framework;
-
 using System;
 using System.Runtime.InteropServices;
 
@@ -14,7 +12,7 @@ using System.Runtime.InteropServices;
 // which appears effectively a kind of typeof check, does not work right
 // to prevent misdetection, a safety switch "extraCheck" has been added.
 
-namespace Protractor.TestUtils {
+namespace Utils {
 	public class ElevationChecker {
 		public static bool IsProcessElevated(bool extraCheck) {
 			var identity = WindowsIdentity.GetCurrent();
