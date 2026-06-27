@@ -18,8 +18,8 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 
-Add-Type -TypeDefinition @"
-
+# https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.iwin32window?view=netframework-4.5
+Add-Type -TypeDefinition @'
 using System;
 using System.Windows.Forms;
 public class Win32Window : IWin32Window
@@ -56,7 +56,7 @@ public class Win32Window : IWin32Window
     }
 }
 
-"@ -ReferencedAssemblies 'System.Windows.Forms.dll'
+'@ -ReferencedAssemblies 'System.Windows.Forms.dll'
 # see also: 
 # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_type_operators?view=powershell-5.1
 if ( -not ('DropDownTreeView.DropDownTreeNode' -as [type]) ) {
@@ -75,7 +75,7 @@ using System.Runtime.Serialization;
 // origin: http://www.codeproject.com/Articles/14544/A-TreeView-Control-with-ComboBox-Dropdown-Nodes
 namespace DropDownTreeView
 {
-		// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.treenode?view=netframework-4.5
+    // https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.treenode?view=netframework-4.5
     public class DropDownTreeNode : TreeNode
     {
         public DropDownTreeNode()
@@ -183,9 +183,9 @@ namespace DropDownTreeView
             if (this.m_CurrentNode != null)
             {
                 // Unregister the event listener
-								// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.combobox.selectedindexchanged?view=netframework-4.5
+                // https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.combobox.selectedindexchanged?view=netframework-4.5
                 this.m_CurrentNode.ComboBox.SelectedValueChanged -= ComboBox_SelectedValueChanged;
-								// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.combobox.dropdownclosed?view=netframework-4.5
+                // https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.combobox.dropdownclosed?view=netframework-4.5
                 this.m_CurrentNode.ComboBox.DropDownClosed -= ComboBox_DropDownClosed;
 
                 // Copy the selected text from the ComboBox to the TreeNode
@@ -288,6 +288,13 @@ function PromptTreeView
       $installs = @( 'Typical','Compact','Custom')
       $script:dtn2.ComboBox.Items.AddRange($installs)
       $script:dtn2.ComboBox.SelectedIndex = 0
+      # NOTE: the Powershell event handlers are not closures. 
+      # The defining scope variables are not captured
+      # Also the Variables declared within an event-handling script block are local to that execution instance and cannot easily persist or communicate with the parent script's state without careful scoping
+      # Either keep it in Win32Window attached to the current Handle of the Form
+      # or use the script: or global: scope prefixes
+      # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_scopes?view=powershell-5.1
+      # https://www.varonis.com/blog/powershell-variable-scope
       $handler1_combobox_closed = {
         param(
           [object]$sender,
@@ -296,17 +303,17 @@ function PromptTreeView
         try {
 
           [System.Windows.Forms.ComboBox]$cb = $sender
-					$text = $cb.SelectedItem.ToString() 
+          $text = $cb.SelectedItem.ToString() 
           # [System.Windows.Forms.MessageBox]::Show(('Credentials -> "{0}"' -f $selectedItemText ))
-					write-host ('Selected Item Text: {0}' -f $text)
+          write-host ('Selected Item Text: {0}' -f $text)
           [System.Windows.Forms.MessageBox]::Show(('Credentials -> "{0}"' -f $text ))
-					# https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.treenode.nodes?view=netframework-4.5
-	  			# write-host ('dtn1: {0}' -f $script:dtn1.GetTypeName())
-					if ($script:dtn1 -ne $null) {
-	  			  write-host ('Clear {0}' -f $script:dtn1.Nodes)
-	          $script:dtn1.Nodes.Clear()
-						write-host ('Cleared {0}' -f $script:dtn1.Nodes)
- 			  	}
+          # https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.treenode.nodes?view=netframework-4.5
+          # write-host ('dtn1: {0}' -f $script:dtn1.GetTypeName())
+          if ($script:dtn1 -ne $null) {
+            write-host ('Clear {0}' -f $script:dtn1.Nodes)
+            $script:dtn1.Nodes.Clear()
+            write-host ('Cleared {0}' -f $script:dtn1.Nodes)
+           }
 
           if ($text -eq 'LocalService' ) {
              [DropDownTreeView.DropDownTreeNode]$x1 = New-Object DropDownTreeView.DropDownTreeNode ('Lime')
@@ -319,7 +326,7 @@ function PromptTreeView
           if ($text -eq 'LocalSystem') {
              [System.Windows.Forms.TreeNode]$x1 = New-Object System.Windows.Forms.TreeNode('Salt')
              [void]$script:dtn1.Nodes.Add($x1)
-						 write-host ('Added: {0}' -f $x1)
+             write-host ('Added: {0}' -f $x1)
              [System.Windows.Forms.TreeNode]$x2 = New-Object System.Windows.Forms.TreeNode('Smell')
              [void]$script:dtn1.Nodes.Add($x2)
           } 
@@ -333,13 +340,12 @@ function PromptTreeView
              [void]$script:dtn1.Nodes.Add($x3)
              [DropDownTreeView.DropDownTreeNode]$x4 = New-Object DropDownTreeView.DropDownTreeNode ('Nick')
              [void]$script:dtn1.Nodes.Add($x4)
-
           } 
-					$script:dtn1.Expand()
+          $script:dtn1.Expand()
           # $caller.Message += ('{0},' -f $cb.SelectedItem.ToString())
         } catch [exception]{
-				  write-host $_.exception.message
-				  # You cannot call a method on a null-valued expression.
+          write-host $_.exception.message
+          # You cannot call a method on a null-valued expression.
         }
       }
 
@@ -352,7 +358,7 @@ function PromptTreeView
           [System.Windows.Forms.ComboBox]$cb = $sender
           $text = $cb.SelectedItem.ToString() 
           # [System.Windows.Forms.MessageBox]::Show(('Credentials -> "{0}"' -f $selectedItemText ))
-					write-host ('Selected Item Text: {0}' -f $text)
+          write-host ('Selected Item Text: {0}' -f $text)
         } catch [exception]{
         }
       }
@@ -389,7 +395,8 @@ function PromptTreeView
   }
 
   $f.Add_Shown({ $f.Activate() })
-
+  # Passing an IWin32Window argument, such as this from a calling form, properly establishes the owner-child relationship
+  # https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.form.showdialog?view=netframework-4.5
   [void]$f.ShowDialog([win32window]($caller))
 
   $t.Dispose()
@@ -400,19 +407,18 @@ function PromptTreeView
 }
 
 Function Get-FileName {  
-param(
-  [string]$initialDirectory = '.',
-  [string]$filter = 'JSON files (*.json)|*.json|All files (*.*)| *.*'
-	)
- [System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") |
- Out-Null
+  param(
+    [string]$initialDirectory = '.',
+    [string]$filter = 'JSON files (*.json)|*.json|All files (*.*)| *.*'
+  )
+  [System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
 
- $OpenFileDialog = New-Object System.Windows.Forms.OpenFileDialog
- $OpenFileDialog.initialDirectory = $initialDirectory
- $OpenFileDialog.filter = $filter
- $OpenFileDialog.ShowDialog() | Out-Null
- $OpenFileDialog.filename
-} #end function Get-FileName
+  $OpenFileDialog = New-Object System.Windows.Forms.OpenFileDialog
+  $OpenFileDialog.initialDirectory = $initialDirectory
+  $OpenFileDialog.filter = $filter
+  $OpenFileDialog.ShowDialog() | Out-Null
+  $OpenFileDialog.filename
+}
 
 
 
