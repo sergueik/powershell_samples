@@ -97,7 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{CB806EEC-AC14-48F0-A70C-1F13FA5CE894}</Project>
+      <Project>{0a243a71-7518-442d-b63a-1888982ddee6}</Project>
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>

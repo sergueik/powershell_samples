@@ -106,7 +106,7 @@ namespace Program {
 		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs) {
 			myTimer.Stop();
 			nScanCounter++;
-			Debug.WriteLine("{0}", nScanCounter.ToString());
+			Debug.WriteLine(String.Format("Counter: {0}", nScanCounter.ToString()));
 			is_busy = !is_busy;
 			notifyIcon.Visible = false;
 			if (is_busy)
@@ -114,9 +114,13 @@ namespace Program {
 			else
 				notifyIcon.Icon = idle_icon;
 			notifyIcon.Visible = true;
-			// var processRunner = new ProcessRunner();
-			// processRunner.Run(String.Format(@"{0}\{1}", toolPath,fileName), arguments);
-			// Debug.WriteLine(String.Join("", processRunner.StandardOutput));
+			var processRunner = new ProcessRunner();
+			// NOTE: can not run under SharpDevelop: the %PROGRAMFILES% will expand to C:\Program Files (x86) 
+			Debug.WriteLine(String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath,fileName)));
+			Debug.WriteLine(String.Format("arguments: {0}", arguments));
+			processRunner.Run(String.Format(@"{0}\{1}", toolPath,fileName), arguments);
+			Debug.WriteLine(String.Format(@"{0} ""{1}""","STDOUT:" , String.Join("", processRunner.StandardOutput)));
+			Debug.WriteLine(String.Format(@"{0} ""{1}""","STDERR:" , String.Join("", processRunner.StandardError)));
 			Thread.Sleep(1000);
 			is_busy = !is_busy;
 			notifyIcon.Visible = false;
