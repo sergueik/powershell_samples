@@ -1,0 +1,132 @@
+﻿using System;
+using System.Drawing;
+using System.Diagnostics;
+using System.Windows.Forms;
+using Program.Properties;
+using System.Threading;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.Timers;
+using System.Linq;
+
+using Utils;
+
+namespace Program {
+
+	class ProcessIcon : IDisposable {
+		private NameValueCollection appSettings;
+		private Boolean debug;
+		private int collectInterval = 1000;
+		private string vmName = "";
+		private string toolPath = null;
+		private string fileName = null;
+		private string arguments = null;
+		
+		NotifyIcon notifyIcon;
+		// NOTE: Timer is an ambiguous reference between
+		// System.Windows.Forms.Timer and System.Threading.Timer
+		System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
+		bool is_busy = false;
+		int nScanCounter = 1;
+		static bool exitFlag = false;
+		private Icon idle_icon;
+		private Icon busy_icon;
+
+		public ProcessIcon() {
+			notifyIcon = new NotifyIcon();
+
+			appSettings = ConfigurationManager.AppSettings;
+			// NOTE: 
+			// System.Array does not contain a definition for 'Contains' and no extension method 'Contains' accepting a first argument of type 'System.Array' could be found 
+			// need to add System.Linq (CS1061)
+			
+			if (appSettings.AllKeys.Contains("Debug")) {
+				debug = Boolean.Parse(appSettings["Debug"]);
+			}
+
+			if (appSettings.AllKeys.Contains("CollectInterval")) {
+				collectInterval = int.Parse(appSettings["CollectInterval"]);
+			}
+
+			if (appSettings.AllKeys.Contains("VmName")) {
+				vmName = appSettings["VmName"];
+			}
+			if (appSettings.AllKeys.Contains("FileName")) {
+				fileName = appSettings["FileName"];
+			}
+			if (appSettings.AllKeys.Contains("Arguments1")) {
+				arguments = appSettings["Arguments1"];
+			}
+			if (appSettings.AllKeys.Contains("ToolPath")) {
+				var rawToolPath = appSettings["ToolPath"];
+
+				toolPath = Environment.ExpandEnvironmentVariables(rawToolPath);
+				Debug.WriteLine(String.Format("Expanded Path: {0}", toolPath));
+			} else {
+				Debug.WriteLine("could not resolve toolpath");
+			}
+		}
+
+		public void Display() {
+			notifyIcon.MouseClick += new MouseEventHandler(ni_MouseClick);
+			
+			idle_icon = Resources.idle_icon;
+			busy_icon = Resources.busy_icon;
+			notifyIcon.Icon = idle_icon;
+			// https://learn.microsoft.com/en-us/dotnet/api/system.reflection.assemblydescriptionattribute?view=netframework-4.5
+			// https://learn.microsoft.com/en-us/dotnet/api/system.reflection.assemblytitleattribute?view=netframework-4.5
+			// https://learn.microsoft.com/en-us/dotnet/api/system.attribute.getcustomattribute?view=netframework-4.5
+			string assemblyTitle = ((AssemblyTitleAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyTitleAttribute), false)).Title;
+			// System.ArgumentOutOfRangeException: Text length must be less than 64 characters long.
+		
+			notifyIcon.Text = (assemblyTitle.Length > 64) ? (assemblyTitle.Substring(0, 61) + "...") : assemblyTitle;
+			notifyIcon.Visible = true;
+			notifyIcon.ContextMenuStrip = new ContextMenus().Create();
+			myTimer.Tick += new EventHandler(TimerEventProcessor);
+			myTimer.Interval = 5000;
+			myTimer.Start();
+		}
+
+		public void Dispose()
+		{
+			notifyIcon.Visible = false;
+			notifyIcon.Dispose();
+		}
+
+		void ni_MouseClick(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left) {
+				Process.Start("explorer", null);
+			}
+		}
+	
+	
+		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs) {
+			myTimer.Stop();
+			nScanCounter++;
+			Debug.WriteLine("{0}", nScanCounter.ToString());
+			is_busy = !is_busy;
+			notifyIcon.Visible = false;
+			if (is_busy)
+				notifyIcon.Icon = busy_icon;
+			else
+				notifyIcon.Icon = idle_icon;
+			notifyIcon.Visible = true;
+			// var processRunner = new ProcessRunner();
+			// processRunner.Run(String.Format(@"{0}\{1}", toolPath,fileName), arguments);
+			// Debug.WriteLine(String.Join("", processRunner.StandardOutput));
+			Thread.Sleep(1000);
+			is_busy = !is_busy;
+			notifyIcon.Visible = false;
+			if (is_busy)
+				notifyIcon.Icon = busy_icon;
+			else
+				notifyIcon.Icon = idle_icon;
+			notifyIcon.Visible = true;
+			// restart Timer.
+			myTimer.Start();
+		}
+	}
+}
