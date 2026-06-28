@@ -30,7 +30,7 @@ namespace Utils {
 					UseShellExecute = false,
 					RedirectStandardOutput = true,
 					RedirectStandardError = true,
-					CreateNoWindow = false
+					CreateNoWindow = true
 				};
 
 				using (var process = new Process()) {

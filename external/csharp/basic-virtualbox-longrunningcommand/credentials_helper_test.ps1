@@ -1,3 +1,25 @@
+#Copyright (c) 2021 Serguei Kouzmine
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,e
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
+
+
+Add-Type -TypeDefinition @"
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,7 +28,7 @@ using System.Text;
 using Microsoft.Win32.SafeHandles;
 
 namespace  Custom {
-public static class CredentialsManagerHelper {
+public static class CredentialsHelper {
     public static Credential ReadCredential(string applicationName) {
 			IntPtr nCredPtr;
 			bool read = CredRead(applicationName, CredentialType.Generic, 0, out nCredPtr);
@@ -33,7 +55,7 @@ public static class CredentialsManagerHelper {
 
 		public static void WriteCredential(string applicationName, string userName, string secret) {
 			byte[] byteArray = secret == null ? null : Encoding.Unicode.GetBytes(secret);
-			// XP and Vista: 512; 
+			// XP and Vista: 512;
 			// 7 and above: 5*512
 			if (Environment.OSVersion.Version < new Version(6, 1) /* Windows 7 */) {
 				if (byteArray != null && byteArray.Length > 512)
@@ -96,7 +118,7 @@ public static class CredentialsManagerHelper {
 
 		[DllImport("Advapi32.dll", EntryPoint = "CredFree", SetLastError = true)]
 		static extern bool CredFree([In] IntPtr cred);
-		
+
 		private enum CredentialPersistence : uint {
 			Session = 1,
 			LocalMachine,
@@ -190,3 +212,24 @@ public static class CredentialsManagerHelper {
 		}
 	}
 }
+
+
+"@ -ReferencedAssemblies 'System.dll'
+[Custom.CredentialsHelper]::EnumerateCrendentials() |
+where-object {$_.UserName -ne $null} |
+foreach-object {
+  write-output ("Type: {0}" -f $_.CredentialType)
+  write-output ("ApplicationName: {0}" -f $_.ApplicationName)
+  write-output ("UserName: {0}" -f $_.UserName)
+  if ($_.Password -ne $null) {
+    $password = $_.Password -replace '.', '?'
+  } else {
+   $password= ''
+  }
+  write-output ("Password: {0}" -f $password )
+}
+
+# NOTE:
+# $caller = New-Object Custom.CredentialsHelper
+# New-Object : A constructor was not found. Cannot find an appropriate
+# constructor for type Custom.CredentialsHelper.

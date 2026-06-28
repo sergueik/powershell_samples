@@ -11,6 +11,7 @@ namespace Utils {
 		public int Interval { set { interval = value; } get {return interval;}}
 		public string FilePath { set { filePath = value; } get {return filePath;}}
 		public bool Debug { get; set; }
+		public bool Append { get; set; }
 		public string Text { get; set; }
 		private byte[] bytes;
 		public byte[] Bytes { get { return bytes; } }
@@ -19,17 +20,19 @@ namespace Utils {
 
 		public void WriteContents() {
 			Boolean done = false;
-			if (!string.IsNullOrEmpty(filePath)) {
+			if (!string.IsNullOrEmpty(this.filePath)) {
 				// Console.Error.WriteLine(String.Format("Writing data to {0}.", filePath));
 				for (int cnt = 0; cnt != Retries; cnt++) {
 					if (done)
 						break;
 					try {
-						stream = new FileInfo(filePath).Open(FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+						// https://learn.microsoft.com/en-us/dotnet/api/system.io.filemode?view=netframework-4.5
+						stream = new FileInfo(filePath).Open(this.Append? FileMode.Append : FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 						bytes = Encoding.ASCII.GetBytes(Text);
 						// stream.Lock(0, bytes.Length);
 						// have to truncate
-						stream.SetLength(0);
+						if (!this.Append)
+							stream.SetLength(0);
 						if (Debug)
 							Console.Error.WriteLine(String.Format("Writing text {0}.", Text));
 						stream.Write(bytes, 0, bytes.Length);
