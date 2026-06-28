@@ -67,12 +67,10 @@ namespace Program
 			}
 			if (appSettings.AllKeys.Contains("Arguments4")) {
 				arguments = appSettings["Arguments4"];
-				var macro = arguments.FindMatch(@"(?<vm>%VM%)");
-				arguments = arguments.Replace(macro, "{7e261a39-d356-4eb1-a8ed-75675b149241}");
-				macro = arguments.FindMatch(@"(?<username>%USERNAME%)");
-				arguments = arguments.Replace(macro, "sergueik");
-				macro = arguments.FindMatch(@"(?<username>%PASSWORD%)");
-				arguments = arguments.Replace(macro, "password");
+				arguments = arguments.Replace("%VM%", "{7e261a39-d356-4eb1-a8ed-75675b149241}");
+				// the user name may not match login id
+				arguments = arguments.Replace("%USERNAME%", "sergueik");
+				arguments = arguments.Replace("%PASSWORD%", "password");
 			}
 			if (appSettings.AllKeys.Contains("ToolPath")) {
 				toolPath = Environment.ExpandEnvironmentVariables(appSettings["ToolPath"]);

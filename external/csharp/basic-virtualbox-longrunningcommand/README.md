@@ -373,3 +373,54 @@ this is a test with argument: sample
 ```text
 this is a test with argument: sample aergument with spaces
 ```
+
+#### How this Version Works
+
+
+* Layer 1: VBoxManage
+```
+exe = /bin/sh
+argv = ["/bin/sh", "-c", "/tmp/a.sh sample"]
+```
+* Layer 2: Linux shell (/bin/sh)
+```
+-c "/tmp/a.sh sample"
+```
+* Layer 3: your script
+```
+/tmp/a.sh sample
+```
+So the command only works because:
+
+/bin/sh becomes the single deterministic interpreter boundary
+
+2. Why the “extra /bin/sh” looks redundant but is required
+
+This part:
+```cmd
+--exe /bin/sh -- /bin/sh -c ...
+```
+
+is what fixes VBoxManage’s strict argument model.
+
+__VBoxManage__ does NOT reliably infer:
+
+* `PATH` resolution
+* shell interpretation
+* command concatenation
+
+So you explicitly anchor it twice:
+
+|Part    |	Purpose |
+|--------|----------|
+|--exe /bin/sh	| actual process launched in guest|
+|-- /bin/sh -c ...	|argv passed to that process |
+
+This is redundant only syntactically — not semantically.
+
+__VBoxManage__ `guestcontrol` is not a command executor — it is a process spawner with strict argv semantics.
+
+
+### NOTE
+
+By default, Ubuntu does not set a password for the root user: root account is effectively locked to prevent direct logins

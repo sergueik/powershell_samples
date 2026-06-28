@@ -21,6 +21,10 @@ foreach (var credential in CredentialManager.EnumerateCrendentials()) {
 
   * the original author's [Meziantou.Framework SDK](https://github.com/meziantou/Meziantou.Framework)
   * another [similar helper](https://github.com/davotronic5000/PowerShell_Credential_Manager) with Powershell cmdlet
+  * [](https://github.com/peewpw/Invoke-WCMDump/blob/master/Invoke-WCMDump.ps1) - PowerShell Script to Dump Windows Credentials from the Credential Manager - contains the same code (`NativeMethods.`) compiled through `add-type`. NOTE: Marked as threat `Powershell.Expolit.E` troyan and is deleted by Windows Defender on __Windows 11__
+![Windows Defender](screenshots/capture-windows-defender.png)
+  * [spolnik/Simple.CredentialsManager](https://github.com/spolnik/Simple.CredentialsManager) - original of all the above, a C# Api for accessing Windows Credential Manager (reading, writing and removing of credentials)
+
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

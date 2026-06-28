@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 
-namespace  Custom {
+namespace  Utils {
 public static class CredentialsManagerHelper {
     public static Credential ReadCredential(string applicationName) {
 			IntPtr nCredPtr;
@@ -96,7 +96,7 @@ public static class CredentialsManagerHelper {
 
 		[DllImport("Advapi32.dll", EntryPoint = "CredFree", SetLastError = true)]
 		static extern bool CredFree([In] IntPtr cred);
-		
+
 		private enum CredentialPersistence : uint {
 			Session = 1,
 			LocalMachine,
