@@ -4,7 +4,19 @@
 
 #### Goal
 
+```cmd
+VBoxManage.exe list runningvms
+```
+```text
 
+"XPSP3" {91047a20-5df0-4b68-b11d-1abd36738105}
+"Xubuntu 22.04" {7e261a39-d356-4eb1-a8ed-75675b149241}
+"default" {59c3df8a-e359-4211-8e7c-74ec5dd3e51d}
+"Windows 7" {55d01a4a-4656-480f-bccb-e6838f5df285}
+"Windows 10 x64 ru" {184f37d0-8529-474c-962d-6fd6781d9757}
+"Xubuntu VS Code" {0b64d785-4228-4357-83bc-2b6a436f81bf}
+
+```
 
 Provide a deterministic, non-interactive mechanism to perform Docker authentication inside a Linux VM appliance, triggered from a Windows host via:
 

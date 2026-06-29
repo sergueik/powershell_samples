@@ -4,6 +4,8 @@ Replica of the [gist](https://gist.github.com/meziantou/10311113)
 to acccess data in [Windows Credential Manager](https://support.microsoft.com/en-au/windows/accessing-credential-manager-1b5c916a-6a16-889f-8581-fc16e8165ac0) via [p/invoke](https://www.pinvoke.net/default.aspx/advapi32/CredRead.html)
 converted into Program and Test projects
 
+![Windows Credential Manager](screenshots/capture-windows-credentials-manager.png)
+
 ### Example
 ```c#
 foreach (var credential in CredentialManager.EnumerateCrendentials()) {
