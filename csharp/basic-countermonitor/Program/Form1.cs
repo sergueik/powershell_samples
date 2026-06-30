@@ -57,6 +57,10 @@ namespace Program {
 				rounds = int.Parse(appSettings["Rounds"]);
 			}
 
+			if (appSettings.AllKeys.Contains("TargetUrl")) {
+				targetUrl = appSettings["TargetUrl"];
+			}
+
 			dataFile = EnvVars.ResolveEnvVars((appSettings.AllKeys.Contains("Datafile")) ? appSettings["Datafile"] : @"${temp}\loadaverage.csv");
 
 			InitializeComponent();

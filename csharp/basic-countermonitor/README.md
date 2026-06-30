@@ -266,6 +266,15 @@ process.PrivateMemorySize64
 ### Push to Docker Hosted Promethus
 
 ```cmd
+mkdir -p grafana/provisioning/{datasources,dashboards}
+touch grafana/provisioning/datasources/prometheus.yml
+touch grafana/provisioning/dashboards/provider.yml
+touch grafana/provisioning/dashboards/windows-process.json
+```
+```cmd
+docker-compose up -d`
+```
+```cmd
 docker-compose ps
 ```
 

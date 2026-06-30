@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using System.Globalization;
 using System;
 
 namespace Utils {
@@ -26,6 +27,7 @@ namespace Utils {
 		private string categoryName = "Memory";
 		private string counterName = "Available Bytes";
 		private string instanceName = "";
+		private string  targetUrl = null; 
 
 		public string CategoryName {
 			get { return categoryName; }
@@ -62,6 +64,11 @@ namespace Utils {
 		public Boolean Debug {
 			get { return debug; }
 			set  { debug = value; }
+		}
+
+		public string TargetUrl {
+			get { return targetUrl; }
+			set  { targetUrl = value; }
 		}
 
 		public UserControl1() {
@@ -151,7 +158,17 @@ namespace Utils {
 				System.Diagnostics.Debug.WriteLine(String.Format("Exception: {0}", e.ToString()));
 			}
 			System.Diagnostics.Debug.WriteLine(String.Format("{0} from {1} samples", average, values.Count()));
-
+			// use Prometheus metric types
+			// https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo?view=netframework-4.5
+ var body =
+        "# TYPE process_average gauge\n" +
+        "process_average " +
+        average.ToString(
+            CultureInfo.InvariantCulture) +
+        "\n";
+ if (!String.IsNullOrEmpty(this.targetUrl))
+			    MetricsSinkHelper.push(this.targetUrl, body);
+			
 			var fields = new List<string> {
 				DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
 				average.ToString("F2")

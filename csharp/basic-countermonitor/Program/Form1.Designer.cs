@@ -15,17 +15,19 @@ namespace Program {
 	partial class Form1 {
 
 		private IContainer components = null;
-		// 15 minute worth of data
 		private NameValueCollection appSettings;
-			private Boolean debug;
+		private Boolean debug;
 		private string dataFile = @"c:\temp\loadaveragecounterservice.txt";
 		private int averageInterval = 60000;
 		private int collectInterval = 1000;
 		private int rounds = 100;
+		// 15 minute worth of data
 		private int capacity = 900;
 		private string categoryName = "Memory";
 		private string counterName = "Available Bytes";
 		private string instanceName = "";
+		private string targetUrl = null; 
+
 		// NOTE: the default values of
 		// dataFile,  averageInterval, collectInterval, categoryNAme, counterName, and instanceName about to be overwrittedn with app config values
 
@@ -51,6 +53,7 @@ namespace Program {
 			userControl.Debug = this.debug;
 			userControl.DataFile = this.dataFile;
 			userControl.Rounds = this.rounds;
+			userControl.TargetUrl = this.targetUrl;
 
 			this.SuspendLayout();
 
