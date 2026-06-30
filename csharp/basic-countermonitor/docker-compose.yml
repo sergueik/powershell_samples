@@ -1,0 +1,84 @@
+---
+version: "3.5"
+
+services:
+
+  prometheus:
+    # build: prometheus
+    image: prom/prometheus:v3.4.0
+    container_name: monitoring-prometheus
+    restart: unless-stopped
+    depends_on:
+      pushgateway:
+        condition: service_healthy
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      # on Docker Toolbox need to honor VM volumes
+      # - /c/Users/$USERNAME/Documents/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+     - --config.file=/etc/prometheus/prometheus.yml
+     - --storage.tsdb.path=/prometheus
+     - --storage.tsdb.retention.time=15d
+     - --web.enable-lifecycle
+     # the last option enables hot reload of config via POST '/-/reload'
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9090/-/healthy" ]
+      interval: 10s
+      retries: 3
+      timeout: 5s
+
+  grafana:
+    container_name: monitoring-grafana
+    restart: unless-stopped
+    # build: grafana
+    image: grafana/grafana:11.6.0
+    ports:
+      - 3000:3000
+    working_dir: '/scripts'
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "admin"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/provisioning/dashboars/windows-process.json
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    tty: false
+    extra_hosts:
+      - "host.docker.internal:192.168.99.100"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      # on Docker Toolbox need to honor VM volumes
+      # - /c/Users/$USERNAME/Documents/grafana/provisioning:/etc/grafana/provisioning:ro
+
+  pushgateway:
+    image: prom/pushgateway:v1.10.0
+    container_name: monitoring-pushgateway
+    ports:
+      - "9091:9091"
+    restart: unless-stopped
+    command:
+      - --persistence.file=/data/pushgateway.db
+      - --persistence.interval=5m
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+    volumes:
+      - pushgateway-data:/data
+      # - /c/Users/$USERNAME/Documents/data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9091/-/healthy" ]
+      interval: 10s
+      retries: 10
+      timeout: 5s
+
+volumes:
+  grafana-data:
+  prometheus-data:
+  pushgateway-data:

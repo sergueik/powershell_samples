@@ -55,7 +55,7 @@ Background Info
 
 Given that Microsoft Windows continuously performs the heavy lifting every minute of every hour, collecting an log structurd set of performance counters ΓÇö both global system metrics and per-instance process data ΓÇö the telemetry foundation is already present before a single line of application code is written.
 
-#### Available Counters 
+#### Available Counters
 
 `Process.Explorer`   |
 ---------------------|
@@ -211,7 +211,7 @@ to find out explore it using the available tools in console:
 set LOG=%TEMP%\output.txt
 wmic.exe /output:%LOG% path win32_process where (commandline like "%java.exe%" and name != "wmic.exe") get processid,name,commandlinewmic.exe /output:%LOG% path win32_process where (commandline like "%java.exe%" and name != "wmic.exe") get processid,name,commandline
 ```
-> NOTE: there isn't native `/noheaders` or `/output:noheaders` switch `wmic.exe` would recognize. The stabdard hack is to use 
+> NOTE: there isn't native `/noheaders` or `/output:noheaders` switch `wmic.exe` would recognize. The stabdard hack is to use
 ```cmd
 more.com +1 %LOG%
 ```
@@ -261,7 +261,76 @@ capture target `Process` instance `private memory` property instead of performan
 
 ```c#
 process.PrivateMemorySize64
-``` 
+```
+
+### Push to Docker Hosted Promethus
+
+```cmd
+docker-compose ps
+```
+
+```text
+        Name                 Command             State              Ports       
+--------------------------------------------------------------------------------
+monitoring-grafana     /run.sh                Up             0.0.0.0:3000-      
+                                                             >3000/tcp,:::3000- 
+                                                             >3000/tcp          
+monitoring-            /bin/prometheus        Up (healthy)   0.0.0.0:9090-      
+prometheus             --config.f ...                        >9090/tcp,:::9090- 
+                                                             >9090/tcp          
+monitoring-            /bin/pushgateway       Up (healthy)   0.0.0.0:9091-      
+pushgateway            --persist ...                         >9091/tcp,:::9091-                                                              >9091/tcp    
+```
+### Troubleshooting
+```sh
+docker pull prom/pushgateway:v1.10.0
+```
+
+
+> NOTE: if the image or tag is incorrect Docker Toolbox wll print a misleading error message:
+```text
+error during connect: Post https://192.168.99.100:2376/v1.40/images/create?fromImage=prom%2Fprometheus&tag=v3.4.0: dial tcp 192.168.99.100:2376: connectex: No connection could be made because the target machine actively refused it.
+```
+
+while Docker will print  a misleading error message:
+```text
+Error response from daemon: pull access denied for prom/pushateway, repository does not exist or may require 'docker login': denied: requested access to the resource is denied
+```
+
+```text
+ERROR: yaml.parser.ParserError: while parsing a flow sequence
+  in "./docker-compose.yaml", line 30, column 13
+expected ',' or ']', but got '<scalar>'
+  in "./docker-compose.yaml", line 30, column 35
+```
+```text
+ERROR: The Compose file './docker-compose.yaml' is invalid because:
+services.prometheus.healthcheck.test contains {"CMD": "wget"}, which is an invalid type, it should be a string
+```
+```sh
+docker-compose logs pushgateway
+```
+> NOTE: not the 
+```text
+Attaching to monitoring-pushgateway
+monitoring-pushgateway | ts=2026-06-30T00:52:23.679Z caller=main.go:87 level=info msg="starting pushgateway" version="(version=1.10.0, branch=HEAD, revision=17dd0704c6595396b8ca2550884bd9f0d66990bb)"
+monitoring-pushgateway | ts=2026-06-30T00:52:23.679Z caller=main.go:88 level=info build_context="(go=go1.23.1, platform=linux/amd64, user=root@ef8599d2814a, date=20240919-21:18:11, tags=unknown)"
+monitoring-pushgateway | ts=2026-06-30T00:52:23.680Z caller=tls_config.go:348 level=info msg="Listening on" address=[::]:9091
+monitoring-pushgateway | ts=2026-06-30T00:52:23.681Z caller=tls_config.go:351 level=info msg="TLS is disabled." http2=false address=[::]:9091
+
+```
+
+```cmd
+docker-compose ps
+```
+
+```text
+       Name                 Command             State               Ports
+--------------------------------------------------------------------------------
+monitoring-           /bin/pushgateway      Up (unhealthy)   0.0.0.0:9091-
+pushgateway           --persist ...                          >9091/tcp,:::9091-
+                                                             >9091/tcp
+```
 ### See Also:
    * example code from [Updating Your Form from Another Thread without Creating Delegates for Every Type of Update](https://www.codeproject.com/Articles/52752/Updating-Your-Form-from-Another-Thread-without-Cre)
 
@@ -270,6 +339,6 @@ process.PrivateMemorySize64
   * [how to use InvokeRequired](https://stackoverflow.com/questions/15580494)
   * https://learn.microsoft.com/en-us/dotnet/desktop/winforms/how-to-change-the-borders-of-windows-forms?view=netframework-4.5
   * https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.textbox?view=netframework-4.5
- 
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
