@@ -52,7 +52,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MetricsSinkHelper.cs" />
+    <Compile Include="MetricSinkHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CircularBuffer.cs" />

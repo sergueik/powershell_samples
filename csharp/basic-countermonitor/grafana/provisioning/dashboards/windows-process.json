@@ -1,0 +1,23 @@
+{
+  "uid": "windows-process",
+  "title": "Windows Process Metrics",
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "5s",
+
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Process Average",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 10 },
+
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "process_average"
+        }
+      ]
+    }
+  ]
+}

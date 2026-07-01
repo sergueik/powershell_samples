@@ -13,8 +13,10 @@ using System.Windows.Forms;
 using System.Globalization;
 using System;
 
-namespace Utils {
-	public partial class UserControl1 : UserControl {
+namespace Utils
+{
+	public partial class UserControl1 : UserControl
+	{
 		private Boolean debug;
 		private CircularBuffer<Data> buffer;
 
@@ -27,7 +29,7 @@ namespace Utils {
 		private string categoryName = "Memory";
 		private string counterName = "Available Bytes";
 		private string instanceName = "";
-		private string  targetUrl = null; 
+		private string targetUrl = null;
 
 		public string CategoryName {
 			get { return categoryName; }
@@ -71,13 +73,15 @@ namespace Utils {
 			set  { targetUrl = value; }
 		}
 
-		public UserControl1() {
+		public UserControl1()
+		{
 			buffer = new CircularBuffer<Data>(capacity);
 			// appSettings = ConfigurationManager.AppSettings;
 			InitializeComponent();
 		}
 
-		private void button1_Click(object sender, EventArgs e) {
+		private void button1_Click(object sender, EventArgs e)
+		{
 			var thread = new Thread(new ThreadStart(StartCalculation));
 			thread.Start();
 
@@ -94,7 +98,8 @@ namespace Utils {
 		}
 
 		private Action<Control> setEnabled = (Control control) => control.Enabled = true;
-		public void StartCalculation() {
+		public void StartCalculation()
+		{
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.control?view=netframework-4.5
 			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.control.invoke?view=netframework-4.5
 			// https://learn.microsoft.com/en-us/dotnet/api/system.delegate?view=netframework-4.5
@@ -120,7 +125,8 @@ namespace Utils {
 			}
 		}
 
-		private void CollectMetrics() {
+		private void CollectMetrics()
+		{
 			float value = 0;
 			var row = new Data();
 			row.TimeStamp = DateTime.Now;
@@ -140,7 +146,8 @@ namespace Utils {
 			buffer.AddLast(row);
 		}
 
-		private void Commit() {
+		private void Commit()
+		{
 
 			var rows = buffer.ToList();
 			var now = DateTime.Now;
@@ -159,15 +166,13 @@ namespace Utils {
 			}
 			System.Diagnostics.Debug.WriteLine(String.Format("{0} from {1} samples", average, values.Count()));
 			// use Prometheus metric types
+			// https://prometheus.io/docs/concepts/metric_types/#gauge
 			// https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo?view=netframework-4.5
- var body =
-        "# TYPE process_average gauge\n" +
-        "process_average " +
-        average.ToString(
-            CultureInfo.InvariantCulture) +
-        "\n";
- if (!String.IsNullOrEmpty(this.targetUrl))
-			    MetricsSinkHelper.push(this.targetUrl, body);
+			var body =
+				"# TYPE process_average gauge\n" +
+				"process_average " + average.ToString(CultureInfo.InvariantCulture) + "\n";
+			if (!String.IsNullOrEmpty(this.targetUrl))
+				MetricSinkHelper.push(this.targetUrl, body);
 			
 			var fields = new List<string> {
 				DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),

@@ -271,25 +271,64 @@ touch grafana/provisioning/datasources/prometheus.yml
 touch grafana/provisioning/dashboards/provider.yml
 touch grafana/provisioning/dashboards/windows-process.json
 ```
+
+```
+docker pull prom/prometheus:v3.4.0
+docker pull grafana/grafana:11.6.0
+docker pull prom/pushgateway:v1.10.0
+```
 ```cmd
-docker-compose up -d`
+docker-compose up -d
 ```
 ```cmd
 docker-compose ps
 ```
 
 ```text
-        Name                 Command             State              Ports       
+        Name                 Command             State              Ports
 --------------------------------------------------------------------------------
-monitoring-grafana     /run.sh                Up             0.0.0.0:3000-      
-                                                             >3000/tcp,:::3000- 
-                                                             >3000/tcp          
-monitoring-            /bin/prometheus        Up (healthy)   0.0.0.0:9090-      
-prometheus             --config.f ...                        >9090/tcp,:::9090- 
-                                                             >9090/tcp          
-monitoring-            /bin/pushgateway       Up (healthy)   0.0.0.0:9091-      
-pushgateway            --persist ...                         >9091/tcp,:::9091-                                                              >9091/tcp    
+monitoring-grafana     /run.sh                Up             0.0.0.0:3000-
+                                                             >3000/tcp,:::3000-
+                                                             >3000/tcp
+monitoring-            /bin/prometheus        Up (healthy)   0.0.0.0:9090-
+prometheus             --config.f ...                        >9090/tcp,:::9090-
+                                                             >9090/tcp
+monitoring-            /bin/pushgateway       Up (healthy)   0.0.0.0:9091-
+pushgateway            --persist ...                         >9091/tcp,:::9091-                                                              >9091/tcp
 ```
+
+Application will begin sending metrics:
+```text
+153889680 from 58 samples
+153889680 from 58 samples
+153924544 from 60 samples
+153924544 from 60 samples
+153970688 from 60 samples
+153970688 from 60 samples
+153995408 from 60 samples
+...
+```
+it is using this code:
+```c#
+var body =
+	"# TYPE process_average gauge\n" +
+	"process_average " + average.ToString(CultureInfo.InvariantCulture) + "\n";
+if (!String.IsNullOrEmpty(this.targetUrl))
+	MetricSinkHelper.push(this.targetUrl, body);
+```
+Open Prometheus pushgateway as web page `http://192.168.12.159:9091/metrics`
+examine the text to observe the entries:
+
+```text
+# TYPE process_average gauge
+process_average{instance="",job="myapp"} 1.54080192e+08
+```
+
+see it in Grafana `http://192.168.12.159:3000/dashboard/new?orgId=1&from=now-15m&to=now&timezone=browser&editPanel=1`
+- manual configuration of Prometheus data source and process_average dashboard will be required.
+
+![Grafana](screenshots/capture-grafana.png)
+
 ### Troubleshooting
 ```sh
 docker pull prom/pushgateway:v1.10.0
@@ -319,7 +358,7 @@ services.prometheus.healthcheck.test contains {"CMD": "wget"}, which is an inval
 ```sh
 docker-compose logs pushgateway
 ```
-> NOTE: not the 
+> NOTE: not the
 ```text
 Attaching to monitoring-pushgateway
 monitoring-pushgateway | ts=2026-06-30T00:52:23.679Z caller=main.go:87 level=info msg="starting pushgateway" version="(version=1.10.0, branch=HEAD, revision=17dd0704c6595396b8ca2550884bd9f0d66990bb)"
