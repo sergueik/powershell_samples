@@ -382,20 +382,35 @@ cat /tmp/log.64915.txt
 ```
 
 ```text
-process_rss_mb{pid="1782959237",cmd="java"} 154.6
-process_vsz_mb{pid="1782959237",cmd="java"} 3035.3
-process_majflt{pid="1782959237",cmd="java"} 0.07
-process_rss_mb{pid="1782959267",cmd="java"} 154.6
-process_vsz_mb{pid="1782959267",cmd="java"} 3035.3
-process_majflt{pid="1782959267",cmd="java"} 0.10
-process_rss_mb{pid="1782959297",cmd="java"} 154.6
-process_vsz_mb{pid="1782959297",cmd="java"} 3035.3
-process_majflt{pid="1782959297",cmd="java"} 0.07
+process_rss_mb{pid="56398",cmd="java"} 154.7
+process_vsz_mb{pid="56398",cmd="java"} 3035.3
+process_majflt{pid="56398",cmd="java"} 0.07
+process_rss_mb{pid="56398",cmd="java"} 154.7
+process_vsz_mb{pid="56398",cmd="java"} 3035.3
+process_majflt{pid="56398",cmd="java"} 0.10
+process_rss_mb{pid="56398",cmd="java"} 154.7
+process_vsz_mb{pid="56398",cmd="java"} 3035.3
+process_majflt{pid="56398",cmd="java"} 0.00
+process_rss_mb{pid="56398",cmd="java"} 154.7
+process_vsz_mb{pid="56398",cmd="java"} 3035.3
+process_majflt{pid="56398",cmd="java"} 0.17
 ```
 
-- manual configuration of Prometheus data source and process_average dashboard may be required
+![pushgateway dashboard](screenshots/capture-pushgateway.png)
 
+- manual configuration of Prometheus data source and process_average dashboard may be required - e.g. selecting counter
+
+```text
+process_vsz_mb{job="pidstat"}
+```
 ![grafana dashboard (linux)](screenshots/capture-grafana-linux.png)
+
+Ignore the data buffering error
+```text
+pushed metrics are invalid or inconsistent with existing metrics: 57 error(s) occurred:
+* collected metric "process_rss_mb" { label:{name:"cmd"  value:"java"}  label:{name:"instance"  value:""}  label:{name:"job"  value:"pidstat"}  label:{name:"pid"  value:"56398"}  untyped:{value:154.7}} was collected before with the same name and label values
+``` 
+it will be solved WIP.
 
 
 ### Troubleshooting

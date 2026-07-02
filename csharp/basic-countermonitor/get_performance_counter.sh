@@ -106,8 +106,11 @@ if [[ ! -z "$URL" ]]; then
   else 
     TMP_LOGFILE=/tmp/log.$$.txt
   fi
+  # NOTE: With -H, the first column in pidstat is the epoch time
+  # NOTE: -v creates an awk variable, not a shell variable therefore inside the awk program
+  # one reference it as PID, not $PID
   pidstat -H -r -p "$PID" "$INTERVAL" "$COUNT" |
-  awk '/UID/{next} /^[0-9]/{pid=$1;rss=$7/1024;vsz=$6/1024;maj=$5;cmd=$NF;gsub(/"/,"\\\"",cmd);label="pid=\""pid"\",cmd=\""cmd"\"";printf "process_rss_mb{%s} %.1f\nprocess_vsz_mb{%s} %.1f\nprocess_majflt{%s} %s\n",label,rss,label,vsz,label,maj;fflush()}' | tee "$TMP_LOGFILE" | curl --data-binary @- $URL
+  awk -v PID=$PID '/UID/{next} /^[0-9]/{pid=PID;rss=$7/1024;vsz=$6/1024;maj=$5;cmd=$NF;gsub(/"/,"\\\"",cmd);label="pid=\""pid"\",cmd=\""cmd"\"";printf "process_rss_mb{%s} %.1f\nprocess_vsz_mb{%s} %.1f\nprocess_majflt{%s} %s\n",label,rss,label,vsz,label,maj;fflush()}' | tee "$TMP_LOGFILE" | curl --data-binary @- $URL
 else
   echo "[INFO] writing pidstat output to $OUTFILE"
   if [[ "$FORMAT" == "csv" ]]; then
