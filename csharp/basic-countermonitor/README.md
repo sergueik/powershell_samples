@@ -265,22 +265,15 @@ process.PrivateMemorySize64
 
 ### Push to Docker Hosted Promethus
 
-```cmd
-mkdir -p grafana/provisioning/{datasources,dashboards}
-touch grafana/provisioning/datasources/prometheus.yml
-touch grafana/provisioning/dashboards/provider.yml
-touch grafana/provisioning/dashboards/windows-process.json
-```
-
-```
+```sh
 docker pull prom/prometheus:v3.4.0
 docker pull grafana/grafana:11.6.0
 docker pull prom/pushgateway:v1.10.0
 ```
-```cmd
-docker-compose up -d
+```sh
+docker-compose up -d --build
 ```
-```cmd
+```sh
 docker-compose ps
 ```
 
@@ -296,6 +289,7 @@ prometheus             --config.f ...                        >9090/tcp,:::9090-
 monitoring-            /bin/pushgateway       Up (healthy)   0.0.0.0:9091-
 pushgateway            --persist ...                         >9091/tcp,:::9091-                                                              >9091/tcp
 ```
+run the application on Windows host
 
 Application will begin sending metrics:
 ```text
@@ -327,7 +321,82 @@ process_average{instance="",job="myapp"} 1.54080192e+08
 see it in Grafana `http://192.168.12.159:3000/dashboard/new?orgId=1&from=now-15m&to=now&timezone=browser&editPanel=1`
 - manual configuration of Prometheus data source and process_average dashboard will be required.
 
-![Grafana](screenshots/capture-grafana.png)
+![Grafana](screenshots/capture-grafana-windows.png)
+
+
+alternatively on Linux host run
+
+* launch sample application
+
+```sh
+pushd  basic-karate-example3/oauth-stub/
+mvn package
+java -jar target/example.jwt-stub.jar
+popd
+```
+* launch the metric collector
+
+```sh
+./get_performance_counter.sh --jar example.jwt-stub.jar
+```
+
+```text
+[INFO] process name : java
+[INFO] grep values  : example.jwt-stub.jar
+ps -ef | grep "example.jwt-stub.jar" | grep "jav[a]" | awk 'NR==1 {print $2}'
+[INFO] found PID=56398
+[INFO] collecting process memory counters every 30 sec max 20 times
+[INFO] writing pidstat output to performance_counter.log
+```
+```text
+1782957118 | rss=  101.7 MB | vsz=  3020.2 MB | majflt/s= 0.00 | cmd=java
+1782957148 | rss=  101.7 MB | vsz=  3020.2 MB | majflt/s= 0.00 | cmd=java
+1782957178 | rss=  101.7 MB | vsz=  3020.2 MB | majflt/s= 0.00 | cmd=java
+1782957208 | rss=  101.7 MB | vsz=  3020.2 MB | majflt/s= 0.00 | cmd=java
+1782957238 | rss=  101.7 MB | vsz=  3020.2 MB | majflt/s= 0.00 | cmd=java
+1782957268 | rss=  101.7 MB | vsz=  3020.2 MB | majflt/s= 0.00 | cmd=java
+...
+```
+
+```sh
+./get_performance_counter.sh --name java --jar example.jwt-stub.jar --url http://localhost:9091/metrics/job/pidstat
+```
+```text
+[INFO] process name : java
+[INFO] grep values  : example.jwt-stub.jar
+[INFO] url          : http://localhost:9091/metrics/job/pidstat
+ps -ef | grep "example.jwt-stub.jar" | grep "jav[a]" | awk 'NR==1 {print $2}'
+[INFO] found PID=56398
+[INFO] collecting process memory counters every 30 sec max 20 times
+[INFO] uploading metrics to http://localhost:9091/metrics/job/pidstat
+```
+```sh
+ls -l /tmp/log.*.txt
+```
+```text
+-rw-rw-r-- 1 sergueik sergueik 150 Jul  1 22:27 /tmp/log.64915.txt
+```
+
+```sh
+cat /tmp/log.64915.txt 
+```
+
+```text
+process_rss_mb{pid="1782959237",cmd="java"} 154.6
+process_vsz_mb{pid="1782959237",cmd="java"} 3035.3
+process_majflt{pid="1782959237",cmd="java"} 0.07
+process_rss_mb{pid="1782959267",cmd="java"} 154.6
+process_vsz_mb{pid="1782959267",cmd="java"} 3035.3
+process_majflt{pid="1782959267",cmd="java"} 0.10
+process_rss_mb{pid="1782959297",cmd="java"} 154.6
+process_vsz_mb{pid="1782959297",cmd="java"} 3035.3
+process_majflt{pid="1782959297",cmd="java"} 0.07
+```
+
+- manual configuration of Prometheus data source and process_average dashboard may be required
+
+![grafana dashboard (linux)](screenshots/capture-grafana-linux.png)
+
 
 ### Troubleshooting
 ```sh
