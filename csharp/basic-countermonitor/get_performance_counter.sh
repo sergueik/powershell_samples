@@ -30,20 +30,29 @@ FORMAT='pretty'
 usage() {
   cat <<'EOF'
 Usage:
-  get_performance_counter.sh -name <process_name> -jar <jar> -main <mainclass> [options]
+get_performance_counter.sh -name <process_name> (-jar <jar> | -main <mainclass>) [options]
 
 Required:
-  -name     Process executable name filter (example: java)
-  -main     Main class or any unique command-line fragment
-  -jar      Jar name
+-name     Process executable name filter (default: java)
+
+At least one of the following is required:
+-jar      Jar file name or a unique fragment of the command line.
+Intended for packaged applications started via:
+java -jar application.jar
+
+-main     Fully qualified main class name or any unique command-line
+fragment. Particularly useful with development launches such as:
+mvn spring-boot:run
+where no application JAR appears on the JVM command line.
 
 Optional:
-  -f        Output format: pretty|csv (default: pretty)
-  -i        Sampling interval in seconds (default: 30)
-  -c        Number of samples (default: 20)
-  -o        Output log file (default: performance_counter.log)
-  -h        Show help
-  -url      Prometheus pushgateway url to post the metrics (e.g. http://localhost:9091/metrics/job/pidstat )
+-f        Output format: pretty|csv (default: pretty)
+-i        Sampling interval in seconds between measurements (default: 30)
+-c        Number of samples to collect (default: 20)
+-o        Output log file (default: performance_counter.log)
+-url      Prometheus Pushgateway URL
+(example: http://localhost:9091/metrics/job/pidstat)
+-h        Show this help message
 EOF
 }
 
@@ -86,9 +95,10 @@ echo "[INFO] grep values  : ${VALUE}"
 if [[ ! -z "$URL" ]]; then
   echo "[INFO] url          : ${URL}"
 fi
-echo  "ps -ef | grep \"$VALUE\" | grep \"${NAME:0:3}[${NAME:3:1}]${NAME:4}\" | awk 'NR==1 {print \$2}'"
-
-PID=$(ps -ef | grep "$VALUE" | grep "${NAME:0:3}[${NAME:3:1}]${NAME:4}" | awk 'NR==1 {print $2}' )
+SCRIPT_NAME=$(basename "$0")
+# very common Unix foot-gun
+echo  "ps -ef | grep -v "$SCRIPT_NAME" | grep \"$VALUE\" | grep \"${NAME:0:3}[${NAME:3:1}]${NAME:4}\" | awk 'NR==1 {print \$2}'"
+PID=$(ps -ef | grep -v "$SCRIPT_NAME" | grep "$VALUE" | grep "${NAME:0:3}[${NAME:3:1}]${NAME:4}" | awk 'NR==1 {print $2}' )
 
 if [[ -z "$PID" ]]; then
   echo "[ERROR] process not found for name: ${NAME} value: ${VALUE}"
