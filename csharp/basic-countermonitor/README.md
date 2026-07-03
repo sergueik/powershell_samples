@@ -362,39 +362,38 @@ ps -ef | grep "example.jwt-stub.jar" | grep "jav[a]" | awk 'NR==1 {print $2}'
 ./get_performance_counter.sh --name java --jar example.jwt-stub.jar --url http://localhost:9091/metrics/job/pidstat
 ```
 ```text
+./get_performance_counter.sh --name java --jar example.jwt-stub.jar --url http://localhost:9091/metrics/job/pidstat
 [INFO] process name : java
 [INFO] grep values  : example.jwt-stub.jar
 [INFO] url          : http://localhost:9091/metrics/job/pidstat
 ps -ef | grep "example.jwt-stub.jar" | grep "jav[a]" | awk 'NR==1 {print $2}'
-[INFO] found PID=56398
+[INFO] found PID=228052
+UID          PID    PPID  C STIME TTY          TIME CMD
+sergueik  228052   53294  0 11:09 pts/3    00:01:56 java -jar target/example.jwt
+Linux 5.15.0-181-generic (sergueik47) 	07/02/2026 	_x86_64_	(1 CPU)
+
+1783037733    UID       PID  minflt/s  majflt/s     VSZ     RSS   %MEM  Command
+1783037734   1000    228052      0.00      0.00 3109444  164364   4.10  java
+Average:     1000    228052      0.00      0.00 3109444  164364   4.10  java
 [INFO] collecting process memory counters every 30 sec max 20 times
 [INFO] uploading metrics to http://localhost:9091/metrics/job/pidstat
+process_rss_mb{pid="228052",cmd="java"} 160.5
+process_vsz_mb{pid="228052",cmd="java"} 3036.6
+process_majflt{pid="228052",cmd="java"} 0.00
+process_rss_mb{pid="228052",cmd="java"} 160.5
+process_vsz_mb{pid="228052",cmd="java"} 3036.6
+process_majflt{pid="228052",cmd="java"} 0.00
+
 ```
 ```sh
-ls -l /tmp/log.*.txt
+ls -1dtr /tmp/log.*.txt|tail -1 |xargs cat
 ```
 ```text
--rw-rw-r-- 1 sergueik sergueik 150 Jul  1 22:27 /tmp/log.64915.txt
+process_rss_mb{pid="228052",cmd="java"} 160.5
+process_vsz_mb{pid="228052",cmd="java"} 3036.6
+process_majflt{pid="228052",cmd="java"} 0.00
 ```
-
-```sh
-cat /tmp/log.64915.txt 
-```
-
-```text
-process_rss_mb{pid="56398",cmd="java"} 154.7
-process_vsz_mb{pid="56398",cmd="java"} 3035.3
-process_majflt{pid="56398",cmd="java"} 0.07
-process_rss_mb{pid="56398",cmd="java"} 154.7
-process_vsz_mb{pid="56398",cmd="java"} 3035.3
-process_majflt{pid="56398",cmd="java"} 0.10
-process_rss_mb{pid="56398",cmd="java"} 154.7
-process_vsz_mb{pid="56398",cmd="java"} 3035.3
-process_majflt{pid="56398",cmd="java"} 0.00
-process_rss_mb{pid="56398",cmd="java"} 154.7
-process_vsz_mb{pid="56398",cmd="java"} 3035.3
-process_majflt{pid="56398",cmd="java"} 0.17
-```
+(the value will be overwritten)
 
 ![pushgateway dashboard](screenshots/capture-pushgateway.png)
 
@@ -411,6 +410,13 @@ pushed metrics are invalid or inconsistent with existing metrics: 57 error(s) oc
 * collected metric "process_rss_mb" { label:{name:"cmd"  value:"java"}  label:{name:"instance"  value:""}  label:{name:"job"  value:"pidstat"}  label:{name:"pid"  value:"56398"}  untyped:{value:154.7}} was collected before with the same name and label values
 ``` 
 it will be solved WIP.
+
+### Cleanup
+
+```sh
+docker-compose down -v --rmi local --remove-orphans
+```
+
 
 
 ### Troubleshooting

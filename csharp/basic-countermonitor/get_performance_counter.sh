@@ -96,6 +96,8 @@ if [[ -z "$PID" ]]; then
 fi
 
 echo "[INFO] found PID=$PID"
+ps -fp "$PID"
+pidstat -H -r -p "$PID" 1 1
 echo "[INFO] collecting process memory counters every ${INTERVAL} sec max ${COUNT} times"
 if [[ ! -z "$URL" ]]; then
   echo "[INFO] uploading metrics to ${URL}"
@@ -109,8 +111,16 @@ if [[ ! -z "$URL" ]]; then
   # NOTE: With -H, the first column in pidstat is the epoch time
   # NOTE: -v creates an awk variable, not a shell variable therefore inside the awk program
   # one reference it as PID, not $PID
-  pidstat -H -r -p "$PID" "$INTERVAL" "$COUNT" |
-  awk -v PID=$PID '/UID/{next} /^[0-9]/{pid=PID;rss=$7/1024;vsz=$6/1024;maj=$5;cmd=$NF;gsub(/"/,"\\\"",cmd);label="pid=\""pid"\",cmd=\""cmd"\"";printf "process_rss_mb{%s} %.1f\nprocess_vsz_mb{%s} %.1f\nprocess_majflt{%s} %s\n",label,rss,label,vsz,label,maj;fflush()}' | tee "$TMP_LOGFILE" | curl --data-binary @- $URL
+  # NOTE: one cannot and do not need to pass timestamps explicitly to the Prometheus Pushgateway. 
+  SAMPLE_COUNT=1
+  while [ "$SAMPLE_COUNT" -le "$COUNT" ]; do
+    pidstat -H -r -p "$PID" 1 1 |
+    awk -v PID=$PID '/UID/{next} /^[0-9]/{pid=PID;rss=$7/1024;vsz=$6/1024;maj=$5;cmd=$NF;gsub(/"/,"\\\"",cmd);label="pid=\""pid"\",cmd=\""cmd"\"";printf "process_rss_mb{%s} %.1f\nprocess_vsz_mb{%s} %.1f\nprocess_majflt{%s} %s\n",label,rss,label,vsz,label,maj;fflush()}' | tee "$TMP_LOGFILE" /dev/stderr | curl --data-binary @- $URL
+	if [ "$SAMPLE_COUNT" -lt "$COUNT" ]; then
+		sleep "$INTERVAL"
+	fi
+	SAMPLE_COUNT=$((SAMPLE_COUNT + 1))
+   done
 else
   echo "[INFO] writing pidstat output to $OUTFILE"
   if [[ "$FORMAT" == "csv" ]]; then
