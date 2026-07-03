@@ -28,7 +28,12 @@ namespace Program
 		private string logFile = null;
 		private string fileName = null;
 		private string arguments = null;
-		
+		private string runCommand = null;
+		private string userName = null;
+		private string password = null;
+		private string script = null;
+		private string scriptArguments = null;
+	
 		NotifyIcon notifyIcon;
 		// NOTE: Timer is an ambiguous reference between
 		// System.Windows.Forms.Timer and System.Threading.Timer
@@ -65,12 +70,30 @@ namespace Program
 			if (appSettings.AllKeys.Contains("FileName")) {
 				fileName = appSettings["FileName"];
 			}
-			if (appSettings.AllKeys.Contains("Arguments4")) {
-				arguments = appSettings["Arguments4"];
+			if (appSettings.AllKeys.Contains("RunCommand")) {
+				runCommand = appSettings["RunCommand"];
+			}
+			if (appSettings.AllKeys.Contains("Password")) {
+				password = appSettings["Password"];
+			}
+			if (appSettings.AllKeys.Contains("UserName")) {
+				userName = appSettings["UserName"];
+			}
+			if (appSettings.AllKeys.Contains("Script")) {
+				script = appSettings["Script"];
+			}
+			if (appSettings.AllKeys.Contains("ScriptArguments")) {
+				scriptArguments = appSettings["ScriptArguments"];
+			}
+
+			if (appSettings.AllKeys.Contains(runCommand)) {
+				arguments = appSettings[runCommand];
 				arguments = arguments.Replace("%VM%", "{7e261a39-d356-4eb1-a8ed-75675b149241}");
 				// the user name may not match login id
 				arguments = arguments.Replace("%USERNAME%", "sergueik");
 				arguments = arguments.Replace("%PASSWORD%", "password");
+				arguments = arguments.Replace("%SCRIPT%", script);
+				arguments = arguments.Replace("%SCRIPT_ARGUMENTS%", scriptArguments);
 			}
 			if (appSettings.AllKeys.Contains("ToolPath")) {
 				toolPath = Environment.ExpandEnvironmentVariables(appSettings["ToolPath"]);
