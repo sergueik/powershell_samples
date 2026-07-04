@@ -21,8 +21,10 @@ namespace Test
 	public class ExtractInfoTest
 	{
 		private string result = null;
-		private NameValueCollection appSettings;
-	
+		// private NameValueCollection appSettings;
+		private KeyValueConfigurationCollection appSettings;
+		private string directory;
+
 		[Test]
 		public void test1()
 		{
@@ -60,14 +62,20 @@ namespace Test
 			
 			
 			
-			// NOTE: Hard wired to fallback to assembly
-			// appSettings = ConfigurationManager.AppSettings;
+			// NOTE: the "ConfigurationManager.AppSettings" is somewhat useless:
+			// it is Hard wired to fallback to assembly
+			// and immutable during execution
 			// Solution: access directly
-			var sutDir = Path.GetDirectoryName(Path.GetDirectoryName(
+			directory = Path.GetDirectoryName(Path.GetDirectoryName(
 				             typeof(ExtractInfoTest).Assembly.Location));
-			// immutable during execution
-			var configPath = Path.Combine(
-				                 sutDir, "Program",
+			directory = AppDomain.CurrentDomain.BaseDirectory;
+
+			directory = Path.GetFullPath(Path.Combine(directory, ".."));
+			directory = Path.GetFullPath(Path.Combine(directory, ".."));
+			directory = Path.GetFullPath(Path.Combine(directory, ".."));
+
+			var configPath = Path.Combine(Path.Combine(
+				                 Path.Combine(Path.Combine(directory, "Program"), "bin"), "Debug"),
 				                 "VboxManageSystemTrayApp.exe.config");
 
 			var map = new ExeConfigurationFileMap {
@@ -78,12 +86,18 @@ namespace Test
 				             map,
 				             ConfigurationUserLevel.None);
 
-			var appSettings = config.AppSettings.Settings;
+			appSettings = config.AppSettings.Settings;
 			variables.ForEach((string variable) => {
+			                  	
 				result = null;
-				if (appSettings.AllKeys.Contains(variable)) {
-					result = appSettings[variable].Value.ToString();
+				var setting = config.AppSettings.Settings[variable];
+
+				if (setting != null) {
+					result = setting.Value.ToString();
 				}
+//				if (appSettings.AllKeys.Contains(variable)) {
+//					result = appSettings[variable].Value.ToString();
+//				}
 				Assert.IsNotNull(result);
 				Console.WriteLine(String.Format("variable: {0}: result: {1}", variable, result));
 			});
