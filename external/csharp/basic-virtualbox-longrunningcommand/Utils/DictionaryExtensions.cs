@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 
 
-	// http://www.java2s.com/Code/CSharp/Collections-Data-Structure/DictionaryPrettyPrint.htm
-namespace TestUtils {
+// based on: http://www.java2s.com/Code/CSharp/Collections-Data-Structure/DictionaryPrettyPrint.htm
+namespace Utils {
 	public static class DictionaryExtensions {
 
 		public static string PrettyPrint<K, V>(this IDictionary<K, V> dict) {

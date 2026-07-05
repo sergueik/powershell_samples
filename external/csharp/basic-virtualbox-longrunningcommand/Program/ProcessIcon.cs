@@ -93,7 +93,7 @@ namespace Program
 				arguments = arguments.Replace("%USERNAME%", "sergueik");
 				arguments = arguments.Replace("%PASSWORD%", "password");
 				arguments = arguments.Replace("%SCRIPT%", script);
-				arguments = arguments.Replace("%SCRIPT_ARGUMENTS%", scriptArguments);
+				arguments = arguments.Replace("%SCRIPTARGUMENTS%", scriptArguments);
 			}
 			if (appSettings.AllKeys.Contains("ToolPath")) {
 				toolPath = Environment.ExpandEnvironmentVariables(appSettings["ToolPath"]);

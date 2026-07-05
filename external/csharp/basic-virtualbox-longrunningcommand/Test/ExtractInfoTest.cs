@@ -9,10 +9,10 @@ using System.Reflection;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 using Utils;
-// using Program;
 
 namespace Test
 {
@@ -24,10 +24,43 @@ namespace Test
 		// private NameValueCollection appSettings;
 		private KeyValueConfigurationCollection appSettings;
 		private string directory;
+		private Regex regex = new Regex("%(?<token>[A-Z0-9_]+)%");
+		private HashSet<string> resolved = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+		private Dictionary<string, string> values = new Dictionary<string, string>();
+
+
+		[SetUp]
+		public void SetUp()
+		{
+			// NOTE: the "ConfigurationManager.AppSettings" is somewhat useless:
+			// it is Hard wired to fallback to assembly
+			// and immutable during execution
+			// Solution: access directly
+			directory = Path.GetDirectoryName(Path.GetDirectoryName(
+				typeof(ExtractInfoTest).Assembly.Location));
+			directory = AppDomain.CurrentDomain.BaseDirectory;
+
+			directory = Path.GetFullPath(Path.Combine(directory, ".."));
+			directory = Path.GetFullPath(Path.Combine(directory, ".."));
+			directory = Path.GetFullPath(Path.Combine(directory, ".."));
+
+			var configPath = Path.Combine(Path.Combine(
+				                 Path.Combine(Path.Combine(directory, "Program"), "bin"), "Debug"),
+				                 "VboxManageSystemTrayApp.exe.config");
+
+			var map = new ExeConfigurationFileMap {
+				ExeConfigFilename = configPath
+			};
+
+			var config = ConfigurationManager.OpenMappedExeConfiguration(
+				             map,
+				             ConfigurationUserLevel.None);
+
+			appSettings = config.AppSettings.Settings;
+		}
 
 		[Test]
-		public void test1()
-		{
+		public void test1() {
 			var vars = new List<string> {
 				@"""XPSP3"" {91047a20-5df0-4b68-b11d-1abd36738105}",
 				@"""Xubuntu 22.04"" {7e261a39-d356-4eb1-a8ed-75675b149241}",
@@ -56,41 +89,13 @@ namespace Test
 		}
 
 		[Test]
-		public void test2()
-		{
+		public void test2() {
 			var variables = new List<string> { "UserName", "Debug", "Password" };
-			
-			
-			
-			// NOTE: the "ConfigurationManager.AppSettings" is somewhat useless:
-			// it is Hard wired to fallback to assembly
-			// and immutable during execution
-			// Solution: access directly
-			directory = Path.GetDirectoryName(Path.GetDirectoryName(
-				             typeof(ExtractInfoTest).Assembly.Location));
-			directory = AppDomain.CurrentDomain.BaseDirectory;
 
-			directory = Path.GetFullPath(Path.Combine(directory, ".."));
-			directory = Path.GetFullPath(Path.Combine(directory, ".."));
-			directory = Path.GetFullPath(Path.Combine(directory, ".."));
-
-			var configPath = Path.Combine(Path.Combine(
-				                 Path.Combine(Path.Combine(directory, "Program"), "bin"), "Debug"),
-				                 "VboxManageSystemTrayApp.exe.config");
-
-			var map = new ExeConfigurationFileMap {
-				ExeConfigFilename = configPath
-			};
-
-			var config = ConfigurationManager.OpenMappedExeConfiguration(
-				             map,
-				             ConfigurationUserLevel.None);
-
-			appSettings = config.AppSettings.Settings;
 			variables.ForEach((string variable) => {
-			                  	
+
 				result = null;
-				var setting = config.AppSettings.Settings[variable];
+				var setting = appSettings[variable];
 
 				if (setting != null) {
 					result = setting.Value.ToString();
@@ -102,6 +107,74 @@ namespace Test
 				Console.WriteLine(String.Format("variable: {0}: result: {1}", variable, result));
 			});
 		}
-	
+
+
+		[Test]
+		public void test3() {
+			regex = new Regex("%(?<token>[A-Z0-9_]+)%");
+
+			// Arrange:
+			foreach (KeyValueConfigurationElement setting in appSettings) {
+				values[Canonical(setting.Key)] = setting.Value;
+				if (!regex.IsMatch(setting.Value ?? String.Empty))
+					resolved.Add(Canonical(setting.Key));
+			}
+
+			// Seed some known vars:
+			values["PROGRAMFILES"] = Environment.GetEnvironmentVariable("PROGRAMFILES");
+			resolved.Add("PROGRAMFILES");
+			resolved.Add("TEMP");
+			values["TEMP"] = "/tmp"; // filler
+			// Act:
+			bool progress;
+
+			do {
+				progress = false;
+
+				foreach (var key in values.Keys.ToList()) {
+					if (resolved.Contains(key))
+						continue;
+					var value = values[key];
+					var matches = regex.Matches(value);
+					bool ready = true;
+
+					foreach (Match m in matches) {
+						var token =
+							m.Groups["token"].Value;
+
+						if (!resolved.Contains(token)) {
+							ready = false;
+							break;
+						}
+					}
+
+					if (!ready)
+						continue;
+
+					foreach (Match m in matches) {
+						var token =
+							m.Groups["token"].Value;
+
+						value = value.Replace(
+							"%" + token + "%",
+							values[token]);
+					}
+
+					values[Canonical(key)] = value;
+					resolved.Add(Canonical(key));
+					progress = true;
+				}
+
+			} while (progress);
+
+			Console.Error.WriteLine(String.Format("values: {0}\n({1} items)\nresolved: {2}\n({3} items)", values.PrettyPrint(), values.Count, string.Join(",", resolved), resolved.Count));
+			var unresolved = values.Keys.Except(resolved, StringComparer.OrdinalIgnoreCase).ToList();
+			Console.WriteLine(   "Unresolved: {0}",   unresolved.Count == 0 ? "none" :String.Join(",", unresolved));
+			Assert.IsTrue(resolved.Count == values.Count, "some are not resolved");
+		}
+
+		private static string Canonical(string name) {
+    			return name.ToUpperInvariant();
+		}
 	}
 }
