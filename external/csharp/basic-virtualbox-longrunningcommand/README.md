@@ -570,6 +570,84 @@ VBoxManage.exe list vms
 VBoxManage.exe guestcontrol {75a91c26-d044-423d-a438-9b72b7ab8af0} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
 VBoxManage.exe: error: Machine "{75a91c26-d044-423d-a438-9b72b7ab8af0}" is not running (currently powered off)!
 ```
+#### Misc. Successful and Failing Commands
+```cmd
+
+VBoxManage.exe list vms
+```
+```text
+"STDERR: "Exception: The system cannot find the file specified"
+```
+```cmd
+VBoxManage.exe list vms
+```
+```text
+STDOUT: ""Debian" {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}"<inaccessible>" {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4}"
+```
+```cmd
+VBoxManage.exe guestcontrol {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+```
+```text
+VBoxManage.exe: error: Could not find a registered machine with UUID {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4}
+VBoxManage.exe: error: Details: code VBOX_E_OBJECT_NOT_FOUND (0x80bb0001), component VirtualBoxWrap, interface IVirtualBox, callee IUnknown
+VBoxManage.exe: error: Context: "FindMachine(Bstr(pCtx->pszVmNameOrUuid).raw(), machine.asOutParam())" at line 842 of file VBoxManageGuestCtrl.cpp
+```
+```cmd
+VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+```
+```text
+VBoxManage.exe: error: Machine "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}" is not running (currently powered off)!
+```
+
+```cmd
+VBoxManage.exe startvm {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}
+```
+```text
+Waiting for VM "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}" to power on...
+VM "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}" has been successfully started.
+```
+```cmd
+VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+```
+```text
+VBoxManage.exe: error: The guest execution service is not ready (yet)
+VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
+VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
+```
+```cmd
+2>nul VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+```
+> NOTE: the messages are printed to STDERR
+```text
+STDOUT: ""STDERR: "VBoxManage.exe: error: Could not find a registered machine with UUID {7e261a39-d356-4eb1-a8ed-75675b149241}VBoxManage.exe: error: Details: code VBOX_E_OBJECT_NOT_FOUND (0x80bb0001), component VirtualBoxWrap, interface IVirtualBox, callee IUnknownVBoxManage.exe: error: Context: "FindMachine(Bstr(pCtx->pszVmNameOrUuid).raw(), machine.asOutParam())" at line 842 of file VBoxManageGuestCtrl.cpp"
+```
+```text
+STDOUT: ""STDERR: "VBoxManage.exe: error: Machine "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}" is not running (currently powered off)!"
+```
+
+```cmd
+VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+```
+```text
+VBoxManage.exe: error: Session is not in started state
+VBoxManage.exe: error: Details: code E_UNEXPECTED (0x8000ffff), component GuestSessionWrap, interface IGuestSession, callee IUnknown
+VBoxManage.exe: error: Context: "ProcessCreate(Bstr(pszImage).raw(), ComSafeArrayAsInParam(aArgs), ComSafeArrayAsInParam(aEnv), ComSafeArrayAsInParam(aCreateFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), pProcess.asOutParam())" at line 1520 of file VBoxManageGuestCtrl.cpp
+```
+```cmd
+VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+```
+```text
+VBoxManage.exe: error: Invalid user/password credentials
+VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
+VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
+```
+```cmd
+VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password 123qwe  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+```
+> NOTE: Vierual Box 5.2.x 32-bit hanging.
+
+This makes The straw Windows 10 machine with an  unhealthy 32 bit Virtual Box install simply a fairly good fault generator
+
 ### See Also
 
 https://github.com/bitnami/minideb

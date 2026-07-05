@@ -92,7 +92,9 @@ namespace Program
 
 			if (appSettings.AllKeys.Contains(runCommand)) {
 				arguments2 = appSettings[runCommand];
-				arguments2 = arguments2.Replace("%VM%", "{7e261a39-d356-4eb1-a8ed-75675b149241}");
+				// arguments2 = arguments2.Replace("%VM%", "{7e261a39-d356-4eb1-a8ed-75675b149241}");
+				arguments2 = arguments2.Replace("%VM%", "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}");
+				
 				// the user name may not match login id
 				arguments2 = arguments2.Replace("%USERNAME%", "sergueik");
 				arguments2 = arguments2.Replace("%PASSWORD%", "password");
@@ -149,7 +151,7 @@ namespace Program
 		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs) {
 			myTimer.Stop();
 			nScanCounter++;
-			Debug.WriteLine(String.Format(@"Run ""{0}\{1}"" {2}", toolPath, fileName, arguments1));
+			Debug.WriteLine(String.Format(@"Run ""{0}\{1}"" {2}", toolPath, fileName, arguments2));
 			Debug.WriteLine(String.Format("Counter: {0}", nScanCounter.ToString()));
 			is_busy = !is_busy;
 			notifyIcon.Visible = false;
@@ -162,7 +164,7 @@ namespace Program
 			// NOTE: can not run under SharpDevelop: the %PROGRAMFILES% will expand to C:\Program Files (x86) 
 			// Debug.WriteLine(String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath, fileName)));
 			// Debug.WriteLine(String.Format("arguments: {0}", arguments));
-			processRunner.Run(String.Format(@"{0}\{1}", toolPath, fileName), arguments1);
+			processRunner.Run(String.Format(@"{0}\{1}", toolPath, fileName), arguments2);
 			// Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDOUT:", String.Join("", processRunner.StandardOutput)));
 			// Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDERR:", String.Join("", processRunner.StandardError)));
 			var fileHelper = new FileHelper();
@@ -171,7 +173,7 @@ namespace Program
 			fileHelper.FilePath = logFile;
 			fileHelper.Interval = 500;
 			fileHelper.Append = true;
-			fileHelper.Text = String.Format("{0} \"{1}\"\n", "STDOUT:", String.Join("", processRunner.StandardOutput));
+			fileHelper.Text = String.Format("{0} \"{1}\"{2} \"{3}\"\n", "STDOUT:", String.Join("", processRunner.StandardOutput),"STDERR:", String.Join("", processRunner.StandardError));
 
 			fileHelper.WriteContents();
 			// Thread.Sleep(1000);
