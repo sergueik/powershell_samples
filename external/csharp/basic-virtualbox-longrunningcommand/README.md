@@ -436,3 +436,145 @@ __VBoxManage__ `guestcontrol` is not a command executor — it is a process spaw
 ### NOTE
 
 By default, Ubuntu does not set a password for the root user: root account is effectively locked to prevent direct logins
+
+### Workaround
+
+#### Install __32 bit__ __VirtualBox__ __5.2.x__
+
+
+![Install Guest Additions 1](screenthots/capture-vbox-extension-pack1.png)
+![Install Guest Additions 2](screenthots/capture-vbox-extension-pack2.png)
+
+
+> NOTE 64 bit images will not be able to boot:
+
+![Install Prerequisite 1](screenthots/capture-vcredist1.png)
+
+![Install Prerequisite 2](screenthots/capture-vcredist2.png)
+
+![Install Prerequisite 3](screenthots/capture-vcredist3.png)
+
+![Install Share Develop](screenthots/capture-sharpdevelop.png)
+
+![Fix TLS Settings](screenthots/capture-registry-fix.png)
+
+![](screenthots/)
+![](screenthots/)
+
+confirm in console
+```cmd
+"C:\Program Files (x86)\virtualbox\VBoxManage.exe" list vms
+```
+```text
+"default" {bbf2aa73-2f33-468d-a45a-8d781618680c}
+"Debian" {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}
+"centos" {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4}
+```
+```
+"C:\Program Files (x86)\virtualbox\VBoxManage.exe" list runningvms
+```
+no output.
+```
+```
+> NOTE:  need guest additions to be installed
+
+``cmd 
+type %temp%\vboxtest.txt
+```
+```text
+STDOUT: ""default" {bbf2aa73-2f33-468d-a45a-8d781618680c}"Debian" {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}"centos" {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4}"
+```
+https://help.ubuntu.com/community/Installation/MinimalCD#A32-bit_PC_.28i386.2C_x86.29
+
+http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-i386/current/images/netboot/mini.iso
+
+
+https://sourceforge.net/projects/debian32bitvbox/
+https://sourceforge.net/projects/debian32bitvbox/files/OVA-image/vm1%5B32bit%5D.ova/download
+http://nixsrv.com/llthw/ex0 [provides information about user/pass] - page no longer exists
+https://sourceforge.net/projects/debian32bitvbox/files/READMD.txt
+To use the box you'll need the following two users:
+
+user1/123qwe
+root/same as above
+download 32 bit debiamn 11 virtualbox image
+https://www.osboxes.org/debian
+VirtualBox (VDI) 32bit  Size: 1.11GB
+SHA256: F1C2A16A45ADB83F1E8C54D0D1417DAED7077D2D9F59D982710DF
+https://www.linuxvmimages.com/how-to-use/vm-image-password/
+
+https://download.virtualbox.org/virtualbox/5.2.22/
+Username: debian
+
+Password: debianS
+
+NOTE: image cannot boot under VirtualBo 5.2.x
+For Debian VM images hosted on linuxvmimages.com, the default login credentials are:
+
+
+Centos
+
+NOTE: image is quite heavy - 5 GB - it has GUI. USe for testing only
+
+https://alpinelinux.org/downloads/
+(Virtual) 
+
+https://dl-cdn.alpinelinux.org/alpine/
+https://dl-cdn.alpinelinux.org/alpine/v3.12/releases/x86/alpine-standard-3.12.11-x86.iso
+
+
+Visual C++ 2008 SP1 Redistributable Package
+NOTE:
+file:///C:/Program%20Files%20(x86)/SharpDevelop/5.1/doc/Dependencies.html
+
+###
+```text
+
+Result Code: 
+E_FAIL (0x80004005)
+
+
+```
+```
+WARNING: The underlying connection was closed: An unexpected error occurred on a send.
+Unable to find version '2.6.4' of package 'NUnit'.
+Exited with code: 1
+```
+```cmd
+VBoxManage.exe guestcontrol {75a91c26-d044-423d-a438-9b72b7ab8af0} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+```
+```text
+VBoxManage.exe: error: The guest execution service is not ready (yet)
+VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
+VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
+
+```
+To install VirtualBox Guest Additions on an Alpine Linux image, you must install the native alpine packages from the community repository rather than mounting the
+
+The
+```cmd
+VBoxManage.exe list runningvms
+```
+does not return anything with VirtualBox 32 bit 
+
+and the error is different:
+
+```cmd
+VBoxManage.exe list vms
+```
+```text
+"Debian" {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}
+"alpine" {75a91c26-d044-423d-a438-9b72b7ab8af0}
+```
+```
+VBoxManage.exe guestcontrol {75a91c26-d044-423d-a438-9b72b7ab8af0} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+VBoxManage.exe: error: Machine "{75a91c26-d044-423d-a438-9b72b7ab8af0}" is not running (currently powered off)!
+```
+### See Also
+
+https://github.com/bitnami/minideb
+https://www.linuxvmimages.com/images/centos-7/
+https://download.virtualbox.org/virtualbox/5.2.22/
+https://download.virtualbox.org/virtualbox/5.2.22/Oracle_VM_VirtualBox_Extension_Pack-5.2.22-126460.vbox-extpack
+
+

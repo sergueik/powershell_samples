@@ -27,7 +27,8 @@ namespace Program
 		private string toolPath = null;
 		private string logFile = null;
 		private string fileName = null;
-		private string arguments = null;
+		private string arguments1 = null;
+		private string arguments2 = null;
 		private string runCommand = null;
 		private string userName = null;
 		private string password = null;
@@ -85,15 +86,18 @@ namespace Program
 			if (appSettings.AllKeys.Contains("ScriptArguments")) {
 				scriptArguments = appSettings["ScriptArguments"];
 			}
+			if (appSettings.AllKeys.Contains("Arguments1")) {
+				arguments1 = appSettings["Arguments1"];
+			}
 
 			if (appSettings.AllKeys.Contains(runCommand)) {
-				arguments = appSettings[runCommand];
-				arguments = arguments.Replace("%VM%", "{7e261a39-d356-4eb1-a8ed-75675b149241}");
+				arguments2 = appSettings[runCommand];
+				arguments2 = arguments2.Replace("%VM%", "{7e261a39-d356-4eb1-a8ed-75675b149241}");
 				// the user name may not match login id
-				arguments = arguments.Replace("%USERNAME%", "sergueik");
-				arguments = arguments.Replace("%PASSWORD%", "password");
-				arguments = arguments.Replace("%SCRIPT%", script);
-				arguments = arguments.Replace("%SCRIPTARGUMENTS%", scriptArguments);
+				arguments2 = arguments2.Replace("%USERNAME%", "sergueik");
+				arguments2 = arguments2.Replace("%PASSWORD%", "password");
+				arguments2 = arguments2.Replace("%SCRIPT%", script);
+				arguments2 = arguments2.Replace("%SCRIPTARGUMENTS%", scriptArguments);
 			}
 			if (appSettings.AllKeys.Contains("ToolPath")) {
 				toolPath = Environment.ExpandEnvironmentVariables(appSettings["ToolPath"]);
@@ -145,6 +149,7 @@ namespace Program
 		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs) {
 			myTimer.Stop();
 			nScanCounter++;
+			Debug.WriteLine(String.Format(@"Run ""{0}\{1}"" {2}", toolPath, fileName, arguments1));
 			Debug.WriteLine(String.Format("Counter: {0}", nScanCounter.ToString()));
 			is_busy = !is_busy;
 			notifyIcon.Visible = false;
@@ -157,7 +162,7 @@ namespace Program
 			// NOTE: can not run under SharpDevelop: the %PROGRAMFILES% will expand to C:\Program Files (x86) 
 			// Debug.WriteLine(String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath, fileName)));
 			// Debug.WriteLine(String.Format("arguments: {0}", arguments));
-			processRunner.Run(String.Format(@"{0}\{1}", toolPath, fileName), arguments);
+			processRunner.Run(String.Format(@"{0}\{1}", toolPath, fileName), arguments1);
 			// Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDOUT:", String.Join("", processRunner.StandardOutput)));
 			// Debug.WriteLine(String.Format(@"{0} ""{1}""", "STDERR:", String.Join("", processRunner.StandardError)));
 			var fileHelper = new FileHelper();
