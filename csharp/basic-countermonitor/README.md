@@ -547,7 +547,7 @@ cat grafana/provisioning/dashboards/linux-process.jsonnet | docker run -i --rm d
       ],
 ```
 > NOTE:
-this is not yet a correct Grafana dashboard. Quick checks
+the commit `9f58c8d6947c85723f314b2067658aa781d2e870` source generation output examination indicates is not yet a correct Grafana dashboard. Quick checks
 ```sh
 jq type grafana/provisioning/dashboards/linux-process.json 
 ```
@@ -558,6 +558,105 @@ jq type grafana/provisioning/dashboards/linux-process.json
 ```text
 "object"
 ```
+this was ipdated in the next commit.
+```sh
+cat grafana/provisioning/dashboards/linux-process.jsonnet | docker run -i --rm dysnix/jsonnet   - | tee grafana/provisioning/dashboards/linux-process.json
+```
+```json
+{
+   "panels": [
+      {
+         "fieldConfig": {
+            "defaults": {
+               "unit": "decbytes"
+            }
+         },
+         "targets": [
+            {
+               "expr": "process_rss_mb{cmd=~\"$cmd\"}",
+               "refId": "A"
+            }
+         ],
+         "title": "RSS Memory",
+         "type": "timeseries"
+      },
+      {
+         "fieldConfig": {
+            "defaults": {
+               "unit": "decbytes"
+            }
+         },
+         "targets": [
+            {
+               "expr": "process_vsz_mb{cmd=~\"$cmd\"}",
+               "refId": "A"
+            }
+         ],
+         "title": "Virtual Memory",
+         "type": "timeseries"
+      },
+      {
+         "fieldConfig": {
+            "defaults": {
+               "unit": "short"
+            }
+         },
+         "targets": [
+            {
+               "expr": "process_majflt{cmd=~\"$cmd\"}",
+               "refId": "A"
+            }
+         ],
+         "title": "Major Faults",
+         "type": "timeseries"
+      }
+   ],
+   "refresh": "5s",
+   "schemaVersion": 38,
+   "timezone": "browser",
+   "title": "Linux Process Metrics",
+   "uid": "linux-process",
+   "version": 1
+}
+```
+
+one can rebuild the Grafana Prometheus Pushgateway cluster:
+
+```sh
+docker-compose stop 
+docker-compose rm -f 
+docker-compose up -d --build
+```
+
+then feed some data into pushgateway TCP port:
+```sh
+sed -i 's|\r||g' ./get_performance_counter.sh
+chmod +x ./get_performance_counter.sh
+```
+then
+```
+./get_performance_counter.sh --jar example.jwt-stub.jar --url http://localhost:9091/metrics/job/pidsta
+```
+or
+```sh
+./get_performance_counter.sh --main example.Application --url http://localhost:9091/metrics/job/pidsta
+```
+
+navigate to `http://localhost:3000/dashboards`
+
+You will observe __Linix Process Metrics__ dashboard in the menu
+
+![Available Dashboards](screenshots/capture-grafana-dashboards.png)
+
+but after navigating there you will see 3 blank panels with nodata:
+
+![Available Panels](screenshots/capture-grafana-panels.png)
+
+after editing the query and replacing
+
+`process_rss_mb{cmd~"$cmd"}` with `process_rss_mb{cmd="java"}` and run queries, data appear.
+
+
 If still prefer to run locally may install via a package manager such as Chocolatey or Scoop. The other option is
 __Jsonnet Language Server__ VS Code extension (officially published as `Grafana.vscode-jsonnet`) - 
 
@@ -579,6 +678,57 @@ __Jsonnet Language Server__ VS Code extension (officially published as `Grafana.
   * [releases](https://github.com/google/jsonnet/releases) - short of pre-compiled go-jsonnet executable for Windows 11
   * NOTE: no longer avail for free: [bitnami/jsonnetbitnami/jsonnet](https://hub.docker.com/r/bitnami/jsonnet)
   * [akamai/cli-jsonnet](https://github.com/akamai/cli-jsonnet) - CLI module for managing configurations as Jsonnet code, uses Property Manager API (PAPI)
+
+### Service Now Discussion
+Taking a raw comma-separated bulk list of affected services and
+formatting it into a sorted bullet list is a very common ServiceNow
+notification customization.
+
+Typical approaches, from native to custom:
+
+1. Notification Email Script (server-side JavaScript) — most common
+
+ServiceNow Email Scripts can dynamically generate parts of an email body.
+
+Instead of sending:
+
+Affected Services:
+Foo
+Bar
+BAZ
+bam
+
+a server-side Mail Script can transform it into HTML:
+
+<h3>Affected Services</h3>
+<ul>
+    <li>Bam</li>
+    <li>Bar</li>
+    <li>Baz</li>
+    <li>Foo</li>
+</ul>
+
+The script can sort, filter, remove duplicates, or group services
+before rendering.
+
+2. Notification Templates / Email Layouts
+
+Used to standardize formatting, branding, headers, footers,
+and common sections without modifying every notification individually.
+
+3. Custom Mail Scripts / Script Includes
+
+Used when the formatting logic becomes reusable or shared across
+multiple notifications.
+
+This is normally not solved with a browser extension or external plugin;
+the customization belongs inside the ServiceNow instance.
+
+In a typical SaaS ServiceNow deployment, the customer owns the instance
+configuration. ServiceNow provides the platform, while the customer's
+administrators grant developers the required roles (for example,
+notification, scripting, and application development permissions).
+
 
 ---  
 ### Author
