@@ -156,9 +156,9 @@ SharpDevelop
 
 ---------------------------
 
-Can not start process. The application has failed to start because its side-by-side configuration is incorrect. 
+Can not start process. The application has failed to start because its side-by-side configuration is incorrect.
 
-Please see the application event log or use the command-line sxstrace.exe tool for more detail.  
+Please see the application event log or use the command-line sxstrace.exe tool for more detail.
 
 (Exception from HRESULT: 0x800736B1)
 
@@ -166,7 +166,7 @@ Please see the application event log or use the command-line sxstrace.exe tool f
 
 ---------------------------
 
-OK   
+OK
 
 ---------------------------
 
@@ -208,7 +208,7 @@ app.config:15.117: Entity 'qquot' not defined
 
 run --username root --password secret --exe /bin/sh -- -c \&qquot;uname -a\&qquot;
 
-&#x20;                     
+&#x20;
 
 ```
 
@@ -353,7 +353,7 @@ this is a test with argument: none received
 ```sh
 #!/bin/sh
 ARG=${1:-'none received'}
-echo -n 'this is a test with argument: ' 
+echo -n 'this is a test with argument: '
 echo $ARG
 ```
 
@@ -458,9 +458,6 @@ By default, Ubuntu does not set a password for the root user: root account is ef
 
 ![Fix TLS Settings](screenthots/capture-registry-fix.png)
 
-![](screenthots/)
-![](screenthots/)
-
 confirm in console
 ```cmd
 "C:\Program Files (x86)\virtualbox\VBoxManage.exe" list vms
@@ -476,13 +473,13 @@ confirm in console
 no output.
 ```
 ```
-> NOTE:  need guest additions to be installed
+> NOTE:  needs guest additions to be installed
 
-``cmd 
+``cmd
 type %temp%\vboxtest.txt
 ```
 ```text
-STDOUT: ""default" {bbf2aa73-2f33-468d-a45a-8d781618680c}"Debian" {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}"centos" {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4}"
+STDOUT: ""default" {bbf2aa73-2f33-468d-a45a-8d781618680c} "Debian" {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} "centos" {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4}"
 ```
 https://help.ubuntu.com/community/Installation/MinimalCD#A32-bit_PC_.28i386.2C_x86.29
 
@@ -506,7 +503,7 @@ https://www.linuxvmimages.com/how-to-use/vm-image-password/
 https://download.virtualbox.org/virtualbox/5.2.22/
 Username: debian
 
-Password: debianS
+Password: debian
 
 NOTE: image cannot boot under VirtualBo 5.2.x
 For Debian VM images hosted on linuxvmimages.com, the default login credentials are:
@@ -514,10 +511,10 @@ For Debian VM images hosted on linuxvmimages.com, the default login credentials 
 
 Centos
 
-NOTE: image is quite heavy - 5 GB - it has GUI. USe for testing only
+NOTE: image is quite heavy - 5 GB - it has GUI installed. Consider smaller images
 
 https://alpinelinux.org/downloads/
-(Virtual) 
+(Virtual)
 
 https://dl-cdn.alpinelinux.org/alpine/
 https://dl-cdn.alpinelinux.org/alpine/v3.12/releases/x86/alpine-standard-3.12.11-x86.iso
@@ -527,19 +524,24 @@ Visual C++ 2008 SP1 Redistributable Package
 NOTE:
 file:///C:/Program%20Files%20(x86)/SharpDevelop/5.1/doc/Dependencies.html
 
-###
-```text
-
-Result Code: 
-E_FAIL (0x80004005)
+### VirtualBox Error Message Inventory
 
 
-```
-```
-WARNING: The underlying connection was closed: An unexpected error occurred on a send.
-Unable to find version '2.6.4' of package 'NUnit'.
-Exited with code: 1
-```
+Debugging VBoxManage guestcontrol occasionally feels less like programming and more like reading
+an real Agatha Christie detective novel.
+Each error message is a clue rather than a conclusion:
+
+* VBoxManage may claim the specific machine is powered off, even though it is visibly running
+* That the guest execution service is "not ready (yet)." 
+* Insists that no registered machine exists
+* Complains about an unexpected session state. 
+
+Individually, each message appears convincing; together, they gradually reveal what is actually happening
+
+This investigation therefore treats each VirtualBox error as evidence rather than as the final diagnosis. The goal is not merely to display Oracle's original message, but to classify it into a more meaningful synopsis and provide practical guidance. Like a detective assembling witness statements, the application combines the command, exit code, standard output, standard error, and execution context before reaching its own conclusion.
+
+
+
 ```cmd
 VBoxManage.exe guestcontrol {75a91c26-d044-423d-a438-9b72b7ab8af0} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
 ```
@@ -547,17 +549,13 @@ VBoxManage.exe guestcontrol {75a91c26-d044-423d-a438-9b72b7ab8af0} run  --userna
 VBoxManage.exe: error: The guest execution service is not ready (yet)
 VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
 VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
-
 ```
-To install VirtualBox Guest Additions on an Alpine Linux image, you must install the native alpine packages from the community repository rather than mounting the
+> NOTE: To install VirtualBox Guest Additions on an Alpine Linux image, you must install the native alpine packages from the community repository rather than mounting the
 
-The
 ```cmd
 VBoxManage.exe list runningvms
 ```
-does not return anything with VirtualBox 32 bit 
-
-and the error is different:
+may not return anything with VirtualBox 32-bit user identity mismatch
 
 ```cmd
 VBoxManage.exe list vms
@@ -566,37 +564,28 @@ VBoxManage.exe list vms
 "Debian" {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}
 "alpine" {75a91c26-d044-423d-a438-9b72b7ab8af0}
 ```
-```
+```sh
 VBoxManage.exe guestcontrol {75a91c26-d044-423d-a438-9b72b7ab8af0} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
+```
+```text
 VBoxManage.exe: error: Machine "{75a91c26-d044-423d-a438-9b72b7ab8af0}" is not running (currently powered off)!
 ```
-#### Misc. Successful and Failing Commands
+
 ```cmd
 
 VBoxManage.exe list vms
 ```
 ```text
-"STDERR: "Exception: The system cannot find the file specified"
+Exception: The system cannot find the file specified
 ```
+NOTE: This may indicate the Oracle Virtual Box non standard install location  
+
 ```cmd
 VBoxManage.exe list vms
 ```
 ```text
-STDOUT: ""Debian" {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}"<inaccessible>" {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4}"
-```
-```cmd
-VBoxManage.exe guestcontrol {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
-```
-```text
-VBoxManage.exe: error: Could not find a registered machine with UUID {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4}
-VBoxManage.exe: error: Details: code VBOX_E_OBJECT_NOT_FOUND (0x80bb0001), component VirtualBoxWrap, interface IVirtualBox, callee IUnknown
-VBoxManage.exe: error: Context: "FindMachine(Bstr(pCtx->pszVmNameOrUuid).raw(), machine.asOutParam())" at line 842 of file VBoxManageGuestCtrl.cpp
-```
-```cmd
-VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
-```
-```text
-VBoxManage.exe: error: Machine "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}" is not running (currently powered off)!
+"Debian" {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}
+"<inaccessible>" {a30b7f86-d30a-41b8-9dbc-cb1ea02e55c4}
 ```
 
 ```cmd
@@ -606,23 +595,18 @@ VBoxManage.exe startvm {93a38cd7-ef00-47aa-9868-d291d4ed5e0a}
 Waiting for VM "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}" to power on...
 VM "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}" has been successfully started.
 ```
-```cmd
-VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
-```
-```text
-VBoxManage.exe: error: The guest execution service is not ready (yet)
-VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
-VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
-```
+
 ```cmd
 2>nul VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
 ```
 > NOTE: the messages are printed to STDERR
 ```text
-STDOUT: ""STDERR: "VBoxManage.exe: error: Could not find a registered machine with UUID {7e261a39-d356-4eb1-a8ed-75675b149241}VBoxManage.exe: error: Details: code VBOX_E_OBJECT_NOT_FOUND (0x80bb0001), component VirtualBoxWrap, interface IVirtualBox, callee IUnknownVBoxManage.exe: error: Context: "FindMachine(Bstr(pCtx->pszVmNameOrUuid).raw(), machine.asOutParam())" at line 842 of file VBoxManageGuestCtrl.cpp"
+VBoxManage.exe: error: Could not find a registered machine with UUID {7e261a39-d356-4eb1-a8ed-75675b149241}
+VBoxManage.exe: error: Details: code VBOX_E_OBJECT_NOT_FOUND (0x80bb0001), component VirtualBoxWrap, interface IVirtualBox, callee IUnknown
+VBoxManage.exe: error: Context: "FindMachine(Bstr(pCtx->pszVmNameOrUuid).raw(), machine.asOutParam())" at line 842 of file VBoxManageGuestCtrl.cpp
 ```
 ```text
-STDOUT: ""STDERR: "VBoxManage.exe: error: Machine "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}" is not running (currently powered off)!"
+VBoxManage.exe: error: Machine "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}" is not running (currently powered off)!
 ```
 
 ```cmd
@@ -644,15 +628,20 @@ VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFl
 ```cmd
 VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password 123qwe  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
 ```
-> NOTE: Vierual Box 5.2.x 32-bit hanging.
+> NOTE: occasionaly Virtual Box 5.2.x is hanging.
 
-This makes The straw Windows 10 machine with an  unhealthy 32 bit Virtual Box install simply a fairly good fault generator
+This turns the straw Windows 10 machine with an unhealthy 32 bit Virtual Box stack simply a fairly good fault generator
 
 ### See Also
 
-https://github.com/bitnami/minideb
-https://www.linuxvmimages.com/images/centos-7/
-https://download.virtualbox.org/virtualbox/5.2.22/
-https://download.virtualbox.org/virtualbox/5.2.22/Oracle_VM_VirtualBox_Extension_Pack-5.2.22-126460.vbox-extpack
+  * https://github.com/bitnami/minideb
+  * https://www.linuxvmimages.com/images/centos-7/
+  * https://download.virtualbox.org/virtualbox/5.2.22/
+  * https://download.virtualbox.org/virtualbox/5.2.22/Oracle_VM_VirtualBox_Extension_Pack-5.2.22-126460.vbox-extpack
+
+----
+
+### Author
+[Serguei Kouzmine](kouzmine_serguei@yahoo.com)
 
 
