@@ -441,22 +441,51 @@ By default, Ubuntu does not set a password for the root user: root account is ef
 
 #### Install __32 bit__ __VirtualBox__ __5.2.x__
 
+VirtualBox 5.2.x is no longer supported!
 
-![Install Guest Additions 1](screenthots/capture-vbox-extension-pack1.png)
-![Install Guest Additions 2](screenthots/capture-vbox-extension-pack2.png)
+VirtualBox is not portable
+
+Copying C:\Program Files (x86)\Oracle\VirtualBox alone is usually insufficient.
+
+VirtualBox installs:
+
+  * kernel drivers (VBoxDrv, VBoxUSB, VBoxNetFlt, etc.)
+  * COM registrations
+  * networking components
+  * services
+
+VirtualBox.exe often fails with messages such as:
+
+  * Failed to create COM object
+  * Kernel driver not installed
+  * VT-x is not available
+
+Therefore, merely copying the directory generally does not produce a working second installation.
+
+VirtualBox is fundamentally not a portable application because it depends on:
+
+  * COM registrations
+  * Windows services
+  * kernel-mode drivers (VBoxDrv, networking drivers, USB drivers)
+  * registry entries
+  * device objects created by those drivers
+
+![Install Guest Additions 1](screenshots/capture-vbox-extension-pack1.png)
+
+![Install Guest Additions 2](screenshots/capture-vbox-extension-pack2.png)
 
 
 > NOTE 64 bit images will not be able to boot:
 
-![Install Prerequisite 1](screenthots/capture-vcredist1.png)
+![Install Prerequisite 1](screenshots/capture-vcredist1.png)
 
-![Install Prerequisite 2](screenthots/capture-vcredist2.png)
+![Install Prerequisite 2](screenshots/capture-vcredist2.png)
 
-![Install Prerequisite 3](screenthots/capture-vcredist3.png)
+![Install Prerequisite 3](screenshots/capture-vcredist3.png)
 
-![Install Share Develop](screenthots/capture-sharpdevelop.png)
+![Install Share Develop](screenshots/capture-sharpdevelop.png)
 
-![Fix TLS Settings](screenthots/capture-registry-fix.png)
+![Fix TLS Settings](screenshots/capture-registry-fix.png)
 
 confirm in console
 ```cmd
@@ -531,10 +560,10 @@ Debugging VBoxManage guestcontrol occasionally feels less like programming and m
 an real Agatha Christie detective novel.
 Each error message is a clue rather than a conclusion:
 
-* VBoxManage may claim the specific machine is powered off, even though it is visibly running
-* That the guest execution service is "not ready (yet)." 
-* Insists that no registered machine exists
-* Complains about an unexpected session state. 
+  * VBoxManage may claim the specific machine is powered off, even though it is visibly running
+  * That the guest execution service is "not ready (yet)." 
+  * Insists that no registered machine exists
+   * Complains about an unexpected session state. 
 
 Individually, each message appears convincing; together, they gradually reveal what is actually happening
 
