@@ -27,29 +27,27 @@ namespace Utils {
         private string result;
 
         public static string Show( string messageText) {
-            return Show( messageText, null, null, "Information", "OK");
+            return Show( messageText, null, null, SystemIcons.Information);
         }
 
         public static string Show( string messageText, Exception e) {
-            return Show( messageText, "Exception", e.Message, e.StackTrace, "OK");
+            return Show( e.Message,  "Exception", "Stack Trace: \n" + e.StackTrace , SystemIcons.Error);
         }
  
         public static string Show( string messageText, string messageTitle, string description) {
-            return Show( messageText, messageTitle, description, "Information", "OK");
+            return Show( messageText, messageTitle, description, SystemIcons.Information, "OK");
         }
 
-        public static string Show( string messageText, string messageTitle, string description, string icon){ 
+        public static string Show( string messageText, string messageTitle, string description, Icon icon){ 
             return Show( messageText, messageTitle, description,  icon, "OK");
         }
 
-        public static string Show( string messageText, string messageTitle, string description, string icon, string buttons, string filename ) {
+        public static string Show( string messageText, string messageTitle, string description, string filename , string buttons  ) {
 
             var box = new CustomMessageBoxForm();
-
             box.Initialize();
-
             box.SetMessageText(  messageText, messageTitle, description);
-            box.AddIconBitmap(filename, null );
+            box.AddIconBitmap(filename);
             box.AddButtons(buttons);
             box.result = "Cancel";
             box.DrawBox();
@@ -59,7 +57,7 @@ namespace Utils {
             return answer;
         }
 
-        public static string Show( string messageText, string messageTitle, string description, string icon, string buttons ) {
+        public static string Show( string messageText, string messageTitle, string description, Icon icon, string buttons ) {
             var box = new CustomMessageBoxForm();
 
             box.Initialize();
@@ -94,7 +92,6 @@ namespace Utils {
             labelMessage = new Label();
         }
 
-
         private void ReturnResponse(  object sender, EventArgs e) {
 
             var button = sender as Button;
@@ -118,67 +115,21 @@ namespace Utils {
             f.Dispose();
         }
 
-		// Powershell
-        /*
-		function add_icon_bitmap {
-			  param([psobject]$param)
-
-			  switch ($param)
-			  {
-			    ('Error') {
-			      $icon_bitmap.Image = ([System.Drawing.SystemIcons]::Error).ToBitmap()
-			    }
-			    ('Information') {
-			      $icon_bitmap.Image = ([System.Drawing.SystemIcons]::Information).ToBitmap()
-			    }
-			    ('Question') {
-			      $icon_bitmap.Image = ([System.Drawing.SystemIcons]::Question).ToBitmap()
-			    }
-			    ('Warning') {
-			      $icon_bitmap.Image = ([System.Drawing.SystemIcons]::Warning).ToBitmap()
-			    }
-			    default {
-			      $icon_bitmap.Image = ([System.Drawing.SystemIcons]::Information).ToBitmap()
-			    }
-			  }
-			}
-        */
-
-        private void AddIconBitmap( string icon) {
-            switch (icon) {
-                case "Error":
-                    iconBitmap.Image =
-                        SystemIcons.Error.ToBitmap();
-                    break;
-
-                case "Information":
-                    iconBitmap.Image =
-                        SystemIcons.Information.ToBitmap();
-                    break;
-
-                case "Question":
-                    iconBitmap.Image =
-                        SystemIcons.Question.ToBitmap();
-                    break;
-
-                case "Warning":
-                    iconBitmap.Image =
-                        SystemIcons.Warning.ToBitmap();
-                    break;
-
-                default:
-                    iconBitmap.Image =
-                        SystemIcons.Information.ToBitmap();
-                    break;
-            }
+        // https://learn.microsoft.com/en-us/dotnet/api/system.drawing.systemicons?view=netframework-4.5
+        private void AddIconBitmap( Icon icon = null ) {
+			iconBitmap.Image = (icon ?? SystemIcons.Information).ToBitmap();
         }
-        private void AddIconBitmap( string filename, string icon = null ) {
 
-			string iconPath = Path.Combine( AppDomain.CurrentDomain.BaseDirectory, filename);
-			
-			if (File.Exists(iconPath)) {
-				iconBitmap.Image = new Icon(iconPath).ToBitmap();
-			}
+        // https://learn.microsoft.com/en-us/dotnet/api/system.drawing.icon?view=netframework-4.5
+        private void AddIconBitmap( string filename ) {
+        	if (filename == null) 
+        		iconBitmap.Image = SystemIcons.Information.ToBitmap();
+    		else {
+				string iconPath = Path.Combine( AppDomain.CurrentDomain.BaseDirectory, filename);
+				if (File.Exists(iconPath)) {
+					iconBitmap.Image = new Icon(iconPath).ToBitmap();
+				}
+        	}
         }
         private void SetMessageText( string messageText, string title,  string description) {
             labelMessage.Text = messageText;

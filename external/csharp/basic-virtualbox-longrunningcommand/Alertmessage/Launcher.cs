@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Utils;
@@ -23,8 +24,8 @@ namespace Program {
 			
 			CustomMessageBoxForm.Show("This is a test");
 			CustomMessageBoxForm.Show("Test","Title", "Description");
-			CustomMessageBoxForm.Show("Test","Title", "Description","Information");
-			CustomMessageBoxForm.Show("Test","Title", "Description","Information", "AbortRetryIgnore");
+			CustomMessageBoxForm.Show("Test","Title", "Description",SystemIcons.Question);
+			CustomMessageBoxForm.Show("Test","Title", "Description",SystemIcons.Warning, "AbortRetryIgnore");
 			var e = new Exception("this is exception message");
 			CustomMessageBoxForm.Show("Test",e);
 			// CustomMessageBoxForm.Show("Test","Title", "Description");
