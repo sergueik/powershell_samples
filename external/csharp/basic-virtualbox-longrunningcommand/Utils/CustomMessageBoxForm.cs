@@ -42,7 +42,7 @@ namespace Utils {
             return Show( messageText, messageTitle, description,  icon, "OK");
         }
 
-        public static string Show( string messageText, string messageTitle, string description, string filename , string buttons  ) {
+        public static string Show( string messageText, string messageTitle, string description, string filename , string buttons) {
 
             var box = new CustomMessageBoxForm();
             box.Initialize();
@@ -127,9 +127,12 @@ namespace Utils {
     		else {
 				string iconPath = Path.Combine( AppDomain.CurrentDomain.BaseDirectory, filename);
 				if (File.Exists(iconPath)) {
-					iconBitmap.Image = new Icon(iconPath).ToBitmap();
+					using (Image image = Image.FromFile(iconPath)) {
+            			iconBitmap.Image = new Bitmap(image);
+        			}
+					// iconBitmap.Image = new Icon(iconPath).ToBitmap();
 				}
-        	}
+			}
         }
         private void SetMessageText( string messageText, string title,  string description) {
             labelMessage.Text = messageText;
@@ -169,6 +172,9 @@ namespace Utils {
 
 		    switch (buttons) {
 		        case "None":
+		        case "Really?":
+		            buttonOK = CreateButton( "Really?", start);
+		            break;
 		        case "OK":
 		            buttonOK = CreateButton( "OK", start);
 		            break;

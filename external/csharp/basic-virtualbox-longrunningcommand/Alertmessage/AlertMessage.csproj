@@ -78,6 +78,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="icon-facepalm.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{0a243a71-7518-442d-b63a-1888982ddee6}</Project>
       <Name>Utils</Name>

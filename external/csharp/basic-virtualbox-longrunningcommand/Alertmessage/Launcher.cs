@@ -28,7 +28,7 @@ namespace Program {
 			CustomMessageBoxForm.Show("Test","Title", "Description",SystemIcons.Warning, "AbortRetryIgnore");
 			var e = new Exception("this is exception message");
 			CustomMessageBoxForm.Show("Test",e);
-			// CustomMessageBoxForm.Show("Test","Title", "Description");
+			CustomMessageBoxForm.Show("Test","Title", "Description", "icon-facepalm.png", "Really?");
 			// https://github.com/sergueik/powershell_samples/blob/master/custom_msgbox.ps1
 			var iniFilePath = AppDomain.CurrentDomain.BaseDirectory + @"\config.ini";
 			// IniFile iniFile = IniFile.FromFile(iniFilePath);
