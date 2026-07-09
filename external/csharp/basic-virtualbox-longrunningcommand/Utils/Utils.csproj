@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMessageBoxForm.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="CredentialsManagerHelper.cs" />
   </ItemGroup>
   <ItemGroup>

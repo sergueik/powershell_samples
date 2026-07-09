@@ -21,7 +21,14 @@ namespace Program {
 			DialogMessage.MsgIcons icon;
 			DialogMessage.MsgButtons buttons;
 			
-			//
+			CustomMessageBoxForm.Show("This is a test");
+			CustomMessageBoxForm.Show("Test","Title", "Description");
+			CustomMessageBoxForm.Show("Test","Title", "Description","Information");
+			CustomMessageBoxForm.Show("Test","Title", "Description","Information", "AbortRetryIgnore");
+			var e = new Exception("this is exception message");
+			CustomMessageBoxForm.Show("Test",e);
+			// CustomMessageBoxForm.Show("Test","Title", "Description");
+			// https://github.com/sergueik/powershell_samples/blob/master/custom_msgbox.ps1
 			var iniFilePath = AppDomain.CurrentDomain.BaseDirectory + @"\config.ini";
 			// IniFile iniFile = IniFile.FromFile(iniFilePath);
 
