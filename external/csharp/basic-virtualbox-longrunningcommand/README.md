@@ -33,12 +33,7 @@ This design avoids:
 - interactive login sessions
 - GUI dependencies
 - state inference on the host
-
-
-
 ---
-
-
 
 #### 1. VM-side script: `/opt/appliance/docker-login.sh`
 
@@ -48,176 +43,87 @@ This design avoids:
 
 Performs a non-interactive Docker login and returns a clear exit code.
 
+##### Scripts
 
 
-##### Script
-
-
-
-```bash
-
-#!/bin/bash
-
-set -euo pipefail
-
-
-
-REGISTRY="${1:-registry.mock.local}"
-
-USERNAME="${2:-testuser}"
-
-PASSWORD\_FILE="${3:-/run/secrets/docker\_password}"
-
-
-
-echo "[INFO] Starting Docker login for ${REGISTRY}"
-
-
-
-if [[ ! -f "$PASSWORD\_FILE" ]]; then
-
-&#x20; echo "[ERROR] Password file not found: $PASSWORD\_FILE"
-
-&#x20; exit 2
-
-fi
-
-
-
-PASSWORD="$(cat "$PASSWORD\_FILE")"
-
-
-
-# Non-interactive login
-
-echo "$PASSWORD" | docker login "$REGISTRY" \\
-
-&#x20; -u "$USERNAME" \\
-
-&#x20; --password-stdin
-
-
-
-RC=$?
-
-
-
-if [[ $RC -eq 0 ]]; then
-
-&#x20; echo "[INFO] Docker login successful"
-
-&#x20; echo "authenticated" > /tmp/docker\_auth\_state
-
-else
-
-&#x20; echo "[ERROR] Docker login failed"
-
-&#x20; echo "failed" > /tmp/docker\_auth\_state
-
-fi
-
-
-
-exit $RC
-
-
+sample argument echo script
+```sh
 
 ```
 
+crash script:
+```sh
+#!/bin/bash
+# This function calls itself forever. 
+# It fills up the computer's memory stack until it crashes.
+
+crash_function() {
+    crash_function
+}
+
+```
+
+```sh
+#!/bin/bash
+
+result=$(( 10 / 0 ))
+```
+sample docker login script
+```bash
+#!/bin/bash
+set -euo pipefail
+
+REGISTRY="${1:-registry.mock.local}"
+USERNAME="${2:-testuser}"
+PASSWORD_FILE="${3:-/run/secrets/docker_password}"
+
+echo "[INFO] Starting Docker login for ${REGISTRY}"
+if [[ ! -f "$PASSWORD_FILE" ]]; then echo "[ERROR] Password file not found: $PASSWORD_FILE"; exit 2; fi
+
+PASSWORD="$(cat "$PASSWORD_FILE")"
+
+# Non-interactive login
+echo "$PASSWORD" | docker login "$REGISTRY" -u "$USERNAME" --password-stdin
+RC=$?
+
+if [[ $RC -eq 0 ]]; then echo "[INFO] Docker login successful"; echo "authenticated" > /tmp/docker_auth_state; else echo "[ERROR] Docker login failed"; echo "failed" > /tmp/docker_auth_state; fi
+exit $RC
+```
+
+> NOTE: In Bash, keywords like `else`, `then`, and `fi` are reserved words, not standalone commands.
 
 
 ### Execution Checkpoints
 
-
-
 - Accept parameters (future: credentials)
-
 - Simulate Docker login execution
-
 - Optionally call real `docker login`
-
 - Sleep for controlled delay
-
 - Exit with provided status code
-
-
-
-
 
 ### Troubleshooting
 
-
-
 ```text
-
----------------------------
-
-SharpDevelop
-
----------------------------
-
 Can not start process. The application has failed to start because its side-by-side configuration is incorrect.
-
 Please see the application event log or use the command-line sxstrace.exe tool for more detail.
-
 (Exception from HRESULT: 0x800736B1)
-
-
-
----------------------------
-
-OK
-
----------------------------
-
-
-
 ```
-
+with the Event log error showing the details:
 ```text
-
 Activation context generation failed for "C:\\developer\\sergueik\\powershell\_samples\\external\\csharp\\basic-virtualbox-longrunningcommand\\Program\\bin\\Debug\\VboxManageSystemTrayApp.exe".Error in manifest or policy file "C:\\developer\\sergueik\\powershell\_samples\\external\\csharp\\basic-virtualbox-longrunningcommand\\Program\\bin\\Debug\\VboxManageSystemTrayApp.exe.Config" on line 9. Invalid Xml syntax.
-
 ```
 
 
-
-```
-
-&#x20;xml fo app.config
-
+validate
+```sh
+xml fo app.config
 app.config:10.27: Entity 'qquot' not defined
-
-&#x20;   <add key="VM" value="\&qquot;Xubuntu 22.04\&qquot; {7e261a39-d356-4eb1-a8ed-75
-
-&#x20;                               ^
-
+<add key="VM" value="&qquot;Xubuntu 22.04&qquot; {7e261a39-d356-4eb1-a8ed-75
 app.config:10.47: Entity 'qquot' not defined
-
-&#x20;   <add key="VM" value="\&qquot;Xubuntu 22.04\&qquot; {7e261a39-d356-4eb1-a8ed-75
-
-&#x20;                                                   ^
-
-app.config:15.102: Entity 'qquot' not defined
-
-stcontrol %VM% run --username root --password secret --exe /bin/sh -- -c \&qquot;
-
-&#x20;                                                                              ^
-
-app.config:15.117: Entity 'qquot' not defined
-
-run --username root --password secret --exe /bin/sh -- -c \&qquot;uname -a\&qquot;
-
-&#x20;
-
+<add key="VM" value="&qquot;Xubuntu 22.04&qquot; {7e261a39-d356-4eb1-a8ed-75
+...
 ```
-
-
-
-HTML historically accumulated hundreds and eventually thousands of named entities:
-
-
-
+unlike the HTML which historically accumulated hundreds and eventually thousands of named entities:
 * `&copy;`
 * `&nbsp;`
 * `&eacute;`
@@ -226,11 +132,11 @@ HTML historically accumulated hundreds and eventually thousands of named entitie
 * `&hellip;`
 
 
-but XML 1.0 the only allowed are:
+__XML__ __1.0__ the only allowed are very few:
 
 |entity  |symbol  |
 |--------|--------|
-|`&amp;` |  &amp; |
+|`&amp;` |&amp;   |
 |`&lt;`  |&lt;    |
 |`&gt;`  |&gt;    |
 |`&quot;`|"       |
@@ -268,9 +174,7 @@ Exception calling "GetAssemblyName" with "1" argument(s): "Could not load file o
 ```
 x86 (32-bit)
 ```
-
-
-
+* choose 64-bit NDP explicitly
 ```powershell
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework64\v4.0.30319"
 ```
@@ -290,8 +194,6 @@ x86 (32-bit)
 ```
 Unknown machine type: -31132
 ```
-
-
 
 ### Script Execution
 
@@ -370,6 +272,9 @@ $env:VM='{7e261a39-d356-4eb1-a8ed-75675b149241}'
 VBoxManage.exe: error: No such file or directory on guest
 VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
 VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
+```
+```text
+/bin/sh: 1: /tmp/a.sh: Permission denied
 ```
 
 ```cmd
@@ -563,7 +468,7 @@ Each error message is a clue rather than a conclusion:
   * VBoxManage may claim the specific machine is powered off, even though it is visibly running
   * That the guest execution service is "not ready (yet)." 
   * Insists that no registered machine exists
-   * Complains about an unexpected session state. 
+  * Complains about an unexpected session state. 
 
 Individually, each message appears convincing; together, they gradually reveal what is actually happening
 
@@ -601,7 +506,6 @@ VBoxManage.exe: error: Machine "{75a91c26-d044-423d-a438-9b72b7ab8af0}" is not r
 ```
 
 ```cmd
-
 VBoxManage.exe list vms
 ```
 ```text
@@ -646,20 +550,107 @@ VBoxManage.exe: error: Session is not in started state
 VBoxManage.exe: error: Details: code E_UNEXPECTED (0x8000ffff), component GuestSessionWrap, interface IGuestSession, callee IUnknown
 VBoxManage.exe: error: Context: "ProcessCreate(Bstr(pszImage).raw(), ComSafeArrayAsInParam(aArgs), ComSafeArrayAsInParam(aEnv), ComSafeArrayAsInParam(aCreateFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), pProcess.asOutParam())" at line 1520 of file VBoxManageGuestCtrl.cpp
 ```
-```cmd
-VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password alpine  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
-```
 ```text
 VBoxManage.exe: error: Invalid user/password credentials
 VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
 VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
 ```
+```text
+/bin/sh: 1: /tmp/a.sh: Permission denied
+```
+```text
+Segmentation fault
+```
+> NOTE: occasionaly Virtual Box 5.2.x is hanging on legitimate command:
 ```cmd
 VBoxManage.exe guestcontrol {93a38cd7-ef00-47aa-9868-d291d4ed5e0a} run  --username root --password 123qwe  --exe /bin/sh -- /bin/sh -c '/tmp/a.sh sample'"
 ```
-> NOTE: occasionaly Virtual Box 5.2.x is hanging.
 
 This turns the straw Windows 10 machine with an unhealthy 32 bit Virtual Box stack simply a fairly good fault generator
+
+### Virtual Box OS Type Icon Resources
+
+VirtualBox stores the image/icon data for a specific virtual machine in the `ExtraData` section of that machine's settings file
+named`<VM_Name>.vbox`:
+
+```sh
+dir "c:\Users\kouzm\VirtualBox VMs"\*vbox /b/s
+```
+```txt
+c:\Users\kouzm\VirtualBox VMs\Playwright\Playwright.vbox
+c:\Users\kouzm\VirtualBox VMs\Windows 10 x64 ru\Windows 10 x64 ru.vbox
+c:\Users\kouzm\VirtualBox VMs\Windows 7\Windows 7.vbox
+c:\Users\kouzm\VirtualBox VMs\Windows 7 Visual Studio 2019\Windows 7 Visual Studio 2019.vbox
+c:\Users\kouzm\VirtualBox VMs\Xubuntu 22.04\Xubuntu 22.04.vbox
+c:\Users\kouzm\VirtualBox VMs\Xubuntu 22.04-1\Xubuntu 22.04-1.vbox
+```
+
+The icons for known OS Types in VirtualBox are not stored as separate files but are compiled directly into the application
+binaries (or the `.qrc` resource files)  using C++ source code.
+VirtualBox uses the OS type index you select (e.g., "Windows 10" or "Ubuntu") to dynamically map the guest to the correct
+hard-coded icon resource in `https://github.com/VirtualBox/virtualbox/tree/main/src/VBox/Frontends/VirtualBox/images`:
+
+```text
+src/VBox/Frontends/VirtualBox/images/os_archlinux.png
+src/VBox/Frontends/VirtualBox/images/os_cloud.png
+src/VBox/Frontends/VirtualBox/images/os_debian.png
+src/VBox/Frontends/VirtualBox/images/os_dos.png
+src/VBox/Frontends/VirtualBox/images/os_fedora.png
+src/VBox/Frontends/VirtualBox/images/os_freebsd.png
+src/VBox/Frontends/VirtualBox/images/os_gentoo.png
+src/VBox/Frontends/VirtualBox/images/os_jrockitve.png
+src/VBox/Frontends/VirtualBox/images/os_l4.png
+src/VBox/Frontends/VirtualBox/images/os_linux.png
+src/VBox/Frontends/VirtualBox/images/os_linux24.png
+src/VBox/Frontends/VirtualBox/images/os_linux26.png
+src/VBox/Frontends/VirtualBox/images/os_macosx.png
+src/VBox/Frontends/VirtualBox/images/os_mandriva.png
+src/VBox/Frontends/VirtualBox/images/os_netbsd.png
+src/VBox/Frontends/VirtualBox/images/os_netware.png
+src/VBox/Frontends/VirtualBox/images/os_openbsd.png
+src/VBox/Frontends/VirtualBox/images/os_opensuse.png
+src/VBox/Frontends/VirtualBox/images/os_oracle.png
+src/VBox/Frontends/VirtualBox/images/os_oraclesolaris.png
+src/VBox/Frontends/VirtualBox/images/os_os2_other.png
+src/VBox/Frontends/VirtualBox/images/os_os2ecs.png
+src/VBox/Frontends/VirtualBox/images/os_os2warp3.png
+src/VBox/Frontends/VirtualBox/images/os_os2warp4.png
+src/VBox/Frontends/VirtualBox/images/os_os2warp45.png
+src/VBox/Frontends/VirtualBox/images/os_other.png
+src/VBox/Frontends/VirtualBox/images/os_qnx.png
+src/VBox/Frontends/VirtualBox/images/os_redhat.png
+src/VBox/Frontends/VirtualBox/images/os_solaris.png
+src/VBox/Frontends/VirtualBox/images/os_turbolinux.png
+src/VBox/Frontends/VirtualBox/images/os_ubuntu.png
+src/VBox/Frontends/VirtualBox/images/os_win10.png
+src/VBox/Frontends/VirtualBox/images/os_win11.png
+src/VBox/Frontends/VirtualBox/images/os_win2k.png
+src/VBox/Frontends/VirtualBox/images/os_win2k12.png
+src/VBox/Frontends/VirtualBox/images/os_win2k16.png
+src/VBox/Frontends/VirtualBox/images/os_win2k19.png
+src/VBox/Frontends/VirtualBox/images/os_win2k22.png
+src/VBox/Frontends/VirtualBox/images/os_win2k25.png
+src/VBox/Frontends/VirtualBox/images/os_win2k3.png
+src/VBox/Frontends/VirtualBox/images/os_win2k8.png
+src/VBox/Frontends/VirtualBox/images/os_win31.png
+src/VBox/Frontends/VirtualBox/images/os_win7.png
+src/VBox/Frontends/VirtualBox/images/os_win8.png
+src/VBox/Frontends/VirtualBox/images/os_win81.png
+src/VBox/Frontends/VirtualBox/images/os_win95.png
+src/VBox/Frontends/VirtualBox/images/os_win98.png
+src/VBox/Frontends/VirtualBox/images/os_win_other.png
+src/VBox/Frontends/VirtualBox/images/os_winme.png
+src/VBox/Frontends/VirtualBox/images/os_winnt4.png
+src/VBox/Frontends/VirtualBox/images/os_winvista.png
+src/VBox/Frontends/VirtualBox/images/os_winxp.png
+src/VBox/Frontends/VirtualBox/images/os_xandros.png
+```
+There are actually three possible storage mechanisms in the finished executable
+
+  * ordinary `RT_RCDATA` Win32 resources
+  * Qt `RCC tree` resources
+  * plain C arrays `const uchar image_data[]`
+
 
 ### See Also
 
