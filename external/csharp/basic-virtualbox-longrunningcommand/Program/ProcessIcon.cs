@@ -45,8 +45,7 @@ namespace Program
 		private Icon idle_icon;
 		private Icon busy_icon;
 
-		public ProcessIcon()
-		{
+		public ProcessIcon() {
 			notifyIcon = new NotifyIcon();
 
 			appSettings = ConfigurationManager.AppSettings;
@@ -113,9 +112,8 @@ namespace Program
 			}
 		}
 
-		public void Display()
-		{
-			notifyIcon.MouseClick += new MouseEventHandler(ni_MouseClick);
+		public void Display() {
+			notifyIcon.MouseClick += new MouseEventHandler(notifyIcon_MouseClick);
 			
 			idle_icon = Resources.idle_icon;
 			busy_icon = Resources.busy_icon;
@@ -129,26 +127,24 @@ namespace Program
 			notifyIcon.Text = (assemblyTitle.Length > 64) ? (assemblyTitle.Substring(0, 61) + "...") : assemblyTitle;
 			notifyIcon.Visible = true;
 			notifyIcon.ContextMenuStrip = new ContextMenus().Create();
-			myTimer.Tick += new EventHandler(TimerEventProcessor);
-			myTimer.Interval = collectInterval;
-			myTimer.Start();
+			// myTimer.Tick += new EventHandler(timerEventProcessor);
+			// myTimer.Interval = collectInterval;
+			// myTimer.Start();
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 			notifyIcon.Visible = false;
 			notifyIcon.Dispose();
 		}
 
-		void ni_MouseClick(object sender, MouseEventArgs e)
-		{
+		void notifyIcon_MouseClick(object sender, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Left) {
 				Process.Start("explorer", null);
 			}
 		}
 	
 	
-		private void TimerEventProcessor(Object myObject, EventArgs myEventArgs) {
+		private void timerEventProcessor(Object myObject, EventArgs myEventArgs) {
 			myTimer.Stop();
 			nScanCounter++;
 			Debug.WriteLine(String.Format(@"Run ""{0}\{1}"" {2}", toolPath, fileName, arguments2));

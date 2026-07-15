@@ -178,23 +178,53 @@ x86 (32-bit)
 ```powershell
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework64\v4.0.30319"
 ```
+
 ```powershell
 cd C:\developer\sergueik\powershell_samples\external\csharp\basic-virtualbox-longrunningcommand
 msbuild.exe .\basic-virtualbox-longrunningcommand.sln "/p:Platform=x64" /detailedsummary /t:clean,build
 ```
 ```powershell
+pushd Program\bin\Debug
 ..\..\..\binary_check.ps1 -filename VboxManageSystemTrayApp.exe
+popd
 ```
-```
+the default `bin\Debug` are  32 bit binaries from SharpDevelop
+```txt
 x86 (32-bit)
 ```
 ```
- .\binary_check.ps1 .\Program\bin\x64\Debug\VboxManageSystemTrayApp.exe
+pushd Program\bin\x64\Debug
+..\..\..\..\binary_check.ps1 -filename VboxManageSystemTrayApp.exe
+popd
 ```
 ```
 Unknown machine type: -31132
 ```
+this is an 64 bit artifact, run it to avoid `Program (x86)` path resolution
+```text
+C:\Program Files (x86)\Oracle\VirtualBox\VBoxManage.exe
+Exception: The system cannot find the file specified"
+```
 
+```powershell
+pushd Program\bin\Debug
+.\VboxManageSystemTrayApp.exe
+```
+> NOTE: Like a Unix shell, Windows PowerShell does not load commands from the current location by default
+
+You will not be able to use `Console.Error.WriteLine` and for `Debug.WriteLine` you will need Visual Studio or another 64 bit IDE.
+
+The app with log in console while building the VM list:
+
+![Visual Studio](screnshots/capture-visual-studio.png)
+```text
+Guest OS: Windows 7 (32-bit)
+{3b5c8967-4a00-4bf5-a137-ce0c4a046900} = Windows 7
+Guest OS: Ubuntu (64-bit)
+{f09db6f8-420b-4c64-9e22-0c2081c032d3} = Xubuntu 22.04
+Guest OS: undefined
+{7e261a39-d356-4eb1-a8ed-75675b149241} = Xubuntu 22.04
+```
 ### Script Execution
 
 ```cmd
@@ -658,7 +688,11 @@ There are actually three possible storage mechanisms in the finished executable
   * https://www.linuxvmimages.com/images/centos-7/
   * https://download.virtualbox.org/virtualbox/5.2.22/
   * https://download.virtualbox.org/virtualbox/5.2.22/Oracle_VM_VirtualBox_Extension_Pack-5.2.22-126460.vbox-extpack
-
+  * __Atom__
+    + [Home Page](https://github.blog/news-insights/product-news/sunsetting-atom) - Archievd and sunsettied on December 15, 2022 
+    + [older releases](https://github.com/atom/atom/releases/tag/v1.60.0)  
+ 
+ 
 ----
 
 ### Author

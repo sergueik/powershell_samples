@@ -12,5 +12,6 @@
 **/obj
 **/*.suo
 **/*.user
+**/.vs
 **/.nuget
 **/packages/**
