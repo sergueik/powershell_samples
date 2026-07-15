@@ -214,9 +214,11 @@ pushd Program\bin\Debug
 
 You will not be able to use `Console.Error.WriteLine` and for `Debug.WriteLine` you will need Visual Studio or another 64 bit IDE.
 
+
+![Visual Studio](screenshots/capture-visual-studio.png)
+
 The app with log in console while building the VM list:
 
-![Visual Studio](screnshots/capture-visual-studio.png)
 ```text
 Guest OS: Windows 7 (32-bit)
 {3b5c8967-4a00-4bf5-a137-ce0c4a046900} = Windows 7
@@ -681,6 +683,13 @@ There are actually three possible storage mechanisms in the finished executable
   * Qt `RCC tree` resources
   * plain C arrays `const uchar image_data[]`
 
+
+WSL2 additional features
+  * Hyper-V Manager	
+  * Hyper-V virtual machines	
+  * Windows Sandbox	
+  * Group Policy Editor	
+  * Domain Join
 
 ### See Also
 

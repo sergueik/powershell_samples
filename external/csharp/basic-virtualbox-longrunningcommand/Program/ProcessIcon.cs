@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Program.Properties;
 using System.Threading;
 using System.Reflection;
+
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -113,6 +114,10 @@ namespace Program
 		}
 
 		public void Display() {
+			// NOTE: in C#, (void) is not a valid cast. in c# 7.0 _ = becomes available
+			ArchitectureChecker.is64BitOperatingSystem();
+			ArchitectureChecker.checkAssemblyArchitecture();
+				
 			notifyIcon.MouseClick += new MouseEventHandler(notifyIcon_MouseClick);
 			
 			idle_icon = Resources.idle_icon;
@@ -183,5 +188,43 @@ namespace Program
 			// restart Timer.
 			myTimer.Start();
 		}
+
+		// TODO: move to Utils
+		public static void CheckAssemblyArchitecture() {
+			CheckAssemblyArchitecture(System.Reflection.Assembly.GetExecutingAssembly().Location);
+		}
+		public static void CheckAssemblyArchitecture(string assemblyPath) {
+	        try
+	        {
+	            // Read metadata without executing the assembly
+	            Assembly assembly = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
+	            Module module = assembly.ManifestModule;
+	            // https://learn.microsoft.com/en-us/dotnet/api/system.reflection.portableexecutablekinds?view=netframework-4.5
+	            // NOTE: non-nullable value type
+	            PortableExecutableKinds peKinds = System.Reflection.PortableExecutableKinds.ILOnly;
+	            // https://learn.microsoft.com/en-us/dotnet/api/system.reflection.imagefilemachine?view=netframework-4.5
+	            // NOTE: non-nullable value type
+	            ImageFileMachine machine = System.Reflection.ImageFileMachine.I386;
+	            module.GetPEKind(out peKinds, out machine);
+	
+	            // Check if it is exclusively a 32-bit assembly
+	            if ((peKinds & PortableExecutableKinds.Required32Bit) != 0)
+	            {
+	                Debug.WriteLine("The assembly requires 32-bit execution (x86).");
+	            }
+	            else if ((peKinds & PortableExecutableKinds.PE32Plus) != 0)
+	            {
+	                Debug.WriteLine("The assembly is compiled for 64-bit execution (x64).");
+	            }
+	            else if ((peKinds & PortableExecutableKinds.ILOnly) != 0)
+	            {
+	                Debug.WriteLine("The assembly is AnyCPU (MSIL).");
+	            }
+	        }
+	        catch (Exception ex)
+	        {
+	        	Debug.WriteLine(String.Format("Failed to load or parse assembly: {0}",ex.Message));
+	        }
+	    }
 	}
 }
