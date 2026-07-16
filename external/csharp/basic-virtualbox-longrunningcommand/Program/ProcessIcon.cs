@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Program.Properties;
 using System.Threading;
 using System.Reflection;
+
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -113,6 +114,10 @@ namespace Program
 		}
 
 		public void Display() {
+			// NOTE: in C#, (void) is not a valid cast. in c# 7.0 _ = becomes available
+			ArchitectureChecker.is64BitOperatingSystem();
+			ArchitectureChecker.checkAssemblyArchitecture();
+				
 			notifyIcon.MouseClick += new MouseEventHandler(notifyIcon_MouseClick);
 			
 			idle_icon = Resources.idle_icon;
