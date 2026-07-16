@@ -143,6 +143,44 @@ __XML__ __1.0__ the only allowed are very few:
 |`&apos;`|'       |
 
 
+* commenting an sensitive area in legacy Visual Studio solutuon file and accidentally leaving a blank line after the commented line:
+```c#
+ # old disabled configuration
+ # old disabled configuration
+-
+ active configuration...
+```
+leads to
+```text
+---------------------------
+Exception got
+---------------------------
+ICSharpCode.SharpDevelop.Project.ProjectLoadException: Error reading from C:\developer\sergueik\powershell_samples\external\csharp\basic-virtualbox-longrunningcommand\basic-virtualbox-longrunningcommand.sln at line 49:
+
+Expected EndGlobalSection
+
+   at ICSharpCode.SharpDevelop.Project.SolutionLoader.ReadSection(Boolean isGlobal)
+
+   at ICSharpCode.SharpDevelop.Project.SolutionLoader.ReadSolution(Solution solution, IProgressMonitor progress)
+
+   at ICSharpCode.SharpDevelop.Project.SDProjectService.LoadSolutionFile(FileName fileName, IProgressMonitor progress)
+
+   at ICSharpCode.SharpDevelop.Project.SDProjectService.OpenSolutionInternal(FileName fileName)
+
+   at ICSharpCode.SharpDevelop.Project.SDProjectService.OpenSolutionOrProjectInternal(FileName fileName)
+
+   at ICSharpCode.Core.FileUtility.<>c__DisplayClass63_0.<ObservedLoad>b__0()
+
+   at ICSharpCode.Core.FileUtility.ObservedLoad(FileOperationDelegate loadFile, FileName fileName, String message, FileErrorPolicy policy)
+---------------------------
+OK
+---------------------------
+```
+
+![SharpDevelop Error 1](screenshots/capture-sharpdevelop-error1.png)
+
+![SharpDevelop Error 1](screenshots/capture-sharpdevelop-error2.png)
+
 ### Building and Running in Console
 
 ```powershell
