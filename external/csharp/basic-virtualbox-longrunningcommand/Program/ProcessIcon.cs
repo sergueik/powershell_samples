@@ -14,11 +14,9 @@ using System.Linq;
 
 using Utils;
 
-namespace Program
-{
+namespace Program {
 
-	class ProcessIcon : IDisposable
-	{
+	class ProcessIcon : IDisposable {
 		private NameValueCollection appSettings;
 		private Boolean debug;
 		static int retries = 2;
@@ -35,7 +33,12 @@ namespace Program
 		private string password = null;
 		private string script = null;
 		private string scriptArguments = null;
-	
+		// when every qualifier is technically meaningful within the system, yet the whole sentence sounds paradoxical.
+		private Dictionary<string, string> envRemap = new Dictionary<string, string>() {
+			{ "PROGRAMFILES", "PROGRAMFILES" },
+			{ "COMMONPROGRAMFILES", "COMMONPROGRAMFILES" }
+		};
+
 		NotifyIcon notifyIcon;
 		// NOTE: Timer is an ambiguous reference between
 		// System.Windows.Forms.Timer and System.Threading.Timer
@@ -47,6 +50,17 @@ namespace Program
 		private Icon busy_icon;
 
 		public ProcessIcon() {
+
+			bool is64 = ArchitectureChecker.is64BitOperatingSystem();
+			string architecture = ArchitectureChecker.checkAssemblyArchitecture();
+			if (is64) {
+				if (!architecture.Contains("64")) {
+					// in all app,config entry values replace %PROGRAMFILES% with %PROGRAMW6432%
+					envRemap["COMMONPROGRAMFILES"] = "COMMONPROGRAMW6432";
+					envRemap["PROGRAMFILES"] = "PROGRAMW6432";
+				}
+			}
+
 			notifyIcon = new NotifyIcon();
 
 			appSettings = ConfigurationManager.AppSettings;
@@ -102,8 +116,12 @@ namespace Program
 				arguments2 = arguments2.Replace("%SCRIPTARGUMENTS%", scriptArguments);
 			}
 			if (appSettings.AllKeys.Contains("ToolPath")) {
+				foreach (KeyValuePair<string, string> keyValuePair in envRemap) {
+					appSettings["ToolPath"] = appSettings["ToolPath"].Replace(keyValuePair.Key, keyValuePair.Value);
+					Debug.WriteLine(String.Format("Replaced {0} with {1}", keyValuePair.Key, keyValuePair.Value));
+				}			
 				toolPath = Environment.ExpandEnvironmentVariables(appSettings["ToolPath"]);
-				Debug.WriteLine(String.Format("Expanded Path: {0}", toolPath));
+				Debug.WriteLine(String.Format("Expanded Path: {0} => {1}", appSettings["ToolPath"], toolPath));
 			} else {
 				Debug.WriteLine("could not resolve toolpath");
 			}
@@ -114,10 +132,6 @@ namespace Program
 		}
 
 		public void Display() {
-			// NOTE: in C#, (void) is not a valid cast. in c# 7.0 _ = becomes available
-			ArchitectureChecker.is64BitOperatingSystem();
-			ArchitectureChecker.checkAssemblyArchitecture();
-				
 			notifyIcon.MouseClick += new MouseEventHandler(notifyIcon_MouseClick);
 			
 			idle_icon = Resources.idle_icon;
@@ -131,7 +145,7 @@ namespace Program
 		
 			notifyIcon.Text = (assemblyTitle.Length > 64) ? (assemblyTitle.Substring(0, 61) + "...") : assemblyTitle;
 			notifyIcon.Visible = true;
-			notifyIcon.ContextMenuStrip = new ContextMenus().Create();
+			notifyIcon.ContextMenuStrip = new ContextMenus().Create(toolPath);
 			// myTimer.Tick += new EventHandler(timerEventProcessor);
 			// myTimer.Interval = collectInterval;
 			// myTimer.Start();
@@ -147,8 +161,7 @@ namespace Program
 				Process.Start("explorer", null);
 			}
 		}
-	
-	
+
 		private void timerEventProcessor(Object myObject, EventArgs myEventArgs) {
 			myTimer.Stop();
 			nScanCounter++;
@@ -174,7 +187,7 @@ namespace Program
 			fileHelper.FilePath = logFile;
 			fileHelper.Interval = 500;
 			fileHelper.Append = true;
-			fileHelper.Text = String.Format("{0} \"{1}\"{2} \"{3}\"\n", "STDOUT:", String.Join("", processRunner.StandardOutput),"STDERR:", String.Join("", processRunner.StandardError));
+			fileHelper.Text = String.Format("{0} \"{1}\"{2} \"{3}\"\n", "STDOUT:", String.Join("", processRunner.StandardOutput), "STDERR:", String.Join("", processRunner.StandardError));
 
 			fileHelper.WriteContents();
 			// Thread.Sleep(1000);

@@ -19,11 +19,12 @@ namespace Utils {
 			return status;
 		}
 
-		public static void checkAssemblyArchitecture() {
-			checkAssemblyArchitecture(Assembly.GetExecutingAssembly().Location);
+		public static string checkAssemblyArchitecture() {
+			return checkAssemblyArchitecture(Assembly.GetExecutingAssembly().Location);
 		}
 
-		public static void checkAssemblyArchitecture(string assemblyPath) {
+		public static string checkAssemblyArchitecture(string assemblyPath) {
+			var status = "Unknown";
 	        try {
 	            // Read metadata without executing the assembly
 	            Assembly assembly = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
@@ -38,17 +39,21 @@ namespace Utils {
 	
 	            // Check if it is exclusively a 32-bit assembly
 	            if ((peKinds & PortableExecutableKinds.Required32Bit) != 0) {
+			status = "32-bit";
 	                Debug.WriteLine("The assembly requires 32-bit execution (x86).");
 	            }
 	            else if ((peKinds & PortableExecutableKinds.PE32Plus) != 0) {
+			status = "64-bit";
 	                Debug.WriteLine("The assembly is compiled for 64-bit execution (x64).");
 	            }
 	            else if ((peKinds & PortableExecutableKinds.ILOnly) != 0) {
+			status = "MSIL";
 	                Debug.WriteLine("The assembly is AnyCPU (MSIL).");
 	            }
 	        } catch (Exception e) {
 	        	Debug.WriteLine(String.Format("Failed to load or parse assembly: {0}",e.Message));
 	        }
+			return status;
 	    }
 	}
 }
