@@ -52,6 +52,7 @@
     <Compile Include="CredentialsManagerHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IconHelper.cs" />
     <Compile Include="ProcessRunner.cs" />
   </ItemGroup>
   <ItemGroup>

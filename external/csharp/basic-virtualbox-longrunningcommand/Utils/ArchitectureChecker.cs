@@ -3,11 +3,11 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Diagnostics;
 
-// NOTE: th learn about how applications can be designed without barriers
-// the canonical introduction is:
+// NOTE: the canonical introduction how applications can be designed without barriers is:
 // https://learn.microsoft.com/en-us/windows/win32/winprog64/file-system-redirector
 // see also:
 // https://learn.microsoft.com/en-us/windows/win32/winprog64/registry-redirector
+
 namespace Utils {
 	public class ArchitectureChecker {
 
