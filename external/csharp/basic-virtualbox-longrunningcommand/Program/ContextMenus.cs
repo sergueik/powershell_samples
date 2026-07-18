@@ -20,7 +20,8 @@ namespace Program {
 			var menu = new ContextMenuStrip();
 			ToolStripMenuItem item;
 			ToolStripSeparator sep;
-
+			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.toolstripmenuitem?view=netframework-4.5
+			menu.Renderer = new CustomDisabledIconRenderer();
 			item = new ToolStripMenuItem();
 			item.Text = "Explorer";
 			item.Click += new EventHandler(Explorer_Click);
@@ -46,9 +47,10 @@ namespace Program {
 			
 				// toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 				Image image = IconHelper.getImage(machines[id]["Guest OS"].ToLowerInvariant());
-				item.Image = image != null ? image: Resources.QuestionMark; 
+				item.Image = image ?? Resources.QuestionMark;
+				// see also:
 				item.Enabled = false;
-
+				item.Tag = true;
 				menu.Items.Add(item);
 			}
 			sep = new ToolStripSeparator();
