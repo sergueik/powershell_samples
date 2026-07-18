@@ -26,7 +26,21 @@ namespace Utils {
 				else {
 					Debug.WriteLine(String.Format("Image size: {0} ImageRectangle: {1} ", e.Image.Size, e.ImageRectangle));
 					using (var scaledBitmap = new Bitmap(e.Image, e.ImageRectangle.Width, e.ImageRectangle.Height)) {
-						ControlPaint.DrawImageDisabled( e.Graphics, scaledBitmap, e.ImageRectangle.X, e.ImageRectangle.Y, e.Item.BackColor);
+						
+						
+						// create a Graphics object to modify the image
+						using (Graphics graphics = Graphics.FromImage(scaledBitmap)) {
+							using (var pen = new Pen(Color.Red, 2)) {
+								graphics.DrawLine(pen, 0, e.ImageRectangle.Height, e.ImageRectangle.Width,  0 );
+								graphics.DrawLine(pen, 0, 0, e.ImageRectangle.Width, e.ImageRectangle.Height);
+							}						
+						}
+						// https://learn.microsoft.com/en-us/dotnet/api/system.drawing.graphics.drawimage?view=netframework-4.5
+						e.Graphics.DrawImage(scaledBitmap, e.ImageRectangle.X, e.ImageRectangle.Y, e.ImageRectangle.Width, e.ImageRectangle.Height);
+
+						// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.controlpaint?view=netframework-4.5
+						// ControlPaint.DrawImageDisabled(e.Graphics, e.Image, e.ImageRectangle.X, e.ImageRectangle.Y, e.Item.BackColor);
+
 					}
 				}
 				// Will dispose the temporary bitmap automatically
