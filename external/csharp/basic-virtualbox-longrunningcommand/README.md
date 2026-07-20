@@ -6,6 +6,13 @@ Hypervisor VM extensions bridge on a selected VM running OS-specific code on a V
 
 ![ToolBar Context VM Chooser](screenshots/capture-toolbar-menu.png)
 
+here the disabled icon indicates the VM is present but is currently not powered up.
+#### State 
+
+The toolmat menu is used to list the VirtualBox machines present on the host and to indicate their up to date status, with the crossed icon reserved to convey the machine is listed but is misconfogured / missing. The default "dieabled" state is for the case machine is present not running
+
+![Variant of Disabled Context VM Status](screenshots/capture-variants-of-disabled.png)
+
 ```cmd
 VBoxManage.exe list runningvms
 ```
