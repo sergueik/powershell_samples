@@ -24,10 +24,8 @@ namespace Utils {
 				if (e.Image.Size.Width == e.ImageRectangle.Width && e.Image.Size.Height == e.ImageRectangle.Height)
 					ControlPaint.DrawImageDisabled(e.Graphics, e.Image, e.ImageRectangle.X, e.ImageRectangle.Y, e.Item.BackColor);
 				else {
-					Debug.WriteLine(String.Format("Image size: {0} ImageRectangle: {1} ", e.Image.Size, e.ImageRectangle));
+					// Debug.WriteLine(String.Format("Image size: {0} ImageRectangle: {1} ", e.Image.Size, e.ImageRectangle));
 					using (var scaledBitmap = new Bitmap(e.Image, e.ImageRectangle.Width, e.ImageRectangle.Height)) {
-						
-						
 						// create a Graphics object to modify the image
 						using (Graphics graphics = Graphics.FromImage(scaledBitmap)) {
 							using (var pen = new Pen(Color.Red, 2)) {

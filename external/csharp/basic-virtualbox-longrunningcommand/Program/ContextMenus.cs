@@ -38,9 +38,9 @@ namespace Program {
 			menu.Items.Add(sep);
 
 			fillNodeData();
-
+			int count = 0;
 			foreach (var id in machines.Keys) {
-				
+				count ++;
 				item = new ToolStripMenuItem();
 				item.Text = getNodeData(id);
 				// item.Click += new System.EventHandler(Exit_Click);
@@ -48,9 +48,11 @@ namespace Program {
 				// toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 				Image image = IconHelper.getImage(machines[id]["Guest OS"].ToLowerInvariant());
 				item.Image = image ?? Resources.QuestionMark;
-				// see also:
-				item.Enabled = false;
-				item.Tag = true;
+				if (count > 1) {
+					item.Enabled = false;
+					if (count %2 ==0)
+						item.Tag = true;
+				}
 				menu.Items.Add(item);
 			}
 			sep = new ToolStripSeparator();
