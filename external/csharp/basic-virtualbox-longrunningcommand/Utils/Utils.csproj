@@ -46,14 +46,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArchitectureChecker.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="CustomDisabledIconRenderer.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="CustomMessageBoxForm.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CredentialsManagerHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UserDataHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="IconHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="ProcessRunner.cs" />
   </ItemGroup>
   <ItemGroup>

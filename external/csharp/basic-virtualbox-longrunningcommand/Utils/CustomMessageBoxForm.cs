@@ -8,7 +8,7 @@ using System.IO;
 namespace Utils {
 
     public class CustomMessageBoxForm {
-        private Form f;
+        private Form form;
 
         private Button buttonDetails;
         private Button buttonOK;
@@ -25,7 +25,9 @@ namespace Utils {
         private Label labelMessage;
 
         private string result;
-
+        private IntPtr handle;
+			public IntPtr getHandle(){ return this.form.Handle;
+		}
         public static string Show( string messageText) {
             return Show( messageText, null, null, SystemIcons.Information);
         }
@@ -33,12 +35,12 @@ namespace Utils {
         public static string Show( string messageText, Exception e) {
             return Show( e.Message,  "Exception", "Stack Trace: \n" + e.StackTrace , SystemIcons.Error);
         }
- 
+
         public static string Show( string messageText, string messageTitle, string description) {
             return Show( messageText, messageTitle, description, SystemIcons.Information, "OK");
         }
 
-        public static string Show( string messageText, string messageTitle, string description, Icon icon){ 
+        public static string Show( string messageText, string messageTitle, string description, Icon icon){
             return Show( messageText, messageTitle, description,  icon, "OK");
         }
 
@@ -46,14 +48,14 @@ namespace Utils {
 
             var box = new CustomMessageBoxForm();
             box.Initialize();
-            box.SetMessageText(  messageText, messageTitle, description);
+            box.SetMessageText( messageText, messageTitle, description);
             box.AddIconBitmap(filename);
             box.AddButtons(buttons);
             box.result = "Cancel";
             box.DrawBox();
-            box.f.ShowDialog();
+            box.form.ShowDialog();
             string answer = box.result;
-            box.f.Dispose();
+            box.form.Dispose();
             return answer;
         }
 
@@ -62,20 +64,19 @@ namespace Utils {
 
             box.Initialize();
 
-            box.SetMessageText(  messageText, messageTitle, description);
+            box.SetMessageText( messageText, messageTitle, description);
             box.AddIconBitmap(icon);
             box.AddButtons(buttons);
             box.result = "Cancel";
             box.DrawBox();
-            box.f.ShowDialog();
+            box.form.ShowDialog();
             string answer = box.result;
-            box.f.Dispose();
+            box.form.Dispose();
             return answer;
         }
 
-
         private void Initialize() {
-            f = new Form();
+            form = new Form();
 
             buttonDetails = new Button();
             buttonOK = new Button();
@@ -92,7 +93,7 @@ namespace Utils {
             labelMessage = new Label();
         }
 
-        private void ReturnResponse(  object sender, EventArgs e) {
+        private void ReturnResponse( object sender, EventArgs e) {
 
             var button = sender as Button;
             if (button == null) {
@@ -112,7 +113,7 @@ namespace Utils {
                     break;
             }
 
-            f.Dispose();
+            form.Dispose();
         }
 
         // https://learn.microsoft.com/en-us/dotnet/api/system.drawing.systemicons?view=netframework-4.5
@@ -122,7 +123,7 @@ namespace Utils {
 
         // https://learn.microsoft.com/en-us/dotnet/api/system.drawing.icon?view=netframework-4.5
         private void AddIconBitmap( string filename ) {
-        	if (filename == null) 
+        	if (filename == null)
         		iconBitmap.Image = SystemIcons.Information.ToBitmap();
     		else {
 				string iconPath = Path.Combine( AppDomain.CurrentDomain.BaseDirectory, filename);
@@ -144,23 +145,23 @@ namespace Utils {
             }
 
             if (!String.IsNullOrEmpty(title)) {
-                f.Text = title;
+                form.Text = title;
             } else {
-                f.Text = "Your Message Box";
+                form.Text = "Your Message Box";
             }
         }
 
 
         private void ClickHandler(   object sender, EventArgs e) {
             if (buttonDetails.Tag.ToString() == "collapse") {
-                f.Height += txtDescription.Height + 6;
+                form.Height += txtDescription.Height + 6;
 
                 buttonDetails.Tag = "expand";
                 buttonDetails.Text = "Hide Details";
 
                 txtDescription.WordWrap = true;
             } else if (buttonDetails.Tag.ToString() == "expand") {
-                f.Height -= txtDescription.Height + 6;
+                form.Height -= txtDescription.Height + 6;
 
                 buttonDetails.Tag = "collapse";
                 buttonDetails.Text = "Show Details";
@@ -172,9 +173,11 @@ namespace Utils {
 
 		    switch (buttons) {
 		        case "None":
+		            break;
 		        case "Really?":
 		            buttonOK = CreateButton( "Really?", start);
 		            break;
+
 		        case "OK":
 		            buttonOK = CreateButton( "OK", start);
 		            break;
@@ -205,99 +208,79 @@ namespace Utils {
 		}
 
 		private void DrawBox() {
-		    f.Controls.Add(panel);
-		
+		    form.Controls.Add(panel);
+
 		    panel.Dock = DockStyle.Fill;
-		
-		
+
 		    // icon
-		
+
 		    iconBitmap.Height = 36;
 		    iconBitmap.Width = 40;
 		    iconBitmap.Location = new Point(10, 11);
-		
+
 		    panel.Controls.Add(iconBitmap);
-		
-		
+
 		    // details text box
-		
+
 		    txtDescription.Multiline = true;
 		    txtDescription.Height = 183;
 		    txtDescription.Width = 464;
-		
-		    txtDescription.Location =
-		        new Point(6, 143);
-		
-		    txtDescription.BorderStyle =
-		        BorderStyle.Fixed3D;
-		
-		    txtDescription.ScrollBars =
-		        ScrollBars.Both;
-		
+
+		    txtDescription.Location = new Point(6, 143);
+
+		    txtDescription.BorderStyle = BorderStyle.Fixed3D;
+
+		    txtDescription.ScrollBars = ScrollBars.Both;
+
 		    txtDescription.ReadOnly = true;
-		
+
 		    panel.Controls.Add(txtDescription);
-		
-		
-		
+
 		    // details button
-		
+
 		    buttonDetails.Height = 24;
 		    buttonDetails.Width = 96;
-		
-		    buttonDetails.Location =
-		        new Point(6, 84);
-		
+
+		    buttonDetails.Location = new Point(6, 84);
+
 		    buttonDetails.Tag = "expand";
 		    buttonDetails.Text = "Show Details";
-		
+
 		    buttonDetails.Click += ClickHandler;
-		
+
 		    panel.Controls.Add(buttonDetails);
-		
-		
-		
+
 		    // message label
-		
-		    labelMessage.Location =
-		        new Point(64, 22);
-		
+
+		    labelMessage.Location =  new Point(64, 22);
+
 		    labelMessage.AutoSize = true;
-		
+
 		    panel.Controls.Add(labelMessage);
-		
-		
-		
+
 		    // form setup
-		
-		    f.Height = 360;
-		    f.Width = 483;
-		
-		    f.StartPosition =
-		        FormStartPosition.CenterScreen;
-		
-		    f.FormBorderStyle =
-		        FormBorderStyle.FixedSingle;
-		
-		    f.MaximizeBox = false;
-		    f.MinimizeBox = false;
-		
-		    f.BackColor =
-		        SystemColors.ButtonFace;
-		
-		
-		
+
+		    form.Height = 360;
+		    form.Width = 483;
+
+		    form.StartPosition = FormStartPosition.CenterScreen;
+
+		    form.FormBorderStyle = FormBorderStyle.FixedSingle;
+
+		    form.MaximizeBox = false;
+		    form.MinimizeBox = false;
+
+		    form.BackColor = SystemColors.ButtonFace;
+
 		    // collapse details initially
-		
-		    if (buttonDetails.Tag.ToString() == "expand")
-		    {
-		        f.Height =
-		            f.Height - txtDescription.Height - 6;
-		
+
+		    if (buttonDetails.Tag.ToString() == "expand") {
+		        form.Height = form.Height - txtDescription.Height - 6;
 		        buttonDetails.Tag = "collapse";
 		        buttonDetails.Text = "Show Details";
 		    }
 		}
+
 		private Button CreateButton(string text, Point location) {
 		    var button = new Button();
 
