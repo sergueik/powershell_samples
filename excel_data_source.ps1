@@ -1,4 +1,4 @@
-#Copyright (c) 2015,2016 Serguei Kouzmine
+#Copyright (c) 2015,2016,2026 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -71,6 +71,8 @@ function initialize_data_reader {
   )
 
   [string]$datafile_directory = (Get-ScriptDirectory)
+  # for interactive, simply
+  # $datafile_directory =  (resolve-path -path '.').path
   [string]$datafile_fullpath = ('{0}\{1}' -f $datafile_directory,$datafile_filename)
 
 
@@ -95,11 +97,17 @@ function initialize_data_reader {
     default { throw }
   }
   $connection_string = "$oledb_provider;$data_source;$ext_arg"
+  # $connection_string = "$oledb_provider;$data_source"
+  # need $ext_args
+  # Exception calling "Fill" with "1" argument(s): 
+  # "Unrecognized database format 'C:\developer\sergueik\powershell_samples\TestConfiguration.xls'."
+  $connection_string = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\developer\sergueik\powershell_samples\TestConfiguration.xls;Extended Properties=Excel 8.0"
+  
+  
   [string]$query = "Select * from [${table}] WHERE ISNULL(guid)"
 
-  [System.Data.OleDb.OleDbConnection]$local:connection = New-Object System.Data.OleDb.OleDbConnection ($connection_string)
-  [System.Data.OleDb.OleDbCommand]$local:command = New-Object System.Data.OleDb.OleDbCommand ($query)
-
+  [System.Data.OleDb.OleDbConnection]$local:connection = New-Object System.Data.OleDb.OleDbConnection($connection_string)
+  [System.Data.OleDb.OleDbCommand]$local:command = New-Object System.Data.OleDb.OleDbCommand($query)
 
   [System.Data.DataTable]$local:data_table = New-Object System.Data.DataTable
   [System.Data.OleDb.OleDbDataAdapter]$ole_db_adapter = New-Object System.Data.OleDb.OleDbDataAdapter
@@ -108,6 +116,9 @@ function initialize_data_reader {
   $local:command.Connection = $connection
 
   [void]$ole_db_adapter.Fill($local:data_table)
+<#
+  Exception calling "Fill" with "1" argument(s): "Could not find installable ISAM."
+ #> 
   $local:connection.open()
   # http://stackoverflow.com/questions/24648081/error-the-type-system-data-oledb-oledbdatareader-has-no-constructors-defined
   $global:data_reader = $local:command.ExecuteReader()
@@ -409,3 +420,4 @@ public class Excel_Data
     }
 }
 #>
+
