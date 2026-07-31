@@ -1,3 +1,96 @@
+Microsoft ACE OLEDB 12.0 provider was restored successfully.
+
+The original PowerShell automation, written around 2015/2016,
+still executes on a compatible Windows environment after reinstalling
+Microsoft Access Database Engine 2010 Redistributable.
+
+Validation steps:
+- ACE provider registration restored:
+    HKEY_CLASSES_ROOT\Microsoft.ACE.OLEDB.12.0
+    CLSID {3BE786A0-0366-4F5C-9434-25CF162E475E}
+
+- Provider DLL confirmed:
+    C:\Program Files\Common Files\Microsoft Shared\OFFICE14\ACEOLEDB.DLL
+
+- PowerShell script successfully:
+    * opened the XLS workbook through OleDb
+    * queried worksheet data
+    * updated cells using parameterized OleDb commands
+
+The remaining limitation observed is not a provider installation failure.
+
+Running two PowerShell instances simultaneously against the same XLS file
+causes the ACE engine to report:
+
+"The Microsoft Access database engine cannot open or write to the file.
+It is already opened exclusively by another user..."
+
+This is expected behavior for the Excel-as-database model.
+The XLS file is not a transactional multi-user database and ACE locking
+semantics prevent concurrent writers.
+
+Conclusion:
+* The legacy automation path is operational.
+* No further Windows 7 investigation is required unless concurrent access
+* or production hardening is a requirement.
+
+
+One would expect substantially more difficulty when attempting to restore a production-grade COM server application from the early 2000s onto a newer, unsupported Windows platform. 
+Such systems typically depended on a much larger ecosystem of registrations, services, middleware components, security settings, and deployment assumptions.
+
+In this case, the objective is much narrower: preserve the spreadsheet-driven automation artifact, retain the ability to read and update the workbook, and make only task-specific adjustments as operational feedback requires. The VM provides a sufficient historical runtime boundary without requiring a broader modernization effort.
+
+The `Could not find installable ISAM` error was almost a textbook "old technology still works, but the connection string dialect is slightly wrong" problem. 
+The fix was localized:
+```text
+PowerShell
+   |
+OleDbConnection
+   |
+ACE provider loaded successfully
+   |
+connection string parsed incorrectly
+   |
+"Could not find installable ISAM"
+```
+A small change to the Extended Properties format restored the intended behavior. 
+As you said, that is almost a one-search repair.
+
+A COM registration problem on a different Windows generation is a different class of problem:
+```text
+Application
+    |
+    COM ProgID lookup
+    |
+    CLSID resolution
+    |
+    registry hive / bitness
+    |
+    InProcServer32
+    |
+    DLL dependency chain
+    |
+    runtime compatibility
+```
+The failure can be caused by many things:
+
+32-bit application vs 64-bit provider mismatch
+missing CLSID entries
+incorrect InprocServer32 path
+DLL registration not performed
+dependent DLL missing
+registry virtualization/UAC effects
+provider installed but not visible to the calling process
+
+The frustrating part of COM-era debugging is that the error often appears far away from the actual cause. For example:
+
+"The provider is not registered on the local machine"
+
+does not necessarily mean "install the provider." It may mean:
+
+### Technical Details
+ 
+
 * install / reinstall __Microsoft Access Database Engine__ __2010__ (AccessDatabaseEngine 14.0.6119.5000): 
 
 ![Installer Start](screenshots/135.png)

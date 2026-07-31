@@ -264,7 +264,30 @@ You will not be able to use `Console.Error.WriteLine` and for `Debug.WriteLine` 
 
 ![Visual Studio](screenshots/capture-visual-studio.png)
 
-The app with log in console while building the VM list:
+#### WOW6432 Patch 
+when tun from __Visual Studio__ which is __64__ bit, __Start Debugging__ console shows:
+```text
+Windows Platform Detection: is 64 bit: True
+%ProgramW6432%: C:\Program Files %ProgramFiles%: C:\Program Files
+The assembly is compiled for 64-bit execution (x64).
+Replaced PROGRAMFILES with PROGRAMFILES
+Replaced COMMONPROGRAMFILES with COMMONPROGRAMFILES
+Expanded Path: %PROGRAMFILES%\Oracle\VirtualBox => C:\Program Files\Oracle\VirtualBox
+
+```
+when run from __Sharp Develop__ which is __32__ bit, __Debug Run__ console shows:
+
+```text
+Windows Platform Detection: is 64 bit: True
+%ProgramW6432%: C:\Program Files %ProgramFiles%: C:\Program Files (x86)
+The assembly is AnyCPU (MSIL).
+Replaced PROGRAMFILES with PROGRAMW6432
+Replaced COMMONPROGRAMFILES with COMMONPROGRAMW6432
+Expanded Path: %PROGRAMW6432%\Oracle\VirtualBox => C:\Program Files\Oracle\VirtualBox
+```
+The app is able to interact with __Virtual Box__ which is __64__ bit, either way
+
+Next, the app will log in console the steps of building the VM information list:
 
 ```text
 Guest OS: Windows 7 (32-bit)
@@ -1248,6 +1271,7 @@ if (true) {
     + [older releases](https://github.com/atom/atom/releases/tag/v1.60.0)  
  
  * https://icons8.com/icon/50196/rest-api  
+
 ----
 
 ### Author
