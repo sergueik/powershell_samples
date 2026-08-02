@@ -56,7 +56,6 @@ function Get-ScriptDirectory
   }
 }
 
-
 function initialize_data_reader {
   param(
     [string]$format = 'excel',
@@ -69,27 +68,36 @@ function initialize_data_reader {
     [bool]$debug
 
   )
-
-  [string]$datafile_directory = (Get-ScriptDirectory)
-  # for interactive, simply
-  # $datafile_directory =  (resolve-path -path '.').path
+  # [string]$datafile_directory = (Get-ScriptDirectory)
+  [string]$datafile_directory = (resolve-path -path '.').Path
   [string]$datafile_fullpath = ('{0}\{1}' -f $datafile_directory,$datafile_filename)
 
-
-  switch ($format)
-  {
+  switch ($format) {
     'excel' {
       [string]$oledb_provider = 'Provider=Microsoft.ACE.OLEDB.12.0'
-      # 32-bit instances only, included with core image for Windows XP, Server 2013
-      # [string]$oledb_provider = 'Provider=Microsoft.Jet.OLEDB.4.0'
+      [string]$data_source = "Data Source = ${datafile_fullpath}"
+      [string]$ext_arg = 'Extended Properties=Excel 8.0'
+      <#
+        Exception calling "Fill" with "1" argument(s): "Could not find installable ISAM."
+      #> 
+      [string]$table = $sheet_name
+    }
+    'excel_legacy' {
+      # 32-bit instances only, Jet Engine has been included with core image for Windows XP, Server 2013
+      [string]$oledb_provider = 'Provider=Microsoft.Jet.OLEDB.4.0'
       [string]$data_source = "Data Source = ${datafile_fullpath}"
       [string]$ext_arg = 'Extended Properties=Excel 8.0;IMEX=1;'
       [string]$table = $sheet_name
     }
     'csv' {
       [string]$oledb_provider = 'Provider=Microsoft.ACE.OLEDB.12.0'
+      [string]$ext_arg = 'Extended Properties="Text;IMEX=1;HDR=Yes;FMT=Delimited(,)";'
+      [string]$data_source = "Data Source = ${$datafile_directory}"
+      [string]$table = $datafile_filename
+    }
+    'csv_legacy' {
       # 32-bit instances only:
-      # [string]$oledb_provider = 'Provider=Microsoft.Jet.OLEDB.4.0'
+      [string]$oledb_provider = 'Provider=Microsoft.Jet.OLEDB.4.0'
       [string]$ext_arg = 'Extended Properties="Text;IMEX=1;HDR=Yes;FMT=Delimited(,)";'
       [string]$data_source = "Data Source = ${$datafile_directory}"
       [string]$table = $datafile_filename
@@ -97,28 +105,19 @@ function initialize_data_reader {
     default { throw }
   }
   $connection_string = "$oledb_provider;$data_source;$ext_arg"
-  # $connection_string = "$oledb_provider;$data_source"
-  # need $ext_args
-  # Exception calling "Fill" with "1" argument(s): 
-  # "Unrecognized database format 'C:\developer\sergueik\powershell_samples\TestConfiguration.xls'."
-  $connection_string = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\developer\sergueik\powershell_samples\TestConfiguration.xls;Extended Properties=Excel 8.0"
   
-  
-  [string]$query = "Select * from [${table}] WHERE ISNULL(guid)"
+  [string]$query = "SELECT * FROM [${table}] WHERE ISNULL(guid)"
 
-  [System.Data.OleDb.OleDbConnection]$local:connection = New-Object System.Data.OleDb.OleDbConnection($connection_string)
-  [System.Data.OleDb.OleDbCommand]$local:command = New-Object System.Data.OleDb.OleDbCommand($query)
+  [System.Data.OleDb.OleDbConnection]$local:connection = new-object System.Data.OleDb.OleDbConnection($connection_string)
+  [System.Data.OleDb.OleDbCommand]$local:command = new-object System.Data.OleDb.OleDbCommand($query)
 
-  [System.Data.DataTable]$local:data_table = New-Object System.Data.DataTable
-  [System.Data.OleDb.OleDbDataAdapter]$ole_db_adapter = New-Object System.Data.OleDb.OleDbDataAdapter
+  [System.Data.DataTable]$local:data_table = new-object System.Data.DataTable
+  [System.Data.OleDb.OleDbDataAdapter]$ole_db_adapter = new-object System.Data.OleDb.OleDbDataAdapter
   $ole_db_adapter.SelectCommand = $local:command
 
   $local:command.Connection = $connection
 
   [void]$ole_db_adapter.Fill($local:data_table)
-<#
-  Exception calling "Fill" with "1" argument(s): "Could not find installable ISAM."
- #> 
   $local:connection.open()
   # http://stackoverflow.com/questions/24648081/error-the-type-system-data-oledb-oledbdatareader-has-no-constructors-defined
   $global:data_reader = $local:command.ExecuteReader()
@@ -127,6 +126,8 @@ function initialize_data_reader {
   $command_ref.Value = $local:command
   return $local:data_reader
 }
+
+
 
 function insert_row_new {
   param(

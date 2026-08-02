@@ -1,8 +1,14 @@
 Microsoft ACE OLEDB 12.0 provider was restored successfully.
 
+![working Microsoft Access Engine](screenshots/127.png)
+
 The original PowerShell automation, written around 2015/2016,
 still executes on a compatible Windows environment after reinstalling
 Microsoft Access Database Engine 2010 Redistributable.
+
+The newer Access Database Engine 2016 needs tweaking (WIP)
+
+![non-working Microsoft Access Engine](screenshots/128.png)
 
 Validation steps:
 - ACE provider registration restored:
@@ -263,3 +269,34 @@ At C:\developer\sergueik\powershell_samples\excel_data_source.ps1:149 char:53
 You cannot call a method on a null-valued expression.
 ```
 after the concurrent powershell console window is closed, repeating the command produces the healthy result
+
+During the NT 4.0 / Windows 2000 era, there was a feeling that Microsoft was willing to expose internal engineering tools and APIs. Over time, that shifted toward a more curated platform:
+
+undocumented interfaces became less accessible,
+internal utilities stayed internal,
+extensibility points became more controlled,
+security reviews became much stricter before something shipped publicly.
+i
+During the Windows 2000 era, if you wanted to manipulate data, there was a sense that the platform itself was the toolbox. By the Windows XP / Server 2003 timeframe, that toolbox had arguably reached its widest point:
+
+ADO
+ODBC
+OLE DB
+WMI
+COM Automation
+Windows Script Host
+Office object models
+IIS scripting
+MMC snap-in APIs
+Resource Kits
+Sysinternals (later acquired by Microsoft)
+
+It felt like Windows was saying:
+
+"Here's the engine. Go build things."
+
+Microsoft moved away from assuming that every Windows installation should include every conceivable developer technology
+In my view,
+Windows has later evolved from being the product to being the sole store front that encourages adoption of Microsoft's subscription services. -  not where one can self-service
+
+"In my view, Windows has evolved from being the product into the primary storefront for Microsoft's subscription services, rather than a self-contained platform where users and developers can self-service, explore, and build solutions independently."
