@@ -71,23 +71,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DropdownButton">
-      <HintPath>..\Resources\References\DropdownButton.dll</HintPath>
+      <HintPath>Resources\References\DropdownButton.dll</HintPath>
     </Reference>
     <Reference Include="MetroFramework">
-      <HintPath>..\Resources\References\MetroFramework.dll</HintPath>
+      <HintPath>Resources\References\MetroFramework.dll</HintPath>
     </Reference>
     <Reference Include="MetroFramework.Design">
-      <HintPath>..\Resources\References\MetroFramework.Design.dll</HintPath>
+      <HintPath>Resources\References\MetroFramework.Design.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ModernFolderBrowserDialog">
-      <HintPath>..\Resources\References\ModernFolderBrowserDialog.dll</HintPath>
+      <HintPath>Resources\References\ModernFolderBrowserDialog.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\Resources\References\Newtonsoft.Json.dll</HintPath>
+      <HintPath>Resources\References\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="ObjectListView">
-      <HintPath>..\Resources\References\ObjectListView.dll</HintPath>
+      <HintPath>Resources\References\ObjectListView.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -274,10 +274,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon-full.ico" />
-    <None Include="MediaInfo.dll">
+    <None Include="Resources\MediaInfo.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="MediaInfo64.dll">
+    <None Include="Resources\MediaInfo64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
