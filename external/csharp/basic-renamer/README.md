@@ -219,3 +219,7 @@ grep -lr \.\.\\\\Resources ./Program | xargs -IX sed -i 's|\.\.\\Resources|Resou
   * https://www.nuget.org/packages/MediaInfoDLL
   * https://www.nuget.org/packages/FolderBrowserEx
   * https://www.nuget.org/packages/BetterFolderBrowser
+---
+
+### Author
+[Serguei Kouzmine](kouzmine_serguei@yahoo.com)
