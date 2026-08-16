@@ -12,11 +12,14 @@ using TestUtils;
 namespace Test {
 	[TestFixture]
 	public class StringExtensionTest{
+		const string text = "A1 - What Shall We Do With the Drunken Sailor - Dschinghis Khan";
 		[Test]
 		public void test() {
-			String text = "A1 - Love Isn't Easy (But It Sure Is Hard Enough) - ABBA";
-			foreach (int size in Enumerable.Range(5, 20)) {
-				Console.WriteLine(String.Format("result: {0}", text.Squeeze(size)));
+			int min = 5;
+			int max = 20;
+			foreach (int size in Enumerable.Range(min, max - min + 1).Reverse()) {
+				var result =  text.Squeeze(size);
+				Console.WriteLine(String.Format("{0} -> result: {1} / {2} chars", size, result, result.Length));
 			}
 		}
 	}
