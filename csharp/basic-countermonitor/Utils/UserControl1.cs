@@ -146,8 +146,7 @@ namespace Utils
 			buffer.AddLast(row);
 		}
 
-		private void Commit()
-		{
+		private void Commit() {
 
 			var rows = buffer.ToList();
 			var now = DateTime.Now;
@@ -173,7 +172,8 @@ namespace Utils
 				"process_average " + average.ToString(CultureInfo.InvariantCulture) + "\n";
 			if (!String.IsNullOrEmpty(this.targetUrl))
 				MetricSinkHelper.push(this.targetUrl, body);
-			
+			System.Diagnostics.Debug.WriteLine(String.Format("Posted metric to \"{0}\": {1}", this.targetUrl, body));
+
 			var fields = new List<string> {
 				DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
 				average.ToString("F2")

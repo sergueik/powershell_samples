@@ -54,7 +54,8 @@
   <ItemGroup>
     <Compile Include="Configuration.cs" />
     <Compile Include="EnvVars.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="RegexExtension.cs" />
+    <Compile Include="StringExtension.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

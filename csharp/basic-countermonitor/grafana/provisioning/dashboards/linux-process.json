@@ -1,0 +1,55 @@
+{
+   "panels": [
+      {
+         "fieldConfig": {
+            "defaults": {
+               "unit": "decbytes"
+            }
+         },
+         "targets": [
+            {
+               "expr": "process_rss_mb{cmd=~\"$cmd\"}",
+               "refId": "A"
+            }
+         ],
+         "title": "RSS Memory",
+         "type": "timeseries"
+      },
+      {
+         "fieldConfig": {
+            "defaults": {
+               "unit": "decbytes"
+            }
+         },
+         "targets": [
+            {
+               "expr": "process_vsz_mb{cmd=~\"$cmd\"}",
+               "refId": "A"
+            }
+         ],
+         "title": "Virtual Memory",
+         "type": "timeseries"
+      },
+      {
+         "fieldConfig": {
+            "defaults": {
+               "unit": "short"
+            }
+         },
+         "targets": [
+            {
+               "expr": "process_majflt{cmd=~\"$cmd\"}",
+               "refId": "A"
+            }
+         ],
+         "title": "Major Faults",
+         "type": "timeseries"
+      }
+   ],
+   "refresh": "5s",
+   "schemaVersion": 38,
+   "timezone": "browser",
+   "title": "Linux Process Metrics",
+   "uid": "linux-process",
+   "version": 1
+}

@@ -5,17 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Utils
-{
+namespace Utils {
 
-	public static class Extensions
-	{
+	public static class RegexExtension {
 		private static string result = null;
 		private static Regex regex;
 		private static MatchCollection matches;
 
-		public static string FindMatch(this string text, string matchPattern, string matchTag)
-		{
+		public static string FindMatch(this string text, string matchPattern, string matchTag) {
 			result = null;
 			regex = new Regex(matchPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 			matches = regex.Matches(text);
@@ -31,8 +28,7 @@ namespace Utils
 			return result;
 		}
 
-		public static string FindMatch(this string text, string matchPattern)
-		{
+		public static string FindMatch(this string text, string matchPattern) {
 			string generated_tag = matchPattern.FindMatch("(?:<(?<result>[^>]+)>)", "result");
 			result = null;
 			regex = new Regex(matchPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled

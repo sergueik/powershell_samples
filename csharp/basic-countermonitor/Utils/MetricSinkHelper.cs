@@ -5,17 +5,12 @@ using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Utils
-{
-	public static class MetricSinkHelper
-	{
-		// NOTE: avoid using (var client = new HttpClient())
-		// which is a widespread anti-pattern in older codebases.
+namespace Utils {
+	public static class MetricSinkHelper {
+		// NOTE: avoid using (var client = new HttpClient()) which is a widespread anti-pattern in older codebases
 		private static readonly HttpClient httpClient = new HttpClient();
-		public static void push(string targetUrl, string body)
-		{
-			
-			
+		public static void push(string targetUrl, string body) {
+
 			// https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpclient.postasync?view=netframework-4.5
 			// https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.continuewith?view=netframework-4.5
 			// https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpresponsemessage?view=netframework-4.5

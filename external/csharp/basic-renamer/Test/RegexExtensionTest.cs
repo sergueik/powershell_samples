@@ -7,16 +7,12 @@ using System.Linq;
 using NUnit.Framework;
 
 using Utils;
+using TestUtils;
 
-namespace Test
-{
+namespace Test {
 	[TestFixture]
-	public class ExtensionTest
-	{
-		// NOTE: unused
-		private const string name = @"(01) Artist Title";
-		private const string matchPattern = @"\\((?<index>[AB0-9][0-9]+)\\)\\s+(?<artist>[^ ].+[^ ])\\s+(?<title>[^ ].+)";
-		private const string newname = @"<index> - <title> - <artist>";
+	public class RegexExtensionTest {
+
 		private TestContext testContextInstance;
 
 		public TestContext TestContext {
@@ -56,11 +52,11 @@ namespace Test
 			var check = "<day>/<month>/<year>";
 			var result = resultRegex.Replace(check, (Match match) => {
 				string key = match.Groups[1].Value;
-				// Return dictionary value resultif it exists, otherwise keep original match
 				string value;
 				return dictionary.TryGetValue(key, out value) ? value : match.Value;
 			});
 			Assert.AreEqual(eu, result);
+			Console.WriteLine(dictionary.PrettyPrint());
 			// one cannot pass a dictionary lookup directly like dictionary["$1"] inside Regex.Replace. $1 is a regex replacement token string, not a live variable or group value evaluated at runtime
 			// System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary
 			Assert.Throws<KeyNotFoundException>(() => resultRegex.Replace(check, dictionary["$1"]));
