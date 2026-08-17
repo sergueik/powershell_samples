@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 using System.Linq;
 
-namespace Utils {
-	public static class StringExtension {
+namespace Utils
+{
+	public static class StringExtension
+	{
 		// static char[] separator = new char[] {' ', '-',' '};
 		static string separator = " - ";
 		// static string ellipsis = "\u2026";
 		static string ellipsis = "~";
 
-		static string SqueezeToken(string value, int maxLength, string filler) {
+		static string SqueezeToken(string value, int maxLength, string filler)
+		{
 			int available = maxLength - filler.Length;
 			int left = (available + 1) / 2;
 			int right = available / 2;
@@ -19,13 +23,19 @@ namespace Utils {
 		}
 		
 		public static string Squeeze(this string text, int maxLength) {
-			var tokens = text.Split(separator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-			tokens = Regex.Split(text, Regex.Escape(separator));
-			var candidate = tokens.Select(( string value, int index) => new { value, index }).Where(x => x.value.Length > maxLength).OrderByDescending(x => x.value.Length).FirstOrDefault();
+			var result = text; // shoul use copy ?
+			while (result.Length > maxLength + 10) {
+				var tokens = Regex.Split(result, Regex.Escape(separator));
+			
+				var candidate = tokens.Select(( string value, int index) => new { value, index }).OrderByDescending(x => x.value.Length).Take(2).ToList().Shuffle().FirstOrDefault(); 
+				if (candidate != null){
+					Debug.WriteLine(String.Format("candidate: {0} length : {1}",candidate, result.Length));
+					result = string.Join(separator, tokens.Select((value, index) => index == candidate.index ? SqueezeToken(value, value.Length - 1, ellipsis) : value));
 
-			if (candidate == null)
-				return text;
-			return string.Join(separator, tokens.Select((value, index) => index == candidate.index ? SqueezeToken(value, maxLength, ellipsis) : value));
+				}				
+				
+			}
+			return result;
 		}
 	}
 }

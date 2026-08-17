@@ -15,8 +15,8 @@ namespace Test {
 		const string text = "A1 - What Shall We Do With the Drunken Sailor - Dschinghis Khan";
 		[Test]
 		public void test() {
-			int min = 5;
-			int max = 20;
+			int min = 30;
+			int max = 50;
 			foreach (int size in Enumerable.Range(min, max - min + 1).Reverse()) {
 				var result =  text.Squeeze(size);
 				Console.WriteLine(String.Format("{0} -> result: {1} / {2} chars", size, result, result.Length));

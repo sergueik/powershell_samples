@@ -44,6 +44,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="FileMoveTest.cs" />
     <Compile Include="RegexExtensionTest.cs" />
     <Compile Include="EnvVarsTest.cs" />
     <Compile Include="StringExtensionTest.cs" />
