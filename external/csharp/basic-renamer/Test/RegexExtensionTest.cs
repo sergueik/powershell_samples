@@ -33,11 +33,11 @@ namespace Test {
 			var us = date.ToString("MM/dd/yyyy");
 			var eu = date.ToString("dd/MM/yyyy");
 
-			var dateDattern = @"(?<month>\d{2})/(?<day>\d{2})/(?<year>\d{4})";
+			var datePattern = @"(?<month>\d{2})/(?<day>\d{2})/(?<year>\d{4})";
 
-			Assert.IsTrue(Regex.IsMatch(us, "^" + dateDattern + "$"));
+			Assert.IsTrue(Regex.IsMatch(us, "^" + datePattern + "$"));
 
-			var dictionary = us.FindMatches(dateDattern);
+			var dictionary = us.FindMatches(datePattern);
 			Assert.NotNull(dictionary);
 			// novel NUnit 3.0 features - That, Does
 			// Assert.That(dictionary.Keys, Does.Contain("month"));
