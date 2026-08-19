@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Configuration.cs" />
     <Compile Include="EnvVars.cs" />
+    <Compile Include="FileMover.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="RegexExtension.cs" />
     <Compile Include="StringExtension.cs" />

@@ -52,7 +52,7 @@ namespace Test {
 				var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
 				var extension = Path.GetExtension(file);
 				var fileDirectoryName = Path.GetDirectoryName(file);
-				var newName = GetNewName(fileNameWithoutExtension,"^(?<id>[0-9]+)_(?<artist>[^-]+) - (?<title>.+)$","<id> - <title> - <artist>");
+				var newName = FileMover.GetNewName(fileNameWithoutExtension,"^(?<id>[0-9]+)_(?<artist>[^-]+) - (?<title>.+)$","<id> - <title> - <artist>");
 				if (String.IsNullOrEmpty(newName)) {
 					Console.WriteLine("Not renaming {0}", file);
 					continue;
@@ -72,20 +72,6 @@ namespace Test {
 				}
 				File.Move(file, newFilePath);
 			}
-		}
-		
-		private string GetNewName(string oldName, string oldNamePattern, string newNamePattern) {
-			var dictionary = oldName.FindMatches(oldNamePattern);
-			// Dictionary is a collection one can count
-			if (dictionary == null || dictionary.Count == 0) 
-				return null;
-			var resultRegex = new Regex("<([^>]+)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-			var result = resultRegex.Replace(newNamePattern, (Match match) => {
-				string key = match.Groups[1].Value;
-				string value;
-				return dictionary.TryGetValue(key, out value) ? value : match.Value;
-			});
-			return result;
 		}
 	}
 }
