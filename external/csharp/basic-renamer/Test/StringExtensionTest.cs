@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using System.Linq;
 
 using NUnit.Framework;
 
 using Utils;
-using TestUtils;
 
 namespace Test {
 	[TestFixture]

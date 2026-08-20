@@ -5,8 +5,6 @@ using System.Text.RegularExpressions;
 
 namespace Utils {
 	public class FileMover {
-		// constants are already static by default - CS0504
-		// the only way to instantiate a non-null reference type is by executing code at run-time - const field of a reference type other than string can only be initialized with null - CS0134
 		private static readonly Regex resultRegex = new Regex("<([^>]+)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 		public static string GetNewName(string oldName, string oldNamePattern, string newNamePattern) {
 			var dictionary = oldName.FindMatches(oldNamePattern);

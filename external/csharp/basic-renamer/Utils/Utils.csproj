@@ -57,6 +57,7 @@
     <Compile Include="FileMover.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="RegexExtension.cs" />
+    <Compile Include="Renamer.cs" />
     <Compile Include="StringExtension.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

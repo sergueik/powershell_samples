@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +20,7 @@ namespace Test {
 		}
 
 		[TestFixtureTearDown]
-		public static void Cleanup()
-		{
+		public static void Cleanup() {
 		}
 
 		[Test]
