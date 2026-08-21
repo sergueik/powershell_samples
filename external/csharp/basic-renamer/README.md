@@ -4,7 +4,189 @@ replica of [renamer](https://github.com/SetsunaF/Renamer)
 an  easy to use massive file renamer with custom  Windows Form like UI.
 useful for mormalizing media filenames for a constrained playback/display device
 
+### Background
 
+Document is a massive directory of everything and a kitchen sink, which includes the Visuo drawing Word itself can not handle directly
+```
+document.docx
+│
+├── [Content_Types].xml
+│
+├── _rels/
+│   └── .rels
+│
+├── docProps/
+│   ├── app.xml
+│   ├── core.xml
+│   └── custom.xml                 # optional
+│
+└── word/
+    ├── document.xml               # main document body
+    │
+    ├── _rels/
+    │   └── document.xml.rels      # relationships from document.xml
+    │
+    ├── styles.xml
+    ├── settings.xml
+    ├── fontTable.xml
+    ├── webSettings.xml
+    │
+    ├── numbering.xml              # lists / numbering
+    ├── comments.xml               # optional
+    ├── footnotes.xml              # optional
+    ├── endnotes.xml               # optional
+    │
+    ├── theme/
+    │   └── theme1.xml
+    │
+    ├── media/
+    │   ├── image1.png
+    │   ├── image2.jpeg
+    │   └── ...
+    │
+    ├── embeddings/
+    │   ├── oleObject1.bin
+    │   └── ...
+    │
+    └── charts/
+        ├── chart1.xml
+        └── ...
+```
+Older Office:
+
+```code
+document.doc
+│
+├── Root Entry
+│
+├── WordDocument
+├── 0Table / 1Table
+├── Data
+│
+├── ObjectPool/
+│   ├── _123456789/
+│   │   ├── CompObj
+│   │   ├── Ole
+│   │   └── ...
+│   └── ...
+│
+└── other storages / streams
+```
+the entries in the hieratchy above  weren't true filesystem *directories* and *files*. They were *storages* and *streams* inside a single *Compound Binary* File (CFB).
+
+Older binary Office documents used OLE Structured Storage, which presented the contents of a single file as a hierarchical collection of storages and streams through interfaces such as IStorage and IStream
+
+
+```
+Vintage .doc                         Modern .docx
+────────────                         ────────────
+
+Compound File                    ZIP / OPC package
+     │                                  │
+     ├── Storage                        ├── directories
+     │                                  │
+     └── Stream                         └── parts/files
+            │                                  │
+            └── binary data                    └── XML/binary resources
+```
+packing dilemma
+
+```code
+┌───────────────────────────────┐
+│       BUSINESS PROCESS        │
+│                               │
+│  Word document                │
+│    └── embedded Visio         │
+│         { proprietary schema }│
+│          └── diagram          │
+└───────────────┬───────────────┘
+                │
+                │  extract payload
+                ▼
+┌───────────────────────────────┐
+│        VISIO RESOURCE         │
+│                               │
+│ shapes + connectors + context │
+│ + IDE details (zoom,font,color│
+│ + internal relationships      │
+└───────────────┬───────────────┘
+                │
+                │  semantic extraction
+                ▼
+┌───────────────────────────────┐
+│      MERMAID REPRESENTATION   │
+│                               │
+│        A ───► B               │
+│         │                     │
+│         └──► C                │
+│                               │
+│   business-relevant           │
+│   deliberately lossy          │
+└───────────────┬───────────────┘
+                │
+                │  reason / modify / test
+                ▼
+┌───────────────────────────────┐
+│            EXPERIMENT         │
+│                               │
+│    "Is it calling foo?"       │
+│   "Does it really need bar?"  │
+│ "Can it interact with baz?"   │
+└───────────────┬───────────────┘
+                │
+                │  final verdict
+                ▼
+        ┌──────────────────┐
+        │ ORIGINAL SOURCE  │
+        │   = authority    │
+        └──────────────────┘
+```
+
+|OLE Structured Storage | OPC / Open XML|
+|-----------------------|---------------|
+|`StgOpenStorage()`     | open ZIP package|
+|`IStorage`                 | package / part hierarchy|
+|`IStorage::OpenStream()`   | open package part|
+|`IStorage::OpenStorage()`  | navigate relationships/parts|
+|`IStream`                  | stream access|
+
+|Expensive path|Proven cheap path|
+|--------------|-----------------|
+|Word → OLE → Visio → inspect|Word → extract Visio payload|
+|BP/UiPath → proprietary internals → inspect|BP/UiPath → extract payload|
+|Work directly on system of record|Work on semantic projection|
+|Every experiment touches original|Experiments touch Mermaid|
+|High operational cost|Low-cost hypothesis testing|
+|Final answer still requires judgment|Final answer checked against original|
+
+Given __Visio__ is installed locally → one can *ask* Visio itself about its drawing
+
+```code
+' interart with Visio asking it to interpret its own document.
+
+Dim visApp, visDoc, visPage, visShape
+Dim filename: filename = "drawing.vsdx"
+
+Dim visApp:Set visApp = CreateObject("Visio.Application"): visApp.Visible = False
+
+Dim visDoc: Set visDoc = visApp.Documents.Open(filename)
+
+For Each visPage In visDoc.Pages
+    For Each visShape In visPage.Shapes
+
+        WScript.Echo _
+            "  [" & visShape.ID & "] " & _
+            "Name=" & visShape.Name & _
+            "  Text=" & visShape.Text & _
+            "       Type=" & visShape.Type & _
+            "  Master=" & visShape.Master.Name
+
+    Next
+Next
+
+visDoc.Close: visApp.Quit: Set visShape = Nothing: Set visPage = Nothing: Set visDoc = Nothing: Set visApp = Nothing
+```
+### Usage
 The scenario
 
 
