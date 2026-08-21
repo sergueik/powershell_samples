@@ -8,21 +8,22 @@ using Utils;
 namespace Test {
 	[TestFixture]
 	public class RenamerTest {
-		const string extension = "wav";
-		const string oldNamePattern  ="^(?<id>[0-9]+)_(?<artist>[^-]+) - (?<title>.+)$";
-		const string newNamePattern ="<id> - <title> - <artist>";
-	private const string directoryName =
-			@"C:\Users\kouzm\Desktop\Music\Russian\Fantastique - Fantastique (2006)";
+		const string extension = "flac";
+		const string oldNamePattern = "^(?<id>[0-9]+)\\. (?<artist>[^-]+) - (?<title>.+)$";
+		const string newNamePattern = "<id> - <title> - <artist>";
+		private const string directoryName =
+			@"C:\Users\kouzm\Desktop\Music\Cal Tjader\Cal Tjader - Both Sides Of The Coin - flac";
 
 		[Description("Rename files")]
 		[Test]
-		public void test() {
+		public void test()
+		{
 			var renamer = new Renamer();
 			renamer.Extension = extension;
-				renamer.DirectoryName = directoryName;
-				renamer.NewNamePattern = newNamePattern;
-				renamer.OldNamePattern = oldNamePattern;
-				renamer.Rename();
+			renamer.DirectoryName = directoryName;
+			renamer.NewNamePattern = newNamePattern;
+			renamer.OldNamePattern = oldNamePattern;
+			renamer.Rename();
 		}
 	}
 	// TODO: add test GetFiles: C:\Users\kouzm\Desktop\Musi	c\Russian\Fantastique - Fantastique (2006) *.wav

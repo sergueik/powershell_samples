@@ -24,9 +24,9 @@
 
 
 param (
-	[string] $old = '^(?<id>[0-9]+)_(?<artist>[^-]+) - (?<title>.+)$',
+	[string] $old = '^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$',
 	[string] $new = '<id> - <title> - <artist>',
-	[string] $extension = 'wav',
+	[string] $extension = 'flac',
   [switch]$flag
   # currently unused
 )
@@ -135,7 +135,7 @@ namespace Utils {
 				var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
 				var extension = Path.GetExtension(file);
 				var fileDirectoryName = Path.GetDirectoryName(file);
-				var newName = GetNewName(fileNameWithoutExtension, "^(?<id>[0-9]+)_(?<artist>[^-]+) - (?<title>.+)$", "<id> - <title> - <artist>");
+				var newName = GetNewName(fileNameWithoutExtension, this.oldNamePattern , this.newNamePattern);
 				if (String.IsNullOrEmpty(newName)) {
 					Debug.WriteLine(String.Format("Not renaming {0}", file));
 					continue;
@@ -163,7 +163,8 @@ namespace Utils {
 $o = new-object Utils.Renamer
 
 $o.Extension = $extension
-$o.DirectoryName = $directory
+$o.DirectoryName = (resolve-path -path '.').Path
 $o.NewNamePattern = $new
 $o.OldNamePattern = $old
+write-host $o.DirectoryName
 $o.Rename()

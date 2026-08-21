@@ -77,7 +77,7 @@ namespace Utils {
 				var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
 				var extension = Path.GetExtension(file);
 				var fileDirectoryName = Path.GetDirectoryName(file);
-				var newName = GetNewName(fileNameWithoutExtension, "^(?<id>[0-9]+)_(?<artist>[^-]+) - (?<title>.+)$", "<id> - <title> - <artist>");
+				var newName = GetNewName(fileNameWithoutExtension, this.oldNamePattern , this.newNamePattern);
 				if (String.IsNullOrEmpty(newName)) {
 					Debug.WriteLine(String.Format("Not renaming {0}", file));
 					continue;
