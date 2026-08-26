@@ -24,22 +24,25 @@ param (
 	# "^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$" 
 	[string] $new = '<id> - <title> - <artist>',
 	[string] $extension = 'flac',
-  [switch]$probe,
-  [switch]$flag
-  # currently unused
+  [switch] $probe,
+  [switch] $verbose,
+  [switch] $unused_flag
 )
-
 [bool]$probe_flag = [bool]$psboundparameters['probe'].ispresent
-write-host ('switch arguments: probe: {0}' -f $probe_flag)
-write-host -nonewline 'implicit arguments: '
-write-host -nonewline ('"{0}" = "{1}" ' -f 'old', $old)
-write-host -nonewline ('"{0}" = "{1}" ' -f 'new', $new)
-write-host -nonewline ('"{0}" = "{1}" ' -f 'extension', $extension)
-write-host ''
-if ($args.Count -gt 1 ) {
-  write-host ('{0} positional arguments: {1}' -f $args.Count, ($args -join ','))
-} else {
-  write-host 'no positional arguments'
+
+[bool]$verbose_flag = [bool]$psboundparameters['verbose'].ispresent
+if ($verbose_flag) {
+  write-host ('switch arguments: probe: {0}' -f $probe_flag)
+  write-host -nonewline 'implicit arguments: '
+  write-host -nonewline ('"{0}" = "{1}" ' -f 'old', $old)
+  write-host -nonewline ('"{0}" = "{1}" ' -f 'new', $new)
+  write-host -nonewline ('"{0}" = "{1}" ' -f 'extension', $extension)
+  write-host ''
+  if ($args.Count -gt 1 ) {
+    write-host ('{0} positional arguments: {1}' -f $args.Count, ($args -join ','))
+  } else {
+    write-host 'no positional arguments'
+  }
 }
 # debug
 # exit
@@ -165,38 +168,45 @@ namespace Utils {
 
 
 if ($probe_flag) {
-$masks = @(
-  @{ 
-    'Regex'='^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$';
-    'Name' = 'x';
-  },
-  @{
-    'Regex' = "^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$";
-    'Name' = 'y';
+
+  $masks = @(  
+    '^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$' , 
+    '^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$'
+  )
+  if ($source_dir -eq $null ) {
+    $source_dir = (resolve-path -path '.').path
   }
-)
-
-
-foreach ($file in Get-ChildItem -Path $SourceDir -File) {
-
-    foreach ($mask in $masks) {
-        write-host $mask.Name
-        if ($file.BaseName -match $mask.Regex) {
-
-            write-host ("Matched {0}: {1}" -f $mask.Name, $file.BaseName)
-
-            $candidate = [PSCustomObject]@{
-                File    = $file.BaseName
-                Mask    = $mask.Name
-                Id      = $Matches['id']
-                Artist  = $Matches['artist'].Trim()
-                Title   = $Matches['title'].Trim()
-            }
-
-            break
+  $hits = @{}
+  Get-ChildItem -Path $SourceDir -File | 
+    foreach-object {
+    $filename = $_.basename 
+    # TODO: write-verbose if -vebose flag gets through 
+    write-verbose ('testing file: {0}' -f $filename) 
+    @(0..($masks.Count -1) ) |
+    foreach-object { 
+      $id = $_
+      $mask = $masks[$id]
+      write-verbose ('testing mask: {0}' -f $mask) 
+      if ($filename -match $mask) {
+        write-verbose ("Matched mask # {0}: {1}" -f $id, $filename)
+        
+        $custom_object = [PSCustomObject]@{
+          File    = $fileName
+          Mask    = $mask
+          id      = $Matches['id']
+          Artist  = $Matches['artist'].Trim()
+          Title   = $Matches['title'].Trim()
         }
-    }
-}
+        write-verbose ('id      = {0}' -f $Matches['id'])
+        if (-not $hits.ContainsKey($id )) {
+          $hits[$id] = @()
+        }
+        $hits[$id] +=  $custom_object
+      }
+      #        break
+    } 
+  }
+  write-host ('{0} matching patterns found' -f $hits.count)
 } else {
   $o = new-object Utils.Renamer
   
