@@ -168,7 +168,7 @@ namespace Utils {
 
 
 if ($probe_flag) {
-
+  $run_flag = $false
   $masks = @(  
     '^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$' , 
     '^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$'
@@ -206,8 +206,22 @@ if ($probe_flag) {
       #        break
     } 
   }
-  write-host ('{0} matching patterns found' -f $hits.count)
-} else {
+  switch ($hits.count) {
+    0 {
+      write-host 'No matching patterns'      
+    }
+    1 {
+      write-host ('Matching pattern: "{0}"' -f $masks[$hits.Keys[0]])
+      $run_flag = $true
+      # proceed with replace   
+    } 
+    default { 
+      write-host ('Too many *({0}) matching patterns' -f $hits.Count)
+    }
+  }   
+} 
+
+if ($run_flag ){
   $o = new-object Utils.Renamer
   
   $o.Extension = $extension
