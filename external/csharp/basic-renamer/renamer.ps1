@@ -18,28 +18,31 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 
-# surprisingly, the PowerShell version becomes lighter, not heavier
-# usage $0 owner repo directory_path branch destination
-#       $0 url
-
-
 param (
 	[string] $old = '^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$',
+	# '(01) [Count Basie] Seventh Avenue Express' 
+	# "^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$" 
 	[string] $new = '<id> - <title> - <artist>',
 	[string] $extension = 'flac',
+  [switch]$probe,
   [switch]$flag
   # currently unused
 )
 
+[bool]$probe_flag = [bool]$psboundparameters['probe'].ispresent
+write-host ('switch arguments: probe: {0}' -f $probe_flag)
 write-host -nonewline 'implicit arguments: '
 write-host -nonewline ('"{0}" = "{1}" ' -f 'old', $old)
 write-host -nonewline ('"{0}" = "{1}" ' -f 'new', $new)
 write-host -nonewline ('"{0}" = "{1}" ' -f 'extension', $extension)
+write-host ''
 if ($args.Count -gt 1 ) {
   write-host ('{0} positional arguments: {1}' -f $args.Count, ($args -join ','))
 } else {
-  write-host 'no positional artguments'
+  write-host 'no positional arguments'
 }
+# debug
+# exit
 <#
 if ($args.Count -gt 1 ) {
   $old = $args[0]
@@ -160,11 +163,47 @@ namespace Utils {
 }
 "@ -ReferencedAssemblies 'System.Windows.Forms.dll'
 
-$o = new-object Utils.Renamer
 
-$o.Extension = $extension
-$o.DirectoryName = (resolve-path -path '.').Path
-$o.NewNamePattern = $new
-$o.OldNamePattern = $old
-write-host $o.DirectoryName
-$o.Rename()
+if ($probe_flag) {
+$masks = @(
+  @{ 
+    'Regex'='^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$';
+    'Name' = 'x';
+  },
+  @{
+    'Regex' = "^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$";
+    'Name' = 'y';
+  }
+)
+
+
+foreach ($file in Get-ChildItem -Path $SourceDir -File) {
+
+    foreach ($mask in $masks) {
+        write-host $mask.Name
+        if ($file.BaseName -match $mask.Regex) {
+
+            write-host ("Matched {0}: {1}" -f $mask.Name, $file.BaseName)
+
+            $candidate = [PSCustomObject]@{
+                File    = $file.BaseName
+                Mask    = $mask.Name
+                Id      = $Matches['id']
+                Artist  = $Matches['artist'].Trim()
+                Title   = $Matches['title'].Trim()
+            }
+
+            break
+        }
+    }
+}
+} else {
+  $o = new-object Utils.Renamer
+  
+  $o.Extension = $extension
+  $o.DirectoryName = (resolve-path -path '.').Path
+  $o.NewNamePattern = $new
+  $o.OldNamePattern = $old
+  write-host $o.DirectoryName
+  $o.Rename()
+}
