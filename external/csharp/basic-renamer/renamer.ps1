@@ -166,18 +166,18 @@ namespace Utils {
 }
 "@ -ReferencedAssemblies 'System.Windows.Forms.dll'
 
-
+if ($source_dir -eq $null ) {
+  $source_dir = (resolve-path -path '.').path
+}
+write-host ('Examine {0}' -f $source_dir ) 
 if ($probe_flag) {
   $run_flag = $false
   $masks = @(  
     '^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$' , 
     '^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$'
   )
-  if ($source_dir -eq $null ) {
-    $source_dir = (resolve-path -path '.').path
-  }
   $hits = @{}
-  Get-ChildItem -Path $SourceDir -File | 
+  get-childitem -path $source_dir -file | 
     foreach-object {
     $filename = $_.basename 
     # TODO: write-verbose if -vebose flag gets through 
@@ -186,7 +186,7 @@ if ($probe_flag) {
     foreach-object { 
       $id = $_
       $mask = $masks[$id]
-      write-verbose ('testing mask: {0}' -f $mask) 
+      write-verbose ('testing mask: {0}' -f $mask)
       if ($filename -match $mask) {
         write-verbose ("Matched mask # {0}: {1}" -f $id, $filename)
         
@@ -211,12 +211,19 @@ if ($probe_flag) {
       write-host 'No matching patterns'      
     }
     1 {
-      write-host ('Matching pattern: "{0}"' -f $masks[$hits.Keys[0]])
+      # overwrite the command line argument 
+      $old = $masks[$hits.Keys[0]]
+      write-host ('Matching pattern: "{0}"' -f $old )
       $run_flag = $true
       # proceed with replace   
     } 
     default { 
-      write-host ('Too many *({0}) matching patterns' -f $hits.Count)
+      write-host ('Ambiguous: {0} matching patterns' -f $hits.Count)
+
+        $hits.Keys |foreach-object {
+         $id  = $_
+         write-host ('{0}: "{1}"' -f $id, $masks[$id])
+      }
     }
   }   
 } 
@@ -225,9 +232,10 @@ if ($run_flag ){
   $o = new-object Utils.Renamer
   
   $o.Extension = $extension
-  $o.DirectoryName = (resolve-path -path '.').Path
+  $o.DirectoryName = $source_dir
   $o.NewNamePattern = $new
   $o.OldNamePattern = $old
   write-host $o.DirectoryName
   $o.Rename()
 }
+remove-variable -name source_dir
