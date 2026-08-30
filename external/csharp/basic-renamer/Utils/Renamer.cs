@@ -75,16 +75,17 @@ namespace Utils {
 			}
 			foreach (var file in files) {
 				var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
-				var extension = Path.GetExtension(file);
+				var fileExtension = Path.GetExtension(file);
 				var fileDirectoryName = Path.GetDirectoryName(file);
-				var newName = GetNewName(fileNameWithoutExtension, this.oldNamePattern , this.newNamePattern);
-				if (String.IsNullOrEmpty(newName)) {
+				var newFileName = GetNewName(fileNameWithoutExtension, this.oldNamePattern , this.newNamePattern);
+
+				if (String.IsNullOrEmpty(newFileName)) {
 					Debug.WriteLine(String.Format("Not renaming {0}", file));
 					continue;
 				}
-				var newFilePath = Path.Combine(directoryName, newName + extension);
+				var newFilePath = Path.Combine(directoryName, newFileName + fileExtension);
 
-				Debug.WriteLine(String.Format("filename: \"{0}\" extension: \"{1}\" directory: \"{2}\" new name: \"{3}\" new file path: \"{4}\"", fileNameWithoutExtension, extension, fileDirectoryName, newName, newFilePath));
+				Debug.WriteLine(String.Format("filename: \"{0}\" extension: \"{1}\" directory: \"{2}\" new name: \"{3}\" new file path: \"{4}\"", fileNameWithoutExtension, fileExtension, fileDirectoryName, newFileName, newFilePath));
 
 				if (!File.Exists(file)) {
 					Debug.WriteLine(String.Format("Source file missing"));

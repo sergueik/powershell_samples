@@ -965,6 +965,30 @@ Collection: The data is sent to an OpenTelemetry Collector, a component that can
 Exporting: The Collector exports the processed data to an observability backend	 (e.g., a database or visualization tool) for storage and analysis.
 
 
+### Background Info — In Retrospect
+
+The project effectively started from **one relevant code snippet** demonstrating one of the many obscure, file/directory-like operations exposed through Windows `IStorage`:
+
+`HRESULT SetClass(Guid clsid);`
+
+The snippet was found in the [original example](https://learn.microsoft.com/en-us/answers/questions/1358539/get-chm-title).
+
+In retrospect, this turned into a rather impressive **Rube Goldberg machine for a task that 7-Zip could already perform**: instead of invoking a mature external tool, the implementation went through COM activation, `IITStorage`, `IStorage`, `IEnumSTATSTG`, HRESULT handling, COM interop and explicit object lifetime management.
+
+After roughly a week of tuning the implementation, the major milestone was:
+
+> **We now had two APIs working.**
+
+The one guaranteed positive outcome was therefore not necessarily a better production solution, but the somewhat less marketable achievement:
+
+> **I can do that now.**
+
+An additional, entirely unplanned benefit was an **OOM incident caused by walking the storage**, subsequently repurposed as material for Elasticsearch logging and visualization practice.
+
+In other words: technically useful, educationally valuable, and in retrospect unmistakably a **Rube Goldberg machine for opening a door that was already unlocked.**
+
+
+
 ---
 ### See Also
 
