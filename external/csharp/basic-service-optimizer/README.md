@@ -1,6 +1,9 @@
 ### Info
 
-Replica of [service optimizer](https://github.com/imribiy/service-optimizer) aplication that lists the services that are actively running on Windows and whose startup status is automatic and allows to disable them
+Replica of [service optimizer](https://github.com/imribiy/service-optimizer)
+aplication that lists the services that are actively running on Windows and whose startup status is automatic and allows to disable them
+
+![configuration](screenshots/capture-configuration.png)
 
 ### NOTE
 
@@ -37,5 +40,4 @@ unzip -x ~/Downloads/PSTools.zip PsExec.exe PsExec64.exe
 
 ---
 ### Author
-
-
+[Serguei Kouzmine](kouzmine_serguei@yahoo.com)
