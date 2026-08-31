@@ -42,7 +42,7 @@ namespace LoginTest
     {
 
       Form fSplash = new Form();
-      fSplash.BackgroundImage = System.Drawing.Image.FromFile(@"backg.bmp");
+      fSplash.BackgroundImage = System.Drawing.Image.FromFile(@"2311dd55-e869-45a5-9d6f-ebf002a63c37.png");
 
       fSplash.BackgroundImageLayout = ImageLayout.Center;
       fSplash.FormBorderStyle = FormBorderStyle.None;
