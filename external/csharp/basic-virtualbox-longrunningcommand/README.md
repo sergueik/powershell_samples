@@ -1218,6 +1218,12 @@ blkid
 /dev/sdb3: UUID="df6307c6-7f8e-4b3c-9d29-3058848f4da3" TYPE="ext4" PARTUUID="7606d6b8-03"
 ```
 
+### Note
+
+`normnfc.nlp` is a system data file used by the Microsoft .NET Framework to handle Unicode character normalization
+
+`normidna.nlp` is a data file used by the Microsoft .NET Framework for handling Internationalized Domain Names in Applications (IDNA) normalization
+
 ### The event
 
 
@@ -1271,7 +1277,8 @@ if (true) {
     + [older releases](https://github.com/atom/atom/releases/tag/v1.60.0)  
  
  * https://icons8.com/icon/50196/rest-api  
-
+ * https://github.com/mikemajesty/cooldatagridview 
+ * https://github.com/datarza/DataViewExtenders
 ----
 
 ### Author

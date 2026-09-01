@@ -113,9 +113,49 @@ namespace Program.Properties {
 		/// <summary>
 		///   Looks up a localized resource of type System.Drawing.Bitmap.
 		/// </summary>
+		internal static System.Drawing.Bitmap linux {
+			get {
+				object obj = ResourceManager.GetObject("linux", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized resource of type System.Drawing.Bitmap.
+		/// </summary>
 		internal static System.Drawing.Bitmap QuestionMark {
 			get {
 				object obj = ResourceManager.GetObject("QuestionMark", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized resource of type System.Drawing.Bitmap.
+		/// </summary>
+		internal static System.Drawing.Bitmap redhat {
+			get {
+				object obj = ResourceManager.GetObject("redhat", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized resource of type System.Drawing.Bitmap.
+		/// </summary>
+		internal static System.Drawing.Bitmap ubuntu {
+			get {
+				object obj = ResourceManager.GetObject("ubuntu", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized resource of type System.Drawing.Bitmap.
+		/// </summary>
+		internal static System.Drawing.Bitmap windows {
+			get {
+				object obj = ResourceManager.GetObject("windows", resourceCulture);
 				return ((System.Drawing.Bitmap)(obj));
 			}
 		}

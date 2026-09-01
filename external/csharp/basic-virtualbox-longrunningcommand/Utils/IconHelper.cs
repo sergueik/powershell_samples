@@ -45,6 +45,8 @@ namespace Utils {
 			public static Image getImage(string os) { 
 				// NOTE: Windows Forms does not include built-in, pre-coded enum references (like StockIcons) that automatically populate the Image property
 				Image image = null;
+				// NOTE: cannot perform - class is in separate package
+				// Resources.ResourceManager.GetObject(os, CultureInfo.CurrentCulture);
 				var filename = "Resources/os_other.png";
 				Debug.WriteLine(String.Format("Determine icon for {0}", os));
 				foreach (KeyValuePair<string, string> keyValuePair  in iconLookup) {

@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Program.Properties;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 using Utils;
@@ -25,13 +26,13 @@ namespace Program {
 			item = new ToolStripMenuItem();
 			item.Text = "Explorer";
 			item.Click += new EventHandler(Explorer_Click);
-			item.Image = Resources.Explorer;
+			item.Image = (Bitmap)(Resources.ResourceManager.GetObject("Explorer", CultureInfo.CurrentCulture));
 			menu.Items.Add(item);
 
 			item = new ToolStripMenuItem();
 			item.Text = "About";
 			item.Click += new EventHandler(About_Click);
-			item.Image = Resources.About;
+			item.Image = (Bitmap)(Resources.ResourceManager.GetObject("About", CultureInfo.CurrentCulture));
 			menu.Items.Add(item);
 
 			sep = new ToolStripSeparator();
@@ -46,8 +47,13 @@ namespace Program {
 				// item.Click += new System.EventHandler(Exit_Click);
 			
 				// toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-				Image image = IconHelper.getImage(machines[id]["Guest OS"].ToLowerInvariant());
-				item.Image = image ?? Resources.QuestionMark;
+				Object imageObject = Resources.ResourceManager.GetObject(machines[id]["Guest OS"].ToLowerInvariant(), CultureInfo.CurrentCulture);
+				if (imageObject != null)
+					item.Image = (Bitmap)(imageObject);
+				else {
+					Image image = IconHelper.getImage(machines[id]["Guest OS"].ToLowerInvariant());
+					item.Image = image ?? (Bitmap)(Resources.ResourceManager.GetObject("QuestionMark", CultureInfo.CurrentCulture));
+				}
 				if (count > 1) {
 					item.Enabled = false;
 					if (count %2 ==0)
@@ -61,7 +67,7 @@ namespace Program {
 			item = new ToolStripMenuItem();
 			item.Text = "Exit";
 			item.Click += new System.EventHandler(Exit_Click);
-			item.Image = Resources.Exit;
+			item.Image = (Bitmap)(Resources.ResourceManager.GetObject("Exit", CultureInfo.CurrentCulture));
 			menu.Items.Add(item);
 
 			return menu;
