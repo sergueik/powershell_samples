@@ -7,7 +7,7 @@ Hypervisor VM extensions bridge on a selected VM running OS-specific code on a V
 ![ToolBar Context VM Chooser](screenshots/capture-toolbar-menu.png)
 
 here the disabled icon indicates the VM is present but is currently not powered up.
-#### State 
+#### State
 
 The toolmat menu is used to list the VirtualBox machines present on the host and to indicate their up to date status, with the crossed icon reserved to convey the machine is listed but is misconfogured / missing. The default "dieabled" state is for the case machine is present not running
 
@@ -63,7 +63,7 @@ sample argument echo script
 crash script:
 ```sh
 #!/bin/bash
-# This function calls itself forever. 
+# This function calls itself forever.
 # It fills up the computer's memory stack until it crashes.
 
 crash_function() {
@@ -122,7 +122,6 @@ with the Event log error showing the details:
 Activation context generation failed for "C:\\developer\\sergueik\\powershell\_samples\\external\\csharp\\basic-virtualbox-longrunningcommand\\Program\\bin\\Debug\\VboxManageSystemTrayApp.exe".Error in manifest or policy file "C:\\developer\\sergueik\\powershell\_samples\\external\\csharp\\basic-virtualbox-longrunningcommand\\Program\\bin\\Debug\\VboxManageSystemTrayApp.exe.Config" on line 9. Invalid Xml syntax.
 ```
 
-
 validate
 ```sh
 xml fo app.config
@@ -169,17 +168,11 @@ ICSharpCode.SharpDevelop.Project.ProjectLoadException: Error reading from C:\dev
 Expected EndGlobalSection
 
    at ICSharpCode.SharpDevelop.Project.SolutionLoader.ReadSection(Boolean isGlobal)
-
    at ICSharpCode.SharpDevelop.Project.SolutionLoader.ReadSolution(Solution solution, IProgressMonitor progress)
-
    at ICSharpCode.SharpDevelop.Project.SDProjectService.LoadSolutionFile(FileName fileName, IProgressMonitor progress)
-
    at ICSharpCode.SharpDevelop.Project.SDProjectService.OpenSolutionInternal(FileName fileName)
-
    at ICSharpCode.SharpDevelop.Project.SDProjectService.OpenSolutionOrProjectInternal(FileName fileName)
-
    at ICSharpCode.Core.FileUtility.<>c__DisplayClass63_0.<ObservedLoad>b__0()
-
    at ICSharpCode.Core.FileUtility.ObservedLoad(FileOperationDelegate loadFile, FileName fileName, String message, FileErrorPolicy policy)
 ---------------------------
 OK
@@ -264,7 +257,7 @@ You will not be able to use `Console.Error.WriteLine` and for `Debug.WriteLine` 
 
 ![Visual Studio](screenshots/capture-visual-studio.png)
 
-#### WOW6432 Patch 
+#### WOW6432 Patch
 when tun from __Visual Studio__ which is __64__ bit, __Start Debugging__ console shows:
 ```text
 Windows Platform Detection: is 64 bit: True
@@ -392,7 +385,60 @@ this is a test with argument: sample
 ```text
 this is a test with argument: sample aergument with spaces
 ```
+#### Install Vanilla Image
 
+> NOTE: VirtualBox Guest Additions likely not installed/ wrong version
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" list vms | findstr -ic:"Alpine39"
+```
+
+```text
+"Alpine39" {143fc8d2-8e84-4778-a58e-ae4ad83c41cc}
+```
+control
+```text
+"Xubuntu 22.04" {7e261a39-d356-4eb1-a8ed-75675b149241}
+```
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {143fc8d2-8e84-4778-a58e-ae4ad83c41cc} run --username vagrant --password vagrant --exe /bin/sh -- /bin/sh -c "/home/vagrant/login.sh testuser password"
+```
+
+```text
+VBoxManage.exe: error: Error starting guest session (current status is: terminated)
+
+```
+
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {143fc8d2-8e84-4778-a58e-ae4ad83c41cc} list processes
+```
+```text
+No active guest sessions found
+```
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {7e261a39-d356-4eb1-a8ed-75675b149241} run --username sergueik --password list files
+```
+```text
+VBoxManage.exe: error: No such file or directory on guest
+VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
+VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
+```
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {7e261a39-d356-4eb1-a8ed-75675b149241} run --username sergueik --password --exe /bin/sh -- /bin/sh -c "/home/sergueik/login.sh testuser password ''"
+```
+```text
+[INFO] Starting login test for testuser password
+```
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {7e261a39-d356-4eb1-a8ed-75675b149241} run --username sergueik --password --exe /bin/sh -- /bin/sh -c "/home/sergueik/login.sh testuser password '/home/sergueik/password.txt'"
+```
+```text
+[INFO] Starting login test for testuser 123
+```
 #### How this Version Works
 
 
@@ -568,9 +614,9 @@ an real Agatha Christie detective novel.
 Each error message is a clue rather than a conclusion:
 
   * VBoxManage may claim the specific machine is powered off, even though it is visibly running
-  * That the guest execution service is "not ready (yet)." 
+  * That the guest execution service is "not ready (yet)."
   * Insists that no registered machine exists
-  * Complains about an unexpected session state. 
+  * Complains about an unexpected session state.
 
 Individually, each message appears convincing; together, they gradually reveal what is actually happening
 
@@ -613,7 +659,7 @@ VBoxManage.exe list vms
 ```text
 Exception: The system cannot find the file specified
 ```
-NOTE: This may indicate the Oracle Virtual Box non standard install location  
+NOTE: This may indicate the Oracle Virtual Box non standard install location
 
 ```cmd
 VBoxManage.exe list vms
@@ -954,6 +1000,23 @@ The new practices are optimized for:
 
 ---
 
+The important
+point is that __Visio__ itself has an unavoidable structural toll before one 
+even get to the semantic payload
+
+The toll is structural, not semantic: you pay it before you know how much knowledge you actually need.
+
+
+That gives you a nice parallel:
+
+Word container
+Open → expand embedded objects → locate the payload → reason
+
+Visio container
+Open → reconstruct document model → traverse/resolve structure → locate the payload → reason
+
+
+
 ## Summary
 
 The transition from centralized enterprise SCM to distributed SCM changed the definition of confidence.
@@ -1244,12 +1307,12 @@ Message encrypted with policy:
 Need BOTH attributes to decrypt
 
 Key A  +  Key B  =  access
-```     
+```
 the bug effectively caused:```
-        Key A alone = access        
-```     
+        Key A alone = access
+```
         The frightening part is not that the encryption algorithm (AES, elliptic curves, etc.) was "broken." It is that the authorization logic embedded in the cryptographic scheme was broken.
-        
+
         A normal application bug might look like:
 
 ```
@@ -1273,11 +1336,11 @@ if (true) {
   * https://download.virtualbox.org/virtualbox/5.2.22/
   * https://download.virtualbox.org/virtualbox/5.2.22/Oracle_VM_VirtualBox_Extension_Pack-5.2.22-126460.vbox-extpack
   * __Atom__
-    + [Home Page](https://github.blog/news-insights/product-news/sunsetting-atom) - Archievd and sunsettied on December 15, 2022 
-    + [older releases](https://github.com/atom/atom/releases/tag/v1.60.0)  
- 
- * https://icons8.com/icon/50196/rest-api  
- * https://github.com/mikemajesty/cooldatagridview 
+    + [Home Page](https://github.blog/news-insights/product-news/sunsetting-atom) - Archievd and sunsettied on December 15, 2022
+    + [older releases](https://github.com/atom/atom/releases/tag/v1.60.0)
+
+ * https://icons8.com/icon/50196/rest-api
+ * https://github.com/mikemajesty/cooldatagridview
  * https://github.com/datarza/DataViewExtenders
 ----
 

@@ -47,13 +47,18 @@ namespace Program {
 				// item.Click += new System.EventHandler(Exit_Click);
 			
 				// toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-				Object imageObject = Resources.ResourceManager.GetObject(machines[id]["Guest OS"].ToLowerInvariant(), CultureInfo.CurrentCulture);
+				var guestOS = machines[id]["Guest OS"];
+				Debug.WriteLine(String.Format("Determine icon resource for {0}({1})", id, guestOS));
+
+				Object imageObject = Resources.ResourceManager.GetObject(guestOS.ToLowerInvariant(), CultureInfo.CurrentCulture);
 				if (imageObject != null)
 					item.Image = (Bitmap)(imageObject);
 				else {
-					Image image = IconHelper.getImage(machines[id]["Guest OS"].ToLowerInvariant());
+				Debug.WriteLine(String.Format("Determine icon file for {0}", guestOS));
+					Image image = IconHelper.getImage(guestOS.ToLowerInvariant());
 					item.Image = image ?? (Bitmap)(Resources.ResourceManager.GetObject("QuestionMark", CultureInfo.CurrentCulture));
 				}
+				// Mock the state of the machines
 				if (count > 1) {
 					item.Enabled = false;
 					if (count %2 ==0)
@@ -107,6 +112,7 @@ namespace Program {
 			// machines.Add("{aa7eaf83-18d1-4d7a-b20b-e98a9206c41b}", new Dictionary<string, string>() { { "Name", "default" }, { "Guest OS", "unknown" } });
 			// Virtual Box box images
 			machines.Add("{033248a8-18ef-4b52-8001-f9e7ebaaf3f7}", new Dictionary<string, string>() { { "Name", "Generic Alpine Virtualbox" }, { "Guest OS", "unknown" } });
+			machines.Add("{143fc8d2-8e84-4778-a58e-ae4ad83c41cc}", new Dictionary<string, string>() { { "Name", "Generic Alpine 3.9 Virtualbox" }, { "Guest OS", "linux" } });
 			machines.Add("{a48d8b60-7e07-406e-9244-d58bbd530fed}", new Dictionary<string, string>() { { "Name", "Generic Centos Virtualbox" }, { "Guest OS", "unknown" } });
 
 			foreach (var id in machines.Keys) {
