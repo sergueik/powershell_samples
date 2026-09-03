@@ -1,9 +1,9 @@
 ### Info
 
-WinForms app acting as a non-elevated memory watchdog wrapper for another executable.
+Windows Forms app acting as a non-elevated memory watchdog wrapper for another executable.
 Requirement is evidence collection, not active protection.
-Also Powershell version hosting the `Thread` dependent control in a Windows Form
-
+Also there is a Powershell version hosting the `Thread` dependent control in a Windows Form
+f
 So the watchdog app behaves like a passive observer:
 
 
@@ -53,7 +53,7 @@ type %temp%\loadaverage.csv | c:\Windows\system32\find.exe /v /c ""
 ### Background Info
 Background Info
 
-Given that Microsoft Windows continuously performs the heavy lifting every minute of every hour, collecting an log structurd set of performance counters ΓÇö both global system metrics and per-instance process data ΓÇö the telemetry foundation is already present before a single line of application code is written.
+Given that Microsoft Windows continuously performs the heavy lifting every minute of every hour, collecting an log structurd set of performance counters ' both global system metrics and per-instance process data ' the telemetry foundation is already present before a single line of application code is written.
 
 #### Available Counters
 
@@ -128,14 +128,14 @@ One can rhetorically ask: can we not take advantage of an operating system that 
 
 Borrowing from a certain unforgettable cinematic farewell: it is important to always try new things.
 
-__Fusion__ (managed and unmanaged) isnΓÇÖt just assembly binding  which it is on the surface ΓÇö in the managed/unmanaged context of .NET Framework, it also serves as a gatekeeper: it enforces code trust and licensing, and ensures that assemblies (and the OS/runtime) wonΓÇÖt function if licensing checks fail.
-__WPA__ (__Windows Product Activation__) is part of the same concept at the OS level: making the system refuse to run if it wasnΓÇÖt properly licensed.
+__Fusion__ (managed and unmanaged) isn't just assembly binding  which it is on the surface ' in the managed/unmanaged context of .NET Framework, it also serves as a gatekeeper: it enforces code trust and licensing, and ensures that assemblies (and the OS/runtime) won't function if licensing checks fail.
+__WPA__ (__Windows Product Activation__) is part of the same concept at the OS level: making the system refuse to run if it wasn't properly licensed.
 
 This move is contrary to almost every other decision Microsoft made, before or after:
 Historically, they monetized and controlled access via licensing, Fusion, WPA, IE bundling, etc.
-Suddenly, the GAC becomes free infrastructure ΓÇö no gate, no enforcement, no direct profit.
+Suddenly, the GAC becomes free infrastructure ' no gate, no enforcement, no direct profit.
 
-So what youΓÇÖre highlighting is a truly exceptional paradox in Microsoft history: they accidentally (or perhaps naively) created something ΓÇ£as open as UnixΓÇ¥ inside Windows, but without any financial benefit ΓÇö a rare crack in the otherwise highly controlled ecosystem.
+So what you're highlighting is a truly exceptional paradox in Microsoft history: they accidentally (or perhaps naively) created something "as open as Unix" inside Windows, but without any financial benefit - a rare crack in the otherwise highly controlled ecosystem.
 ### Usage
 
 * rebuild the complex project in the IDE or commandline
@@ -165,14 +165,19 @@ invoke-expression -command "$msbuild -p:FrameworkPathOverride=""${framework_path
 cmd %%-/c tree.com
 ```
 ```text
-Γö£ΓöÇΓöÇΓöÇpackages
-Γöé   ΓööΓöÇΓöÇΓöÇNUnit.2.6.4
-Γöé       ΓööΓöÇΓöÇΓöÇlib
-Γö£ΓöÇΓöÇΓöÇProgram
-Γö£ΓöÇΓöÇΓöÇscreenshots
-Γö£ΓöÇΓöÇΓöÇTest
-Γö£ΓöÇΓöÇΓöÇTestUtils
-ΓööΓöÇΓöÇΓöÇUtils
+├───Client
+├───grafana
+│   └───provisioning
+│       ├───dashboards
+│       └───datasources
+├───packages
+│   └───NUnit.2.6.4
+│       └───lib
+├───Program
+├───screenshots
+├───Test
+├───TestUtils
+└───Utils
 ```
 - the exact  path to `msbuild.exe` may vary with Windows release. To find, inspect the output of
 
@@ -362,7 +367,6 @@ ps -ef | grep "example.jwt-stub.jar" | grep "jav[a]" | awk 'NR==1 {print $2}'
 ./get_performance_counter.sh --name java --jar example.jwt-stub.jar --url http://localhost:9091/metrics/job/pidstat
 ```
 ```text
-./get_performance_counter.sh --name java --jar example.jwt-stub.jar --url http://localhost:9091/metrics/job/pidstat
 [INFO] process name : java
 [INFO] grep values  : example.jwt-stub.jar
 [INFO] url          : http://localhost:9091/metrics/job/pidstat
