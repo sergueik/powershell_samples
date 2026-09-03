@@ -7,7 +7,7 @@ Hypervisor VM extensions bridge on a selected VM running OS-specific code on a V
 ![ToolBar Context VM Chooser](screenshots/capture-toolbar-menu.png)
 
 here the disabled icon indicates the VM is present but is currently not powered up.
-#### State 
+#### State
 
 The toolmat menu is used to list the VirtualBox machines present on the host and to indicate their up to date status, with the crossed icon reserved to convey the machine is listed but is misconfogured / missing. The default "dieabled" state is for the case machine is present not running
 
@@ -63,7 +63,7 @@ sample argument echo script
 crash script:
 ```sh
 #!/bin/bash
-# This function calls itself forever. 
+# This function calls itself forever.
 # It fills up the computer's memory stack until it crashes.
 
 crash_function() {
@@ -122,7 +122,6 @@ with the Event log error showing the details:
 Activation context generation failed for "C:\\developer\\sergueik\\powershell\_samples\\external\\csharp\\basic-virtualbox-longrunningcommand\\Program\\bin\\Debug\\VboxManageSystemTrayApp.exe".Error in manifest or policy file "C:\\developer\\sergueik\\powershell\_samples\\external\\csharp\\basic-virtualbox-longrunningcommand\\Program\\bin\\Debug\\VboxManageSystemTrayApp.exe.Config" on line 9. Invalid Xml syntax.
 ```
 
-
 validate
 ```sh
 xml fo app.config
@@ -169,17 +168,11 @@ ICSharpCode.SharpDevelop.Project.ProjectLoadException: Error reading from C:\dev
 Expected EndGlobalSection
 
    at ICSharpCode.SharpDevelop.Project.SolutionLoader.ReadSection(Boolean isGlobal)
-
    at ICSharpCode.SharpDevelop.Project.SolutionLoader.ReadSolution(Solution solution, IProgressMonitor progress)
-
    at ICSharpCode.SharpDevelop.Project.SDProjectService.LoadSolutionFile(FileName fileName, IProgressMonitor progress)
-
    at ICSharpCode.SharpDevelop.Project.SDProjectService.OpenSolutionInternal(FileName fileName)
-
    at ICSharpCode.SharpDevelop.Project.SDProjectService.OpenSolutionOrProjectInternal(FileName fileName)
-
    at ICSharpCode.Core.FileUtility.<>c__DisplayClass63_0.<ObservedLoad>b__0()
-
    at ICSharpCode.Core.FileUtility.ObservedLoad(FileOperationDelegate loadFile, FileName fileName, String message, FileErrorPolicy policy)
 ---------------------------
 OK
@@ -264,7 +257,7 @@ You will not be able to use `Console.Error.WriteLine` and for `Debug.WriteLine` 
 
 ![Visual Studio](screenshots/capture-visual-studio.png)
 
-#### WOW6432 Patch 
+#### WOW6432 Patch
 when tun from __Visual Studio__ which is __64__ bit, __Start Debugging__ console shows:
 ```text
 Windows Platform Detection: is 64 bit: True
@@ -392,7 +385,60 @@ this is a test with argument: sample
 ```text
 this is a test with argument: sample aergument with spaces
 ```
+#### Install Vanilla Image
 
+> NOTE: VirtualBox Guest Additions likely not installed/ wrong version
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" list vms | findstr -ic:"Alpine39"
+```
+
+```text
+"Alpine39" {143fc8d2-8e84-4778-a58e-ae4ad83c41cc}
+```
+control
+```text
+"Xubuntu 22.04" {7e261a39-d356-4eb1-a8ed-75675b149241}
+```
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {143fc8d2-8e84-4778-a58e-ae4ad83c41cc} run --username vagrant --password vagrant --exe /bin/sh -- /bin/sh -c "/home/vagrant/login.sh testuser password"
+```
+
+```text
+VBoxManage.exe: error: Error starting guest session (current status is: terminated)
+
+```
+
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {143fc8d2-8e84-4778-a58e-ae4ad83c41cc} list processes
+```
+```text
+No active guest sessions found
+```
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {7e261a39-d356-4eb1-a8ed-75675b149241} run --username sergueik --password list files
+```
+```text
+VBoxManage.exe: error: No such file or directory on guest
+VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestProcessWrap, interface IGuestProcess, callee IUnknown
+VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFlags), gctlRunGetRemainingTime(msStart, cMsTimeout), &waitResult)" at line 1529 of file VBoxManageGuestCtrl.cpp
+```
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {7e261a39-d356-4eb1-a8ed-75675b149241} run --username sergueik --password --exe /bin/sh -- /bin/sh -c "/home/sergueik/login.sh testuser password ''"
+```
+```text
+[INFO] Starting login test for testuser password
+```
+
+```cmd
+"c:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol {7e261a39-d356-4eb1-a8ed-75675b149241} run --username sergueik --password --exe /bin/sh -- /bin/sh -c "/home/sergueik/login.sh testuser password '/home/sergueik/password.txt'"
+```
+```text
+[INFO] Starting login test for testuser 123
+```
 #### How this Version Works
 
 
@@ -507,11 +553,10 @@ confirm in console
 "C:\Program Files (x86)\virtualbox\VBoxManage.exe" list runningvms
 ```
 no output.
-```
-```
+
 > NOTE:  needs guest additions to be installed
 
-``cmd
+```cmd
 type %temp%\vboxtest.txt
 ```
 ```text
@@ -530,7 +575,7 @@ To use the box you'll need the following two users:
 
 user1/123qwe
 root/same as above
-download 32 bit debiamn 11 virtualbox image
+download 32 bit debian 11 virtualbox image
 https://www.osboxes.org/debian
 VirtualBox (VDI) 32bit  Size: 1.11GB
 SHA256: F1C2A16A45ADB83F1E8C54D0D1417DAED7077D2D9F59D982710DF
@@ -538,7 +583,6 @@ https://www.linuxvmimages.com/how-to-use/vm-image-password/
 
 https://download.virtualbox.org/virtualbox/5.2.22/
 Username: debian
-
 Password: debian
 
 NOTE: image cannot boot under VirtualBo 5.2.x
@@ -568,9 +612,9 @@ an real Agatha Christie detective novel.
 Each error message is a clue rather than a conclusion:
 
   * VBoxManage may claim the specific machine is powered off, even though it is visibly running
-  * That the guest execution service is "not ready (yet)." 
+  * That the guest execution service is "not ready (yet)."
   * Insists that no registered machine exists
-  * Complains about an unexpected session state. 
+  * Complains about an unexpected session state.
 
 Individually, each message appears convincing; together, they gradually reveal what is actually happening
 
@@ -613,7 +657,7 @@ VBoxManage.exe list vms
 ```text
 Exception: The system cannot find the file specified
 ```
-NOTE: This may indicate the Oracle Virtual Box non standard install location  
+NOTE: This may indicate the Oracle Virtual Box non standard install location
 
 ```cmd
 VBoxManage.exe list vms
@@ -755,6 +799,7 @@ There are actually three possible storage mechanisms in the finished executable
 
 
 WSL2 additional features
+
   * Hyper-V Manager	
   * Hyper-V virtual machines	
   * Windows Sandbox	
@@ -953,6 +998,23 @@ The new practices are optimized for:
 - disposable environments
 
 ---
+
+The important
+point is that __Visio__ itself has an unavoidable structural toll before one 
+even get to the semantic payload
+
+The toll is structural, not semantic: you pay it before you know how much knowledge you actually need.
+
+
+That gives you a nice parallel:
+
+Word container
+Open → expand embedded objects → locate the payload → reason
+
+Visio container
+Open → reconstruct document model → traverse/resolve structure → locate the payload → reason
+
+
 
 ## Summary
 
@@ -1179,7 +1241,9 @@ This creates the possibility of context leakage:
 * Ubuntu 6.06 "Dapper Drake" – museum reserve.
 
 Ubuntu 18.04 has a reputation for being one of the more stable releases. Once a machine has run it reliably for years, it often becomes more like firmware than like a constantly evolving operating system. That's why people still happily run old CNC machines, lab equipment, audio servers, and embedded PCs on it.
-### Check L`ist
+
+
+### Check List
 
 ```sh
 lsblk -f
@@ -1231,10 +1295,13 @@ blkid
 zkSecurity's zkao AI-assisted audit of Cloudflare's CIRCL cryptographic library. The "one missing line" memory is probably referring to a class of bugs where a security invariant was assumed but a tiny validation/check was absent. The actual published story is slightly broader than one single missing line: the AI pipeline found seven real vulnerabilities in CIRCL, and several were caused by very small implementation mistakes with very large cryptographic consequences
 
 ### What Happened
-Cloudflare maintains CIRCL (Cloudflare Interoperable Reusable Cryptographic Library), a Go cryptography library containing advanced primitives, including elliptic-curve, threshold cryptography, and post-quantum-related components.
+
+Cloudflare maintains CIRCL (Cloudflare Interoperable Reusable Cryptographic Library), a
+Go cryptography library containing advanced primitives, including elliptic-curve, threshold cryptography, and post-quantum-related components.
 
 A shoking one was about the following
 Message encrypted with policy:
+
 ```
 "Finance Department" AND "US Office"
 
@@ -1244,13 +1311,14 @@ Message encrypted with policy:
 Need BOTH attributes to decrypt
 
 Key A  +  Key B  =  access
-```     
-the bug effectively caused:```
-        Key A alone = access        
-```     
-        The frightening part is not that the encryption algorithm (AES, elliptic curves, etc.) was "broken." It is that the authorization logic embedded in the cryptographic scheme was broken.
-        
-        A normal application bug might look like:
+```
+the bug effectively caused:
+```
+        Key A alone = access
+```
+The frightening part is not that the encryption algorithm (AES, elliptic curves, etc.) was "broken." It is that the authorization logic embedded in the cryptographic scheme was broken.
+
+A normal application bug might look like:
 
 ```
 if (user.isAdmin()) {
@@ -1266,6 +1334,256 @@ if (true) {
 }
 ```
 
+### WSL2
+
+WSL is not Hypervisor and offers a somewhat much reduced functionality. Direct Registry calls can help fill the gap
+ 
+
+```cmd
+wsl.exe --list
+```
+```text
+  NAME      STATE           VERSION
+* Alpine    Stopped         2
+```
+
+the WSL 2 is simply lightweight utility virtual machine. So "it" accepts a global  
+
+```cmd
+		--shutdown
+        Immediately terminates all running
+```
+interestingly is also offers
+```
+   --exec, -e <CommandLine>
+        Execute the specified command without using the default Linux shell.
+```
+```
+wsl.exe ~
+```
+enters the shell and stays there, e.g.
+```
+hostname -f
+```
+```
+DESKTOP-BK4MP50.localdomain
+```
+```
+wsl.exe -d Alpine
+```
+
+__WSL__ operates as a highly integrated, lightweight container-like ecosystem rather than a traditional monolithic
+virtual machine manager, it does not have a single exact equivalent to 
+```sh
+vboxctl.exe describe vm
+```
+or 
+
+```sh
+VBoxManage.exe showvminfo
+```
+commands
+
+```text
+Insufficient system resources exist to complete the requested service
+```
+```cmd
+wsl -d alpine cat /etc/alpine-release
+```
+
+`3.17.0`
+
+Registry Location and DetailsPath: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\LxssContents`: 
+Each subkey inside `Lxss` represents an installed Linux distribution, identified by a unique `GUID`.
+Stored Information: Distribution-specific configurations 
+like the default user, base path for virtual hard disks (`VHDX`), kernel command lines, and distribution state flags
+
+```powershell
+get-childitem -path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss" | select-object -expandproperty property
+$keys = get-childitem -path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss" | select-object -expandproperty property
+```
+```powershell
+
+$names =  get-childitem -path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss" | 
+select-object -expandpropert name | out-string
+write-output $names
+```
+```text
+HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{31f11a3f-ff27-422e-8345-c6460043c517}
+HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{684f6691-1413-44be-af60-f7ac414078b3}
+HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{9d51c0ac-cf84-46ab-bbfb-b8d417429ea5}
+```
+
+> NOTE: need to deal with out-string -split 
+> ``` 
+> get-item : Cannot find path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVe
+>  rsion\Lxss\{31f11a3f-ff27-422e-8345-c6460043c517}' because it does not exist.
+>  At line:1 char:1
+> ```
+> NOTE line break in the registry path
+```powershell
+$names -split "\n" | foreach-object { 
+$name = $_
+write-output $name
+$name = $name -replace 'HKEY_CURRENT_USER', 'HKCU:'
+ $x = 'DistributionName'
+ (get-itemproperty -path $name -name $x )."${x}"
+ 
+}
+```
+```text
+HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{31f11a3f-ff27-422e-8345-c6460043c517}
+Alpine
+HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{684f6691-1413-44be-af60-f7ac414078b3}
+Debian
+HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{9d51c0ac-cf84-46ab-bbfb-b8d417429ea5}
+```
+```powershell
+$name = $name -replace 'HKEY_CURRENT_USER', 'HKCU:'
+```
+```powershell
+$DefaultDistribution = (get-itemproperty -path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss"  -name 'DefaultDistribution' ).DefaultDistribution
+$name = get-item -path ("HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{0}" -f $DefaultDistribution ) | select-object -expandpropert name
+$name = $name -replace 'HKEY_CURRENT_USER', 'HKCU:'
+```
+```powershell
+get-item -path $name
+```
+```powershell
+
+$keys | foreach-object {$x = $_ ; (get-itemproperty -path $name -name $x )."${x}"}
+
+ (get-itemproperty -path $name -name BasePath ).BasePath
+ $x = 'BasePath'
+ (get-itemproperty -path $name -name $x )."${x}"
+``` 
+
+```powershell
+get-item -path ("HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{0}" -f $name ) | select-object -expandproperty name
+```
+```text
+HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{31f11a3f-ff27-422e-8345-c6460043c517}
+```
+```powershell
+(get-itemproperty -path $name -name 'DefaultEnvironment' ).'DefaultEnvironment'
+```
+```text
+HOSTTYPE=x86_64
+LANG=en_US.UTF-8
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+TERM=xterm-256color
+```
+not all shell features work with __Wsl__:
+```
+wsl.exe -d alpine cat /etc/{alpine-release,lsb-release}
+```
+e.g. brace expansion doesn't
+```
+cat: can't open '/etc/{alpine-release,lsb-release}': No such file or directory
+```
+```
+wsl.exe -d alpine cat /etc/os-release
+```
+```
+NAME="Alpine Linux"
+ID=alpine
+VERSION_ID=3.17.0
+PRETTY_NAME="Alpine Linux v3.17"
+HOME_URL="https://alpinelinux.org/"
+BUG_REPORT_URL="https://gitlab.alpinelinux.org/alpine/aports/-/issues"
+```
+```cmd
+wsl.exe --install -d Ubuntu-18.04
+```
+```text
+Downloading: Ubuntu 18.04 LTS
+An error occurred during installation. Distribution Name: 'Ubuntu 18.04 LTS' Error Code: 0x80072ee7
+```
+The WSL error code `0x80072ee7` means "The server name or address could not be resolved". 
+It is a network-related DNS failure that occurs because your Windows system cannot reach Microsoft's servers to download the 
+WSL kernel or Linux distributions.
+needto switch to "Microsoft Store" and "Open" after "Install":
+
+![capture open when the OS finishing the install](screenshots/capture-debian-open.png)
+
+NOTE: distributions e.g. `ubuntu` may still fail with
+```text
+Installing, this may take a few minutes...
+WslRegisterDistribution failed with error: 0x80070040
+Error: 0x80070040 The specified network name is no longer available.
+```
+
+The error `0x80070040` ("The specified network name is no longer available") during WSL registration usually happens
+when the background Hyper-V or LxssManager services lose communication, or when network/winsock 
+configurations block the internal virtual switch creation
+it is fixed via
+elevated shell commands:
+```cmd
+wsl.exe --shutdown
+netsh.exe winsock reset
+netsh.exe int ip reset all
+ipconfig.exe /flushdns
+```
+later ignore the error
+
+```text
+Installing, this may take a few minutes...
+ERROR: failed to read /etc/wsl.conf: system:1326: exists: The user name or password is incorrect.: "\\wsl.localhost\Ubuntu\etc\wsl.conf"Please create a default UNIX user account. The username does not need to match your Windows username.
+For more information visit: https://aka.ms/wslusers
+```
+and just create the user (e.g. `wsl2user`)
+
+How to Do ItInstall a base instance: Download your preferred distribution (such as Ubuntu) from the Microsoft Store or by running 
+```text
+wsl.exe --install -d <distro>
+```
+Export the base system: 
+Turn your existing distribution into a .tar backup file by running this command:
+```
+wsl.exe --export <distro-name> <path-to-tar-file>
+```
+Import as a new instance: Create the second, independent copy under a new name and destination folder using command:
+```
+wsl --import <new-name> <install-folder> 
+<path-to-tar-file>
+```
+e.g.
+```
+wsl --import  Alpine-2 %localappdata%\Packages\36828agowa338.Alpine2WSL_Manual %localappdata%\alpine.tar
+```
+Launch new instance: Access your second environment anytime by running:wsl -d <new-name>
+```cmd
+wsl.exe --list
+```
+```text
+Windows Subsystem for Linux Distributions:
+Alpine (Default)
+Debian
+Alpine-2
+Ubuntu
+```
+| Registry key path | Distribution Name|
+|-------------------|------------------|
+|`HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{31f11a3f-ff27-422e-8345-c6460043c517}`| Alpine |
+|`HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{684f6691-1413-44be-af60-f7ac414078b3}`| Debian |
+|`HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{822c89b2-9d7a-4773-9a4f-a91f11401e29}`| Alpine-2|
+|`HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{9d51c0ac-cf84-46ab-bbfb-b8d417429ea5}`| Ubuntu|
+
+The "copy" element will have less Registry values initially:  no `DefaultEnvironment` or `KernelCommandLine`
+These appear after first run presumably - no they do not . 
+The new image is run by root but has correctly configured `wsluser`
+
+### Bookkeeping
+
+
+```
+sc.exe stop wuauserv
+sc.exe config wuauserv start=disabled
+sc.exe queryex wuauserv
+pushd C:\Windows\SoftwareDistribution
+del /s/q *.*
+popd
+```
 ### See Also
 
   * https://github.com/bitnami/minideb
@@ -1273,12 +1591,17 @@ if (true) {
   * https://download.virtualbox.org/virtualbox/5.2.22/
   * https://download.virtualbox.org/virtualbox/5.2.22/Oracle_VM_VirtualBox_Extension_Pack-5.2.22-126460.vbox-extpack
   * __Atom__
-    + [Home Page](https://github.blog/news-insights/product-news/sunsetting-atom) - Archievd and sunsettied on December 15, 2022 
-    + [older releases](https://github.com/atom/atom/releases/tag/v1.60.0)  
- 
- * https://icons8.com/icon/50196/rest-api  
- * https://github.com/mikemajesty/cooldatagridview 
+    + [Home Page](https://github.blog/news-insights/product-news/sunsetting-atom) - Archievd and sunsettied on December 15, 2022
+    + [older releases](https://github.com/atom/atom/releases/tag/v1.60.0)
+
+ * https://icons8.com/icon/50196/rest-api
+ * https://github.com/mikemajesty/cooldatagridview
  * https://github.com/datarza/DataViewExtenders
+ * WSL2  
+    + https://learn.microsoft.com/en-us/windows/wsl/basic-commands
+    + https://gist.github.com/karthiks/1700a56b7bfb79e6e1c345230c2e26b6
+    + https://learn.microsoft.com/en-us/windows/wsl/wsl-config
+
 ----
 
 ### Author

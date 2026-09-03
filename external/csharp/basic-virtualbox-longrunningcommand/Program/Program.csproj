@@ -80,7 +80,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="docker-login.sh" />
+    <None Include="docker-login.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="login.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\os_archlinux.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
