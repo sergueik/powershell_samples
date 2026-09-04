@@ -57,68 +57,35 @@ Given that Microsoft Windows continuously performs the heavy lifting every minut
 
 #### Available Counters
 
-`Process.Explorer`   |
----------------------|
-`% Processor Time` |
-`% User Time`|
-`% Privileged Time`|
-`Virtual Bytes Peak`|
-`Virtual Bytes`|
-`Page Faults/sec`|
-`Working Set Peak`|
-`Working Set`|
-`Page File Bytes Peak`|
-`Page File Bytes`|
-`Private Bytes`|
-`Thread Count`|
-`Priority Base`|
-`Elapsed Time`|
-`ID Process`|
-`Creating Process ID`|
-`Pool Paged Bytes`|
-`Pool Nonpaged Bytes`|
-`Handle Count`|
-`IO Read Operations/sec`|
-`IO Write Operations/sec`|
-`IO Data Operations/sec`|
-`IO Other Operations/sec`|
-`IO Read Bytes/sec`|
-`IO Write Bytes/sec`|
-`IO Data Bytes/sec`|
-`IO Other Bytes/sec`|
-`Working Set - Private`|
+Counter Categoty `Process.Explorer`:
 
+|                     |                  |              |
+|---------------------|------------------|--------------|
+|`% Privileged Time`| `% Processor Time` | `% User Time`|
+|`Creating Process ID`| `Elapsed Time`| `Handle Count`|
+|`ID Process`| `IO Data Bytes/sec`| `IO Data Operations/sec`|
+|`IO Other Bytes/sec`| `IO Other Operations/sec`| `IO Read Bytes/sec`|
+|`IO Read Operations/sec`| `IO Write Bytes/sec`| `IO Write Operations/sec`|
+|`Page Faults/sec`| `Page File Bytes Peak`| `Page File Bytes`|
+|`Pool Nonpaged Bytes`| `Pool Paged Bytes`| `Priority Base`|
+|`Private Bytes`| `Thread Count`| `Virtual Bytes Peak`|
+|`Virtual Bytes`| `Working Set - Private`| `Working Set Peak`|
+|`Working Set`| | |
 
-Counter Category `Process` |
--------------------------- |
-`% Processor Time`         |
-`% User Time`              |
-`% Privileged Time`|
-`Virtual Bytes Peak`|
-`Virtual Bytes`|
-`Page Faults/sec`|
-`Working Set Peak`|
-`Working Set`|
-`Page File Bytes Peak`|
-`Page File Bytes`|
-`Private Bytes`|
-`Thread Count`|
-`Priority Base`|
-`Elapsed Time`|
-`ID Process`|
-`Creating Process ID`|
-`Pool Paged Bytes`|
-`Pool Nonpaged Bytes`|
-`Handle Count`|
-`IO Read Operations/sec`|
-`IO Write Operations/sec`|
-`IO Data Operations/sec`|
-`IO Other Operations/sec`|
-`IO Read Bytes/sec`|
-`IO Write Bytes/sec`|
-`IO Data Bytes/sec`|
-`IO Other Bytes/sec`|
-`Working Set - Private`|
+Counter Category `Process`:
+
+|                     |                  |              |
+|---------------------|------------------|--------------|
+|`% Privileged Time`| `% Processor Time`         | `% User Time`              |
+|`Creating Process ID`| `Elapsed Time`| `Handle Count`|
+|`ID Process`| `IO Data Bytes/sec`| `IO Data Operations/sec`|
+|`IO Other Bytes/sec`| `IO Other Operations/sec`| `IO Read Bytes/sec`|
+|`IO Read Operations/sec`| `IO Write Bytes/sec`| `IO Write Operations/sec`|
+|`Page Faults/sec`| `Page File Bytes Peak`| `Page File Bytes`|
+|`Pool Nonpaged Bytes`| `Pool Paged Bytes`| `Priority Base`|
+|`Private Bytes`| `Thread Count`| `Virtual Bytes Peak`|
+|`Virtual Bytes`| `Working Set - Private`| `Working Set Peak`|
+|`Working Set`|
 
 
 
@@ -139,7 +106,7 @@ So what you're highlighting is a truly exceptional paradox in Microsoft history:
 ### Usage
 
 * rebuild the complex project in the IDE or commandline
-> NOTE - is *script execution policy* is tight, still can paste individual command in the console
+> NOTE - is *script execution policy* is blocking script execution, one still can paste individual command in the console
 
 
 ```powershell
@@ -186,10 +153,7 @@ cmd %%-/c tree.com
 get-childitem -path 'C:\Windows\Microsoft.NET' -name 'msbuild.exe' -recurse
 ```
 
-will get something like
-
 ```text
-
 assembly\GAC_32\MSBuild\v4.0_4.0.0.0__b03f5f7f11d50a3a\MSBuild.exe
 assembly\GAC_64\MSBuild\v4.0_4.0.0.0__b03f5f7f11d50a3a\MSBuild.exe
 Framework\v2.0.50727\MSBuild.exe
@@ -208,7 +172,6 @@ when subject application is launched via maven and not direcrtly as a jar it bec
 mvn spring-boot:run
 ```
 runs `java.exa` somewhat differently - with a very long `classpath` argument including the project `target\classes` path, and all application dependencies paths from `$HOME\.m2\repository` and the jar main class invoked explicilty:
-
 
 to find out explore it using the available tools in console:
 
@@ -246,7 +209,8 @@ more.com +1 %LOG% | findstr -i %APPLICATION_JAR%
 
 ### Note
 
-Unfortunately __Windows 11__ normal idle state already behaves like low-resource mode. The machine immediately displays some of
+Unfortunately __Windows 11__ normal idle state already behaves like resource starving mode. The machine immediately displays some of
+
   * 80–90% RAM "used"
   * multiple background services
   * continuous indexing
@@ -268,7 +232,7 @@ capture target `Process` instance `private memory` property instead of performan
 process.PrivateMemorySize64
 ```
 
-### Push to Docker Hosted Promethus
+### Push to Docker Hosted Prometheus
 
 ```sh
 docker pull prom/prometheus:v3.4.0
@@ -285,14 +249,11 @@ docker-compose ps
 ```text
         Name                 Command             State              Ports
 --------------------------------------------------------------------------------
-monitoring-grafana     /run.sh                Up             0.0.0.0:3000-
-                                                             >3000/tcp,:::3000-
-                                                             >3000/tcp
+monitoring-grafana     /run.sh                Up             0.0.0.0:3000->3000/tcp,:::3000->3000/tcp
 monitoring-            /bin/prometheus        Up (healthy)   0.0.0.0:9090-
-prometheus             --config.f ...                        >9090/tcp,:::9090-
-                                                             >9090/tcp
+prometheus             --config.f ...                        >9090/tcp,:::9090->9090/tcp
 monitoring-            /bin/pushgateway       Up (healthy)   0.0.0.0:9091-
-pushgateway            --persist ...                         >9091/tcp,:::9091-                                                              >9091/tcp
+pushgateway            --persist ...                         >9091/tcp,:::9091->9091/tcp
 ```
 run the application on Windows host
 
@@ -327,7 +288,6 @@ see it in Grafana `http://192.168.12.159:3000/dashboard/new?orgId=1&from=now-15m
 - manual configuration of Prometheus data source and process_average dashboard will be required.
 
 ![Grafana](screenshots/capture-grafana-windows.png)
-
 
 alternatively on Linux host run
 
@@ -412,7 +372,7 @@ Ignore the data buffering error
 ```text
 pushed metrics are invalid or inconsistent with existing metrics: 57 error(s) occurred:
 * collected metric "process_rss_mb" { label:{name:"cmd"  value:"java"}  label:{name:"instance"  value:""}  label:{name:"job"  value:"pidstat"}  label:{name:"pid"  value:"56398"}  untyped:{value:154.7}} was collected before with the same name and label values
-``` 
+```
 it will be solved WIP.
 
 ### Cleanup
@@ -421,20 +381,17 @@ it will be solved WIP.
 docker-compose down -v --rmi local --remove-orphans
 ```
 
-
-
 ### Troubleshooting
 ```sh
 docker pull prom/pushgateway:v1.10.0
 ```
-
 
 > NOTE: if the image or tag is incorrect Docker Toolbox wll print a misleading error message:
 ```text
 error during connect: Post https://192.168.99.100:2376/v1.40/images/create?fromImage=prom%2Fprometheus&tag=v3.4.0: dial tcp 192.168.99.100:2376: connectex: No connection could be made because the target machine actively refused it.
 ```
 
-while Docker will print  a misleading error message:
+while Docker will print a misleading error message:
 ```text
 Error response from daemon: pull access denied for prom/pushateway, repository does not exist or may require 'docker login': denied: requested access to the resource is denied
 ```
@@ -470,8 +427,7 @@ docker-compose ps
        Name                 Command             State               Ports
 --------------------------------------------------------------------------------
 monitoring-           /bin/pushgateway      Up (unhealthy)   0.0.0.0:9091-
-pushgateway           --persist ...                          >9091/tcp,:::9091-
-                                                             >9091/tcp
+pushgateway           --persist ...                          >9091/tcp,:::9091- >9091/tcp
 ```
 
 ### Bulding Dashboards
@@ -550,10 +506,10 @@ cat grafana/provisioning/dashboards/linux-process.jsonnet | docker run -i --rm d
          }
       ],
 ```
-> NOTE:
+:> NOTE:
 the commit `9f58c8d6947c85723f314b2067658aa781d2e870` source generation output examination indicates is not yet a correct Grafana dashboard. Quick checks
 ```sh
-jq type grafana/provisioning/dashboards/linux-process.json 
+jq type grafana/provisioning/dashboards/linux-process.json
 ```
 ```text
 "array"
@@ -562,9 +518,9 @@ jq type grafana/provisioning/dashboards/linux-process.json
 ```text
 "object"
 ```
-this was ipdated in the next commit.
+this was updated in the next commit.
 ```sh
-cat grafana/provisioning/dashboards/linux-process.jsonnet | docker run -i --rm dysnix/jsonnet   - | tee grafana/provisioning/dashboards/linux-process.json
+cat grafana/provisioning/dashboards/linux-process.jsonnet | docker run -i --rm dysnix/jsonnet - | tee grafana/provisioning/dashboards/linux-process.json
 ```
 ```json
 {
@@ -627,8 +583,8 @@ cat grafana/provisioning/dashboards/linux-process.jsonnet | docker run -i --rm d
 one can rebuild the Grafana Prometheus Pushgateway cluster:
 
 ```sh
-docker-compose stop 
-docker-compose rm -f 
+docker-compose stop
+docker-compose rm -f
 docker-compose up -d --build
 ```
 
@@ -660,28 +616,9 @@ after editing the query and replacing
 
 `process_rss_mb{cmd~"$cmd"}` with `process_rss_mb{cmd="java"}` and run queries, data appear.
 
+If still prefer to run locally may install via a package manager such as [Chocolatey](https://en.wikipedia.org/wiki/Chocolatey) or [Scoop](https://en.wikipedia.org/wiki/Scoop_Package_Manager). The other option is
+__Jsonnet Language Server__ VS Code extension (officially published as `Grafana.vscode-jsonnet`) -
 
-If still prefer to run locally may install via a package manager such as Chocolatey or Scoop. The other option is
-__Jsonnet Language Server__ VS Code extension (officially published as `Grafana.vscode-jsonnet`) - 
-
-
---- 
-
-
-
-### See Also:
-
-   * example code from [Updating Your Form from Another Thread without Creating Delegates for Every Type of Update](https://www.codeproject.com/Articles/52752/Updating-Your-Form-from-Another-Thread-without-Cre)
-
-  * https://stackoverflow.com/questions/661561/how-do-i-update-the-gui-from-another-thread
-  * [effective way to wrire](https://www.codeproject.com/Articles/37642/Avoiding-InvokeRequired) `InvokeRequired` delegates
-  * [how to use InvokeRequired](https://stackoverflow.com/questions/15580494)
-  * https://learn.microsoft.com/en-us/dotnet/desktop/winforms/how-to-change-the-borders-of-windows-forms?view=netframework-4.5
-  * https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.textbox?view=netframework-4.5
-  * [JSONNet](https://jsonnet.org/) a configuration language for app and tool developers - NOTE: name Jsonnet is a portmanteau of JSON and sonnet
-  * [releases](https://github.com/google/jsonnet/releases) - short of pre-compiled go-jsonnet executable for Windows 11
-  * NOTE: no longer avail for free: [bitnami/jsonnetbitnami/jsonnet](https://hub.docker.com/r/bitnami/jsonnet)
-  * [akamai/cli-jsonnet](https://github.com/akamai/cli-jsonnet) - CLI module for managing configurations as Jsonnet code, uses Property Manager API (PAPI)
 
 ### Service Now Discussion
 Taking a raw comma-separated bulk list of affected services and
@@ -733,7 +670,21 @@ configuration. ServiceNow provides the platform, while the customer's
 administrators grant developers the required roles (for example,
 notification, scripting, and application development permissions).
 
+---
 
----  
+### See Also:
+
+  * example code from [Updating Your Form from Another Thread without Creating Delegates for Every Type of Update](https://www.codeproject.com/Articles/52752/Updating-Your-Form-from-Another-Thread-without-Cre)
+  * https://stackoverflow.com/questions/661561/how-do-i-update-the-gui-from-another-thread
+  * [effective way to wrire](https://www.codeproject.com/Articles/37642/Avoiding-InvokeRequired) `InvokeRequired` delegates
+  * [how to use InvokeRequired](https://stackoverflow.com/questions/15580494)
+  * https://learn.microsoft.com/en-us/dotnet/desktop/winforms/how-to-change-the-borders-of-windows-forms?view=netframework-4.5
+  * https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.textbox?view=netframework-4.5
+  * [JSONNet](https://jsonnet.org/) a configuration language for app and tool developers - NOTE: name Jsonnet is a portmanteau of JSON and sonnet
+  * [releases](https://github.com/google/jsonnet/releases) - short of pre-compiled go-jsonnet executable for Windows 11
+  * NOTE: no longer avail for free: [bitnami/jsonnetbitnami/jsonnet](https://hub.docker.com/r/bitnami/jsonnet)
+  * [akamai/cli-jsonnet](https://github.com/akamai/cli-jsonnet) - CLI module for managing configurations as Jsonnet code, uses Property Manager API (PAPI)
+
+---
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
