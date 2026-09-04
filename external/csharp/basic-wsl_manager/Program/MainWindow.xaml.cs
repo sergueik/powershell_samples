@@ -45,8 +45,9 @@ namespace WSL_Manager
 
             if (windowsVersionManager.CurrentVersion.Version < WindowsVersion.V2004.Version)
             {
+            	// TODO: what so special about 2004 ?
                 MessageBox.Show(this,
-                        $@"You are running Windows 10 " + windowsVersionManager.CurrentVersion.Version
+                        @"You are running Windows 10 " + windowsVersionManager.CurrentVersion.Version
                         + " some features may be locked or missing. Update to V2004 or later for full functionality.", "Warning");
             }
 
@@ -240,7 +241,7 @@ namespace WSL_Manager
 
                 var startInfo = new ProcessStartInfo(
                 System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe"),
-                $@"\\wsl$\{selectedDistroData.DistroName}")
+                String.Format(@"\\wsl$\{0}", selectedDistroData.DistroName))
                 {
                     UseShellExecute = false,
                 };
@@ -568,8 +569,8 @@ namespace WSL_Manager
         private void About_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(this,
-                    $@"WSL Manager " + WslManagerVersion
-                    + $@" by visdauas
+                    @"WSL Manager " + WslManagerVersion
+                    + @" by visdauas
 Repository: https://github.com/visdauas/WSL-Manager
 
 Original Repository: https://www.github.com/rkttu/WSL-DistroManager

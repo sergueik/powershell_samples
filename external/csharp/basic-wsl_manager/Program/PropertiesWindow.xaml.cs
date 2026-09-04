@@ -3,7 +3,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using WSL_Manager.External;
-using static WSL_Manager.MainWindow;
+using WSL_Manager;
+// using static WSL_Manager.MainWindow;
 
 namespace WSL_Manager
 {

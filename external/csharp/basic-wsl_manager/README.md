@@ -14,9 +14,21 @@ Older Windows versions may have limitations.
 
 [Installer](https://github.com/visdauas/WSL-Manager/releases/download/v1.1.1/wsl-manager-installer-x64.exe)
 
-# WSL Manager
 
-Uses [LxRunOffline](https://github.com/DDoSolitary/LxRunOffline), wsl and wslconfig to manage your WSL distros.
+
+* [LxRunOffline](https://github.com/DDoSolitary/LxRunOffline) - WSL Manager dependency - thin layer of - abandoned code, offering the following ultra basic functionality:
+
++ Install any Linux distro to any directory on your computer.
++ Move an existing installation to another directory.
++ Duplicate(copy) an existing installation.
++ Register an existing installation directory. This enables you to install to a USB stick and use it on different computers.
++ Run arbitrary Linux commands in a specified installation.
++ Configure default user, environment variables and various flags.
++ Export configuration to an XML file and import from the file.
++ Export an installation to a tar file.
+
+
+, wsl and wslconfig to manage your WSL distros.
 
 Original project has been abandoned as far as I know.
 [Old Repo](https://github.com/wslhub/WSL-DistroManager)
