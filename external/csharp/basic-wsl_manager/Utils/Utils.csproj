@@ -73,8 +73,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArchitectureChecker.cs" />
+    <Compile Include="LxRunOfflineInterface.cs" />
+    <Compile Include="Updater.cs" />
+    <Compile Include="WindowsVersionManager.cs" />
     <Compile Include="Wow64FsRedirectionDisabler.cs" />
     <Compile Include="WslCommands.cs" />
+    <Compile Include="WslInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomDisabledIconRenderer.cs" />
@@ -116,6 +120,8 @@
     <Compile Include="DialogMessage.cs">
       <SubType>Form</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SingleInstanceController.cs" />

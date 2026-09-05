@@ -2,56 +2,49 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using WSL_Manager.External;
-using WSL_Manager;
-// using static WSL_Manager.MainWindow;
+using Utils;
+using Program;
+// using static Program.MainWindow;
 
-namespace WSL_Manager
-{
-    public partial class PropertiesWindow : Window
-    {
+namespace Program {
+	public partial class PropertiesWindow : Window {
 
-        private LxRunOfflineInterface lxRunOfflineInterface;
+		private LxRunOfflineInterface lxRunOfflineInterface;
 
-        public PropertiesWindow(LxRunOfflineInterface lxRunOfflineInterface, DistroData distroData)
-        {
-            InitializeComponent();
-            this.lxRunOfflineInterface = lxRunOfflineInterface;
+		public PropertiesWindow(LxRunOfflineInterface lxRunOfflineInterface, DistroData distroData) {
+			InitializeComponent();
+			this.lxRunOfflineInterface = lxRunOfflineInterface;
 
-            this.Title = distroData.DistroName;
-            DistroName.Content = distroData.DistroName;
-            DistroImage.Source = new BitmapImage(new Uri(distroData.DistroImage, UriKind.Relative));
-            string defaultDistro = lxRunOfflineInterface.GetDefaultDistro();
-            DistroDefault.Content = defaultDistro == distroData.DistroName ? "Yes" : "No";
-            string distroDir = lxRunOfflineInterface.GetDistroDir(distroData.DistroName);
-            DistroLocation.Text = distroDir;
-            DistroState.Content = distroData.DistroState;
-            DistroWslVersion.Content = distroData.DistroWslVersion;
-            DistroSize.Content = (DirSize(new DirectoryInfo(distroDir)) / 1024 / 1024) + " MB";
-            SummaryText.Text = lxRunOfflineInterface.GetDistroSummary(distroData.DistroName).Replace("\t", "").Replace("  ", "");
-        }
+			this.Title = distroData.DistroName;
+			DistroName.Content = distroData.DistroName;
+			DistroImage.Source = new BitmapImage(new Uri(distroData.DistroImage, UriKind.Relative));
+			string defaultDistro = lxRunOfflineInterface.GetDefaultDistro();
+			DistroDefault.Content = defaultDistro == distroData.DistroName ? "Yes" : "No";
+			string distroDir = lxRunOfflineInterface.GetDistroDir(distroData.DistroName);
+			DistroLocation.Text = distroDir;
+			DistroState.Content = distroData.DistroState;
+			DistroWslVersion.Content = distroData.DistroWslVersion;
+			DistroSize.Content = (DirSize(new DirectoryInfo(distroDir)) / 1024 / 1024) + " MB";
+			SummaryText.Text = lxRunOfflineInterface.GetDistroSummary(distroData.DistroName).Replace("\t", "").Replace("  ", "");
+		}
 
-        public static long DirSize(DirectoryInfo d)
-        {
-            long size = 0;
-            // Add file sizes.
-            FileInfo[] fis = d.GetFiles();
-            foreach (FileInfo fi in fis)
-            {
-                size += fi.Length;
-            }
-            // Add subdirectory sizes.
-            DirectoryInfo[] dis = d.GetDirectories();
-            foreach (DirectoryInfo di in dis)
-            {
-                size += DirSize(di);
-            }
-            return size;
-        }
+		public static long DirSize(DirectoryInfo d) {
+			long size = 0;
+			// Add file sizes.
+			FileInfo[] fis = d.GetFiles();
+			foreach (FileInfo fi in fis) {
+				size += fi.Length;
+			}
+			// Add subdirectory sizes.
+			DirectoryInfo[] dis = d.GetDirectories();
+			foreach (DirectoryInfo di in dis) {
+				size += DirSize(di);
+			}
+			return size;
+		}
 
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-    }
+		private void Close_Click(object sender, RoutedEventArgs e) {
+			this.Close();
+		}
+	}
 }
