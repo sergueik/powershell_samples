@@ -1,71 +1,93 @@
 ### Info
-Replica of the [gekkom/WSL-Manager](https://github.com/gekkom/WSL-Manager)
-Windows Subsystem for Linux Manager GUI that does not require [.NET Core](https://docs.microsoft.com/dotnet/core/) (an open-source, cross-platform successor to __.NET Framework__ aiming on make it to Mac OS Linux platrorms. 
->NOTE `https://docs.microsoft.com/dotnet/core/` now redirects to https://learn.microsoft.com/en-us/dotnet/fundamentals/ and there is no way back:
-> ```code
+
+Replica of [gekkom/WSL-Manager](https://github.com/gekkom/WSL-Manager), a Windows Subsystem for Linux Manager GUI that does not require .NET Core.
+
+> **NOTE** The original `docs.microsoft.com/dotnet/core/` URL now redirects to `https://learn.microsoft.com/en-us/dotnet/fundamentals/`:
+>
+> ```text
 > 301 Moved Permanently
 > ```
+>
+> There appears to be no way back.
 
 #### History of the Original Project
 
-> Deprecated please use: https://github.com/bostrot/wsl2-distro-manager
+> Deprecated — please use: https://github.com/bostrot/wsl2-distro-manager
 
-> Works on Windows 10 1803, 1809, 1903, 1909, 2004 and every corresponding Windows Server version.
-> Older Windows versions may have limitations.
+The original project supported Windows 10 1803, 1809, 1903, 1909, 2004 and corresponding Windows Server versions. Older Windows versions may have limitations.
 
-There is ofiginal vendor [Installer executable](https://github.com/visdauas/WSL-Manager/releases/download/v1.1.1/wsl-manager-installer-x64.exe)(untested)
+The original vendor installer is available here:
 
-The key  WSL Manager dependency - [LxRunOffline](https://github.com/DDoSolitary/LxRunOffline) -thin layer around Windows Registry and `wsl.exe` calls - abandoned code -offering the following ultra basic functionality:
+[Installer executable](https://github.com/visdauas/WSL-Manager/releases/download/v1.1.1/wsl-manager-installer-x64.exe) *(untested)*
 
-+ Install any Linux distro to any directory on your computer.
-+ Move an existing installation to another directory.
-+ Duplicate(copy) an existing installation.
-+ Register an existing installation directory. This enables you to install to a USB stick and use it on different computers.
-+ Run arbitrary Linux commands in a specified installation.
-+ Configure default user, environment variables and various flags.
-+ Export configuration to an XML file and import from the file.
-+ Export an installation to a tar file.
+The key WSL Manager dependency is [LxRunOffline](https://github.com/DDoSolitary/LxRunOffline) — a thin layer around the Windows Registry and `wsl.exe` calls.
 
-> Original project has been abandoned as far as I know [Old Repo](https://github.com/wslhub/WSL-DistroManager)
+LxRunOffline itself appears to be abandoned, but provides remarkably basic and useful functionality:
+
+* Install any Linux distro to any directory on the computer.
+* Move an existing installation to another directory.
+* Duplicate (copy) an existing installation.
+* Register an existing installation directory. This enables an installation on a USB stick to be used on different computers.
+* Run arbitrary Linux commands in a specified installation.
+* Configure the default user, environment variables and various flags.
+* Export configuration to an XML file and import it from the file.
+* Export an installation to a tar file.
+
+> The original project appears to have been abandoned: [Old Repo](https://github.com/wslhub/WSL-DistroManager)
 
 ### Usage
 
-copy the dependency we do not like to store under source control
+The dependency is deliberately not stored under source control. Download it into the expected location:
 
-```
+```bash
 mkdir -p Program/bin/x64/Debug/External
-curl -skLo Program/bin/x64/Debug/External/LxRunOffline.exe https://github.com/gekkom/WSL-Manager/raw/refs/heads/master/WSL%20Manager/External/LxRunOffline.exe
+curl -skLo Program/bin/x64/Debug/External/LxRunOffline.exe \
+  https://github.com/gekkom/WSL-Manager/raw/refs/heads/master/WSL%20Manager/External/LxRunOffline.exe
 ```
-> NOTE: consider to use the dependency release location https://github.com/DDoSolitary/LxRunOffline/releases
 
-build for x64 Debug
+> **NOTE** Consider using the dependency's release location instead:
+> https://github.com/DDoSolitary/LxRunOffline/releases
+
+Build for x64 Debug:
 
 ```powershell
 $env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework64\v4.0.30319"
 msbuild.exe .\basic-wsl_manager.sln "/p:Platform=x64" /detailedsummary /t:clean,build
 ```
 
-> NOTE: app need to run with administrator token (manifest?)
+> **NOTE:** The application needs to run with an **elevated process token**.
 
 ![capture elevation](screenshots/capture-elevation.png)
 
-```code
-Can not start process. 
+```text
+Can not start process.
 The requested operation requires elevation. (Exception from HRESULT: 0x800702E4)
 ```
-after run through filtered/non-elevated token to full , appliction behaves as expected
+
+The interesting part is the UAC behavior: launching the application with the normal **filtered/non-elevated token** fails, while accepting the UAC prompt switches execution to the **full/elevated token**, after which the application behaves as expected.
 
 ![capture app](screenshots/capture-app.png)
 
-> NOTE: iit uses `LxRunOffline.exe`  for virtually everything even to launch the shell in the VM:
+This is worth distinguishing from simply asking whether the user is a member of:
 
-![capture app](screenshots/capture-app-launch.png)
+```text
+S-1-5-32-544 = BUILTIN\Administrators
+```
+
+Under UAC, an administrator account can have a **filtered access token**. The relevant Windows terminology is therefore the **access token**, with `TokenElevation` / `TokenElevationType` used to distinguish the non-elevated and elevated process states.
+
+> **NOTE:** The application uses `LxRunOffline.exe` for virtually everything — even to launch the shell in the WSL VM.
+
+![capture app launch](screenshots/capture-app-launch.png)
+
 ### See Also
- 
-  * [WPF WSL Manager](https://github.com/wslhub/WslManager) - __.Net__ __6__
-  * [WSL Maui Universal](https://github.com/Forz70043/bridge) - reuires VS 2022 build schema and
-----
+
+* [WPF WSL Manager](https://github.com/wslhub/WslManager) — **.NET 6**
+* [WSL Maui Universal](https://github.com/Forz70043/bridge) — requires the VS 2022 build environment
+
+---
 
 ### Author
-[Serguei Kouzmine](kouzmine_serguei@yahoo.com)
+
+[Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)
 
