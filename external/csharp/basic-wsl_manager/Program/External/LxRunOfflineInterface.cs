@@ -36,6 +36,7 @@ namespace WSL_Manager.External
         private string ExecuteCommandWithOutput(string command)
         {
             if (!File.Exists(lxRunOfflinePath))
+            	// Exception: System.Windows.Threading.DispatcherUnhandledExceptionEventArgs System.IO.FileNotFoundException: LxRunOffline.exe not found.
                 throw new FileNotFoundException("LxRunOffline.exe not found.");
 
             var proc = new ProcessStartInfo();

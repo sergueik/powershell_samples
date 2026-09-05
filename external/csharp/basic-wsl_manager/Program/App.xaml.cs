@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
 
 namespace WSL_Manager
 {
@@ -25,6 +26,7 @@ namespace WSL_Manager
 
             DispatcherUnhandledException += (s, e) =>
             {
+            	Debug.WriteLine("Exception: "   + e.ToString() + " " +e.Exception.InnerException.ToString());
                 ShowUnhandledException(e.Exception, "Application.Current.DispatcherUnhandledException");
                 e.Handled = true;
             };

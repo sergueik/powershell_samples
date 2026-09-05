@@ -8,7 +8,7 @@ namespace WSL_Manager.External
 {
     public class WslInterface
     {
-        private string wslPath = "wsl";
+        private string wslPath = "wsl.exe";
         private WindowsVersionManager windowsVersionManager;
 
         public WslInterface(WindowsVersionManager windowsVersionManager)
@@ -44,6 +44,8 @@ namespace WSL_Manager.External
             proc.StandardOutputEncoding = Encoding.Unicode;
             proc.RedirectStandardOutput = true;
             proc.CreateNoWindow = true;
+
+            // Exception: System.Windows.Threading.DispatcherUnhandledExceptionEventArgs System.ComponentModel.Win32Exception (0x80004005): The system cannot find the file specified
 
             var process = Process.Start(proc);
             string output = process.StandardOutput.ReadToEnd();
