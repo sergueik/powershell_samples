@@ -1,0 +1,117 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+    <sys:String x:Key="NavContainers">Containers</sys:String>
+    <sys:String x:Key="NavImages">Images</sys:String><sys:String x:Key="NavNetworks">Networks</sys:String><sys:String x:Key="NavVolumes">Volumes</sys:String>
+    <sys:String x:Key="NavSettings">Settings</sys:String>
+    <sys:String x:Key="PreviewNotice">WSL Container Preview · APIs may change</sys:String><sys:String x:Key="Refresh">Refresh</sys:String>
+    <sys:String x:Key="Running">Running</sys:String>
+    <sys:String x:Key="Stopped">Stopped</sys:String><sys:String x:Key="Images">Images</sys:String>
+    <sys:String x:Key="Networks">Networks</sys:String><sys:String x:Key="Volumes">Volumes</sys:String>
+    <sys:String x:Key="Environment">Runtime environment</sys:String><sys:String x:Key="Cpu">CPU</sys:String><sys:String x:Key="Memory">Memory</sys:String>
+    <sys:String x:Key="Network">Network</sys:String><sys:String x:Key="NetworkIo">Network I/O</sys:String><sys:String x:Key="BlockIo">Block I/O</sys:String><sys:String x:Key="Pids">PIDs</sys:String>
+    <sys:String x:Key="ResourceUsage">Resources</sys:String><sys:String x:Key="PublishedPorts">Published ports</sys:String><sys:String x:Key="RawPorts">Raw port data</sys:String>
+    <sys:String x:Key="NetworkDetailsTitle">Network connection</sys:String><sys:String x:Key="LoadingNetworkDetails">Loading network connection information…</sys:String><sys:String x:Key="NetworkDetailsUnavailable">Network connection information is unavailable</sys:String><sys:String x:Key="NetworkMode">Network mode</sys:String><sys:String x:Key="ContainerHostName">Container hostname</sys:String><sys:String x:Key="ConnectedNetworks">Connected networks</sys:String><sys:String x:Key="NoNetworkAttachments">This container did not report any connected networks.</sys:String><sys:String x:Key="RuntimeAddressesUnavailable">The container is not running, so runtime IP and MAC addresses are unavailable.</sys:String><sys:String x:Key="InterfaceDetails">Interface details</sys:String><sys:String x:Key="IpAddress">IP address</sys:String><sys:String x:Key="Gateway">Gateway</sys:String><sys:String x:Key="MacAddress">MAC address</sys:String><sys:String x:Key="Aliases">Aliases</sys:String><sys:String x:Key="NetworkId">Network ID</sys:String><sys:String x:Key="EndpointId">Endpoint ID</sys:String><sys:String x:Key="PortMappings">Port mappings</sys:String><sys:String x:Key="LocalOnly">Local only</sys:String><sys:String x:Key="PotentiallyExposed">Potentially exposed</sys:String><sys:String x:Key="DefaultBinding">Default host binding</sys:String><sys:String x:Key="NoPublishedPorts">No host ports are published.</sys:String><sys:String x:Key="Copy">Copy</sys:String>
+    <sys:String x:Key="LoadingMountDetails">Loading mount information…</sys:String>
+    <sys:String x:Key="MountDetailsUnavailable">Mount information is unavailable</sys:String>
+    <sys:String x:Key="NoMountsDiscovered">WSLC did not report any mount details.</sys:String>
+    <sys:String x:Key="NoMountsDiscoveredHint">Named volumes may not appear in the current inspect output.</sys:String>
+    <sys:String x:Key="MountType">Mount type</sys:String>
+    <sys:String x:Key="SourcePath">Source path</sys:String>
+    <sys:String x:Key="ContainerPath">Container path</sys:String>
+    <sys:String x:Key="CopySourcePath">Copy source path</sys:String>
+    <sys:String x:Key="CopyContainerPath">Copy container path</sys:String>
+    <sys:String x:Key="AccessMode">Access mode</sys:String>
+    <sys:String x:Key="ReadWrite">Read/write</sys:String>
+    <sys:String x:Key="ReadOnly">Read-only</sys:String>
+    <sys:String x:Key="EnvironmentVariables">Environment</sys:String><sys:String x:Key="User">User</sys:String><sys:String x:Key="Workdir">Workdir</sys:String>
+    <sys:String x:Key="AllGpus">All GPUs</sys:String><sys:String x:Key="RemoveWhenStopped">Remove when stopped</sys:String><sys:String x:Key="OptionalCommand">Optional command</sys:String>
+    <sys:String x:Key="LiveStats">Live resource snapshot</sys:String>
+    <sys:String x:Key="ContainersTitle">Containers</sys:String><sys:String x:Key="ContainersSubtitle">Create, run, and inspect Linux workloads</sys:String><sys:String x:Key="AllResources">All</sys:String><sys:String x:Key="Search">Search name, image, or ID</sys:String>
+    <sys:String x:Key="CreateContainer">Create and run a container</sys:String><sys:String x:Key="Image">Image</sys:String>
+    <sys:String x:Key="CreateContainerHint">Configure image, resource limits, networking, and mounts before launch</sys:String>
+    <sys:String x:Key="NoContainerSelected">Select a container</sys:String><sys:String x:Key="SelectContainerHint">Choose a container to inspect and manage it, or use the plus button to create one.</sys:String>
+    <sys:String x:Key="NoContainersTitle">No containers yet</sys:String><sys:String x:Key="NoContainersHint">Create a container to see its state, image, ports, and resource usage here.</sys:String>
+    <sys:String x:Key="NoContainerResultsTitle">No matching containers</sys:String><sys:String x:Key="NoContainerResultsHint">Try another name, image, or ID.</sys:String>
+    <sys:String x:Key="ContainerLifecycle">Lifecycle</sys:String><sys:String x:Key="ContainerLifecycleHint">Stop, restart, force stop, or permanently remove this container</sys:String>
+    <sys:String x:Key="LiveStatsHint">Review CPU, memory, and network I/O snapshots</sys:String><sys:String x:Key="LogsHint">Read recent logs or follow live output</sys:String>
+    <sys:String x:Key="ExecHint">Run a one-shot command inside the active container</sys:String><sys:String x:Key="ExportHint">Export the stopped container filesystem as a tar archive</sys:String>
+    <sys:String x:Key="Name">Name</sys:String><sys:String x:Key="Command">Command</sys:String>
+    <sys:String x:Key="Advanced">Advanced options</sys:String><sys:String x:Key="Run">Run</sys:String>
+    <sys:String x:Key="Start">Start</sys:String><sys:String x:Key="Stop">Stop</sys:String><sys:String x:Key="Restart">Restart</sys:String><sys:String x:Key="Details">Details</sys:String>
+    <sys:String x:Key="Kill">Force stop</sys:String><sys:String x:Key="Remove">Remove</sys:String><sys:String x:Key="Export">Export</sys:String>
+    <sys:String x:Key="Logs">Logs</sys:String><sys:String x:Key="FollowLogs">Follow logs</sys:String><sys:String x:Key="StopFollowing">Stop following</sys:String><sys:String x:Key="CopyLogs">Copy logs</sys:String><sys:String x:Key="ClearLogs">Clear</sys:String><sys:String x:Key="Inspect">Inspect</sys:String><sys:String x:Key="Exec">Exec</sys:String>
+    <sys:String x:Key="Terminal">Interactive terminal</sys:String><sys:String x:Key="Output">Output &amp; diagnostics</sys:String>
+    <sys:String x:Key="ImagesTitle">Images</sys:String><sys:String x:Key="Pull">Pull</sys:String><sys:String x:Key="Build">Build</sys:String>
+    <sys:String x:Key="ImagesSubtitle">Manage local images, builds, and container registries</sys:String><sys:String x:Key="GeneralImageOperations">More image operations</sys:String><sys:String x:Key="SelectedImageActions">Image details</sys:String><sys:String x:Key="SearchImages">Search image name, tag, or ID</sys:String><sys:String x:Key="NoImages">No images found</sys:String><sys:String x:Key="ImageReference">Image reference</sys:String><sys:String x:Key="BuildContext">Build context</sys:String><sys:String x:Key="DockerfilePath">Dockerfile path</sys:String><sys:String x:Key="ImageTag">Image tag</sys:String><sys:String x:Key="OptionalCustomPath">Optional custom path</sys:String>
+    <sys:String x:Key="PullHint">Download an image from a container registry</sys:String><sys:String x:Key="BuildHint">Build an image from a Dockerfile and context</sys:String>
+    <sys:String x:Key="ImageFiles">Image files</sys:String><sys:String x:Key="ImageFilesHint">Import a rootfs or load an image archive</sys:String><sys:String x:Key="TagHint">Apply a new tag to the selected image</sys:String>
+    <sys:String x:Key="Import">Import</sys:String><sys:String x:Key="Load">Load</sys:String><sys:String x:Key="Save">Save</sys:String><sys:String x:Key="Tag">Tag</sys:String>
+    <sys:String x:Key="Push">Push</sys:String><sys:String x:Key="Prune">Prune unused</sys:String><sys:String x:Key="PruneDanglingImages">Prune dangling images</sys:String><sys:String x:Key="PruneDanglingImagesTitle">Prune dangling images</sys:String><sys:String x:Key="PruneDanglingImagesConfirmation">Remove every dangling image?</sys:String>
+    <sys:String x:Key="Create">Create</sys:String>
+    <sys:String x:Key="NetworksTitle">Networks</sys:String><sys:String x:Key="NetworksSubtitle">Manage isolated connectivity between containers</sys:String>
+    <sys:String x:Key="VolumesTitle">Volumes</sys:String><sys:String x:Key="VolumesSubtitle">Manage persistent container storage</sys:String>
+    <sys:String x:Key="CreateNetwork">Create network</sys:String><sys:String x:Key="CreateNetworkHint">Configure the driver, driver options, and metadata labels</sys:String><sys:String x:Key="SearchNetworks">Search networks</sys:String>
+    <sys:String x:Key="CreateVolume">Create volume</sys:String><sys:String x:Key="CreateVolumeHint">Configure the driver, driver options, and metadata labels</sys:String><sys:String x:Key="SearchVolumes">Search volumes</sys:String>
+    <sys:String x:Key="SettingsTitle">Settings</sys:String><sys:String x:Key="Appearance">Appearance &amp; refresh</sys:String>
+    <sys:String x:Key="SettingsSubtitle">Check runtime health and customize ExWSLC behavior</sys:String><sys:String x:Key="RuntimeEnvironment">Runtime environment</sys:String>
+    <sys:String x:Key="NativeSettingsHint">Use the native WSLC YAML file for session resources and runtime options</sys:String><sys:String x:Key="Open">Open</sys:String>
+    <sys:String x:Key="SdkPreviewProjection">Preview API projection</sys:String><sys:String x:Key="RuntimeMaintenance">Runtime maintenance</sys:String><sys:String x:Key="RuntimeMaintenanceHint">Install missing components or restore native settings to their defaults</sys:String>
+    <sys:String x:Key="Language">Language</sys:String><sys:String x:Key="LanguageChinese">Simplified Chinese</sys:String><sys:String x:Key="LanguageEnglish">English</sys:String><sys:String x:Key="Theme">Theme</sys:String>
+    <sys:String x:Key="ThemeSystem">Use system setting</sys:String><sys:String x:Key="ThemeLight">Light</sys:String><sys:String x:Key="ThemeDark">Dark</sys:String>
+    <sys:String x:Key="RefreshInterval">Refresh interval (seconds)</sys:String><sys:String x:Key="SaveSettings">Save settings</sys:String>
+    <sys:String x:Key="NativeSettings">Open native WSLC settings</sys:String><sys:String x:Key="ResetNativeSettings">Reset WSLC settings</sys:String><sys:String x:Key="InstallComponents">Install missing components</sys:String><sys:String x:Key="RegistryLogin">Container registry login</sys:String>
+    <sys:String x:Key="ResetNativeSettingsConfirmation">Reset the native WSLC YAML settings to built-in defaults?</sys:String><sys:String x:Key="InstallComponentsConfirmation">Install missing WSL Container components using the Microsoft preview SDK?</sys:String><sys:String x:Key="InstallationFailed">Installation failed</sys:String><sys:String x:Key="SettingsSavedStatus">Settings saved.</sys:String>
+    <sys:String x:Key="RegistryCredentialsHint">All fields are required. Credentials are sent directly to WSLC and are not stored by ExWSLC.</sys:String>
+    <sys:String x:Key="Server">Server</sys:String><sys:String x:Key="Username">Username</sys:String>
+    <sys:String x:Key="Password">Password or PAT</sys:String><sys:String x:Key="Login">Login</sys:String>
+    <sys:String x:Key="Ready">Ready</sys:String><sys:String x:Key="Unavailable">Unavailable</sys:String>
+    <sys:String x:Key="Cancel">Cancel</sys:String>
+    <sys:String x:Key="State">State</sys:String>
+    <sys:String x:Key="Status">Uptime</sys:String>
+    <sys:String x:Key="Ports">Ports</sys:String>
+    <sys:String x:Key="Actions">Actions</sys:String>
+    <sys:String x:Key="Configuration">Configuration</sys:String>
+    <sys:String x:Key="LoadingConfiguration">Loading container configuration…</sys:String>
+    <sys:String x:Key="ConfigurationUnavailable">Container configuration is unavailable</sys:String>
+    <sys:String x:Key="ContainerCommandHint">Command executed when the container starts</sys:String>
+    <sys:String x:Key="EnvironmentVariablesHint">Key-value pairs passed to the container process</sys:String>
+    <sys:String x:Key="NoEnvironmentVariables">No environment variables are configured</sys:String>
+    <sys:String x:Key="Created">Created</sys:String>
+    <sys:String x:Key="Mounts">Mounts</sys:String>
+    <sys:String x:Key="ArchivePath">Archive path</sys:String>
+    <sys:String x:Key="ImportImageName">Imported image name</sys:String>
+    <sys:String x:Key="ImageInspectOutput">Image inspect output</sys:String>
+    <sys:String x:Key="OperationOutput">Operation output</sys:String>
+    <sys:String x:Key="NetworkName">Network name</sys:String>
+    <sys:String x:Key="VolumeName">Volume name</sys:String>
+    <sys:String x:Key="NetworkInspectOutput">Network inspect output</sys:String>
+    <sys:String x:Key="Subnet">Subnet</sys:String>
+    <sys:String x:Key="Scope">Scope</sys:String>
+    <sys:String x:Key="Driver">Driver</sys:String>
+    <sys:String x:Key="Size">Size</sys:String>
+    <sys:String x:Key="Mountpoint">Mount point</sys:String>
+    <sys:String x:Key="NoNetworks">No networks found</sys:String>
+    <sys:String x:Key="NoVolumes">No volumes found</sys:String>
+    <sys:String x:Key="RemoveNetworkTitle">Remove network</sys:String>
+    <sys:String x:Key="RemoveNetworkConfirmation">Remove network {0}?</sys:String>
+    <sys:String x:Key="RemoveVolumeTitle">Remove volume</sys:String>
+    <sys:String x:Key="RemoveVolumeConfirmation">Remove volume {0}?</sys:String>
+    <sys:String x:Key="PruneNetworksTitle">Prune networks</sys:String>
+    <sys:String x:Key="PruneNetworksConfirmation">Remove every unused network?</sys:String>
+    <sys:String x:Key="PruneVolumesTitle">Prune volumes</sys:String>
+    <sys:String x:Key="PruneVolumesConfirmation">Remove every unused volume?</sys:String>
+    <sys:String x:Key="NetworkDriver">Network driver</sys:String>
+    <sys:String x:Key="DriverOptions">Driver options</sys:String>
+    <sys:String x:Key="DriverOptionsHint">Enter one --opt key=value per line</sys:String>
+    <sys:String x:Key="Labels">Labels</sys:String>
+    <sys:String x:Key="NetworkLabelsHint">Enter one --label key=value per line</sys:String>
+    <sys:String x:Key="Confirm">Confirm</sys:String>
+    <sys:String x:Key="OperationFailed">WSLC operation failed</sys:String>
+    <sys:String x:Key="RuntimeRefreshFailed">Unable to refresh runtime state</sys:String>
+    <sys:String x:Key="NetworkNameRequired">Network name (required)</sys:String>
+    <sys:String x:Key="VolumeNameOptional">Volume name (optional)</sys:String>
+    <sys:String x:Key="VolumeDriver">Volume driver</sys:String>
+    <sys:String x:Key="VolumeOptionsHint">Enter one --opt key=value per line</sys:String>
+    <sys:String x:Key="VolumeLabelsHint">Enter one --label key=value per line</sys:String>
+</ResourceDictionary>

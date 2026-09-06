@@ -1,0 +1,170 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build and test
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Validate release tag
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if ($env:RELEASE_TAG -notmatch '^v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$') {
+            throw "Release tags must use SemVer, for example v1.2.3 or v1.2.3-preview.1."
+          }
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Restore dependencies
+        run: dotnet restore ExWSLC.sln
+
+      - name: Build
+        run: dotnet build ExWSLC.sln -c Release --no-restore
+
+      - name: Test
+        run: dotnet test --solution ExWSLC.sln -c Release --no-build
+
+  publish:
+    name: Publish ${{ matrix.runtime }}
+    needs: build-test
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime:
+          - win-x64
+          - win-arm64
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Restore dependencies
+        run: dotnet restore src/ExWSLC.csproj -r ${{ matrix.runtime }}
+
+      - name: Publish
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $version = $env:RELEASE_TAG.Substring(1)
+          dotnet publish src/ExWSLC.csproj `
+            -c Release `
+            -r "${{ matrix.runtime }}" `
+            --self-contained true `
+            --no-restore `
+            -p:Version="$version" `
+            -o "publish/${{ matrix.runtime }}"
+
+      - name: Create release archive
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          Compress-Archive `
+            -Path "publish/${{ matrix.runtime }}/*" `
+            -DestinationPath "release/ExWSLC-$env:RELEASE_TAG-${{ matrix.runtime }}.zip"
+
+      - name: Upload release archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: ExWSLC-${{ github.ref_name }}-${{ matrix.runtime }}
+          path: release/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: Create GitHub Release
+    needs: publish
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Extract release notes from changelog
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $version = $env:RELEASE_TAG.Substring(1)
+          $escapedVersion = [regex]::Escape($version)
+          $headingPattern = "^## \[$escapedVersion\](?: - \d{4}-\d{2}-\d{2})?\s*$"
+          $lines = Get-Content -LiteralPath CHANGELOG.md
+
+          $start = -1
+          for ($index = 0; $index -lt $lines.Count; $index++) {
+            if ($lines[$index] -match $headingPattern) {
+              $start = $index
+              break
+            }
+          }
+
+          if ($start -lt 0) {
+            throw "CHANGELOG.md does not contain a section for version $version."
+          }
+
+          $end = $lines.Count
+          for ($index = $start + 1; $index -lt $lines.Count; $index++) {
+            if ($lines[$index] -match '^## \[' -or $lines[$index] -match '^\[[^]]+\]:\s+https?://') {
+              $end = $index
+              break
+            }
+          }
+
+          $bodyLines = if ($end -gt $start + 1) {
+            $lines[($start + 1)..($end - 1)]
+          } else {
+            @()
+          }
+          $body = ($bodyLines -join "`n").Trim()
+
+          if ([string]::IsNullOrWhiteSpace($body)) {
+            throw "The CHANGELOG.md section for version $version is empty."
+          }
+
+          Set-Content -LiteralPath release-notes.md -Value $body -Encoding utf8NoBOM
+
+      - name: Download release archives
+        uses: actions/download-artifact@v8
+        with:
+          pattern: ExWSLC-${{ github.ref_name }}-*
+          path: release
+          merge-multiple: true
+
+      - name: Publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $assets = Get-ChildItem release -File | ForEach-Object FullName
+          gh release create "$env:RELEASE_TAG" @assets `
+            --verify-tag `
+            --notes-file release-notes.md `
+            --title "ExWSLC $env:RELEASE_TAG"

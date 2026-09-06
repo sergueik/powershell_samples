@@ -1,0 +1,110 @@
+<Application x:Class="ExWSLC.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+            <FontFamily x:Key="SegoeFluentIcons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+            <Style x:Key="CardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ui:ThemeResource ControlFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ui:ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Margin" Value="0,0,12,12" />
+            </Style>
+            <Style x:Key="ResourcePageTitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="28" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Foreground" Value="{ui:ThemeResource TextFillColorPrimaryBrush}" />
+            </Style>
+            <Style x:Key="ResourcePageSubtitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Foreground" Value="{ui:ThemeResource TextFillColorSecondaryBrush}" />
+                <Setter Property="Margin" Value="0,4,0,0" />
+            </Style>
+            <Style x:Key="ResourceToolbarStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ui:ThemeResource ControlFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ui:ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="Margin" Value="0,18,0,12" />
+            </Style>
+            <Style x:Key="ResourceIconButtonStyle" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                <Setter Property="Width" Value="34" />
+                <Setter Property="Height" Value="34" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Appearance" Value="Secondary" />
+            </Style>
+            <Style x:Key="ResourcePrimaryButtonStyle" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                <Setter Property="MinHeight" Value="34" />
+                <Setter Property="Padding" Value="14,6" />
+                <Setter Property="Appearance" Value="Primary" />
+            </Style>
+            <Style x:Key="ResourceSurfaceStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ui:ThemeResource LayerFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ui:ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="ClipToBounds" Value="True" />
+            </Style>
+            <Style x:Key="ResourceDataGridStyle"
+                   TargetType="ui:DataGrid"
+                   BasedOn="{StaticResource {x:Type ui:DataGrid}}">
+                <Setter Property="AutoGenerateColumns" Value="False" />
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="CanUserAddRows" Value="False" />
+                <Setter Property="HeadersVisibility" Value="Column" />
+                <Setter Property="GridLinesVisibility" Value="Horizontal" />
+                <Setter Property="HorizontalGridLinesBrush" Value="{ui:ThemeResource DividerStrokeColorDefaultBrush}" />
+                <Setter Property="VerticalGridLinesBrush" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="RowHeight" Value="58" />
+                <Setter Property="ColumnHeaderHeight" Value="40" />
+            </Style>
+            <Style x:Key="ResourceEmptyTitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,12,0,4" />
+            </Style>
+            <Style x:Key="LayerCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+                <Setter Property="Background" Value="{ui:ThemeResource LayerFillColorDefaultBrush}" />
+            </Style>
+            <Style x:Key="CompactCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+                <Setter Property="Padding" Value="16,14" />
+            </Style>
+            <Style x:Key="PageTitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="34" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Margin" Value="0,0,0,4" />
+                <Setter Property="Foreground" Value="{ui:ThemeResource TextFillColorPrimaryBrush}" />
+            </Style>
+            <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Margin" Value="0,0,0,10" />
+                <Setter Property="Foreground" Value="{ui:ThemeResource TextFillColorPrimaryBrush}" />
+            </Style>
+            <Style x:Key="PageSubtitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Opacity" Value="0.62" />
+                <Setter Property="Margin" Value="0,0,0,22" />
+                <Setter Property="Foreground" Value="{ui:ThemeResource TextFillColorPrimaryBrush}" />
+            </Style>
+            <Style x:Key="MutedTextStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Opacity" Value="0.6" />
+                <Setter Property="Foreground" Value="{ui:ThemeResource TextFillColorPrimaryBrush}" />
+            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemesDictionary Theme="Light" />
+                <ui:ControlsDictionary />
+                <ResourceDictionary Source="Resources/Strings.zh-CN.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
