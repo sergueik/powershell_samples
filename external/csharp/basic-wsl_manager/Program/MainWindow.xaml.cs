@@ -117,7 +117,7 @@ namespace Program {
 
 		private void refreshTimerTick(object sender, EventArgs e) {
 			if (allowRefresh)
-				RefreshWslData();
+				RefreshWslData(useRealData);
 		}
 
 		private void RefreshWslData(Boolean useRealData){
@@ -212,7 +212,7 @@ namespace Program {
 				SetWindowText(p.MainWindowHandle, distroName + " Console");
 			}
 
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void DistroListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -269,7 +269,7 @@ namespace Program {
 
 				Process.Start(startInfo);
 
-				RefreshWslData();
+				RefreshWslData(useRealData);
 			} else {
 				OpenFolder();
 			}
@@ -283,7 +283,7 @@ namespace Program {
 					System.Threading.Thread.Sleep(100);
 			}
 
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void Rename_Click(object sender, RoutedEventArgs e)
@@ -311,7 +311,7 @@ namespace Program {
 			lxRunOfflineInterface.UnregisterDistro(selectedDistroData.DistroName);
 			lxRunOfflineInterface.RegisterDistro(newDistroName, folder);
 
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void Move_Click(object sender, RoutedEventArgs e)
@@ -340,7 +340,7 @@ namespace Program {
 
 			UnFreezeApp();
 
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private string SelectFolderDialog()
@@ -396,7 +396,7 @@ namespace Program {
 
 			UnFreezeApp();
 
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void Export_Click(object sender, RoutedEventArgs e)
@@ -426,7 +426,7 @@ namespace Program {
 
 			UnFreezeApp();
 
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void Unregister_Click(object sender, RoutedEventArgs e)
@@ -440,13 +440,13 @@ namespace Program {
 
 			wslInterface.TerminateDistro(selectedDistroData.DistroName);
 			lxRunOfflineInterface.UnregisterDistro(selectedDistroData.DistroName);
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void Terminate_Click(object sender, RoutedEventArgs e)
 		{
 			wslInterface.TerminateDistro(selectedDistroData.DistroName);
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void Delete_Click(object sender, RoutedEventArgs e)
@@ -501,7 +501,7 @@ namespace Program {
 		private void TerminateAll_Click(object sender, RoutedEventArgs e)
 		{
 			wslInterface.TerminateAllDistros();
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void Register_Click(object sender, RoutedEventArgs e)
@@ -528,12 +528,12 @@ namespace Program {
 			}
 			wslInterface.TerminateAllDistros();
 			lxRunOfflineInterface.RegisterDistro(newDistroName, folder);
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void Refresh_Click(object sender, RoutedEventArgs e)
 		{
-			RefreshWslData();
+			RefreshWslData(useRealData);
 		}
 
 		private void Exit_Click(object sender, RoutedEventArgs e)
