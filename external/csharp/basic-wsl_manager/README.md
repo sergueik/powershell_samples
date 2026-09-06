@@ -80,6 +80,65 @@ Under UAC, an administrator account can have a __filtered access token__. The re
 
 ![capture app launch](screenshots/capture-app-launch.png)
 
+### UX Development
+
+![capture new look](screenshots/capture-app-new-look.png)
+
+
+To finish the UI without the need to operate real VM, use 
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <startup>
+        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.7.2"/>
+    </startup>
+  <appSettings>
+    <add key="Debug" value="False"/>
+    <add key="Rounds" value="1000"/>
+    <add key="UseRealData" value="True"/>
+    <add key="CheckUpdate" value="False"/>
+    <add key="WslConsoleTimeout" value="300"/>
+    <add key="Datafile" value="${temp}\loadaverage.csv"/>
+   </appSettings>
+</configuration>
+```
+
+and 
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="1.0.0.0" name="Program.app"/>
+   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <requestedExecutionLevel level="requireAdministrator" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Windows 10 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+
+    </application>
+  </compatibility>
+  <!-- Enable themes for Windows common controls and dialogs (Windows XP and later) -->
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity
+          type="win32"
+          name="Microsoft.Windows.Common-Controls"
+          version="6.0.0.0"
+          processorArchitecture="*"
+          publicKeyToken="6595b64144ccf1df"
+          language="*"
+        />
+    </dependentAssembly>
+  </dependency>
+</assembly>
+```
+You will need to completely comment the `trustInfo` in `Program/app.manifest` to suppress UAC prompt
 
 ## Legacy
 
@@ -343,11 +402,11 @@ localhostForwarding=true
 ```
 therefore insread of stating the usual
 
-> _we have booted an Linux VM at 172.30.98.229_
+> _we have booted an Linux VM on_ `172.30.98.229`
 
 in WSL2 envronment it becomes often:
 
-> _we have a Linux process listening on port 8000_
+> _we have a Linux process listening on port_ `8000`
 
 ### See Also
 
@@ -355,8 +414,13 @@ in WSL2 envronment it becomes often:
   * [WSL Maui Universal](https://github.com/Forz70043/bridge) — requires the VS 2022 build environment
   * https://github.com/fw867/WslManager - another WPF WSL Manager with direct calling `wsl.exe` 
   * https://github.com/Ziocash/LxssManager_Restarter/tree/master/LxssManager_Restarter - deal with 
-  
-
+  * https://github.com/fw867/WslManager  
+  * https://github.com/tiwut/WSL-Manager - __.Net__ __8.0__ - supports(?)
+    + launch or Windows File Explorer directly inside any VM root directory
+    + Execute shell commands inside any target distro and view the output streamed in real-time
+  * https://github.com/Pi-Bouf/Wsl-Dev-Manager
+  * https://github.com/MoyashiWithDevice/WSL_Manager
+  * [Native Windows desktop manager for WSL Container](https://github.com/A-Words/ExWSLC) - many features, alternative UX layout
 ---
 
 ### Author
