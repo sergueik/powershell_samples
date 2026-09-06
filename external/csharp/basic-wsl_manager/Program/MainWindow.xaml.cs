@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,12 +13,13 @@ using MessageBox = System.Windows.MessageBox;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
 using System.Runtime.InteropServices;
+using System.Windows.Threading;
 using Utils;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace Program {
-	public partial class MainWindow : Window
-	{
+	public partial class MainWindow : Window {
 		public const string WslManagerVersion = "v1.1.1";
 		private Updater updater;
 
@@ -30,16 +32,36 @@ namespace Program {
 		private DistroData selectedDistroData;
 
 		// 30 sec
-		private const int wslConsoleTimeout = 300;
-
-		public MainWindow()
-		{
+		private int wslConsoleTimeout = 300;
+		private NameValueCollection appSettings;
+		private Boolean debug;
+		private Boolean checkUpdate;
+		private Boolean useRealData = false;
+		
+		public MainWindow() {
 			InitializeComponent();
 
-			updater = new Updater(WslManagerVersion);
+			appSettings = ConfigurationManager.AppSettings;
+			if (appSettings.AllKeys.Contains("Debug")) {
+				debug = Boolean.Parse(appSettings["Debug"]);
+			}
 
-			CheckUpdate();
+			if (appSettings.AllKeys.Contains("CheckUpdate")) {
+				checkUpdate = Boolean.Parse(appSettings["CheckUpdate"]);
+			}
 
+			if (appSettings.AllKeys.Contains("UseRealData")) {
+				useRealData = Boolean.Parse(appSettings["UseRealData"]);
+			}
+
+			if (appSettings.AllKeys.Contains("WslConsoleTimeout")) {
+				wslConsoleTimeout = int.Parse(appSettings["WslConsoleTimeout"]);
+			}
+
+			if (checkUpdate) {
+				updater = new Updater(WslManagerVersion);
+				CheckUpdate();
+			}
 			windowsVersionManager = new WindowsVersionManager();
 
 			if (windowsVersionManager.CurrentVersion.Version < WindowsVersion.V2004.Version) {
@@ -53,18 +75,17 @@ namespace Program {
 			+ (windowsVersionManager.CurrentVersion.Version >= WindowsVersion.V2004.Version ? "WSL 2" : "WSL 1");
 
 			wslInterface = new WslInterface(windowsVersionManager);
-			lxRunOfflineInterface = new LxRunOfflineInterface("External\\LxRunOffline.exe");
+			lxRunOfflineInterface = new LxRunOfflineInterface(@"External\LxRunOffline.exe");
 
-			RefreshWslData();
+			RefreshWslData(useRealData);
 
-			System.Windows.Threading.DispatcherTimer refreshTimer = new System.Windows.Threading.DispatcherTimer();
+			var refreshTimer = new DispatcherTimer();
 			refreshTimer.Tick += refreshTimerTick;
 			refreshTimer.Interval = new TimeSpan(0, 0, 30);
 			refreshTimer.Start();
 		}
 
-		private void CheckUpdate()
-		{
+		private void CheckUpdate() {
 			string url = Task.Run(() => updater.CheckForUpdateAsync()).Result;
 			if (url != null) {
 				var response = MessageBox.Show(this,
@@ -72,12 +93,11 @@ namespace Program {
 
 				if (response != MessageBoxResult.Yes)
 					return;
-				System.Diagnostics.Process.Start(url);
+				Process.Start(url);
 			}
 		}
 
-		public static string GetImageKey(string distroName)
-		{
+		public static string GetImageKey(string distroName) {
 			string eval = (distroName ?? string.Empty).ToUpperInvariant().Trim();
 
 			if (eval.Contains("DEBIAN"))
@@ -95,14 +115,34 @@ namespace Program {
 			return "linux";
 		}
 
-		private void refreshTimerTick(object sender, EventArgs e)
-		{
+		private void refreshTimerTick(object sender, EventArgs e) {
 			if (allowRefresh)
 				RefreshWslData();
 		}
 
-		private void RefreshWslData()
-		{
+		private void RefreshWslData(Boolean useRealData){
+			if (useRealData)
+				RefreshWslData();
+			else {
+				if (wslDistroDataList == null) {
+					wslDistroDataList = new List<DistroData>();
+					string[] distroNames = { "Alpine" };
+					string[] runningDistros = { };
+					var wslDistroData = new DistroData();
+					wslDistroData.DistroImage = "icons/" + GetImageKey(distroNames[0]) + ".png";
+					wslDistroData.Guid = "{31f11a3f-ff27-422e-8345-c6460043c517}";
+					wslDistroData.DistroWslVersion = 2;
+					// why does one care about wsl version
+					wslDistroData.DistroState = "Running";
+					wslDistroData.DistroName = "Alpine";
+					wslDistroDataList.Add(wslDistroData);
+					distroList.ItemsSource = wslDistroDataList;
+					distroList.Items.Refresh();
+				}
+			}
+		}
+
+		private void RefreshWslData() {
 			if (wslDistroDataList == null)
 				wslDistroDataList = new List<DistroData>();
 
@@ -132,7 +172,7 @@ namespace Program {
 						wslDistroData.DistroState = "Unknown";
 					}
 				} else {
-					DistroData wslDistroData = new DistroData();
+					var wslDistroData = new DistroData();
 					wslDistroData.DistroImage = "icons/" + GetImageKey(distroNames[i]) + ".png";
 
 					wslDistroData.DistroName = distroNames[i];
