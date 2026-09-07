@@ -10,7 +10,15 @@ Windows Subsystem for Linux (WSL)
 ### Usage
 
 
-check - straw keys can be found:
+check - straw Registry keys can be found:
+
+
+```powershell
+get-childitem -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss' | select-object -expandproperty Name| select-object -first 1
+```
+```txt
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Lxss\{a7b1b735-87cb-4545-bd1b-b29b129dbc47}
+```
 ```powershell
 get-itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss\{a7b1b735-87cb-4545-bd1b-b29b129dbc47}' -name '*'
 ```
@@ -48,28 +56,26 @@ dir "%LOCALAPPDATA%\Packages\CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc\LocalSta
                1 File(s)  1,197,473,792 bytes
                2 Dir(s)  150,638,940,160 bytes free
 ```
-NOTE: the last modified date of the disk image and the directory.
+NOTE: the last modified date of the disk image and the directory are both in the past, but not identical.
 
-perform Windows component inventory check (elevated prompt):
+perform Windows component inventory check (requires elevated prompt):
 ```posershell
 Get-WindowsOptionalFeature -Online |
-    Where-Object FeatureName -match 'Subsystem-Linux|VirtualMachinePlatform' |
-    Select-Object FeatureName, State
+Where-Object FeatureName -match 'Subsystem-Linux|VirtualMachinePlatform' |
+Select-Object -property FeatureName,State
 ```
 
 ```text
-
 FeatureName                          State
 -----------                          -----
 VirtualMachinePlatform            Disabled
 Microsoft-Windows-Subsystem-Linux Disabled
-
 ```
 
-it means, it is possible for a machine to have a leftover, fully populated Ubuntu WSL2 registration and its corresponding VHDX, but the WSL runtime currently isn't available.
+it means, it is possible for a machine to legitimately have a leftover, fully populated Microsoft Store Linux image(s) (Ubuntu in this case) __WSL2__ registration and its corresponding hard disk (`VHDX`), but the __WSL__ runtime currently isn't available.
 
 
-A non-blocking status check is 
+A non-blocking status check is simple in console:
 ```cmd
 wsl.exe --status
 ```
@@ -77,8 +83,15 @@ wsl.exe --status
 The Windows Subsystem for Linux is not installed. You can install by running 'wsl.exe --install'.
 For more information please visit https://aka.ms/wslinstall
 ```
+```cmd
+echo %ERRORLEVEL%
+```
+```text
+50
+```
 
-The blind attempt to list resources when __WSL__ is not installer may lead to delay with returning the error of longer than a minute:
+```
+The blind attempt to list resources when __WSL__ is not installed (or installed, but subsequently removed) may lead to delay with returning the error of longer than a minute:
 
 ```cmd
 wsl.exe --list --running
@@ -105,13 +118,10 @@ Operation aborted
 ```
 
 
-```text
-Operation aborted
-```
 
 The application never receives the full message:
 
-The  
+The
 ```text
 Press any key to install...
 Press ESC or CTRL-C...

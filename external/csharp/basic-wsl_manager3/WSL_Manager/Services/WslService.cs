@@ -5,20 +5,46 @@ using System.Text;
 using System.Threading.Tasks;
 using WslManagerFramework.Models;
 
-namespace WslManagerFramework.Services
-{
-	public class WslService
-	{
-		private static string GetWslPath()
-		{
+namespace WslManagerFramework.Services {
+	public class WslService {
+		private static string GetWslPath() {
 			var systemDir = Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess
                 ? @"C:\Windows\Sysnative"
                 : @"C:\Windows\System32";
 			return System.IO.Path.Combine(systemDir, "wsl.exe");
 		}
 
-		public static string[] ListDistros()
-		{
+		public static bool CheckWslStatus() {
+			bool status = true;
+			var processStartInfo = new ProcessStartInfo {
+				FileName = GetWslPath(),
+				Arguments = "--status",
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				UseShellExecute = false,
+				CreateNoWindow = true,
+				StandardOutputEncoding = Encoding.Unicode,
+				StandardErrorEncoding = Encoding.Unicode
+			};
+
+			using (var process = new Process { StartInfo = processStartInfo }) {
+				if (!process.Start()) {
+					Debug.WriteLine("wsl.exe failed to start");
+					throw new InvalidOperationException("wsl.exe failed to start");
+				}
+				string standardOutput = process.StandardOutput.ReadToEnd();
+				string standardError = process.StandardError.ReadToEnd();
+				process.WaitForExit();
+
+				if (process.ExitCode != 0) {
+					Debug.WriteLine("wsl.exe error: " + standardError);
+					status = false;
+				}
+			}
+			return status;      
+		}
+
+		public static string[] ListDistros() {
 			var processStartInfo = new ProcessStartInfo {
 				FileName = GetWslPath(),
 				Arguments = "-l -q",

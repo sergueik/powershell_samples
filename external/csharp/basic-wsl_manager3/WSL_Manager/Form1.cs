@@ -353,13 +353,18 @@ namespace WslManagerFramework {
 
 		private void InitializeAvailableDistros() {
 			DetectAvailableDistros();
-			RefreshAvailableDistros();
+			if (WslService.CheckWslStatus()) {
+				RefreshAvailableDistros();
+			}
 		}
 
 		private void RefreshAvailableDistros() {
 			try {
 				label3.Text = "Loading...";
-               
+				if (!WslService.CheckWslStatus()) {
+					label3.Text  = "WSL is unavailable";
+					return;
+				}
 				availableDistroList = WslInstallService.GetAvailableDistros();
 				var installedDistros = WslService.ListDistros();
                 
@@ -460,8 +465,10 @@ namespace WslManagerFramework {
 				label1.Text = "Loading...";
                 
 				// Recreate distribution list
-				var newDistros = WslService.ListDistros();
-                
+				string[] newDistros = {};
+				if (WslService.CheckWslStatus()) {
+					newDistros = WslService.ListDistros();
+				}
 				// Cache
 				if (_allDistros.Length != newDistros.Length || !_allDistros.SequenceEqual(newDistros)) {
 					flowLayoutPanel.Controls.Clear();
@@ -785,7 +792,7 @@ namespace WslManagerFramework {
 
 		private bool DetectAvailableDistros(){
 			List<DistroData> distroDataList =  new List<DistroData>();
-				string registryPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Lxss";
+			string registryPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Lxss";
 
 			try {
 				if (logService != null)
@@ -817,7 +824,10 @@ namespace WslManagerFramework {
 										var distroData = new DistroData();
 										distroData.DistroImage = "";
 										distroData.DistroName = distributionName;
-										
+										Debug.WriteLine(String.Format("Detected entry: {0} {1}",subKeyName, basePath));
+										if (logService != null)
+										logService.AddLog(String.Format("Detected entry: {0} {1}",subKeyName, basePath), Color.LightYellow);
+								
 										distroDataList.Add(distroData);
 									} else {
 										

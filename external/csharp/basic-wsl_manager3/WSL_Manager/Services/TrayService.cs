@@ -42,7 +42,9 @@ namespace WslManagerFramework.Services {
 
 		public void UpdateTrayMenu() {
 			contextMenuStrip.Items.Clear();
-
+			if (!WslService.CheckWslStatus()) {
+				return;
+			}
 			try {
 				var distros = WslService.ListDistros();
                 
