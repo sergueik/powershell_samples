@@ -79,16 +79,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -105,42 +95,6 @@
       <Project>{839ee91f-8e1f-4d47-82b6-efc6a95c2f78}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExampleButton.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExampleButtonDown.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExampleButtonHover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExampleButtonA.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExampleButtonDownA.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExampleButtonHoverA.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CCheckedDown.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CCheckedHover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CCheckedNormal.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CUncheckedDown.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CUncheckedHover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CUncheckedNormal.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

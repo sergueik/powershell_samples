@@ -8,7 +8,7 @@
     <ProjectGuid>{839EE91F-8E1F-4D47-82B6-EFC6A95C2F78}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.Windows.Forms</RootNamespace>
+    <RootNamespace>Utils</RootNamespace>
     <AssemblyName>Utils</AssemblyName>
     <NoWin32Manifest>False</NoWin32Manifest>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
@@ -69,6 +69,63 @@
   <ItemGroup>
     <Compile Include="ImageButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ExampleButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ExampleButtonDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ExampleButtonHover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ExampleButtonA.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ExampleButtonDownA.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ExampleButtonHoverA.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CCheckedDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CCheckedHover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CCheckedNormal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CUncheckedDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CUncheckedHover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CUncheckedNormal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

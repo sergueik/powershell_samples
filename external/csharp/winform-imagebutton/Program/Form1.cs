@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Utils;
 
 namespace Program {
 	public partial class Form1 : Form {
@@ -16,13 +17,13 @@ namespace Program {
 		private void imageButton13_Click(object sender, EventArgs e) {
 			hideAlerts = !hideAlerts;
 			if (hideAlerts) {
-				imageButton13.NormalImage = Properties.Resources.CCheckedNormal;
-				imageButton13.HoverImage = Properties.Resources.CCheckedHover;
-				imageButton13.DownImage = Properties.Resources.CCheckedDown;
+				imageButton13.NormalImage = Utils.Properties.Resources.CCheckedNormal;
+				imageButton13.HoverImage = Utils.Properties.Resources.CCheckedHover;
+				imageButton13.DownImage = Utils.Properties.Resources.CCheckedDown;
 			} else {
-				imageButton13.NormalImage = Properties.Resources.CUncheckedNormal;
-				imageButton13.HoverImage = Properties.Resources.CUncheckedHover;
-				imageButton13.DownImage = Properties.Resources.CUncheckedDown;
+				imageButton13.NormalImage = Utils.Properties.Resources.CUncheckedNormal;
+				imageButton13.HoverImage = Utils.Properties.Resources.CUncheckedHover;
+				imageButton13.DownImage = Utils.Properties.Resources.CUncheckedDown;
 			}
 		}
 
