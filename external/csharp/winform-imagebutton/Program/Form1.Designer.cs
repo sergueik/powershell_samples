@@ -2,16 +2,15 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
 using System;
+using Utils;
 
-namespace ImageButtonDemo {
-	partial class Form1
-	{
+namespace Program {
+	partial class Form1 {
 		private static float fontSize = 9.25F;
 			
 		private IContainer components = null;
 
-		protected override void Dispose(bool disposing)
-		{
+		protected override void Dispose(bool disposing) {
 			if (disposing && (components != null)) {
 				components.Dispose();
 			}
@@ -24,8 +23,7 @@ namespace ImageButtonDemo {
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
-		{
+		private void InitializeComponent() {
 			imageButton1 = new ImageButton();
 			imageButton13 = new ImageButton();
 			imageButton2 = new ImageButton();
@@ -49,9 +47,9 @@ namespace ImageButtonDemo {
 			// imageButton1
 			// 
 			imageButton1.DialogResult = DialogResult.None;
-			imageButton1.DownImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonDownA;
+			imageButton1.DownImage = global::Program.Properties.Resources.ExampleButtonDownA;
 			imageButton1.Font = new Font("Segoe UI", 28F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton1.HoverImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonHoverA;
+			imageButton1.HoverImage = global::Program.Properties.Resources.ExampleButtonHoverA;
 			imageButton1.Location = new Point(22, 22);
 			imageButton1.Margin = new Padding(6);
 			imageButton1.Name = "imageButton1";
@@ -66,9 +64,9 @@ namespace ImageButtonDemo {
 			// imageButton2
 			// 
 			imageButton2.DialogResult = DialogResult.None;
-			imageButton2.DownImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonDownA;
+			imageButton2.DownImage = global::Program.Properties.Resources.ExampleButtonDownA;
 			imageButton2.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton2.HoverImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonHoverA;
+			imageButton2.HoverImage = global::Program.Properties.Resources.ExampleButtonHoverA;
 			imageButton2.Location = new Point(216, 22);
 			imageButton2.Margin = new Padding(6);
 			imageButton2.Name = "imageButton2";
@@ -94,9 +92,9 @@ namespace ImageButtonDemo {
 			// imageButton4
 			// 
 			imageButton4.DialogResult = DialogResult.None;
-			imageButton4.DownImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonDownA;
+			imageButton4.DownImage = global::Program.Properties.Resources.ExampleButtonDownA;
 			imageButton4.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton4.HoverImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonHoverA;
+			imageButton4.HoverImage = global::Program.Properties.Resources.ExampleButtonHoverA;
 			imageButton4.Location = new Point(411, 22);
 			imageButton4.Margin = new Padding(6);
 			imageButton4.Name = "imageButton4";
@@ -111,9 +109,9 @@ namespace ImageButtonDemo {
 			// imageButton5
 			// 
 			imageButton5.DialogResult = DialogResult.None;
-			imageButton5.DownImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonDownA;
+			imageButton5.DownImage = global::Program.Properties.Resources.ExampleButtonDownA;
 			imageButton5.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton5.HoverImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonHoverA;
+			imageButton5.HoverImage = global::Program.Properties.Resources.ExampleButtonHoverA;
 			imageButton5.Location = new Point(605, 22);
 			imageButton5.Margin = new Padding(6);
 			imageButton5.Name = "imageButton5";
@@ -128,9 +126,9 @@ namespace ImageButtonDemo {
 			// imageButton6
 			// 
 			imageButton6.DialogResult = DialogResult.None;
-			imageButton6.DownImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonDownA;
+			imageButton6.DownImage = global::Program.Properties.Resources.ExampleButtonDownA;
 			imageButton6.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton6.HoverImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonHoverA;
+			imageButton6.HoverImage = global::Program.Properties.Resources.ExampleButtonHoverA;
 			imageButton6.Location = new Point(801, 22);
 			imageButton6.Margin = new Padding(6);
 			imageButton6.Name = "imageButton6";
@@ -145,9 +143,9 @@ namespace ImageButtonDemo {
 			// imageButton7
 			// 
 			imageButton7.DialogResult = DialogResult.None;
-			imageButton7.DownImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonDownA;
+			imageButton7.DownImage = global::Program.Properties.Resources.ExampleButtonDownA;
 			imageButton7.Font = new Font("Segoe UI", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton7.HoverImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonHoverA;
+			imageButton7.HoverImage = global::Program.Properties.Resources.ExampleButtonHoverA;
 			imageButton7.Location = new Point(979, 22);
 			imageButton7.Margin = new Padding(6);
 			imageButton7.Name = "imageButton7";
@@ -163,9 +161,9 @@ namespace ImageButtonDemo {
 			// imageButton7
 			// 
 			imageButton8.DialogResult = DialogResult.None;
-			imageButton8.DownImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonDownA;
+			imageButton8.DownImage = global::Program.Properties.Resources.ExampleButtonDownA;
 			imageButton8.Font = new Font("Segoe UI", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton8.HoverImage = global::ImageButtonDemo.Properties.Resources.ExampleButtonHoverA;
+			imageButton8.HoverImage = global::Program.Properties.Resources.ExampleButtonHoverA;
 			imageButton8.Location = new Point(979, 22);
 			imageButton8.Margin = new Padding(6);
 			imageButton8.Name = "imageButton8";
@@ -192,11 +190,11 @@ namespace ImageButtonDemo {
 			// imageButton13
 			// 
 			imageButton13.DialogResult = DialogResult.None;
-			imageButton13.DownImage = global::ImageButtonDemo.Properties.Resources.CUncheckedDown;
-			imageButton13.HoverImage = global::ImageButtonDemo.Properties.Resources.CUncheckedHover;
+			imageButton13.DownImage = global::Program.Properties.Resources.CUncheckedDown;
+			imageButton13.HoverImage = global::Program.Properties.Resources.CUncheckedHover;
 			imageButton13.Location = new Point(31, 166);
 			imageButton13.Name = "imageButton13";
-			imageButton13.NormalImage = global::ImageButtonDemo.Properties.Resources.CUncheckedNormal;
+			imageButton13.NormalImage = global::Program.Properties.Resources.CUncheckedNormal;
 			imageButton13.Size = new Size(20, 20);
 			imageButton13.SizeMode = PictureBoxSizeMode.AutoSize;
 			imageButton13.TabIndex = 2;

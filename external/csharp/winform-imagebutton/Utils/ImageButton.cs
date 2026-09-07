@@ -6,7 +6,7 @@ using System.Drawing;
 using System.ComponentModel;
 
 // NOTE: library namespace
-namespace System.Windows.Forms
+namespace Utils
 {
 	public class ImageButton : PictureBox, IButtonControl
 	{

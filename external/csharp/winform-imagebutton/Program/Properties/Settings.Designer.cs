@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ImageButtonDemo.Properties
+namespace Program.Properties
 {
 
 

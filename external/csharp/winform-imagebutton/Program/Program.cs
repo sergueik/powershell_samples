@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Utils;
 
-namespace ImageButtonDemo
+namespace Program
 {
 	static class Program
 	{
