@@ -19,51 +19,56 @@ namespace ImageButtonDemo
 		private void imageButton1_Click(object sender, EventArgs e)
 		{
 			if (!hideAlerts)
-				MessageBox.Show("Clicked default button.");
+				MessageBox.Show("New");
 		}
 
 		private void imageButton2_Click(object sender, EventArgs e)
 		{
 			if (!hideAlerts)
-				MessageBox.Show("Clicked button B.");
+				MessageBox.Show("Reload");
 		}
 
-		private void imageButton3_Click(object sender, EventArgs e)
+		private void imageButton13_Click(object sender, EventArgs e)
 		{
 			hideAlerts = !hideAlerts;
 			if (hideAlerts) {
-				imageButton3.NormalImage = ImageButtonDemo.Properties.Resources.CCheckedNormal;
-				imageButton3.HoverImage = ImageButtonDemo.Properties.Resources.CCheckedHover;
-				imageButton3.DownImage = ImageButtonDemo.Properties.Resources.CCheckedDown;
+				imageButton13.NormalImage = ImageButtonDemo.Properties.Resources.CCheckedNormal;
+				imageButton13.HoverImage = ImageButtonDemo.Properties.Resources.CCheckedHover;
+				imageButton13.DownImage = ImageButtonDemo.Properties.Resources.CCheckedDown;
 			} else {
-				imageButton3.NormalImage = ImageButtonDemo.Properties.Resources.CUncheckedNormal;
-				imageButton3.HoverImage = ImageButtonDemo.Properties.Resources.CUncheckedHover;
-				imageButton3.DownImage = ImageButtonDemo.Properties.Resources.CUncheckedDown;
+				imageButton13.NormalImage = ImageButtonDemo.Properties.Resources.CUncheckedNormal;
+				imageButton13.HoverImage = ImageButtonDemo.Properties.Resources.CUncheckedHover;
+				imageButton13.DownImage = ImageButtonDemo.Properties.Resources.CUncheckedDown;
 			}
 		}
 
 		private void imageButton4_Click(object sender, EventArgs e)
 		{
 			if (!hideAlerts)
-				MessageBox.Show("Clicked button C.");
+				MessageBox.Show("Start");
 		}
 
 		private void imageButton5_Click(object sender, EventArgs e)
 		{
 			if (!hideAlerts)
-				MessageBox.Show("Clicked button D.");
+				MessageBox.Show("Stop");
 		}
 
 		private void imageButton6_Click(object sender, EventArgs e)
 		{
 			if (!hideAlerts)
-				MessageBox.Show("Clicked button E.");
+				MessageBox.Show("Shell");
 		}
 
 		private void imageButton7_Click(object sender, EventArgs e)
 		{
 			if (!hideAlerts)
-				MessageBox.Show("Clicked button F.");
+				MessageBox.Show("Configure");
+		}
+		private void imageButton8_Click(object sender, EventArgs e)
+		{
+			if (!hideAlerts)
+				MessageBox.Show("Recycle");
 		}
 	}
 }

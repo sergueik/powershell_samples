@@ -204,7 +204,7 @@ namespace System.Windows.Forms
 						OnMouseUp(null);
 						PerformClick();
 					} else if ((int)msg.WParam == (int)Keys.Escape
-					                        || (int)msg.WParam == (int)Keys.Tab) {
+					           || (int)msg.WParam == (int)Keys.Tab) {
 						holdingSpace = false;
 						OnMouseUp(null);
 					}
