@@ -5,7 +5,13 @@ Windows Subsystem for Linux (WSL)
 
 ![Original App](screenshots/capture-app-ja.png)
 
-![App](screenshots/capture-app-en-us.png)
+![App](screenshots/capture-app-console.png)
+
+![App](screenshots/capture-app-store.png)
+
+![App Tray](screenshots/capture-app-tray.png)
+
+![App Tray](screenshots/capture-app-tray2.png)
 
 ### Usage
 

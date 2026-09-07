@@ -4,10 +4,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WSL_Manager.Services;
 
-namespace WslManagerFramework.UI
-{
-	public class DistroRow
-	{
+namespace WslManagerFramework.UI {
+	public class DistroRow {
 		public string DistroName { get; protected set; }
 		public Panel Panel { get; protected set; }
 		public Label StatusLabel { get; protected set; }
@@ -24,9 +22,7 @@ namespace WslManagerFramework.UI
 		private System.Action<string> updateStatusAction;
 		private ToolTip toolTip;
 
-		public DistroRow(string distroName, Panel panel, Label statusLabel, Button backgroundButton, Button launchButton, Button dropdownButton, TextBox txtDescription,
-			Func<string, Task> launchAction, Func<string, Task> stopAction, System.Action<string> updateStatusAction, ToolTip toolTip)
-		{
+		public DistroRow(string distroName, Panel panel, Label statusLabel, Button backgroundButton, Button launchButton, Button dropdownButton, TextBox txtDescription, Func<string, Task> launchAction, Func<string, Task> stopAction, System.Action<string> updateStatusAction, ToolTip toolTip) {
 			DistroName = distroName;
 			Panel = panel;
 			StatusLabel = statusLabel;
@@ -42,8 +38,7 @@ namespace WslManagerFramework.UI
 			BackgroundButton.Click += OnBackgroundButtonClick;
 		}
 
-		public void UpdateStatus(string newStatus)
-		{
+		public void UpdateStatus(string newStatus) {
 			StatusLabel.Text = newStatus;
             
 			switch (newStatus.ToLower()) {
@@ -64,8 +59,7 @@ namespace WslManagerFramework.UI
 			UpdateBackgroundButton(newStatus);
 		}
 
-		private void UpdateBackgroundButton(string status)
-		{
+		private void UpdateBackgroundButton(string status) {
 			BackgroundButton.Click -= OnBackgroundButtonClick;
             
 			if (status.ToLower() == "running") {
@@ -81,12 +75,10 @@ namespace WslManagerFramework.UI
 				BackgroundButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(46, 125, 50);
 				toolTip.SetToolTip(BackgroundButton, "WSL launches it in the background");
 			}
-            
 			BackgroundButton.Click += OnBackgroundButtonClick;
 		}
 
-		private async void OnBackgroundButtonClick(object sender, EventArgs e)
-		{
+		private async void OnBackgroundButtonClick(object sender, EventArgs e) {
 			BackgroundButton.Enabled = false;
 			var originalText = BackgroundButton.Text;
 			BackgroundButton.Text = "Processing...";

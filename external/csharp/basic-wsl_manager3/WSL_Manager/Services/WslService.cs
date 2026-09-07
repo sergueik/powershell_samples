@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WslManagerFramework.Models;
 
 namespace WslManagerFramework.Services {
-	public class WslService {
+	public class  WslService {
 		private static string GetWslPath() {
 			var systemDir = Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess
                 ? @"C:\Windows\Sysnative"

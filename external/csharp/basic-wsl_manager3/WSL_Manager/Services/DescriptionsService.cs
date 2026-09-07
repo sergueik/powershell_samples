@@ -4,36 +4,30 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace WSL_Manager.Services
-{
+namespace WSL_Manager.Services {
 
-	public class DescriptionStore
-	{
+	public class DescriptionStore {
 		private readonly string _jsonPath;
 		private Dictionary<string, string> _map = new Dictionary<string, string>();
 
-		public DescriptionStore(string appName = "WSL Manager")
-		{
+		public DescriptionStore(string appName = "WSL Manager") {
 			_jsonPath = Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
 				appName, "descriptions.json");
 			Load();
 		}
 
-		public string Get(string key)
-		{
-			string v;
-			return _map.TryGetValue(key, out v) ? v : "";
+		public string Get(string key) {
+			string value = null;
+			return _map.TryGetValue(key, out value) ? value : "";
 		}
 
-		public void Set(string key, string value)
-		{
+		public void Set(string key, string value) {
 			_map[key] = value ?? "";
 			Save();
 		}
 
-		private void Load()
-		{
+		private void Load() {
 			try {
 				var dir = Path.GetDirectoryName(_jsonPath);
 				if (!Directory.Exists(dir))
@@ -48,8 +42,7 @@ namespace WSL_Manager.Services
 			}
 		}
 
-		private void Save()
-		{
+		private void Save() {
 			try {
 				var dir = Path.GetDirectoryName(_jsonPath);
 				if (!Directory.Exists(dir))

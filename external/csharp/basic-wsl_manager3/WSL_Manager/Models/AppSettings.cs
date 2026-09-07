@@ -6,18 +6,11 @@ using System.Xml.Serialization;
 namespace WslManagerFramework.Models {
 	[Serializable]
 	public class AppSettings {
-		// public bool MinimizeToTray { get; set; } = true;
-		// public bool RunAtStartup { get; set; } = true;
 		public bool minimizeToTray = true;
 		public bool runAtStartup = true;
 		public bool MinimizeToTray { get { return  minimizeToTray; } set { minimizeToTray = value; } }
 		public bool RunAtStartup { get { return runAtStartup; } set { runAtStartup = value; } }
 		private static string settingsPath = null;
-		/*
-        private static string SettingsPath => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "WSLManager", "settings.xml");
-*/
 		public static AppSettings Load() {
 			settingsPath = Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
