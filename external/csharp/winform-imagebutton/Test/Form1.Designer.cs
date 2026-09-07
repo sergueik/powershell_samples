@@ -1,13 +1,14 @@
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
+using System;
 
 namespace ImageButtonDemo {
 	partial class Form1
 	{
 		private static float fontSize = 9.25F;
 			
-		private System.ComponentModel.IContainer components = null;
+		private IContainer components = null;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -35,14 +36,14 @@ namespace ImageButtonDemo {
 			imageButton7 = new ImageButton();
 			imageButton8 = new ImageButton();
 			label2 = new Label();
-			((System.ComponentModel.ISupportInitialize)(imageButton1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton13)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton2)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton4)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton5)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton6)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton7)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton8)).BeginInit();
+			((ISupportInitialize)(imageButton1)).BeginInit();
+			((ISupportInitialize)(imageButton13)).BeginInit();
+			((ISupportInitialize)(imageButton2)).BeginInit();
+			((ISupportInitialize)(imageButton4)).BeginInit();
+			((ISupportInitialize)(imageButton5)).BeginInit();
+			((ISupportInitialize)(imageButton6)).BeginInit();
+			((ISupportInitialize)(imageButton7)).BeginInit();
+			((ISupportInitialize)(imageButton8)).BeginInit();
 			SuspendLayout();
 			// 
 			// imageButton1
@@ -60,7 +61,7 @@ namespace ImageButtonDemo {
 			imageButton1.TabIndex = 0;
 			imageButton1.TabStop = false;
 			imageButton1.Text = "+";
-			imageButton1.Click += new System.EventHandler(imageButton1_Click);
+			imageButton1.Click += new EventHandler(imageButton1_Click);
 			// 
 			// imageButton2
 			// 
@@ -77,7 +78,7 @@ namespace ImageButtonDemo {
 			imageButton2.TabIndex = 1;
 			imageButton2.TabStop = true;
 			imageButton2.Text = "\uE174";
-			imageButton2.Click += new System.EventHandler(imageButton2_Click);
+			imageButton2.Click += new EventHandler(imageButton2_Click);
 			// 
 			// label1
 			// 
@@ -105,7 +106,7 @@ namespace ImageButtonDemo {
 			imageButton4.TabIndex = 4;
 			imageButton4.TabStop = false;
 			imageButton4.Text = "\uE102";
-			imageButton4.Click += new System.EventHandler(imageButton4_Click);
+			imageButton4.Click += new EventHandler(imageButton4_Click);
 			// 
 			// imageButton5
 			// 
@@ -122,7 +123,7 @@ namespace ImageButtonDemo {
 			imageButton5.TabIndex = 5;
 			imageButton5.TabStop = true;
 			imageButton5.Text = "\uE103";
-			imageButton5.Click += new System.EventHandler(imageButton5_Click);
+			imageButton5.Click += new EventHandler(imageButton5_Click);
 			// 
 			// imageButton6
 			// 
@@ -139,7 +140,7 @@ namespace ImageButtonDemo {
 			imageButton6.TabIndex = 6;
 			imageButton6.TabStop = true;
 			imageButton6.Text = "\uE184";
-			imageButton6.Click += new System.EventHandler(imageButton6_Click);
+			imageButton6.Click += new EventHandler(imageButton6_Click);
 			// 
 			// imageButton7
 			// 
@@ -156,7 +157,7 @@ namespace ImageButtonDemo {
 			imageButton7.TabIndex = 7;
 			imageButton7.TabStop = true;
 			imageButton7.Text = "\uE179";
-			imageButton7.Click += new System.EventHandler(imageButton7_Click);
+			imageButton7.Click += new EventHandler(imageButton7_Click);
 
 			// 
 			// imageButton7
@@ -174,7 +175,7 @@ namespace ImageButtonDemo {
 			imageButton8.TabIndex = 7;
 			imageButton8.TabStop = true;
 			imageButton8.Text = "\uE107";
-			imageButton8.Click += new System.EventHandler(imageButton8_Click);
+			imageButton8.Click += new EventHandler(imageButton8_Click);
 
 			// 
 			// label2
@@ -200,7 +201,7 @@ namespace ImageButtonDemo {
 			imageButton13.SizeMode = PictureBoxSizeMode.AutoSize;
 			imageButton13.TabIndex = 2;
 			imageButton13.TabStop = false;
-			imageButton13.Click += new System.EventHandler(imageButton13_Click);
+			imageButton13.Click += new EventHandler(imageButton13_Click);
 
 			// 
 			// Form1
@@ -225,14 +226,14 @@ namespace ImageButtonDemo {
 			Name = "Form1";
 			ShowIcon = false;
 			Text = "ImageButton Demo";
-			((System.ComponentModel.ISupportInitialize)(imageButton1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton13)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton2)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton4)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton5)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton6)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton7)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(imageButton8)).EndInit();
+			((ISupportInitialize)(imageButton1)).EndInit();
+			((ISupportInitialize)(imageButton13)).EndInit();
+			((ISupportInitialize)(imageButton2)).EndInit();
+			((ISupportInitialize)(imageButton4)).EndInit();
+			((ISupportInitialize)(imageButton5)).EndInit();
+			((ISupportInitialize)(imageButton6)).EndInit();
+			((ISupportInitialize)(imageButton7)).EndInit();
+			((ISupportInitialize)(imageButton8)).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 

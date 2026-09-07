@@ -5,20 +5,29 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
 
+// NOTE: library namespace
 namespace System.Windows.Forms
 {
 	public class ImageButton : PictureBox, IButtonControl
 	{
 
-		#region IButtonControl Members
+		private DialogResult dialogResult;
+		private Image hoverImage;
+		private Image downImage;
+		private Image normalImage;
+		private const int WM_KEYDOWN = 0x0100;
+		private const int WM_KEYUP = 0x0101;
+		private bool hover = false;
+		private bool down = false;
+		private bool isDefault = false;
+		private bool holdingSpace = false;
 
-		private DialogResult m_DialogResult;
 		public DialogResult DialogResult {
 			get {
-				return m_DialogResult;
+				return dialogResult;
 			}
 			set {
-				m_DialogResult = value;
+				dialogResult = value;
 			}
 		}
 
@@ -32,58 +41,39 @@ namespace System.Windows.Forms
 			base.OnClick(EventArgs.Empty);
 		}
 
-		#endregion
-
-		#region HoverImage
-		private Image m_HoverImage;
-
 		[Category("Appearance")]
 		[Description("Image to show when the button is hovered over.")]
 		public Image HoverImage {
-			get { return m_HoverImage; }
+			get { return hoverImage; }
 			set {
-				m_HoverImage = value;
+				hoverImage = value;
 				if (hover)
 					Image = value;
 			}
 		}
-		#endregion
-		#region DownImage
-		private Image m_DownImage;
 
 		[Category("Appearance")]
 		[Description("Image to show when the button is depressed.")]
 		public Image DownImage {
-			get { return m_DownImage; }
+			get { return downImage; }
 			set {
-				m_DownImage = value;
+				downImage = value;
 				if (down)
 					Image = value;
 			}
 		}
-		#endregion
-		#region NormalImage
-		private Image m_NormalImage;
+
 
 		[Category("Appearance")]
 		[Description("Image to show when the button is not in any other state.")]
 		public Image NormalImage {
-			get { return m_NormalImage; }
+			get { return normalImage; }
 			set {
-				m_NormalImage = value;
+				normalImage = value;
 				if (!(hover || down))
 					Image = value;
 			}
 		}
-		#endregion
-
-		private const int WM_KEYDOWN = 0x0100;
-		private const int WM_KEYUP = 0x0101;
-		private bool hover = false;
-		private bool down = false;
-		private bool isDefault = false;
-
-		#region Overrides
 
 		[Browsable(true)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
@@ -111,17 +101,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-		#endregion
-
-		#region Description Changes
 		[Description("Controls how the ImageButton will handle image placement and control sizing.")]
 		public new PictureBoxSizeMode SizeMode { get { return base.SizeMode; } set { base.SizeMode = value; } }
 
 		[Description("Controls what type of border the ImageButton should have.")]
 		public new BorderStyle BorderStyle { get { return base.BorderStyle; } set { base.BorderStyle = value; } }
-		#endregion
-
-		#region Hiding
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -150,26 +134,24 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new bool WaitOnLoad { get { return base.WaitOnLoad; } set { base.WaitOnLoad = value; } }
-		#endregion
 
-		#region Events
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			hover = true;
 			if (down) {
-				if ((m_DownImage != null) && (Image != m_DownImage))
-					Image = m_DownImage;
-			} else if (m_HoverImage != null)
-				Image = m_HoverImage;
+				if ((downImage != null) && (Image != downImage))
+					Image = downImage;
+			} else if (hoverImage != null)
+				Image = hoverImage;
 			else
-				Image = m_NormalImage;
+				Image = normalImage;
 			base.OnMouseMove(e);
 		}
 
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			hover = false;
-			Image = m_NormalImage;
+			Image = normalImage;
 			base.OnMouseLeave(e);
 		}
 
@@ -178,8 +160,8 @@ namespace System.Windows.Forms
 			base.Focus();
 			OnMouseUp(null);
 			down = true;
-			if (m_DownImage != null)
-				Image = m_DownImage;
+			if (downImage != null)
+				Image = downImage;
 			base.OnMouseDown(e);
 		}
 
@@ -187,14 +169,12 @@ namespace System.Windows.Forms
 		{
 			down = false;
 			if (hover) {
-				if (m_HoverImage != null)
-					Image = m_HoverImage;
+				if (hoverImage != null)
+					Image = hoverImage;
 			} else
-				Image = m_NormalImage;
+				Image = normalImage;
 			base.OnMouseUp(e);
 		}
-
-		private bool holdingSpace = false;
 
 		public override bool PreProcessMessage(ref Message msg)
 		{
@@ -249,6 +229,5 @@ namespace System.Windows.Forms
 			Refresh();
 			base.OnTextChanged(e);
 		}
-		#endregion
 	}
 }

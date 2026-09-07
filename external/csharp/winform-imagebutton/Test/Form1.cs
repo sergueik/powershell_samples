@@ -16,18 +16,6 @@ namespace ImageButtonDemo
 			InitializeComponent();
 		}
 
-		private void imageButton1_Click(object sender, EventArgs e)
-		{
-			if (!hideAlerts)
-				MessageBox.Show("New");
-		}
-
-		private void imageButton2_Click(object sender, EventArgs e)
-		{
-			if (!hideAlerts)
-				MessageBox.Show("Reload");
-		}
-
 		private void imageButton13_Click(object sender, EventArgs e)
 		{
 			hideAlerts = !hideAlerts;
@@ -42,6 +30,18 @@ namespace ImageButtonDemo
 			}
 		}
 
+		private void imageButton1_Click(object sender, EventArgs e)
+		{
+			if (!hideAlerts)
+				MessageBox.Show("New");
+		}
+
+		private void imageButton2_Click(object sender, EventArgs e)
+		{
+			if (!hideAlerts)
+				MessageBox.Show("Reload");
+		}
+		
 		private void imageButton4_Click(object sender, EventArgs e)
 		{
 			if (!hideAlerts)
