@@ -3,11 +3,9 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
-namespace WslManagerFramework.Models
-{
+namespace WslManagerFramework.Models {
 	[Serializable]
-	public class AppSettings
-	{
+	public class AppSettings {
 		// public bool MinimizeToTray { get; set; } = true;
 		// public bool RunAtStartup { get; set; } = true;
 		public bool minimizeToTray = true;
@@ -20,8 +18,7 @@ namespace WslManagerFramework.Models
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "WSLManager", "settings.xml");
 */
-		public static AppSettings Load()
-		{
+		public static AppSettings Load() {
 			settingsPath = Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
 				"WSLManager", "settings.xml");
@@ -38,8 +35,7 @@ namespace WslManagerFramework.Models
 			}
 		}
 
-		public void Save()
-		{
+		public void Save() {
 			try {
 				var directory = Path.GetDirectoryName(settingsPath);
 				if (!Directory.Exists(directory))
@@ -49,8 +45,8 @@ namespace WslManagerFramework.Models
 				using (var writer = new FileStream(settingsPath, FileMode.Create)) {
 					serializer.Serialize(writer, this);
 				}
-			} catch (Exception ex) {
-				MessageBox.Show(String.Format("設定の保存に失敗しました: {0}", ex.Message), "エラー",
+			} catch (Exception e) {
+				MessageBox.Show(String.Format("Failed to save settings: {0}", e.Message), "Error",
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}

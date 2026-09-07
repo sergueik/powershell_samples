@@ -4,49 +4,44 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WslManagerFramework.Services
-{
-	public class TrayService
-	{
-		private NotifyIcon _notifyIcon;
-		private ContextMenuStrip _trayContextMenu;
-		private Form _parentForm;
-		private LogService _logService;
+namespace WslManagerFramework.Services {
+	public class TrayService {
+		private NotifyIcon notifyIcon;
+		private ContextMenuStrip contextMenuStrip;
+		private Form form;
+		private LogService logService;
 
-		public TrayService(Form parentForm, LogService logService)
-		{
-			_parentForm = parentForm;
-			_logService = logService;
+		public TrayService(Form form, LogService logService) {
+			this.form = form;
+			this.logService = logService;
 			InitializeTrayComponents();
 		}
 
-		private void InitializeTrayComponents()
-		{
-			_notifyIcon = new NotifyIcon();
-			_trayContextMenu = new ContextMenuStrip();
+		private void InitializeTrayComponents() {
+			notifyIcon = new NotifyIcon();
+			contextMenuStrip = new ContextMenuStrip();
             
 			var iconPath = System.IO.Path.Combine(
-				                        System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), 
-				                        "tax.ico");
+				               System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), 
+				               "tax.ico");
                 
 			if (System.IO.File.Exists(iconPath)) {
-				_notifyIcon.Icon = new Icon(iconPath);
+				notifyIcon.Icon = new Icon(iconPath);
 			} else {
-				_notifyIcon.Icon = SystemIcons.Information;
+				notifyIcon.Icon = SystemIcons.Information;
 			}
             
-			_notifyIcon.Text = "WSL Manager";
-			_notifyIcon.Visible = true;
-			_notifyIcon.DoubleClick += (_, __) => ShowWindow();
+			notifyIcon.Text = "WSL Manager";
+			notifyIcon.Visible = true;
+			notifyIcon.DoubleClick += (_, __) => ShowWindow();
             
-			_trayContextMenu.BackColor = Color.FromArgb(45, 45, 48);
-			_trayContextMenu.ForeColor = Color.White;
-			_notifyIcon.ContextMenuStrip = _trayContextMenu;
+			contextMenuStrip.BackColor = Color.FromArgb(45, 45, 48);
+			contextMenuStrip.ForeColor = Color.White;
+			notifyIcon.ContextMenuStrip = contextMenuStrip;
 		}
 
-		public void UpdateTrayMenu()
-		{
-			_trayContextMenu.Items.Clear();
+		public void UpdateTrayMenu() {
+			contextMenuStrip.Items.Clear();
 
 			try {
 				var distros = WslService.ListDistros();
@@ -59,7 +54,7 @@ namespace WslManagerFramework.Services
 						distroItem.ForeColor = Color.White;
 
 						if (status.ToLower() == "running") {
-							var stopItem = new ToolStripMenuItem("停止");
+							var stopItem = new ToolStripMenuItem("Stop");
 							stopItem.BackColor = Color.FromArgb(45, 45, 48);
 							stopItem.ForeColor = Color.LightCoral;
 							stopItem.Click += async (_, __) => {
@@ -67,53 +62,53 @@ namespace WslManagerFramework.Services
 									await WslService.StopWslAsync(distro);
 									UpdateTrayMenu();
 								} catch (Exception ex) {
-									if (_logService != null)
-										_logService.SafeAddLog(String.Format("WSL停止エラー: {0}", ex.Message), Color.LightCoral);
+									if (logService != null)
+										logService.SafeAddLog(String.Format("WSL Stop error: {0}", ex.Message), Color.LightCoral);
 								}
 							};
 							distroItem.DropDownItems.Add(stopItem);
 						} else {
-							var startItem = new ToolStripMenuItem("バックグラウンド起動");
+							var startItem = new ToolStripMenuItem("Launch in Background");
 							startItem.BackColor = Color.FromArgb(45, 45, 48);
 							startItem.ForeColor = Color.LightGreen;
 							startItem.Click += async (_, __) => {
 								try {
 									await WslService.LaunchWslBackgroundAsync(distro);
 									UpdateTrayMenu();
-									if (_logService != null)
-										_logService.SafeAddLog(String.Format("{0} をバックグラウンドで起動しました。", distro), Color.LightGreen);
+									if (logService != null)
+										logService.SafeAddLog(String.Format("{0} was launched in the background", distro), Color.LightGreen);
 								} catch (Exception ex) {
-									if (_logService != null)
-										_logService.SafeAddLog(String.Format("バックグラウンド起動エラー: {0}", ex.Message), Color.LightCoral);
+									if (logService != null)
+										logService.SafeAddLog(String.Format("Background launch error: {0}", ex.Message), Color.LightCoral);
 								}
 							};
 							distroItem.DropDownItems.Add(startItem);
 						}
 
-						var cmdItem = new ToolStripMenuItem("cmdで開く");
+						var cmdItem = new ToolStripMenuItem("Open with cmd");
 						cmdItem.BackColor = Color.FromArgb(45, 45, 48);
 						cmdItem.ForeColor = Color.White;
 						cmdItem.Click += (_, __) => {
 							try {
 								WslService.LaunchInCmd(distro);
 							} catch (Exception ex) {
-								if (_logService != null)
-									_logService.SafeAddLog(String.Format("cmd起動エラー: {0}", ex.Message), Color.LightCoral);
+								if (logService != null)
+									logService.SafeAddLog(String.Format("Startup error: {0}", ex.Message), Color.LightCoral);
 							}
 						};
 						distroItem.DropDownItems.Add(cmdItem);
 
-						var directItem = new ToolStripMenuItem("直接WSL起動");
+						var directItem = new ToolStripMenuItem("Launch");
 						directItem.BackColor = Color.FromArgb(45, 45, 48);
 						directItem.ForeColor = Color.White;
-						directItem.Click += (_, __) => {
+						directItem.Click += new EventHandler((object source, EventArgs args) => {
 							try {
 								WslService.LaunchWslDirect(distro);
 							} catch (Exception ex) {
-								if (_logService != null)
-									_logService.SafeAddLog(String.Format("直接起動エラー: {0}", ex.Message), Color.LightCoral);
+								if (logService != null)
+									logService.SafeAddLog(String.Format("Launch Error: {0}", ex.Message), Color.LightCoral);
 							}
-						};
+						                             });
 						distroItem.DropDownItems.Add(directItem);
 
 						var statusText = status.ToLower() == "running" ? "Running" : "Stopped";
@@ -123,59 +118,60 @@ namespace WslManagerFramework.Services
 						distroItem.Text = String.Format("{0} ({1})", distro, statusText);
 						distroItem.ForeColor = statusColor;
 
-						_trayContextMenu.Items.Add(distroItem);
+						contextMenuStrip.Items.Add(distroItem);
 					}
 
-					_trayContextMenu.Items.Add(new ToolStripSeparator());
+					contextMenuStrip.Items.Add(new ToolStripSeparator());
 				}
 			} catch (Exception ex) {
-				if (_logService != null)
-					_logService.SafeAddLog(String.Format("タスクトレイメニュー更新エラー: {0}", ex.Message), Color.LightCoral);
+				if (logService != null)
+					logService.SafeAddLog(String.Format("Tray menu update error: {0}", ex.Message), Color.LightCoral);
 			}
 
-			// 固定メニュー項目
-			var showItem = new ToolStripMenuItem("ウィンドウを表示");
+			var showItem = new ToolStripMenuItem("Show window");
 			showItem.BackColor = Color.FromArgb(45, 45, 48);
 			showItem.ForeColor = Color.White;
-			showItem.Click += (_, __) => ShowWindow();
-			_trayContextMenu.Items.Add(showItem);
+			showItem.Click += delegate(object sender, EventArgs e) {
+				ShowWindow();
+			};
+			contextMenuStrip.Items.Add(showItem);
 
-			var refreshItem = new ToolStripMenuItem("更新");
+			var refreshItem = new ToolStripMenuItem("Update");
 			refreshItem.BackColor = Color.FromArgb(45, 45, 48);
 			refreshItem.ForeColor = Color.White;
-			refreshItem.Click += (_, __) => UpdateTrayMenu();
-			_trayContextMenu.Items.Add(refreshItem);
+			refreshItem.Click += delegate {
+				UpdateTrayMenu();
+			};
+			contextMenuStrip.Items.Add(refreshItem);
 
-			var exitItem = new ToolStripMenuItem("終了");
+			var exitItem = new ToolStripMenuItem("End");
 			exitItem.BackColor = Color.FromArgb(45, 45, 48);
 			exitItem.ForeColor = Color.White;
-			exitItem.Click += (_, __) => {
-				_notifyIcon.Visible = false;
+			exitItem.Click += delegate {
+				notifyIcon.Visible = false;
 				Application.Exit();
 			};
-			_trayContextMenu.Items.Add(exitItem);
+			contextMenuStrip.Items.Add(exitItem);
 		}
 
-		private void ShowWindow()
-		{
-			_parentForm.Show();
-			_parentForm.WindowState = FormWindowState.Normal;
-			_parentForm.ShowInTaskbar = true;
-			_parentForm.BringToFront();
+		private void ShowWindow() {
+			form.Show();
+			form.WindowState = FormWindowState.Normal;
+			form.ShowInTaskbar = true;
+			form.BringToFront();
 		}
 
 		public void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
 		{
-			_notifyIcon.ShowBalloonTip(timeout, tipTitle, tipText, tipIcon);
+			notifyIcon.ShowBalloonTip(timeout, tipTitle, tipText, tipIcon);
 		}
 
-		public void Dispose()
-		{
-			if (_notifyIcon != null)
-				_notifyIcon.Dispose();
+		public void Dispose() {
+			if (notifyIcon != null)
+				notifyIcon.Dispose();
 
-			if (_trayContextMenu != null)
-				_trayContextMenu.Dispose();
+			if (contextMenuStrip != null)
+				contextMenuStrip.Dispose();
 		}
 	}
 }

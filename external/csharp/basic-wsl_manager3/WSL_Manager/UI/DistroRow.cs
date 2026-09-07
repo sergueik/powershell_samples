@@ -19,13 +19,13 @@ namespace WslManagerFramework.UI
 
 		public TextBox TxtDescription { get; set; }
 
-		private Func<string, Task> _launchAction;
-		private Func<string, Task> _stopAction;
-		private System.Action<string> _updateStatusAction;
-		private ToolTip _tooltip;
+		private Func<string, Task> launchAction;
+		private Func<string, Task> stopAction;
+		private System.Action<string> updateStatusAction;
+		private ToolTip toolTip;
 
 		public DistroRow(string distroName, Panel panel, Label statusLabel, Button backgroundButton, Button launchButton, Button dropdownButton, TextBox txtDescription,
-			Func<string, Task> launchAction, Func<string, Task> stopAction, System.Action<string> updateStatusAction, ToolTip tooltip)
+			Func<string, Task> launchAction, Func<string, Task> stopAction, System.Action<string> updateStatusAction, ToolTip toolTip)
 		{
 			DistroName = distroName;
 			Panel = panel;
@@ -34,10 +34,10 @@ namespace WslManagerFramework.UI
 			LaunchButton = launchButton;
 			DropdownButton = dropdownButton;
 			TxtDescription = txtDescription;
-			_launchAction = launchAction;
-			_stopAction = stopAction;
-			_updateStatusAction = updateStatusAction;
-			_tooltip = tooltip;
+			this.launchAction = launchAction;
+			this.stopAction = stopAction;
+			this.updateStatusAction = updateStatusAction;
+			this.toolTip = toolTip;
             
 			BackgroundButton.Click += OnBackgroundButtonClick;
 		}
@@ -69,15 +69,17 @@ namespace WslManagerFramework.UI
 			BackgroundButton.Click -= OnBackgroundButtonClick;
             
 			if (status.ToLower() == "running") {
-				BackgroundButton.Text = "停止";
+				BackgroundButton.Text = "Terminate";
+				BackgroundButton.Name = "Terminate";
 				BackgroundButton.BackColor = System.Drawing.Color.FromArgb(217, 83, 79);
 				BackgroundButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(217, 83, 79);
-				_tooltip.SetToolTip(BackgroundButton, "WSLを停止します");
+				toolTip.SetToolTip(BackgroundButton, "WSL terminates");
 			} else {
-				BackgroundButton.Text = "起動";
+				BackgroundButton.Text = "Boot";
+				BackgroundButton.Name = "Boot";
 				BackgroundButton.BackColor = System.Drawing.Color.FromArgb(46, 125, 50);
 				BackgroundButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(46, 125, 50);
-				_tooltip.SetToolTip(BackgroundButton, "WSLをバックグラウンドで起動します");
+				toolTip.SetToolTip(BackgroundButton, "WSL launches it in the background");
 			}
             
 			BackgroundButton.Click += OnBackgroundButtonClick;
@@ -87,21 +89,22 @@ namespace WslManagerFramework.UI
 		{
 			BackgroundButton.Enabled = false;
 			var originalText = BackgroundButton.Text;
-			BackgroundButton.Text = "処理中...";
+			BackgroundButton.Text = "Processing...";
             
 			try {
-				if (originalText == "停止") {
-					await _stopAction(DistroName);
+				// anti-pattern - relies on button text
+				if (originalText == "Stop") {
+					await stopAction(DistroName);
 				} else {
-					await _launchAction(DistroName);
+					await launchAction(DistroName);
 				}
                 
 				await Task.Delay(1000);
                 
 				if (BackgroundButton.InvokeRequired) {
-					BackgroundButton.Invoke(new Action(() => _updateStatusAction(DistroName)));
+					BackgroundButton.Invoke(new Action(() => updateStatusAction(DistroName)));
 				} else {
-					_updateStatusAction(DistroName);
+					updateStatusAction(DistroName);
 				}
 			} finally {
 				BackgroundButton.Enabled = true;
