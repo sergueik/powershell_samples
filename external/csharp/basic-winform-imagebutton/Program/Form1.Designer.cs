@@ -6,10 +6,8 @@ using Utils;
 
 namespace Program {
 	partial class Form1 {
-		private static float fontSize = 9.25F;
+		// private static float fontSize = 9.25F;
 			
-		private IContainer components = null;
-
 		protected override void Dispose(bool disposing) {
 			if (disposing && (components != null)) {
 				components.Dispose();
@@ -24,6 +22,7 @@ namespace Program {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			
 			imageButton1 = new ImageButton();
 			imageButton13 = new ImageButton();
 			imageButton2 = new ImageButton();
@@ -207,17 +206,22 @@ namespace Program {
 			AcceptButton = imageButton1;
 			AutoScaleDimensions = new SizeF(11F, 24F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(1280, 234);
-			Controls.Add(imageButton8);
-			Controls.Add(imageButton7);
-			Controls.Add(imageButton6);
-			Controls.Add(imageButton5);
-			Controls.Add(imageButton4);
-			Controls.Add(imageButton13);
-			Controls.Add(label1);
-			Controls.Add(imageButton2);
-			Controls.Add(imageButton1);
-			Controls.Add(label2);
+			ClientSize = new Size(1280, 640);
+			toolbarPanel.Dock = DockStyle.Top;
+			toolbarPanel.Height = 80;
+			toolbarPanel.BackColor = Color.FromArgb(45, 45, 48);			
+			Controls.Add(toolbarPanel);		
+			toolbarPanel.ClientSize = new Size(1280, 234);
+			toolbarPanel.Controls.Add(imageButton8);
+			toolbarPanel.Controls.Add(imageButton7);
+			toolbarPanel.Controls.Add(imageButton6);
+			toolbarPanel.Controls.Add(imageButton5);
+			toolbarPanel.Controls.Add(imageButton4);
+			toolbarPanel.Controls.Add(imageButton13);
+			toolbarPanel.Controls.Add(label1);
+			toolbarPanel.Controls.Add(imageButton2);
+			toolbarPanel.Controls.Add(imageButton1);
+			toolbarPanel.Controls.Add(label2);
 			FormBorderStyle = FormBorderStyle.FixedSingle;
 			Margin = new Padding(6);
 			MaximizeBox = false;
@@ -238,6 +242,8 @@ namespace Program {
 		}
 
 		#endregion
+		private IContainer components = null;
+		private readonly Panel toolbarPanel = new Panel();
 
 		private ImageButton imageButton1;
 		private ImageButton imageButton2;

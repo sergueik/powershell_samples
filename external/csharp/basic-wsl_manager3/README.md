@@ -3,7 +3,7 @@ replica of [WSL Manager](https://github.com/MoyashiWithDevice/WSL_Manager)
  - Windows Form based custom shell for
 Windows Subsystem for Linux (WSL)
 
-![Original App](screenshots/capture-app-ja.png)
+![Original App](screenshots/capture-app.png)
 
 ![App](screenshots/capture-app-console.png)
 

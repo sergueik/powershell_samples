@@ -5,7 +5,6 @@ using System.Drawing;
 namespace WslManagerFramework {
     partial class Form1 {
         private IContainer components = null;
-
         protected override void Dispose(bool disposing) {
             if (disposing && (components != null))
             {

@@ -6,6 +6,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Utils;
+
 
 using WSL_Manager.Services;
 using WslManagerFramework.Models;
@@ -14,8 +23,11 @@ using WslManagerFramework.UI;
 
 namespace WslManagerFramework {
 	public partial class Form1 : Form {
+
 		private readonly TabControl tabControl = new TabControl();
 		private readonly FlowLayoutPanel flowLayoutPanel = new FlowLayoutPanel();
+		private readonly Panel toolbarPanel = new Panel();
+
 		private readonly Button button1 = new Button();
 		private readonly Label label1 = new Label();
 		private readonly ToolTip toolTip = new ToolTip();
@@ -36,19 +48,27 @@ namespace WslManagerFramework {
         
 		private AppSettings appSettings;
 		private CheckBox checkBox1;
+		private Label label3;
         
 		private FlowLayoutPanel _installPanel = new FlowLayoutPanel();
 		private Button button1Available = new Button();
-		private Label label3 = new Label();
 		private List<AvailableDistro> availableDistroList = new List<AvailableDistro>();
 		private Dictionary<string, InstallProgress> _activeInstalls = new Dictionary<string, InstallProgress>();
 
+		private ImageButton imageButton1;
+		private ImageButton imageButton2;
+		private ImageButton imageButton4;
+		private ImageButton imageButton5;
+		private ImageButton imageButton6;
+		private ImageButton imageButton7;
+		private ImageButton imageButton8;
+		
 		public Form1() {
 			InitializeComponent();
 
 			Text = "WSL Manager";
-			Width = 800;
-			Height = 500;
+			Width =1280;
+			Height = 640;
 
 			appSettings = AppSettings.Load();
 
@@ -63,12 +83,192 @@ namespace WslManagerFramework {
 			InitializeTabs();
 		}
 
+		private void InitializeToolbarPanel() {
+			toolbarPanel.SuspendLayout();
+			imageButton1 = new ImageButton();
+			imageButton2 = new ImageButton();
+			imageButton4 = new ImageButton();
+			imageButton5 = new ImageButton();
+			imageButton6 = new ImageButton();
+			imageButton7 = new ImageButton();
+			imageButton8 = new ImageButton();
+
+			((ISupportInitialize)(imageButton1)).BeginInit();
+			((ISupportInitialize)(imageButton2)).BeginInit();
+			((ISupportInitialize)(imageButton4)).BeginInit();
+			((ISupportInitialize)(imageButton5)).BeginInit();
+			((ISupportInitialize)(imageButton6)).BeginInit();
+			((ISupportInitialize)(imageButton7)).BeginInit();
+			((ISupportInitialize)(imageButton8)).BeginInit();
+			// 
+			// imageButton1
+			// 
+			imageButton1.DialogResult = DialogResult.None;
+			imageButton1.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton1.Font = new Font("Segoe UI", 28F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton1.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton1.Location = new Point(22, 22);
+			imageButton1.Margin = new Padding(6);
+			imageButton1.Name = "imageButton1";
+			imageButton1.NormalImage = null;
+			imageButton1.Size = new Size(100, 50);
+			imageButton1.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton1.TabIndex = 0;
+			imageButton1.TabStop = false;
+			imageButton1.Text = "+";
+			imageButton1.Click += new EventHandler(imageButton1_Click);
+			
+			// 
+			// imageButton2
+			// 
+			imageButton2.DialogResult = DialogResult.None;
+			imageButton2.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton2.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton2.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton2.Location = new Point(216, 22);
+			imageButton2.Margin = new Padding(6);
+			imageButton2.Name = "imageButton2";
+			imageButton2.NormalImage = null;
+			imageButton2.Size = new Size(100, 50);
+			imageButton2.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton2.TabIndex = 1;
+			imageButton2.TabStop = true;
+			imageButton2.Text = "\uE174";
+			imageButton2.Click += new EventHandler(imageButton2_Click);
+			// 
+			// imageButton4
+			// 
+			imageButton4.DialogResult = DialogResult.None;
+			imageButton4.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton4.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton4.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton4.Location = new Point(411, 22);
+			imageButton4.Margin = new Padding(6);
+			imageButton4.Name = "imageButton4";
+			imageButton4.NormalImage = null;
+			imageButton4.Size = new Size(100, 50);
+			imageButton4.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton4.TabIndex = 4;
+			imageButton4.TabStop = false;
+			imageButton4.Text = "\uE102";
+			imageButton4.Click += new EventHandler(imageButton4_Click);
+			// 
+			// imageButton5
+			// 
+			imageButton5.DialogResult = DialogResult.None;
+			imageButton5.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton5.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton5.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton5.Location = new Point(605, 22);
+			imageButton5.Margin = new Padding(6);
+			imageButton5.Name = "imageButton5";
+			imageButton5.NormalImage = null;
+			imageButton5.Size = new Size(100, 50);
+			imageButton5.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton5.TabIndex = 5;
+			imageButton5.TabStop = true;
+			imageButton5.Text = "\uE103";
+			imageButton5.Click += new EventHandler(imageButton5_Click);
+			// 
+			// imageButton6
+			// 
+			imageButton6.DialogResult = DialogResult.None;
+			imageButton6.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton6.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton6.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton6.Location = new Point(801, 22);
+			imageButton6.Margin = new Padding(6);
+			imageButton6.Name = "imageButton6";
+			imageButton6.NormalImage = null;
+			imageButton6.Size = new Size(100, 50);
+			imageButton6.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton6.TabIndex = 6;
+			imageButton6.TabStop = true;
+			imageButton6.Text = "\uE184";
+			imageButton6.Click += new EventHandler(imageButton6_Click);
+			// 
+			// imageButton7
+			// 
+			imageButton7.DialogResult = DialogResult.None;
+			imageButton7.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton7.Font = new Font("Segoe UI", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton7.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton7.Location = new Point(979, 22);
+			imageButton7.Margin = new Padding(6);
+			imageButton7.Name = "imageButton7";
+			imageButton7.NormalImage = null;
+			imageButton7.Size = new Size(100, 50);
+			imageButton7.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton7.TabIndex = 7;
+			imageButton7.TabStop = true;
+			imageButton7.Text = "\uE179";
+			imageButton7.Click += new EventHandler(imageButton7_Click);
+
+			// 
+			// imageButton8
+			// 
+			imageButton8.DialogResult = DialogResult.None;
+			imageButton8.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton8.Font = new Font("Segoe UI", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton8.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton8.Location = new Point(979, 22);
+			imageButton8.Margin = new Padding(6);
+			imageButton8.Name = "imageButton8";
+			imageButton8.NormalImage = null;
+			imageButton8.Size = new Size(100, 50);
+			imageButton8.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton8.TabIndex = 7;
+			imageButton8.TabStop = true;
+			imageButton8.Text = "\uE107";
+			imageButton8.Click += new EventHandler(imageButton8_Click);
+
+			// AutoScaleDimensions = new SizeF(11F, 24F);
+			// AutoScaleMode = AutoScaleMode.Font;
+			// ClientSize = new Size(1280, 640);
+			toolbarPanel.Dock = DockStyle.Top;
+			// toolbarPanel.Height = 80;
+			toolbarPanel.BackColor = Color.FromArgb(45, 45, 48);			
+			toolbarPanel.ClientSize = new Size(1280, 80);
+			toolbarPanel.Controls.Add(imageButton1);
+			toolbarPanel.Controls.Add(imageButton2);
+			toolbarPanel.Controls.Add(imageButton4);
+			toolbarPanel.Controls.Add(imageButton5);
+			toolbarPanel.Controls.Add(imageButton6);
+			toolbarPanel.Controls.Add(imageButton7);
+			toolbarPanel.Controls.Add(imageButton8);
+			((ISupportInitialize)(imageButton1)).EndInit();
+			((ISupportInitialize)(imageButton2)).EndInit();
+			((ISupportInitialize)(imageButton4)).EndInit();
+			((ISupportInitialize)(imageButton5)).EndInit();
+			((ISupportInitialize)(imageButton6)).EndInit();
+			((ISupportInitialize)(imageButton7)).EndInit();
+			((ISupportInitialize)(imageButton8)).EndInit();
+			FormBorderStyle = FormBorderStyle.FixedSingle;
+			Margin = new Padding(6);
+			MaximizeBox = false;
+    		toolbarPanel.ResumeLayout();
+
+		}
 		private void InitializeTabs() {
+			
+			toolbarPanel.Dock = DockStyle.Top;
+			// toolbarPanel.Height = 80;
+    		toolbarPanel.ClientSize = new Size(1280, 80);
+	
+    		toolbarPanel.BackColor = Color.FromArgb(45, 45, 48);
+    		InitializeToolbarPanel();
+			ClientSize = new Size(1280, 640);
+
 			tabControl.Dock = DockStyle.Fill;
 			tabControl.BackColor = Color.FromArgb(45, 45, 48);
 			tabControl.ForeColor = Color.White;
-			Controls.Add(tabControl);
+			tabControl.ClientSize = new Size(1280, 580);
 
+			Controls.Add(tabControl);
+		    Controls.Add(toolbarPanel);
+			toolbarPanel.BringToFront();
+			tabControl.SendToBack();
+			PerformLayout();
 			// Main Tab
 			var mainTab = new TabPage("Console");
 			mainTab.BackColor = Color.FromArgb(45, 45, 48);
@@ -90,6 +290,7 @@ namespace WslManagerFramework {
 			InitializeMainTab(mainTab);
 			InitializeInstallTab(installTab);
 			InitializeSettingsTab(settingsTab);
+			tabControl.PerformLayout();
             
 			// the main tab is select by default.
 			tabControl.SelectedIndex = 0;
@@ -180,7 +381,8 @@ namespace WslManagerFramework {
 			button1Available.FlatAppearance.BorderColor = Color.FromArgb(104, 104, 104);
 			button1Available.Click += (_, __) => RefreshAvailableDistros();
 			toolTip.SetToolTip(button1Available, "Update the list of available distributions");
-
+			
+			label3 = new Label();
 			label3.AutoSize = true;
 			label3.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular);
 			label3.ForeColor = Color.FromArgb(204, 204, 204);
@@ -851,6 +1053,36 @@ namespace WslManagerFramework {
 			}
 
 	        return (bool)(distroDataList.Count != 0 );
+		}
+
+		private void imageButton1_Click(object sender, EventArgs e) {
+			
+		    // Controls.Add(toolbarPanel);
+			MessageBox.Show("New");
+		}
+
+		private void imageButton2_Click(object sender, EventArgs e) {
+			Controls.Add(toolbarPanel);
+			MessageBox.Show("Reload");
+		}
+		
+		private void imageButton4_Click(object sender, EventArgs e) {
+			MessageBox.Show("Start");
+		}
+
+		private void imageButton5_Click(object sender, EventArgs e) {
+			MessageBox.Show("Stop");
+		}
+
+		private void imageButton6_Click(object sender, EventArgs e) {
+			MessageBox.Show("Shell");
+		}
+
+		private void imageButton7_Click(object sender, EventArgs e) {
+			MessageBox.Show("Configure");
+		}
+		private void imageButton8_Click(object sender, EventArgs e) {
+			MessageBox.Show("Recycle");
 		}
 	}
 	public class DistroData {
