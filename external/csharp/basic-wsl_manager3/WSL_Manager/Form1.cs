@@ -131,6 +131,7 @@ namespace WslManagerFramework {
 			imageButton2.NormalImage = null;
 			imageButton2.Size = new Size(100, 50);
 			imageButton2.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton2.Tag = "Start distribution";
 			imageButton2.TabIndex = 1;
 			imageButton2.TabStop = true;
 			imageButton2.Text = "\uE174";
@@ -149,6 +150,7 @@ namespace WslManagerFramework {
 			imageButton4.Size = new Size(100, 50);
 			imageButton4.SizeMode = PictureBoxSizeMode.AutoSize;
 			imageButton4.TabIndex = 4;
+			imageButton4.Tag = "Stop distribution";
 			imageButton4.TabStop = false;
 			imageButton4.Text = "\uE102";
 			imageButton4.Click += new EventHandler(imageButton4_Click);
@@ -157,7 +159,6 @@ namespace WslManagerFramework {
 			// 
 			imageButton5.DialogResult = DialogResult.None;
 			imageButton5.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton5.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton5.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton5.Location = new Point(605, 22);
 			imageButton5.Margin = new Padding(6);
@@ -166,6 +167,7 @@ namespace WslManagerFramework {
 			imageButton5.Size = new Size(100, 50);
 			imageButton5.SizeMode = PictureBoxSizeMode.AutoSize;
 			imageButton5.TabIndex = 5;
+			imageButton5.Tag = "Refresh WSL information";
 			imageButton5.TabStop = true;
 			imageButton5.Text = "\uE103";
 			imageButton5.Click += new EventHandler(imageButton5_Click);
@@ -208,10 +210,11 @@ namespace WslManagerFramework {
 			// imageButton8
 			// 
 			imageButton8.DialogResult = DialogResult.None;
-			imageButton8.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			// imageButton8.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton8.Font = new Font("Segoe Fluent Icons", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton8.Font = new Font("Segoe UI", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton8.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
-			imageButton8.Location = new Point(979, 22);
+			imageButton8.Location = new Point(1158, 22);
 			imageButton8.Margin = new Padding(6);
 			imageButton8.Name = "imageButton8";
 			imageButton8.NormalImage = null;
@@ -220,6 +223,7 @@ namespace WslManagerFramework {
 			imageButton8.TabIndex = 7;
 			imageButton8.TabStop = true;
 			imageButton8.Text = "\uE107";
+			imageButton8.Tag = "Recycle";
 			imageButton8.Click += new EventHandler(imageButton8_Click);
 
 			// AutoScaleDimensions = new SizeF(11F, 24F);

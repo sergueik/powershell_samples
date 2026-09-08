@@ -408,6 +408,180 @@ in WSL2 envronment it becomes often:
 
 > _we have a Linux process listening on port_ `8000`
 
+### Troubleshooting
+
+Porting Widows Forms code:
+```c#
+// 
+// imageButton5
+// 
+imageButton5.DialogResult = DialogResult.None;
+imageButton5.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+imageButton5.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+imageButton5.Location = new Point(605, 22);
+imageButton5.Margin = new Padding(6);
+imageButton5.Name = "imageButton5";
+imageButton5.NormalImage = null;
+imageButton5.Size = new Size(100, 50);
+imageButton5.SizeMode = PictureBoxSizeMode.AutoSize;
+imageButton5.TabIndex = 5;
+imageButton5.Tag = "Refresh WSL information";
+imageButton5.TabStop = true;
+imageButton5.Text = "\uE103";
+imageButton5.Click += new EventHandler(imageButton5_Click);
+```
+![capture refresh button windows forms](screenshots/capture-refresh-windows-forms.png)
+
+to WPF:
+
+```xml
+<Button
+	Width="80"
+	Height="62"
+	Margin="3"
+	Click="Refresh_Click"
+	ToolTip="Refresh WSL information">
+	<StackPanel
+		HorizontalAlignment="Center">
+		<TextBlock
+			Text="&#xE103;"
+			FontSize="28"
+			FontFamily="Segoe UI"
+			HorizontalAlignment="Center" />
+		<TextBlock
+			Text="Refresh"
+			HorizontalAlignment="Center" />
+	</StackPanel>
+</Button>
+
+```
+reveals that `FontFamily` attribute appears _not to work_:
+![capture refresh button windows forms](screenshots/capture-refresh-wpf.png)
+
+ Windows has a font fallback mechanism
+ WPF has its own font fallback behavior, and it may not choose the same font.
+ Use Windows' font fallback registry
+
+ Windows maintains fallback mappings in the registry. The important key is:
+`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink`
+
+
+
+```powershell
+get-item -path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink" | select-object -property *
+
+```
+```text
+Property      : {Lucida Sans Unicode, Microsoft Sans Serif, Tahoma, Segoe
+                UI...}
+PSPath        : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE
+                \Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink
+PSParentPath  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE
+                \Microsoft\Windows NT\CurrentVersion\FontLink
+PSChildName   : SystemLink
+PSDrive       : HKLM
+PSProvider    : Microsoft.PowerShell.Core\Registry
+PSIsContainer : True
+SubKeyCount   : 0
+View          : Default
+Handle        : Microsoft.Win32.SafeHandles.SafeRegistryHandle
+ValueCount    : 83
+Name          : HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows
+                NT\CurrentVersion\FontLink\SystemLink
+
+
+
+```
+```powershell
+get-item -path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink" | select-object -expandproperty property
+
+```
+```text
+Lucida Sans Unicode
+Microsoft Sans Serif
+Tahoma
+Segoe UI
+Segoe UI Bold
+Segoe UI Light
+Segoe UI Semilight
+Segoe UI Semibold
+Segoe UI Variable Small
+Segoe UI Variable Small Bold
+Segoe UI Variable Small Light
+Segoe UI Variable Small Semilig
+Segoe UI Variable Small Semibol
+Segoe UI Variable Text
+Segoe UI Variable Text Bold
+Segoe UI Variable Text Light
+Segoe UI Variable Text Semiligh
+Segoe UI Variable Text Semibold
+Segoe UI Variable Display
+Segoe UI Variable Display Bold
+Segoe UI Variable Display Light
+Segoe UI Variable Display Semil
+Segoe UI Variable Display Semib
+Ebrima
+Ebrima Bold
+Gadugi
+Gadugi Bold
+Khmer UI
+Khmer UI Bold
+Lao UI
+Lao UI Bold
+Leelawadee
+Leelawadee Bold
+Leelawadee UI
+Leelawadee UI Bold
+Nirmala UI
+Nirmala UI Bold
+Nirmala UI Semilight
+MingLiU
+PMingLiU
+MingLiU_HKSCS
+MingLiU-ExtB
+PMingLiU-ExtB
+MingLiU_HKSCS-ExtB
+Microsoft JhengHei
+Microsoft JhengHei Bold
+Microsoft JhengHei UI
+Microsoft JhengHei UI Bold
+Microsoft JhengHei UI Light
+SimSun
+SimSun-ExtB
+NSimSun
+Microsoft YaHei
+Microsoft YaHei Bold
+Microsoft YaHei UI
+Microsoft YaHei UI Bold
+Microsoft YaHei UI Light
+Yu Gothic UI
+Yu Gothic UI Bold
+Yu Gothic UI Light
+Yu Gothic UI Semilight
+Yu Gothic UI Semibold
+Meiryo
+Meiryo Bold
+Meiryo UI
+Meiryo UI Bold
+MS Gothic
+MS PGothic
+MS UI Gothic
+MS Mincho
+MS PMincho
+Batang
+BatangChe
+Dotum
+DotumChe
+Gulim
+GulimChe
+Gungsuh
+GungsuhChe
+Malgun Gothic
+Malgun Gothic Bold
+Malgun Gothic Semilight
+SimSun-ExtG
+```
+
 ### See Also
 
   * [WPF WSL Manager](https://github.com/wslhub/WslManager) — __.NET 6__
