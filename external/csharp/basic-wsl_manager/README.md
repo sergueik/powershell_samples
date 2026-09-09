@@ -408,8 +408,9 @@ in WSL2 envronment it becomes often:
 
 > _wehave a Linux process listening on port_ `8000`
 
+### Disk Free Space Management, Virtual Hard Disk Schrinking
 
-### Space Management
+#### WSL Case
 
 ```code
 flowchart TB
@@ -420,19 +421,12 @@ API[["low-level VHD / NTFS API"]]
 CLEANER[/"cleaner.sh<br/>multi-purpose<br/>baked into image"/]
 
 BEGIN --> WSLRUN
-
-
 WSLRUN["WSL runner<br/>wsl.exe /tmp/cleaner.sh ..."]
-
-
 PINVOKE["WSL Kick Start<br/>P/Invoke"]
-
 WSLRUN --> CLEANER
-CLEANER -- "Free space inside<br/>dynamic VHDX" --> PINVOKE
+CLEANER  -- "free space<br/>inside guest disk" --> PINVOKE
 PINVOKE--> API
-API-- "Shrink Windows-visible<br/>dynamic image" --> END
-
-
+API -- "Shrink Windows<br/>dynamic VHDX image File" --> END
 ```
 ```mermaid
 flowchart TB
@@ -446,63 +440,73 @@ BEGIN --> WSLRUN
 WSLRUN["WSL runner<br/>wsl.exe /tmp/cleaner.sh ..."]
 PINVOKE["WSL Kick Start<br/>P/Invoke"]
 WSLRUN --> CLEANER
-CLEANER -- "Free space inside<br/>dynamic VHDX" --> PINVOKE
+CLEANER  -- "free space<br/>inside guest disk" --> PINVOKE
 PINVOKE--> API
-API-- "Shrink Windows-visible<br/>dynamic image" --> END
-
+API -- "Shrink Windows<br/>dynamic VHDX image File" --> END
 ```
 ![WSL Shrink Process](screenshots/capture-shrink-wsl.png)
 
+#### Virtual Box and other True Hypervisors
+
 ```code
-
 flowchart TB
-BEGIN(((BEGIN)))
-END((END))
-RUNTIME{Container<br/>Runtime}
-VBMANAGE1["VBoxManage showmediuminfo"]
-VBMANAGE2["VBoxManage modifyhd"]
-SCRIPT1[/"docker script"/]
-SCRIPT2[/"podman script"/]
+  BEGIN(((BEGIN)))
+  END((END))
 
-GUESTCTRL1["VBoxManage guestcontrol<br/>--exe /bin/sh ..."]
-GUESTCTRL2["VBoxManage guestcontrol<br/>--exe /bin/sh ..."]
+  RUNTIME{Container<br/>Runtime}
 
-  
-BEGIN --> GUESTCTRL1 
-GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
-RUNTIME -- Docker --> SCRIPT1
-RUNTIME -- Podman --> SCRIPT2
-SCRIPT1 --> GUESTCTRL2
-SCRIPT2 --> GUESTCTRL2
-GUESTCTRL2 --> VBMANAGE1
-VBMANAGE1 -- Fixed --> END
-VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
+  SCRIPT1[/"docker script"/]
+  SCRIPT2[/"podman script"/]
+
+
+  GUESTCTRL1["VBoxManage guestcontrol"]
+  GUESTCTRL2["VBoxManage guestcontrol"]
+  VBMANAGE1["VBoxManage showmediuminfo"]
+  VBMANAGE2["VBoxManage modifyhd"]
+
+  BEGIN --> GUESTCTRL1
+  GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
+
+  RUNTIME -- Docker --> SCRIPT1
+  RUNTIME -- Podman --> SCRIPT2
+
+  SCRIPT1 --> GUESTCTRL2
+  SCRIPT2 --> GUESTCTRL2
+
+  GUESTCTRL2 -- "free space<br/>inside guest disk" --> VBMANAGE1
+  VBMANAGE1 -- Fixed --> END
+  VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
 ```
 
 ```mermaid
 
 flowchart TB
-BEGIN(((BEGIN)))
-END((END))
-RUNTIME{Container<br/>Runtime}
-VBMANAGE1["VBoxManage showmediuminfo"]
-VBMANAGE2["VBoxManage modifyhd"]
-SCRIPT1[/"docker script"/]
-SCRIPT2[/"podman script"/]
+  BEGIN(((BEGIN)))
+  END((END))
 
-GUESTCTRL1["VBoxManage guestcontrol<br/>--exe /bin/sh ..."]
-GUESTCTRL2["VBoxManage guestcontrol<br/>--exe /bin/sh ..."]
+  RUNTIME{Container<br/>Runtime}
 
-  
-BEGIN --> GUESTCTRL1 
-GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
-RUNTIME -- Docker --> SCRIPT1
-RUNTIME -- Podman --> SCRIPT2
-SCRIPT1 --> GUESTCTRL2
-SCRIPT2 --> GUESTCTRL2
-GUESTCTRL2 --> VBMANAGE1
-VBMANAGE1 -- Fixed --> END
-VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
+  SCRIPT1[/"docker script"/]
+  SCRIPT2[/"podman script"/]
+
+
+  GUESTCTRL1["VBoxManage guestcontrol"]
+  GUESTCTRL2["VBoxManage guestcontrol"]
+  VBMANAGE1["VBoxManage showmediuminfo"]
+  VBMANAGE2["VBoxManage modifyhd"]
+
+  BEGIN --> GUESTCTRL1
+  GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
+
+  RUNTIME -- Docker --> SCRIPT1
+  RUNTIME -- Podman --> SCRIPT2
+
+  SCRIPT1 --> GUESTCTRL2
+  SCRIPT2 --> GUESTCTRL2
+
+  GUESTCTRL2 -- "free space<br/>inside guest disk" --> VBMANAGE1
+  VBMANAGE1 -- Fixed --> END
+  VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
 ```
 ![VB Shrink Process](screenshots/capture-shrink-vb.png)
 
@@ -560,7 +564,6 @@ vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASS
 /usr/bin/docker
 0
 ```
-```
 
 ```cmd
 vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C; if [ $? = 0 ]; then $C info > /dev/null; else echo 1;fi" "test" "docker"
@@ -592,6 +595,7 @@ VBoxManage.exe: error: The specified user was not able to logon on guest
 VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestSessionWrap, interface IGuestSession, callee IUnknown
 VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aSessionWaitFlags), 30 * 1000, &enmWaitResult)" at line 938 of file VBoxManageGuestCtrl.cpp
 ```
+
 ### Troubleshooting
 
 Porting Widows Forms code:

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36414.22 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSL_Manager", "WSL_Manager\WSL_Manager.csproj", "{70673CBD-170A-4D79-BA08-4F1A5198E45D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "Program\Program.csproj", "{70673CBD-170A-4D79-BA08-4F1A5198E45D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{839EE91F-8E1F-4D47-82B6-EFC6A95C2F78}"
 EndProject

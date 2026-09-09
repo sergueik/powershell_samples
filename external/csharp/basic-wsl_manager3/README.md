@@ -135,6 +135,193 @@ This prompt will time out...
 ```
 is part of the *interactive fallback behavior* of the WSL stub, rather than ordinary diagnostic output that caller's processInfo `StandardError.ReadToEnd()` is guaranteed to receive
 
+### Disk Free Space Management, Virtual Hard Disk Schrinking
+
+#### WSL Case
+
+```code
+flowchart TB
+%% Shrink Windows-visible<br/>dynamic image
+BEGIN(((BEGIN)))
+END((END))
+API[["low-level VHD / NTFS API"]]
+CLEANER[/"cleaner.sh<br/>multi-purpose<br/>baked into image"/]
+
+BEGIN --> WSLRUN
+WSLRUN["WSL runner<br/>wsl.exe /tmp/cleaner.sh ..."]
+PINVOKE["WSL Kick Start<br/>P/Invoke"]
+WSLRUN --> CLEANER
+CLEANER  -- "free space<br/>inside guest disk" --> PINVOKE
+PINVOKE--> API
+API -- "Shrink Windows<br/>dynamic VHDX image File" --> END
+```
+```mermaid
+flowchart TB
+%% Shrink Windows-visible<br/>dynamic image
+BEGIN(((BEGIN)))
+END((END))
+API[["low-level VHD / NTFS API"]]
+CLEANER[/"cleaner.sh<br/>multi-purpose<br/>baked into image"/]
+
+BEGIN --> WSLRUN
+WSLRUN["WSL runner<br/>wsl.exe /tmp/cleaner.sh ..."]
+PINVOKE["WSL Kick Start<br/>P/Invoke"]
+WSLRUN --> CLEANER
+CLEANER  -- "free space<br/>inside guest disk" --> PINVOKE
+PINVOKE--> API
+API -- "Shrink Windows<br/>dynamic VHDX image File" --> END
+```
+![WSL Shrink Process](screenshots/capture-shrink-wsl.png)
+
+#### Virtual Box and other True Hypervisors
+
+```code
+flowchart TB
+  BEGIN(((BEGIN)))
+  END((END))
+
+  RUNTIME{Container<br/>Runtime}
+
+  SCRIPT1[/"docker script"/]
+  SCRIPT2[/"podman script"/]
+
+
+  GUESTCTRL1["VBoxManage guestcontrol"]
+  GUESTCTRL2["VBoxManage guestcontrol"]
+  VBMANAGE1["VBoxManage showmediuminfo"]
+  VBMANAGE2["VBoxManage modifyhd"]
+
+  BEGIN --> GUESTCTRL1
+  GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
+
+  RUNTIME -- Docker --> SCRIPT1
+  RUNTIME -- Podman --> SCRIPT2
+
+  SCRIPT1 --> GUESTCTRL2
+  SCRIPT2 --> GUESTCTRL2
+
+  GUESTCTRL2 -- "free space<br/>inside guest disk" --> VBMANAGE1
+  VBMANAGE1 -- Fixed --> END
+  VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
+```
+
+```mermaid
+
+flowchart TB
+  BEGIN(((BEGIN)))
+  END((END))
+
+  RUNTIME{Container<br/>Runtime}
+
+  SCRIPT1[/"docker script"/]
+  SCRIPT2[/"podman script"/]
+
+
+  GUESTCTRL1["VBoxManage guestcontrol"]
+  GUESTCTRL2["VBoxManage guestcontrol"]
+  VBMANAGE1["VBoxManage showmediuminfo"]
+  VBMANAGE2["VBoxManage modifyhd"]
+
+  BEGIN --> GUESTCTRL1
+  GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
+
+  RUNTIME -- Docker --> SCRIPT1
+  RUNTIME -- Podman --> SCRIPT2
+
+  SCRIPT1 --> GUESTCTRL2
+  SCRIPT2 --> GUESTCTRL2
+
+  GUESTCTRL2 -- "free space<br/>inside guest disk" --> VBMANAGE1
+  VBMANAGE1 -- Fixed --> END
+  VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
+```
+![VB Shrink Process](screenshots/capture-shrink-vb.png)
+
+      
+```cmd`
+vboxmanage.exe list runningvms
+```
+```text
+"Alpine39" {143fc8d2-8e84-4778-a58e-ae4ad83c41cc}
+"Xubuntu 22.04" {7e261a39-d356-4eb1-a8ed-75675b149241}
+```
+```cmd
+set VM={7e261a39-d356-4eb1-a8ed-75675b149241}
+set USERNAME=sergueik
+set PASSWORD=
+```
+```cmd
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; if which $C && $C --info >/dev/null 2>&1; then echo 1; else echo 0; fi" "probe" "docker"
+```
+
+```text`
+/usr/bin/docker
+0
+```
+
+```cmd
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1;  echo $C" "test" "podman"
+```
+```text
+podman
+```
+
+```cmd
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C; if [ $? = 0 ]; then echo 0; else echo 1;fi" "test" "podman"
+```
+
+```text
+1
+```
+
+```cmd
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C; if [ $? = 0 ]; then echo 0; else echo 1;fi" "test" "docker"
+```
+
+```text
+/usr/bin/docker
+0
+
+
+```cmd
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C; if [ -n $? ]; then echo 0; else echo 1;fi" "test" "docker"
+```
+
+```text
+/usr/bin/docker
+0
+```
+
+```cmd
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C; if [ $? = 0 ]; then $C info > /dev/null; else echo 1;fi" "test" "docker"
+```
+```sh
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C 2>/dev/null 1>&2; if [ $? = 0 ]; then $C info > /dev/null; echo $? ;else echo 1;fi" "test" "docker"
+1
+```
+```cmd
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C 2>/dev/null 1>&2; if [ $? = 0 ]; then $C info > /dev/null; echo $? ;else echo 1;fi" "test" "docker"
+```
+```text
+0
+```
+```cmd
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C 2>/dev/null 1>&2; if [ $? = 0 ]; then $C info > /dev/null; echo $? ;else echo 1;fi" "test" "podman"
+```
+```text
+1
+```
+```cmd
+set VM={143fc8d2-8e84-4778-a58e-ae4ad83c41cc}
+set USERNAME=vagrant
+set PASSWORD=vagrant
+```
+
+```text
+VBoxManage.exe: error: The specified user was not able to logon on guest
+VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestSessionWrap, interface IGuestSession, callee IUnknown
+VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aSessionWaitFlags), 30 * 1000, &enmWaitResult)" at line 938 of file VBoxManageGuestCtrl.cpp
+```
 ----
 
 ### Author
