@@ -90,9 +90,9 @@
 				<StackPanel
 					HorizontalAlignment="Center">
 					<TextBlock
-						Text=""
-						FontFamily="Segoe Fluent Icons"
-						FontSize="22"
+						Text="&#xE117;"
+						FontFamily="Segoe UI Symbol"
+						FontSize="16"
 						HorizontalAlignment="Center" />
 					<TextBlock
 						HorizontalAlignment="Center">
@@ -105,11 +105,28 @@
 				Width="80"
 				Height="62"
 				Margin="3"
+				ToolTip="Recycle">
+				<StackPanel
+					HorizontalAlignment="Center">
+					<TextBlock
+						FontFamily="Segoe Fluent Icons"
+						FontSize="19"
+						Text="&#xE107;"
+						HorizontalAlignment="Center" />
+					<TextBlock
+						Text="Recycle"
+						HorizontalAlignment="Center" />
+				</StackPanel>
+			</Button>
+			<Separator />			<Button
+				Width="80"
+				Height="62"
+				Margin="3"
 				ToolTip="Start distribution">
 				<StackPanel
 					HorizontalAlignment="Center">
 					<TextBlock
-						Text=""
+						Text="&#xE102;"
 						FontFamily="Segoe Fluent Icons"
 						FontSize="22"
 						HorizontalAlignment="Center" />
@@ -128,7 +145,7 @@
 				<StackPanel
 					HorizontalAlignment="Center">
 					<TextBlock
-						Text=""
+						Text="&#xE103;"
 						FontFamily="Segoe Fluent Icons"
 						FontSize="22"
 						HorizontalAlignment="Center" />
@@ -143,34 +160,16 @@
 				Width="80"
 				Height="62"
 				Margin="3"
-				ToolTip="Recycle">
-				<StackPanel
-					HorizontalAlignment="Center">
-					<TextBlock
-						FontFamily="Segoe Fluent Icons"
-						FontSize="19"
-						Text=""
-						HorizontalAlignment="Center" />
-					<TextBlock
-						Text="Recycle"
-						HorizontalAlignment="Center" />
-				</StackPanel>
-			</Button>
-			<Separator />
-			<Button
-				Width="80"
-				Height="62"
-				Margin="3"
-				ToolTip="Open WSL console">
+				ToolTip="Open Shell">
 				<StackPanel
 					HorizontalAlignment="Center">
 					<TextBlock
 						FontFamily="Segoe Fluent Icons"
 						FontSize="22"
-						Text=""
+						Text="&#xE184;"
 						HorizontalAlignment="Center" />
 					<TextBlock
-						Text="Console"
+						Text="Shell"
 						HorizontalAlignment="Center" />
 				</StackPanel>
 			</Button>
@@ -178,7 +177,7 @@
 				Width="80"
 				Height="62"
 				Margin="3"
-				ToolTip="Open in Explore">
+				ToolTip="Open in Explorer">
 				<StackPanel
 					HorizontalAlignment="Center">
 					<TextBlock
@@ -196,11 +195,19 @@
 				Width="80"
 				Height="62"
 				Margin="3"
-				ToolTip="Settings">
+				ToolTip="Configure">
 				<StackPanel
 					HorizontalAlignment="Center">
-					<TextBlock
+					<!--
+						in XAML ShareDevelop tends to replace the Text attibute entity values
+						
+						Text="&#xE179;"
+						with literals
 						Text=""
+						on save and after swithing to "Design" and back
+					-->
+					<TextBlock
+						Text="&#xE179;"
 						FontFamily="Segoe Fluent Icons"
 						FontSize="23"
 						HorizontalAlignment="Center" />
@@ -219,7 +226,7 @@
 					<TextBlock
 						FontFamily="Segoe Fluent Icons"
 						FontSize="19"
-						Text=""
+						Text="&#xE61F;"
 						HorizontalAlignment="Center" />
 					<TextBlock
 						Text="Shrink"
