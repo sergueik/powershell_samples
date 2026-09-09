@@ -118,7 +118,8 @@
 						HorizontalAlignment="Center" />
 				</StackPanel>
 			</Button>
-			<Separator />			<Button
+			<Separator />
+			<Button
 				Width="80"
 				Height="62"
 				Margin="3"
@@ -202,9 +203,10 @@
 						in XAML ShareDevelop tends to replace the Text attibute entity values
 						
 						Text="&#xE179;"
-						with literals
+						with PUA glyph literal
 						Text=""
-						on save and after swithing to "Design" and back
+						leading to a mystery character in the source
+						on save and after swithing to "Design" and back or some other innocent IDE operation
 					-->
 					<TextBlock
 						Text="&#xE179;"

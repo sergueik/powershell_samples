@@ -406,7 +406,130 @@ therefore insread of stating the usual
 
 in WSL2 envronment it becomes often:
 
-> _we have a Linux process listening on port_ `8000`
+> _wehave a Linux process listening on port_ `8000`
+
+
+### Space Management
+
+```code
+flowchart TB
+  %% Shrink Windows-visible<br/>dynamic image
+BEGIN(((BEGIN)))
+END((END))
+API[["low-level VHD / NTFS API"]]
+CLEANER[/"cleaner.sh<br/>multi-purpose<br/>baked into image"/]
+
+BEGIN --> WSLRUN
+
+
+WSLRUN["WSL runner<br/>wsl.exe /tmp/cleaner.sh ..."]
+
+
+PINVOKE["WSL Kick Start<br/>P/Invoke"]
+
+WSLRUN --> CLEANER
+CLEANER -- "Free space inside<br/>dynamic VHDX" --> PINVOKE
+PINVOKE--> API
+API-- "Shrink Windows-visible<br/>dynamic image" --> END
+
+
+```
+```mermaid
+flowchart TB
+  %% Shrink Windows-visible<br/>dynamic image
+BEGIN(((BEGIN)))
+END((END))
+API[["low-level VHD / NTFS API"]]
+CLEANER[/"cleaner.sh<br/>multi-purpose<br/>baked into image"/]
+
+BEGIN --> WSLRUN
+
+
+WSLRUN["WSL runner<br/>wsl.exe /tmp/cleaner.sh ..."]
+
+
+PINVOKE["WSL Kick Start<br/>P/Invoke"]
+
+WSLRUN --> CLEANER
+CLEANER -- "Free space inside<br/>dynamic VHDX" --> PINVOKE
+PINVOKE--> API
+API-- "Shrink Windows-visible<br/>dynamic image" --> END
+
+flowchart TB
+  %% Shrink Windows-visible<br/>dynamic image
+BEGIN(((BEGIN)))
+END((END))
+API[["low-level VHD / NTFS API"]]
+CLEANER[/"cleaner.sh<br/>multi-purpose<br/>baked into image"/]
+
+BEGIN --> WSLRUN
+
+
+WSLRUN["WSL runner<br/>wsl.exe /tmp/cleaner.sh ..."]
+
+
+PINVOKE["WSL Kick Start<br/>P/Invoke"]
+
+WSLRUN --> CLEANER
+CLEANER -- "Free space inside<br/>dynamic VHDX" --> PINVOKE
+PINVOKE--> API
+API-- "Shrink Windows-visible<br/>dynamic image" --> END
+
+```
+![WSL Shrink Process](screenshots/capture-shrink-wsl.png)
+
+```code
+
+flowchart TB
+BEGIN(((BEGIN)))
+END((END))
+RUNTIME{Container<br/>Runtime}
+VBMANAGE1["VBoxManage showmediuminfo"]
+VBMANAGE2["VBoxManage modifyhd"]
+SCRIPT1[/"docker script"/]
+SCRIPT2[/"podman script"/]
+
+GUESTCTRL1["VBoxManage guestcontrol<br/>--exe /bin/sh ..."]
+GUESTCTRL2["VBoxManage guestcontrol<br/>--exe /bin/sh ..."]
+
+  
+BEGIN --> GUESTCTRL1 
+GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
+RUNTIME -- Docker --> SCRIPT1
+RUNTIME -- Podman --> SCRIPT2
+SCRIPT1 --> GUESTCTRL2
+SCRIPT2 --> GUESTCTRL2
+GUESTCTRL2 --> VBMANAGE1
+VBMANAGE1 -- Fixed --> END
+VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
+```
+
+```mermaid
+
+flowchart TB
+BEGIN(((BEGIN)))
+END((END))
+RUNTIME{Container<br/>Runtime}
+VBMANAGE1["VBoxManage showmediuminfo"]
+VBMANAGE2["VBoxManage modifyhd"]
+SCRIPT1[/"docker script"/]
+SCRIPT2[/"podman script"/]
+
+GUESTCTRL1["VBoxManage guestcontrol<br/>--exe /bin/sh ..."]
+GUESTCTRL2["VBoxManage guestcontrol<br/>--exe /bin/sh ..."]
+
+  
+BEGIN --> GUESTCTRL1 
+GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
+RUNTIME -- Docker --> SCRIPT1
+RUNTIME -- Podman --> SCRIPT2
+SCRIPT1 --> GUESTCTRL2
+SCRIPT2 --> GUESTCTRL2
+GUESTCTRL2 --> VBMANAGE1
+VBMANAGE1 -- Fixed --> END
+VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
+```
+![VB Shrink Process](screenshots/capture-shrink-vb.png)
 
 ### Troubleshooting
 
@@ -627,6 +750,7 @@ U+E179: difference = 27.2695
 U+E107: difference = 22.0048
   U+E107 -> True
 ```
+
 ### See Also
 
   * [WPF WSL Manager](https://github.com/wslhub/WslManager) — __.NET 6__
