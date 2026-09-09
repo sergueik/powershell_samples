@@ -135,7 +135,6 @@ This prompt will time out...
 ```
 is part of the *interactive fallback behavior* of the WSL stub, rather than ordinary diagnostic output that caller's processInfo `StandardError.ReadToEnd()` is guaranteed to receive
 
-
 ----
 
 ### Author

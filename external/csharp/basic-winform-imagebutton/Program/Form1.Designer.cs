@@ -22,19 +22,24 @@ namespace Program {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			
+			toolbarPanel = new Panel();
+
+			ClientSize = new Size(1280, 80);
+			BackColor = Color.FromArgb(45, 45, 48);
+			ForeColor = Color.White;
+
 			imageButton1 = new ImageButton();
-			imageButton13 = new ImageButton();
 			imageButton2 = new ImageButton();
-			label1 = new Label();
 			imageButton4 = new ImageButton();
 			imageButton5 = new ImageButton();
 			imageButton6 = new ImageButton();
 			imageButton7 = new ImageButton();
 			imageButton8 = new ImageButton();
-			label2 = new Label();
+
+			imageButton13 = new ImageButton();
+            label1 = new Label();
+            label2 = new Label();
 			((ISupportInitialize)(imageButton1)).BeginInit();
-			((ISupportInitialize)(imageButton13)).BeginInit();
 			((ISupportInitialize)(imageButton2)).BeginInit();
 			((ISupportInitialize)(imageButton4)).BeginInit();
 			((ISupportInitialize)(imageButton5)).BeginInit();
@@ -42,12 +47,13 @@ namespace Program {
 			((ISupportInitialize)(imageButton7)).BeginInit();
 			((ISupportInitialize)(imageButton8)).BeginInit();
 			SuspendLayout();
+
 			// 
 			// imageButton1
 			// 
 			imageButton1.DialogResult = DialogResult.None;
 			imageButton1.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton1.Font = new Font("Segoe UI", 28F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton1.Font = new Font("Segoe UI", 26F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton1.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton1.Location = new Point(22, 22);
 			imageButton1.Margin = new Padding(6);
@@ -56,15 +62,17 @@ namespace Program {
 			imageButton1.Size = new Size(100, 50);
 			imageButton1.SizeMode = PictureBoxSizeMode.AutoSize;
 			imageButton1.TabIndex = 0;
+			imageButton1.Tag = "New";
 			imageButton1.TabStop = false;
 			imageButton1.Text = "+";
-			imageButton1.Click += new EventHandler(imageButton1_Click);
+			imageButton1.Click += new EventHandler(imageButton_Click);
+			
 			// 
 			// imageButton2
 			// 
 			imageButton2.DialogResult = DialogResult.None;
 			imageButton2.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton2.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton2.Font = new Font("Segoe Fluent Icons", 22F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton2.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton2.Location = new Point(216, 22);
 			imageButton2.Margin = new Padding(6);
@@ -72,27 +80,17 @@ namespace Program {
 			imageButton2.NormalImage = null;
 			imageButton2.Size = new Size(100, 50);
 			imageButton2.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton2.Tag = "Refresh";
 			imageButton2.TabIndex = 1;
 			imageButton2.TabStop = true;
 			imageButton2.Text = "\uE174";
-			imageButton2.Click += new EventHandler(imageButton2_Click);
-			// 
-			// label1
-			// 
-			label1.AutoSize = true;
-			label1.BackColor = Color.Transparent;
-			label1.Location = new Point(87, 166);
-			label1.Margin = new Padding(6, 0, 6, 0);
-			label1.Name = "label1";
-			label1.Size = new Size(172, 25);
-			label1.TabIndex = 3;
-			label1.Text = "Disable click alerts";
+			imageButton2.Click += new EventHandler(imageButton_Click);
 			// 
 			// imageButton4
 			// 
 			imageButton4.DialogResult = DialogResult.None;
 			imageButton4.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton4.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton4.Font = new Font("Segoe Fluent Icons", 22F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton4.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton4.Location = new Point(411, 22);
 			imageButton4.Margin = new Padding(6);
@@ -101,15 +99,16 @@ namespace Program {
 			imageButton4.Size = new Size(100, 50);
 			imageButton4.SizeMode = PictureBoxSizeMode.AutoSize;
 			imageButton4.TabIndex = 4;
+			imageButton4.Tag = "Start";
 			imageButton4.TabStop = false;
 			imageButton4.Text = "\uE102";
-			imageButton4.Click += new EventHandler(imageButton4_Click);
+			imageButton4.Click += new EventHandler(imageButton_Click);
 			// 
 			// imageButton5
 			// 
 			imageButton5.DialogResult = DialogResult.None;
 			imageButton5.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton5.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton5.Font = new Font("Segoe Fluent Icons", 22F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton5.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton5.Location = new Point(605, 22);
 			imageButton5.Margin = new Padding(6);
@@ -118,15 +117,16 @@ namespace Program {
 			imageButton5.Size = new Size(100, 50);
 			imageButton5.SizeMode = PictureBoxSizeMode.AutoSize;
 			imageButton5.TabIndex = 5;
+			imageButton5.Tag = "Stop";
 			imageButton5.TabStop = true;
 			imageButton5.Text = "\uE103";
-			imageButton5.Click += new EventHandler(imageButton5_Click);
+			imageButton5.Click += new EventHandler(imageButton_Click);
 			// 
 			// imageButton6
 			// 
 			imageButton6.DialogResult = DialogResult.None;
 			imageButton6.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton6.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton6.Font = new Font("Segoe Fluent Icons", 22F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton6.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton6.Location = new Point(801, 22);
 			imageButton6.Margin = new Padding(6);
@@ -135,15 +135,16 @@ namespace Program {
 			imageButton6.Size = new Size(100, 50);
 			imageButton6.SizeMode = PictureBoxSizeMode.AutoSize;
 			imageButton6.TabIndex = 6;
+			imageButton6.Tag = "Shell";
 			imageButton6.TabStop = true;
 			imageButton6.Text = "\uE184";
-			imageButton6.Click += new EventHandler(imageButton6_Click);
+			imageButton6.Click += new EventHandler(imageButton_Click);
 			// 
 			// imageButton7
 			// 
 			imageButton7.DialogResult = DialogResult.None;
 			imageButton7.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton7.Font = new Font("Segoe UI", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton7.Font = new Font("Segoe Fluent Icons", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton7.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton7.Location = new Point(979, 22);
 			imageButton7.Margin = new Padding(6);
@@ -154,16 +155,16 @@ namespace Program {
 			imageButton7.TabIndex = 7;
 			imageButton7.TabStop = true;
 			imageButton7.Text = "\uE179";
-			imageButton7.Click += new EventHandler(imageButton7_Click);
+			imageButton7.Tag = "Configure";
+			imageButton7.Click += new EventHandler(imageButton_Click);
 
 			// 
-			// imageButton7
+			// imageButton8
 			// 
 			imageButton8.DialogResult = DialogResult.None;
-			imageButton8.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton8.Font = new Font("Segoe UI", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton8.Font = new Font("Segoe Fluent Icons", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton8.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
-			imageButton8.Location = new Point(979, 22);
+			imageButton8.Location = new Point(1158, 22);
 			imageButton8.Margin = new Padding(6);
 			imageButton8.Name = "imageButton8";
 			imageButton8.NormalImage = null;
@@ -172,8 +173,8 @@ namespace Program {
 			imageButton8.TabIndex = 7;
 			imageButton8.TabStop = true;
 			imageButton8.Text = "\uE107";
-			imageButton8.Click += new EventHandler(imageButton8_Click);
-
+			imageButton8.Tag = "Recycle";
+			imageButton8.Click += new EventHandler(imageButton_Click);
 			// 
 			// label2
 			// 
@@ -243,7 +244,7 @@ namespace Program {
 
 		#endregion
 		private IContainer components = null;
-		private readonly Panel toolbarPanel = new Panel();
+		private Panel toolbarPanel = null;
 
 		private ImageButton imageButton1;
 		private ImageButton imageButton2;

@@ -27,38 +27,12 @@ namespace Program {
 			}
 		}
 
-		private void imageButton1_Click(object sender, EventArgs e) {
-			if (!hideAlerts)
-				MessageBox.Show("New");
-		}
 
-		private void imageButton2_Click(object sender, EventArgs e) {
-			if (!hideAlerts)
-				MessageBox.Show("Reload");
+		private void imageButton_Click(object sender, EventArgs e) {
+			Controls.Add(toolbarPanel);
+			var button = (ImageButton) sender;
+			MessageBox.Show(button.Tag.ToString());
 		}
 		
-		private void imageButton4_Click(object sender, EventArgs e) {
-			if (!hideAlerts)
-				MessageBox.Show("Start");
-		}
-
-		private void imageButton5_Click(object sender, EventArgs e) {
-			if (!hideAlerts)
-				MessageBox.Show("Stop");
-		}
-
-		private void imageButton6_Click(object sender, EventArgs e) {
-			if (!hideAlerts)
-				MessageBox.Show("Shell");
-		}
-
-		private void imageButton7_Click(object sender, EventArgs e) {
-			if (!hideAlerts)
-				MessageBox.Show("Configure");
-		}
-		private void imageButton8_Click(object sender, EventArgs e) {
-			if (!hideAlerts)
-				MessageBox.Show("Recycle");
-		}
 	}
 }

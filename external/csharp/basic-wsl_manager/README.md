@@ -581,7 +581,52 @@ Malgun Gothic Bold
 Malgun Gothic Semilight
 SimSun-ExtG
 ```
+```powershell
+. .\glyph_finder.ps1
+```
+```text
+=== Segoe UI ===
+U+E174: difference = 24.2131
+  U+E174 -> True
+U+E102: difference = 20.0929
+  U+E102 -> True
+U+E103: difference = 22.4063
+  U+E103 -> True
+U+E184: difference = 23.2543
+  U+E184 -> True
+U+E179: difference = 26.9961
+  U+E179 -> True
+U+E107: difference = 21.9067
+  U+E107 -> True
 
+=== Segoe Fluent Icons ===
+U+E174: difference = 12.4861
+  U+E174 -> True
+U+E102: difference = 17.6866
+  U+E102 -> True
+U+E103: difference = 22.4583
+  U+E103 -> True
+U+E184: difference = 25.5638
+  U+E184 -> True
+U+E179: difference = 21.6311
+  U+E179 -> True
+U+E107: difference = 22.4718
+  U+E107 -> True
+
+=== Segoe UI Symbol ===
+U+E174: difference = 24.3694
+  U+E174 -> True
+U+E102: difference = 19.2951
+  U+E102 -> True
+U+E103: difference = 22.6415
+  U+E103 -> True
+U+E184: difference = 23.2622
+  U+E184 -> True
+U+E179: difference = 27.2695
+  U+E179 -> True
+U+E107: difference = 22.0048
+  U+E107 -> True
+```
 ### See Also
 
   * [WPF WSL Manager](https://github.com/wslhub/WslManager) — __.NET 6__
