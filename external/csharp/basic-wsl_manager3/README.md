@@ -251,62 +251,13 @@ set USERNAME=sergueik
 set PASSWORD=
 ```
 ```cmd
-vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; if which $C && $C --info >/dev/null 2>&1; then echo 1; else echo 0; fi" "probe" "docker"
-```
-
-```text`
-/usr/bin/docker
-0
-```
-
-```cmd
-vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1;  echo $C" "test" "podman"
-```
-```text
-podman
-```
-
-```cmd
-vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C; if [ $? = 0 ]; then echo 0; else echo 1;fi" "test" "podman"
-```
-
-```text
-1
-```
-
-```cmd
-vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C; if [ $? = 0 ]; then echo 0; else echo 1;fi" "test" "docker"
-```
-
-```text
-/usr/bin/docker
-0
-
-
-```cmd
-vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C; if [ -n $? ]; then echo 0; else echo 1;fi" "test" "docker"
-```
-
-```text
-/usr/bin/docker
-0
-```
-
-```cmd
-vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C; if [ $? = 0 ]; then $C info > /dev/null; else echo 1;fi" "test" "docker"
-```
-```sh
-vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C 2>/dev/null 1>&2; if [ $? = 0 ]; then $C info > /dev/null; echo $? ;else echo 1;fi" "test" "docker"
-1
-```
-```cmd
-vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C 2>/dev/null 1>&2; if [ $? = 0 ]; then $C info > /dev/null; echo $? ;else echo 1;fi" "test" "docker"
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C >/dev/null 2>&1; if [ $? = 0 ]; then $C info > /dev/null 2>&1; echo $?; else echo 1; fi" "test" "docker"
 ```
 ```text
 0
 ```
 ```cmd
-vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C 2>/dev/null 1>&2; if [ $? = 0 ]; then $C info > /dev/null; echo $? ;else echo 1;fi" "test" "podman"
+vboxmanage.exe guestcontrol "%VM%" run --username "%USERNAME%" --password "%PASSWORD%" --exe /bin/sh -- /bin/sh -c "C=$1; which $C >/dev/null 2>&1; if [ $? = 0 ]; then $C info > /dev/null 2>&1; echo $?; else echo 1; fi" "test" "podman"
 ```
 ```text
 1
