@@ -69,6 +69,25 @@
 				Width="80"
 				Height="62"
 				Margin="3"
+				ToolTip="System Info">
+				<StackPanel
+					HorizontalAlignment="Center">
+					<TextBlock
+						Text="&#xE2C0;"
+						FontFamily="Segoe UI Symbol"
+						FontSize="22"
+						HorizontalAlignment="Center" />
+					<TextBlock
+						HorizontalAlignment="Center">
+						<Run
+							Text="Info" />
+					</TextBlock>
+				</StackPanel>
+			</Button>			
+			<Button
+				Width="80"
+				Height="62"
+				Margin="3"
 				ToolTip="Create a new distribution">
 				<StackPanel
 					HorizontalAlignment="Center">
@@ -81,7 +100,7 @@
 						Text="New"
 						HorizontalAlignment="Center" />
 				</StackPanel>
-			</Button>
+			</Button>			
 			<Button
 				Width="80"
 				Height="62"

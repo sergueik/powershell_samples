@@ -60,6 +60,7 @@ namespace WslManagerFramework {
 		private ImageButton imageButton8;
 		private ImageButton imageButton9;
 		private ImageButton imageButton10;
+		private ImageButton imageButton11;
 		
 		public Form1() {
 			InitializeComponent();
@@ -92,6 +93,7 @@ namespace WslManagerFramework {
 			imageButton8 = new ImageButton();
 			imageButton9 = new ImageButton();
 			imageButton10 = new ImageButton();
+			imageButton11 = new ImageButton();
 
 			((ISupportInitialize)(imageButton1)).BeginInit();
 			((ISupportInitialize)(imageButton2)).BeginInit();
@@ -102,6 +104,7 @@ namespace WslManagerFramework {
 			((ISupportInitialize)(imageButton8)).BeginInit();
 			((ISupportInitialize)(imageButton9)).BeginInit();
 			((ISupportInitialize)(imageButton10)).BeginInit();
+			((ISupportInitialize)(imageButton11)).BeginInit();
 			// 
 			// imageButton1
 			// 
@@ -269,6 +272,25 @@ namespace WslManagerFramework {
 			imageButton10.TabStop = true;
 			imageButton10.Click += new EventHandler(imageButton_Click);
  
+
+			// 
+			// imageButton10
+			// 
+			imageButton11.DialogResult = DialogResult.None;
+			imageButton11.Font = new Font("Segoe UI Symbol", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton11.Name = "imageButton11";
+			imageButton11.Tag = "Info";
+			imageButton11.Text = "\uE2C0";
+			imageButton11.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton11.Location = new Point(1142, 22);
+			imageButton11.Margin = new Padding(6);
+			imageButton11.NormalImage = null;
+			imageButton11.Size = new Size(100, 50);
+			imageButton11.SizeMode = PictureBoxSizeMode.AutoSize;
+			imageButton11.TabIndex = 7;
+			imageButton11.TabStop = true;
+			imageButton11.Click += new EventHandler(imageButton_Click);
+ 
 			
 			toolbarPanel.Dock = DockStyle.Top;
 			// toolbarPanel.Height = 80;
@@ -283,6 +305,7 @@ namespace WslManagerFramework {
 			toolbarPanel.Controls.Add(imageButton8);
 			toolbarPanel.Controls.Add(imageButton9);
 			toolbarPanel.Controls.Add(imageButton10);
+			toolbarPanel.Controls.Add(imageButton11);
 			((ISupportInitialize)(imageButton1)).EndInit();
 			((ISupportInitialize)(imageButton2)).EndInit();
 			((ISupportInitialize)(imageButton4)).EndInit();
@@ -292,6 +315,7 @@ namespace WslManagerFramework {
 			((ISupportInitialize)(imageButton8)).EndInit();
 			((ISupportInitialize)(imageButton9)).EndInit();
 			((ISupportInitialize)(imageButton10)).EndInit();
+			((ISupportInitialize)(imageButton11)).EndInit();
 			FormBorderStyle = FormBorderStyle.FixedSingle;
 			Margin = new Padding(6);
 			MaximizeBox = false;
