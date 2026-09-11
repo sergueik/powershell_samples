@@ -37,6 +37,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -57,6 +60,7 @@
     <Compile Include="CredentialsManagerHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JSONHelper.cs" />
     <Compile Include="UserDataHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,7 +79,9 @@
     <Compile Include="ElevationChecker.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ListExtensions.cs" />
+    <Compile Include="ListExtensions.cs">
+      <DependentUpon>JSONHelper.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FindMatchExtensions.cs" />

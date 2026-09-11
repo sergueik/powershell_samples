@@ -184,16 +184,13 @@ namespace Test
 		    foreach (string key in appSettings.AllKeys) {
 		        if (optional.Contains(key))
 		            continue;
-
 		        string value = appSettings[key].Value;
-
-		        Assert.IsFalse( string.IsNullOrWhiteSpace(value),
-		            string.Format( @"AppSetting ""{0}"" expected to have a value.", key));
+		        Assert.IsFalse( string.IsNullOrWhiteSpace(value), string.Format( @"AppSetting ""{0}"" expected to have a value.", key));
 		    }
 		}
 
 		private static string Canonical(string name) {
-    			return name.ToUpperInvariant();
+    		return name.ToUpperInvariant();
 		}
 	}
 }
