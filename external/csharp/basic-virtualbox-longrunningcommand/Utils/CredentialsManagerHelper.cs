@@ -33,7 +33,7 @@ public static class CredentialsManagerHelper {
 
 		public static void WriteCredential(string applicationName, string userName, string secret) {
 			byte[] byteArray = secret == null ? null : Encoding.Unicode.GetBytes(secret);
-			// XP and Vista: 512; 
+			// XP and Vista: 512;
 			// 7 and above: 5*512
 			if (Environment.OSVersion.Version < new Version(6, 1) /* Windows 7 */) {
 				if (byteArray != null && byteArray.Length > 512)

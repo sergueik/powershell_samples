@@ -120,7 +120,7 @@ namespace Program {
 
 				// Tricky to navigate through dropdowns
 				var arguments = String.Format("{0} {1}", "showvminfo", id);
-				var fileName = "VBoxManage.exe";
+				var fileName = "vboxmanage.exe";
 				// var toolPath = Environment.ExpandEnvironmentVariables(@"%PROGRAMFILES%\Oracle\VirtualBox");
 
 				Debug.WriteLine(String.Format(@"{0}\{1} {2}", toolPath, fileName, arguments));
@@ -136,7 +136,6 @@ namespace Program {
 					Debug.WriteLine(String.Format("{0} {1}", id, "undefined"));
 				machines[id][key] = value;
 			}
-
 		}
 	}
 	

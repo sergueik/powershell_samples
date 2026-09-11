@@ -36,7 +36,7 @@ namespace Utils {
 				using (var process = new Process()) {
 					process.StartInfo = processStartInfo;
 
-					// https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.datareceivedeventargs.data?view=netframework-4.5 
+					// https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.datareceivedeventargs.data?view=netframework-4.5
 					process.OutputDataReceived += (object sender, DataReceivedEventArgs e) => {
 						if (e.Data != null)
 							StandardOutput.Add(e.Data);

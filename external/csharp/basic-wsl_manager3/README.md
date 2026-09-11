@@ -273,6 +273,312 @@ VBoxManage.exe: error: The specified user was not able to logon on guest
 VBoxManage.exe: error: Details: code VBOX_E_IPRT_ERROR (0x80bb0005), component GuestSessionWrap, interface IGuestSession, callee IUnknown
 VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aSessionWaitFlags), 30 * 1000, &enmWaitResult)" at line 938 of file VBoxManageGuestCtrl.cpp
 ```
+
+```cmd
+vboxmanage.exe showvminfo %VM%
+```
+```text
+Name:            Xubuntu 22.04
+Groups:          /
+Guest OS:        Ubuntu (64-bit)
+UUID:            7e261a39-d356-4eb1-a8ed-75675b149241
+Config file:     C:\Users\kouzm\VirtualBox VMs\Xubuntu 22.04\Xubuntu 22.04.vbox
+Snapshot folder: C:\Users\kouzm\VirtualBox VMs\Xubuntu 22.04\Snapshots
+Log folder:      C:\Users\kouzm\VirtualBox VMs\Xubuntu 22.04\Logs
+Hardware UUID:   7e261a39-d356-4eb1-a8ed-75675b149241
+Memory size:     4096MB
+Page Fusion:     off
+VRAM size:       21MB
+CPU exec cap:    100%
+HPET:            off
+Chipset:         piix3
+Firmware:        BIOS
+Number of CPUs:  1
+PAE:             on
+Long Mode:       on
+Triple Fault Reset: off
+APIC:            on
+X2APIC:          on
+CPUID Portability Level: 0
+CPUID overrides: None
+Boot menu mode:  message and menu
+Boot Device (1): DVD
+Boot Device (2): HardDisk
+Boot Device (3): Not Assigned
+Boot Device (4): Not Assigned
+ACPI:            on
+IOAPIC:          on
+BIOS APIC mode:  APIC
+Time offset:     0ms
+RTC:             UTC
+Hardw. virt.ext: on
+Nested Paging:   on
+Large Pages:     on
+VT-x VPID:       on
+VT-x unr. exec.: on
+Paravirt. Provider: Default
+Effective Paravirt. Provider: KVM
+State:           running (since 2026-09-10T00:14:37.409000000)
+Monitor count:   1
+3D Acceleration: off
+2D Video Acceleration: off
+Teleporter Enabled: off
+Teleporter Port: 0
+Teleporter Address:
+Teleporter Password:
+Tracing Enabled: off
+Allow Tracing to Access VM: off
+Tracing Configuration:
+Autostart Enabled: off
+Autostart Delay: 0
+Default Frontend:
+Storage Controller Name (0):            IDE
+Storage Controller Type (0):            PIIX4
+Storage Controller Instance Number (0): 0
+Storage Controller Max Port Count (0):  2
+Storage Controller Port Count (0):      2
+Storage Controller Bootable (0):        on
+Storage Controller Name (1):            SATA
+Storage Controller Type (1):            IntelAhci
+Storage Controller Instance Number (1): 0
+Storage Controller Max Port Count (1):  30
+Storage Controller Port Count (1):      1
+Storage Controller Bootable (1):        on
+IDE (1, 0): C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso (UUID: ca34e2f3-e32a-45d3-a259-ff90719abe5c)
+SATA (0, 0): C:\Virtual Machines\xubuntu22.04-3.vdi (UUID: e31692be-ff5c-424f-818d-07a377758041)
+NIC 1:           MAC: 080027249CE8, Attachment: Bridged Interface 'Intel(R) Wi-Fi 6E AX211 160MHz', Cable connected: on, Trace: off (file: none), Type: 82540EM, Reported speed: 0 Mbps, Boot priority: 0, Promisc Policy: deny, Bandwidth group: none
+NIC 2:           disabled
+NIC 3:           disabled
+NIC 4:           disabled
+NIC 5:           disabled
+NIC 6:           disabled
+NIC 7:           disabled
+NIC 8:           disabled210 674 0700
+Pointing Device: USB Tablet
+Keyboard Device: PS/2 Keyboard
+UART 1:          disabled
+UART 2:          disabled
+UART 3:          disabled
+UART 4:          disabled
+LPT 1:           disabled
+LPT 2:           disabled
+Audio:           enabled (Driver: DSOUND, Controller: AC97, Codec: AD1980)
+Audio playback:  disabled
+Audio capture: enabled
+Clipboard Mode:  Bidirectional
+Drag and drop Mode: disabled
+Session name:    GUI/Qt
+Video mode:      1288x790x32 at 0,0 enabled
+VRDE:            disabled
+USB:             enabled
+EHCI:            disabled
+XHCI:            disabled
+
+USB Device Filters:
+
+<none>
+
+Available remote USB devices:
+
+<none>
+
+Currently Attached USB Devices:
+
+<none>
+
+Bandwidth groups:  <none>
+
+Shared folders:  <none>
+
+VRDE Connection:    not active
+Clients so far:     0
+
+Capturing:          not active
+Capture audio:      not active
+Capture screens:    0
+Capture file:       C:\Users\kouzm\VirtualBox VMs\Xubuntu 22.04\Xubuntu 22.04.webm
+Capture dimensions: 1024x768
+Capture rate:       512 kbps
+Capture FPS:        25
+Capture options:    ac_enabled=false
+
+Guest:
+
+Configured memory balloon size:      0 MB
+OS type:                             Linux26_64
+Additions run level:                 2
+Additions version:                   6.0.0 r127566
+
+
+Guest Facilities:
+
+Facility "VirtualBox Base Driver": active/running (last update: 2026/09/10 00:14:51 UTC)
+Facility "VirtualBox System Service": active/running (last update: 2026/09/10 00:14:58 UTC)
+Facility "Seamless Mode": active/running (last update: 2026/09/10 00:14:51 UTC)
+Facility "Graphics Mode": active/running (last update: 2026/09/10 00:14:59 UTC)
+```
+```
+vboxmanage.exe showvminfo %VM% --machinereadable
+name="Xubuntu 22.04"
+groups="/"
+ostype="Ubuntu (64-bit)"
+UUID="7e261a39-d356-4eb1-a8ed-75675b149241"
+CfgFile="C:\\Users\\kouzm\\VirtualBox VMs\\Xubuntu 22.04\\Xubuntu 22.04.vbox"
+SnapFldr="C:\\Users\\kouzm\\VirtualBox VMs\\Xubuntu 22.04\\Snapshots"
+LogFldr="C:\\Users\\kouzm\\VirtualBox VMs\\Xubuntu 22.04\\Logs"
+hardwareuuid="7e261a39-d356-4eb1-a8ed-75675b149241"
+memory=4096
+pagefusion="off"
+vram=21
+cpuexecutioncap=100
+hpet="off"
+chipset="piix3"
+firmware="BIOS"
+cpus=1
+pae="on"
+longmode="on"
+triplefaultreset="off"
+apic="on"
+x2apic="on"
+cpuid-portability-level=0
+bootmenu="messageandmenu"
+boot1="dvd"
+boot2="disk"
+boot3="none"
+boot4="none"
+acpi="on"
+ioapic="on"
+biosapic="apic"
+biossystemtimeoffset=0
+rtcuseutc="on"
+hwvirtex="on"
+nestedpaging="on"
+largepages="on"
+vtxvpid="on"
+vtxux="on"
+paravirtprovider="default"
+effparavirtprovider="kvm"
+VMState="running"
+VMStateChangeTime="2026-09-10T00:14:37.409000000"
+monitorcount=1
+accelerate3d="off"
+accelerate2dvideo="off"
+teleporterenabled="off"
+teleporterport=0
+teleporteraddress=""
+teleporterpassword=""
+tracing-enabled="off"
+tracing-allow-vm-access="off"
+tracing-config=""
+autostart-enabled="off"
+autostart-delay=0
+defaultfrontend=""
+storagecontrollername0="IDE"
+storagecontrollertype0="PIIX4"
+storagecontrollerinstance0="0"
+storagecontrollermaxportcount0="2"
+storagecontrollerportcount0="2"
+storagecontrollerbootable0="on"
+storagecontrollername1="SATA"
+storagecontrollertype1="IntelAhci"
+storagecontrollerinstance1="0"
+storagecontrollermaxportcount1="30"
+storagecontrollerportcount1="1"
+storagecontrollerbootable1="on"
+"IDE-0-0"="none"
+"IDE-0-1"="none"
+"IDE-1-0"="C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso"
+"IDE-ImageUUID-1-0"="ca34e2f3-e32a-45d3-a259-ff90719abe5c"
+"IDE-tempeject"="off"
+"IDE-IsEjected"="off"
+"IDE-1-1"="none"
+"SATA-0-0"="C:\Virtual Machines\xubuntu22.04-3.vdi"
+"SATA-ImageUUID-0-0"="e31692be-ff5c-424f-818d-07a377758041"
+bridgeadapter1="Intel(R) Wi-Fi 6E AX211 160MHz"
+macaddress1="080027249CE8"
+cableconnected1="on"
+nic1="bridged"
+nictype1="82540EM"
+nicspeed1="0"
+nic2="none"
+nic3="none"
+nic4="none"
+nic5="none"
+nic6="none"
+nic7="none"
+nic8="none"
+hidpointing="usbtablet"
+hidkeyboard="ps2kbd"
+uart1="off"
+uart2="off"
+uart3="off"
+uart4="off"
+lpt1="off"
+lpt2="off"
+audio="dsound"
+audio_in="false"
+audio_out="true"
+clipboard="bidirectional"
+draganddrop="disabled"
+SessionName="GUI/Qt"
+VideoMode="1288,790,32"@0,0 1
+vrde="off"
+usb="on"
+ehci="off"
+xhci="off"
+VRDEActiveConnection="off"
+VRDEClients=0
+videocap="off"
+videocap_audio="off"
+videocapscreens=0
+videocapfile="C:\Users\kouzm\VirtualBox VMs\Xubuntu 22.04\Xubuntu 22.04.webm"
+videocapres=1024x768
+videocaprate=512
+videocapfps=25
+videocapopts=ac_enabled=false
+GuestMemoryBalloon=0
+GuestOSType="Linux26_64"
+GuestAdditionsRunLevel=2
+GuestAdditionsVersion="6.0.0 r127566"
+GuestAdditionsFacility_VirtualBox Base Driver=50,1788999291495
+GuestAdditionsFacility_VirtualBox System Service=50,1788999298549
+GuestAdditionsFacility_Seamless Mode=50,1788999291413
+GuestAdditionsFacility_Graphics Mode=50,1788999299634
+```
+```
+set HDD=e31692be-ff5c-424f-818d-07a377758041
+vboxmanage.exe showmediuminfo %HDD%
+```
+or
+```cmd
+vboxmanage.exe showmediuminfo {%HDD%}
+```
+```text
+UUID:           e31692be-ff5c-424f-818d-07a377758041
+Parent UUID:    base
+State:          locked write
+Type:           normal (base)
+Location:       C:\Virtual Machines\xubuntu22.04-3.vdi
+Storage format: VDI
+Format variant: fixed default
+Capacity:       22528 MBytes
+Size on disk:   22530 MBytes
+Encryption:     disabled
+In use by VMs:  Xubuntu 22.04 (UUID: 7e261a39-d356-4eb1-a8ed-75675b149241)
+```
+```cmd
+vboxmanage.exe list hdds
+```
+```text
+UUID:           e31692be-ff5c-424f-818d-07a377758041
+Parent UUID:    base
+State:          locked write
+Type:           normal (base)
+Location:       C:\Virtual Machines\xubuntu22.04-3.vdi
+Storage format: VDI
+Capacity:       22528 MBytes
+Encryption:     disabled
+```
 ----
 
 ### Author

@@ -23,6 +23,7 @@ namespace Program {
 		private int collectInterval = 1000;
 		private int waitInterval = 120000;
 		private string vmName = "";
+		private string vm = "";
 		private string toolPath = null;
 		private string logFile = null;
 		private string fileName = null;
@@ -64,8 +65,8 @@ namespace Program {
 			notifyIcon = new NotifyIcon();
 
 			appSettings = ConfigurationManager.AppSettings;
-			// NOTE: 
-			// System.Array does not contain a definition for 'Contains' and no extension method 'Contains' accepting a first argument of type 'System.Array' could be found 
+			// NOTE:
+			// System.Array does not contain a definition for 'Contains' and no extension method 'Contains' accepting a first argument of type 'System.Array' could be found
 			// need to add System.Linq (CS1061)
 			
 			if (appSettings.AllKeys.Contains("Debug")) {
@@ -78,9 +79,11 @@ namespace Program {
 			if (appSettings.AllKeys.Contains("WaitInterval")) {
 				waitInterval = int.Parse(appSettings["WaitInterval"]);
 			}
-
 			if (appSettings.AllKeys.Contains("VmName")) {
 				vmName = appSettings["VmName"];
+			}
+			if (appSettings.AllKeys.Contains("Vm")) {
+				vm = appSettings["Vm"];
 			}
 			if (appSettings.AllKeys.Contains("FileName")) {
 				fileName = appSettings["FileName"];
@@ -107,11 +110,12 @@ namespace Program {
 			if (appSettings.AllKeys.Contains(runCommand)) {
 				arguments2 = appSettings[runCommand];
 				// arguments2 = arguments2.Replace("%VM%", "{7e261a39-d356-4eb1-a8ed-75675b149241}");
-				arguments2 = arguments2.Replace("%VM%", "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}");
-				
+				// arguments2 = arguments2.Replace("%VM%", "{93a38cd7-ef00-47aa-9868-d291d4ed5e0a}");
+				arguments2 = arguments2.Replace("%VM%", vm);
+
 				// the user name may not match login id
-				arguments2 = arguments2.Replace("%USERNAME%", "sergueik");
-				arguments2 = arguments2.Replace("%PASSWORD%", "password");
+				arguments2 = arguments2.Replace("%USERNAME%", userName);
+				arguments2 = arguments2.Replace("%PASSWORD%", password);
 				arguments2 = arguments2.Replace("%SCRIPT%", script);
 				arguments2 = arguments2.Replace("%SCRIPTARGUMENTS%", scriptArguments);
 			}
@@ -175,7 +179,7 @@ namespace Program {
 				notifyIcon.Icon = idle_icon;
 			notifyIcon.Visible = true;
 			var processRunner = new ProcessRunner();
-			// NOTE: can not run under SharpDevelop: the %PROGRAMFILES% will expand to C:\Program Files (x86) 
+			// NOTE: can not run under SharpDevelop: the %PROGRAMFILES% will expand to C:\Program Files (x86)
 			// Debug.WriteLine(String.Format("filename: {0}", String.Format(@"{0}\{1}", toolPath, fileName)));
 			// Debug.WriteLine(String.Format("arguments: {0}", arguments));
 			processRunner.Run(String.Format(@"{0}\{1}", toolPath, fileName), arguments2);

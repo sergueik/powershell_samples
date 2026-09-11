@@ -110,11 +110,11 @@ namespace WslManagerFramework {
 			// 
 			imageButton1.DialogResult = DialogResult.None;
 			imageButton1.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton1.Font = new Font("Segoe UI", 28F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton1.Name = "imageButton1";
-			imageButton1.Tag = "New";
-			imageButton1.Text = "+";
 			imageButton1.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton1.Font = new Font("Segoe UI Symbol", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton1.Name = "imageButton1";
+			imageButton1.Tag = "Info";
+			imageButton1.Text = "\uE2C0";
 			imageButton1.Location = new Point(22, 22);
 			imageButton1.Margin = new Padding(6);
 			imageButton1.NormalImage = null;
@@ -129,11 +129,11 @@ namespace WslManagerFramework {
 			// 
 			imageButton2.DialogResult = DialogResult.None;
 			imageButton2.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton2.Font = new Font("Segoe UI Symbol", 16F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton2.Name = "imageButton2";
-			imageButton2.Tag = "Refresh";
-			imageButton2.Text = "\uE117";
 			imageButton2.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton2.Font = new Font("Segoe UI", 28F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton2.Name = "imageButton2";
+			imageButton2.Tag = "New";
+			imageButton2.Text = "+";
 			imageButton2.Location = new Point(142, 22);
 			imageButton2.Margin = new Padding(6);
 			imageButton2.NormalImage = null;
@@ -148,11 +148,11 @@ namespace WslManagerFramework {
 			// 
 			imageButton4.DialogResult = DialogResult.None;
 			imageButton4.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton4.Font = new Font("Segoe Fluent Icons", 22F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton4.Name = "imageButton4";
-			imageButton4.Text = "\uE107";
-			imageButton4.Tag = "Recycle";
 			imageButton4.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton4.Font = new Font("Segoe UI Symbol", 16F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton4.Name = "imageButton4";
+			imageButton4.Tag = "Refresh";
+			imageButton4.Text = "\uE117";
 			imageButton4.Location = new Point(262, 22);
 			imageButton4.Margin = new Padding(6);
 			imageButton4.NormalImage = null;
@@ -166,12 +166,11 @@ namespace WslManagerFramework {
 			// 
 			imageButton5.DialogResult = DialogResult.None;
 			imageButton5.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton5.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton5.Font = new Font("Segoe Fluent Icons", 22F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton5.Name = "imageButton5";
-			imageButton5.Tag = "Start";
-			imageButton5.Text = "\uE102";
-			imageButton5.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
-			imageButton5.Location = new Point(402, 22);
+			imageButton5.Text = "\uE107";
+			imageButton5.Tag = "Recycle";			imageButton5.Location = new Point(402, 22);
 			imageButton5.Margin = new Padding(6);
 			imageButton5.NormalImage = null;
 			imageButton5.Size = new Size(100, 50);
@@ -184,11 +183,11 @@ namespace WslManagerFramework {
 			// 
 			imageButton6.DialogResult = DialogResult.None;
 			imageButton6.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
+			imageButton6.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton6.Font = new Font("Segoe Fluent Icons", 22F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton6.Name = "imageButton6";
-			imageButton6.Tag = "Stop";
-			imageButton6.Text = "\uE103";
-			imageButton6.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton6.Tag = "Start";
+			imageButton6.Text = "\uE102";
 			imageButton6.Location = new Point(522, 22);
 			imageButton6.Margin = new Padding(6);
 			imageButton6.NormalImage = null;
@@ -202,10 +201,10 @@ namespace WslManagerFramework {
 			// 
 			imageButton7.DialogResult = DialogResult.None;
 			imageButton7.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
-			imageButton7.Font = new Font("Segoe Fluent Icons", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton7.Font = new Font("Segoe Fluent Icons", 22F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton7.Name = "imageButton7";
-			imageButton7.Tag = "Shell";
-			imageButton7.Text = "\uE184";
+			imageButton7.Tag = "Stop";
+			imageButton7.Text = "\uE103";
 			imageButton7.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton7.Location = new Point(642, 22);
 			imageButton7.Margin = new Padding(6);
@@ -220,11 +219,11 @@ namespace WslManagerFramework {
 			// imageButton8
 			// 
 			imageButton8.DialogResult = DialogResult.None;
-			imageButton8.Font = new Font("Segoe Fluent Icons", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-			imageButton8.Name = "imageButton8";
-			imageButton8.Tag = "Explore";
-			imageButton8.Text = "\uE197";
 			imageButton8.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
+			imageButton8.Font = new Font("Segoe Fluent Icons", 24F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton8.Name = "imageButton8";
+			imageButton8.Tag = "Shell";
+			imageButton8.Text = "\uE184";
 			imageButton8.Location = new Point(782, 22);
 			imageButton8.Margin = new Padding(6);
 			imageButton8.NormalImage = null;
@@ -241,9 +240,8 @@ namespace WslManagerFramework {
 			imageButton9.DialogResult = DialogResult.None;
 			imageButton9.Font = new Font("Segoe Fluent Icons", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton9.Name = "imageButton9";
-			imageButton9.Tag = "Configure";
-			imageButton9.Text = "\uE179";
-			// NOTE: in XAML ShareDevelop tends to replace the attibute values with literals on save after swithing to "Design" and back
+			imageButton9.Tag = "Explore";
+			imageButton9.Text = "\uE197";
 			imageButton9.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton9.Location = new Point(902, 22);
 			imageButton9.Margin = new Padding(6);
@@ -260,8 +258,9 @@ namespace WslManagerFramework {
 			imageButton10.DialogResult = DialogResult.None;
 			imageButton10.Font = new Font("Segoe Fluent Icons", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton10.Name = "imageButton10";
-			imageButton10.Tag = "Shrink";
-			imageButton10.Text = "\uE61F";
+			imageButton10.Tag = "Configure";
+			imageButton10.Text = "\uE179";
+			// NOTE: in XAML ShareDevelop tends to replace the attibute values with literals on save after swithing to "Design" and back
 			imageButton10.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton10.Location = new Point(1022, 22);
 			imageButton10.Margin = new Padding(6);
@@ -274,13 +273,13 @@ namespace WslManagerFramework {
  
 
 			// 
-			// imageButton10
+			// imageButton11
 			// 
 			imageButton11.DialogResult = DialogResult.None;
-			imageButton11.Font = new Font("Segoe UI Symbol", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			imageButton11.Font = new Font("Segoe Fluent Icons", 19F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			imageButton11.Name = "imageButton11";
-			imageButton11.Tag = "Info";
-			imageButton11.Text = "\uE2C0";
+			imageButton11.Tag = "Shrink";
+			imageButton11.Text = "\uE61F";
 			imageButton11.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
 			imageButton11.Location = new Point(1142, 22);
 			imageButton11.Margin = new Padding(6);

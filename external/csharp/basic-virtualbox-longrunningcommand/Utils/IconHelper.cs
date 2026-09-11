@@ -42,7 +42,7 @@ namespace Utils {
 			};
 			
 			// https://learn.microsoft.com/mt-mt/DOTNET/api/system.windows.forms.toolstripitem.image?view=netframework-4.5
-			public static Image getImage(string os) { 
+			public static Image getImage(string os) {
 				// NOTE: Windows Forms does not include built-in, pre-coded enum references (like StockIcons) that automatically populate the Image property
 				Image image = null;
 				// NOTE: cannot perform - class is in separate package
@@ -61,7 +61,7 @@ namespace Utils {
 					using (Image imageFromFile = Image.FromFile(iconPath)) {
 						image = new Bitmap(imageFromFile);
 					}
-				} 
+				}
 				return image;
 			}
 	}
