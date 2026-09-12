@@ -14,12 +14,9 @@ using NUnit.Framework;
 
 using Utils;
 
-namespace Test
-{
-
+namespace Test {
 	[TestFixture]
-	public class ExtractInfoTest
-	{
+	public class ExtractInfoTest {
 		private string result = null;
 		// private NameValueCollection appSettings;
 		private KeyValueConfigurationCollection appSettings;
@@ -30,8 +27,7 @@ namespace Test
 
 
 		[SetUp]
-		public void SetUp()
-		{
+		public void SetUp() {
 			// NOTE: the "ConfigurationManager.AppSettings" is somewhat useless:
 			// it is Hard wired to fallback to assembly
 			// and immutable during execution
@@ -108,7 +104,6 @@ namespace Test
 			});
 		}
 
-
 		[Test]
 		public void test3() {
 			regex = new Regex("%(?<token>[A-Z0-9_]+)%");
@@ -169,8 +164,10 @@ namespace Test
 
 			Console.Error.WriteLine(String.Format("values: {0}\n({1} items)\nresolved: {2}\n({3} items)", values.PrettyPrint(), values.Count, string.Join(",", resolved), resolved.Count));
 			var unresolved = values.Keys.Except(resolved, StringComparer.OrdinalIgnoreCase).ToList();
-			Console.WriteLine(   "Unresolved: {0}",   unresolved.Count == 0 ? "none" :String.Join(",", unresolved));
-			Assert.IsTrue(resolved.Count == values.Count, "some are not resolved");
+			Console.WriteLine("Unresolved: {0}",   unresolved.Count == 0 ? "none" :String.Join(",", unresolved));
+			Assert.IsTrue(resolved.Count == values.Count, String.Format("some are not resolved: {0} / {1}", resolved.Count, values.Count));
+			// Unresolved: ARGUMENTS9
+			// some are not resolved: 24 / 25
 		}
 
 		[Test]

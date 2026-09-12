@@ -47,5 +47,25 @@ namespace Utils {
 			}
 			return result;
 		}
+		public static Dictionary<string, string> FindMatches( this string text, string matchPattern) {
+			var dictionary = new Dictionary<string, string>();
+
+			regex = new Regex( matchPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+			matches = regex.Matches(text);
+
+			foreach (Match match in matches) {
+				if (match.Length != 0) {
+					foreach (string name in regex.GetGroupNames()) {
+						if (name != "0") {
+							dictionary[name] = match.Groups[name].Value;
+						}
+					}
+					break;
+				}
+			}
+
+			return dictionary;
+		}
 	}
 }

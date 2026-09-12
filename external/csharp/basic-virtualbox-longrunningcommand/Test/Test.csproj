@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="JSONHelperTest.cs" />
     <Compile Include="ExtractInfoTest.cs" />
+    <Compile Include="ParsePublishedPortsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
