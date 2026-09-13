@@ -13,7 +13,9 @@ namespace Test {
 	[TestFixture]
 	public class  ParsePublishedPortsTest {
 		
-		private string data = null;
+		private static Regex regex;
+		private string data1 = null;
+		private string data2 = null;
 		private HashSet<string> results = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		private TestContext testContextInstance;
 
@@ -24,12 +26,14 @@ namespace Test {
 		[SetUp]
 		public void SetUp() {
 			results = new HashSet<string>();
-data = @"
+data1 = @"
 		0.0.0.0:8443->8443/tcp,
  [::]:8443->8443/tcp,
  0.0.0.0:8080->8080/tcp,
  [::]:8080->8080/tcp
 		";
+		
+
 		// expect to find IPv4 published ports:		
 		// 8443->8443/tcp		
 		// 8081->8080/tcp
@@ -39,6 +43,65 @@ data = @"
 		//      │       │
 		//      │       └── container port
 		//      └────────── published host port
+
+	data2 = @"[
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 128,
+    ""local"": ""0.0.0.0:22"",
+    ""peer"": ""0.0.0.0:*""
+  },
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 4096,
+    ""local"": ""0.0.0.0:8443"",
+    ""peer"": ""0.0.0.0:*""
+  },
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 4096,
+    ""local"": ""0.0.0.0:8080"",
+    ""peer"": ""0.0.0.0:*""
+  },
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 128,
+    ""local"": ""[::]:22"",
+    ""peer"": ""[::]:*""
+  },
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 4096,
+    ""local"": ""[::]:8443"",
+    ""peer"": ""[::]:*""
+  },
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 4096,
+    ""local"": ""[::]:8080"",
+    ""peer"": ""[::]:*""
+  }
+]
+	";
+// without -j option or when not supported by iproute version
+	/*
+State   Recv-Q   Send-Q     Local Address:Port      Peer Address:Port  Process  
+LISTEN  0        128              0.0.0.0:22             0.0.0.0:*              
+LISTEN  0        4096             0.0.0.0:8443           0.0.0.0:*              
+LISTEN  0        128              0.0.0.0:51413          0.0.0.0:*              
+LISTEN  0        4096           127.0.0.1:42961          0.0.0.0:*              
+LISTEN  0        4096             0.0.0.0:8081           0.0.0.0:*              
+LISTEN  0        128                 [::]:22                [::]:*              
+LISTEN  0        4096                [::]:8443              [::]:*              
+LISTEN  0        128                 [::]:51413             [::]:*              
+LISTEN  0        4096                [::]:8081              [::]:*
+*/
 		}
 
 		[TestFixtureTearDown]
@@ -48,7 +111,7 @@ data = @"
 		[Test]
 		public void test1() {
 			// https://learn.microsoft.com/en-us/dotnet/api/system.string.split?view=netframework-4.5#system-string-split(system-char())
-			var tokens = data.Replace("\r", "").Replace("\n", " ").Split(new char[]{ ',' });
+			var tokens = data1.Replace("\r", "").Replace("\n", " ").Split(new char[]{ ',' });
 			foreach (var token in tokens) {
 
 				var publishedPortPattern = @"(?<host_address>(?:\d{1,3}(?:\.\d{1,3}){3}|\[[^\]]+\])):(?<host_port>\d{2,6})->(?<container_port>\d{2,6})/(?<protocol>(?:tcp|udp))";
@@ -82,7 +145,33 @@ data = @"
 			Assert.IsTrue(results.Contains("8443"));
 			Debug.WriteLine(String.Format("Results: {0}", String.Join(",", results.ToList())));
 		}
+
+		[Test]
+		public void test2() {
+			var ssPortPattern = @"(?<host_address>(?:\d{1,3}(?:\.\d{1,3}){3}|\[[^\]]+\])):(?<host_port>\d{2,6})";
+			regex = new Regex(ssPortPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+			List<string> result1 = new List<string>(); // can not be initialized to null
+			List<Dictionary<string,object>> result2 = null;
+			result2 = JSONHelper.deserialize<List<Dictionary<string,object>>>(data2);
+			Assert.NotNull(result2);
+			// System.NullReferenceException : Object reference not set to an instance of an object. 
+			result2.ForEach((Dictionary<string,object> o) => {
+				MatchCollection matches;
+				var value = o["local"].ToString();
+				Console.Error.WriteLine(String.Format("exploring value: {0}", value));
+				if ((matches = regex.Matches(value)) != null) {
+					value = matches[0].Groups["host_port"].Captures[0].Value;
+					Console.Error.WriteLine(String.Format("Captured: {0}", value));
+					if (matches[0].Groups["host_address"].Captures[0].Value.IndexOf(":") == -1) {
+						results.Add(value);
+					}
+				}
+			});
+			Assert.IsTrue(results.Contains("8080"));
+			Assert.IsTrue(results.Contains("8443"));
+		}
 	}
+
 	class PublishedPort {
 		public string hostAddress { get; set; }
 		public string hostPort { get; set; }

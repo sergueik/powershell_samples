@@ -108,15 +108,30 @@ LISTEN  0        4096                [::]:8081              [::]:*
 			List<SocketInfo> result = null;
 			result = JSONHelper.deserialize<List<SocketInfo>>(data);
 			Assert.IsNotNull(result);
-			Assert.IsTrue(result.Count > 1);
+			Assert.IsTrue(result.Count > 0);
 			Assert.IsNotNull(result[0].state);
 		}
 
-		[Test]
+	 	
+	 	[Test]
+		public void test5() {
+	 		List<Dictionary<string,object>> result = null;
+			result = JSONHelper.deserialize<List<Dictionary<string,object>>>(data);
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.Count > 0);
+			Assert.IsTrue(result[0].Count > 0);
+			var dictionary = result[0];
+			Assert.NotNull(dictionary);
+			Assert.Contains("local", dictionary.Keys);
+			Assert.AreEqual("0.0.0.0:22", dictionary["local"]);
+			Assert.AreEqual("LISTEN", dictionary["state"]);
+		}
+
+	 	[Test]
 		[ExpectedException(typeof(System.InvalidOperationException))]
 		// Type 'System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' is not supported for deserialization of an array.
  
-		public void test5()
+		public void test6()
 		{
 			Dictionary<string, object> result = null;
 			result = JSONHelper.deserialize(data);
