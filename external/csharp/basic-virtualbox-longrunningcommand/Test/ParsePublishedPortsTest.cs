@@ -150,21 +150,51 @@ LISTEN  0        4096                [::]:8081              [::]:*
 		public void test2() {
 			var ssPortPattern = @"(?<host_address>(?:\d{1,3}(?:\.\d{1,3}){3}|\[[^\]]+\])):(?<host_port>\d{2,6})";
 			regex = new Regex(ssPortPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
-			List<string> result1 = new List<string>(); // can not be initialized to null
-			List<Dictionary<string,object>> result2 = null;
-			result2 = JSONHelper.deserialize<List<Dictionary<string,object>>>(data2);
-			Assert.NotNull(result2);
-			// System.NullReferenceException : Object reference not set to an instance of an object. 
-			result2.ForEach((Dictionary<string,object> o) => {
+			List<Dictionary<string,object>> dictionaries = null;
+			dictionaries = JSONHelper.deserialize<List<Dictionary<string,object>>>(data2);
+			Assert.NotNull(dictionaries);
+			dictionaries.ForEach((Dictionary<string,object> dictionary) => {
 				MatchCollection matches;
-				var value = o["local"].ToString();
-				Console.Error.WriteLine(String.Format("exploring value: {0}", value));
-				if ((matches = regex.Matches(value)) != null) {
-					value = matches[0].Groups["host_port"].Captures[0].Value;
-					Console.Error.WriteLine(String.Format("Captured: {0}", value));
-					if (matches[0].Groups["host_address"].Captures[0].Value.IndexOf(":") == -1) {
-						results.Add(value);
+				var data = dictionary["local"].ToString();
+				Console.Error.WriteLine(String.Format("exploring data: {0}", data));
+				matches = regex.Matches(data);
+				if (matches!= null && matches.Count > 0) {					
+					var publishedPort = new PublishedPort();
+					publishedPort.hostAddress = matches[0].Groups["host_address"].Captures[0].Value;
+					publishedPort.hostPort = matches[0].Groups["host_port"].Captures[0].Value;
+					publishedPort.addressFamily = (publishedPort.hostAddress.IndexOf(":") >= 0) ?
+						"IPv6": "IPv4";
+					if ("IPv4".Equals(publishedPort.addressFamily)){
+						results.Add(publishedPort.hostPort);
+						Console.Error.WriteLine(String.Format("Captured: {0}", publishedPort.hostPort));
 					}
+
+				}
+			});
+			Assert.IsTrue(results.Contains("8080"));
+			Assert.IsTrue(results.Contains("8443"));
+		}
+		[Test]
+		public void test3() {
+			var ssPortPattern = @"(?<host_address>(?:\d{1,3}(?:\.\d{1,3}){3}|\[[^\]]+\])):(?<host_port>\d{2,6})";
+			regex = new Regex(ssPortPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+			List<Dictionary<string,object>> dictionaries = null;
+			dictionaries = JSONHelper.deserialize<List<Dictionary<string,object>>>(data2);
+			Assert.NotNull(dictionaries);
+			dictionaries.ForEach((Dictionary<string,object> dictionary1) => {
+
+				var data = dictionary1["local"].ToString();
+				Console.Error.WriteLine(String.Format("exploring data: {0}", data));
+			    var dictionary = data.FindMatches(ssPortPattern);
+				Assert.NotNull(dictionary);
+				var publishedPort = new PublishedPort();
+				publishedPort.hostAddress = dictionary["host_address"];
+				publishedPort.hostPort = dictionary["host_port"];
+				publishedPort.addressFamily = (publishedPort.hostAddress.IndexOf(":") >= 0) ?
+					"IPv6": "IPv4";
+				if ("IPv4".Equals(publishedPort.addressFamily)){
+					results.Add(publishedPort.hostPort);
+					Console.Error.WriteLine(String.Format("Captured: {0}", publishedPort.hostPort));
 				}
 			});
 			Assert.IsTrue(results.Contains("8080"));
