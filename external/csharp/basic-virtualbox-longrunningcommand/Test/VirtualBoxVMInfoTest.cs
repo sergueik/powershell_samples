@@ -10,18 +10,16 @@ using NUnit.Framework;
 
 using Utils;
 
-namespace Test
-{
+namespace Test {
 
 	[TestFixture]
-	public class VirtualBoxVMInfoTest
-	{
+	public class VirtualBoxVMInfoTest {
 
 		private XDocument document = null;
 		private string filename = @"C:\Users\kouzm\VirtualBox VMs\Xubuntu 22.04\Xubuntu 22.04.vbox";
+
 		[SetUp]
-		public void SetUp()
-		{ 
+		public void SetUp() {
 			document = XDocument.Load(filename);
 			/*
 <?xml version="1.0"?>
@@ -45,60 +43,146 @@ namespace Test
 		}
 
 		[Test]
-		public void test1()
-		{
+		public void test1() {
+			var devices = new List<DeviceInfo>();
 			Assert.IsNotNull(document);
-			
-			foreach (XElement descendant in
-			document.Descendants()) {
-				string localName = (string)descendant.Name.LocalName.ToString();
-				string type = (string)descendant.Attribute("type");
-				// Console.WriteLine(String.Format("Decendant Name: {0} Type: {1}", localName, type));
-				if ("StorageController".Equals(localName)) {
+
+			foreach (XElement descendant in document.Descendants()) {
+				if ("StorageController".Equals(descendant.Name.LocalName)) {
 					var controller = descendant;
 
-					// Console.WriteLine("x: " + controller.Elements().Count());
-					// Console.WriteLine("x: " + controller.Elements().First().Name);
-
-					foreach (XElement element1 in
-             controller.Elements()) {
-						var localName1 = (string)element1.Name.LocalName.ToString();
-						if ("AttachedDevice".Equals(localName1)) {
+					var controllerName = controller.Attribute("name").Value;
+					var controllerType = controller.Attribute("type").Value;
+					foreach (XElement element1 in controller.Elements()) {
+						if ("AttachedDevice".Equals(element1.Name.LocalName)) {
 							var device = element1;
 					
-							string deviceType = (string)device.Attribute("type");
-							string port = (string)device.Attribute("port");
-							string deviceNumber = (string)device.Attribute("device");
+							var deviceType = device.Attribute("type").Value;
+							var port = device.Attribute("port").Value;
+							var deviceNumber = device.Attribute("device").Value;
 
-							foreach (XElement element2 in
-             device.Elements()) {
-
-								var localName2 = (string)element2.Name.LocalName.ToString();
-								if ("Image".Equals(localName2)) {
+							foreach (XElement element2 in device.Elements()) {
+								if ("Image".Equals(element2.Name.LocalName)) {
 									XElement image = element2;
 
-									string uuid = image == null
-            ? null
-            : (string)image.Attribute("uuid");
+									var uuid = image == null ? null : image.Attribute("uuid").Value;
 
-									Console.WriteLine(
-										"  Device: type={0}, port={1}, device={2}, uuid={3}",
-										deviceType, port, deviceNumber, uuid);
-									// Device: type=DVD, port=1, device=0, uuid={ca34e2f3-e32a-45d3-a259-ff90719abe5c}
-									// Device: type=HardDisk, port=0, device=0, uuid={e31692be-ff5c-424f-818d-07a377758041}
+									Console.WriteLine("Device: controller={0}, controllerType={1}, deviceType={2}, port={3}, deviceNumber={4}, uuid={5}", controllerName, controllerType, deviceType, port, deviceNumber, uuid);
+									var deviceInfo = new DeviceInfo();
+									deviceInfo.controller = controllerName;
+									deviceInfo.controllerType = controllerType;
+									deviceInfo.deviceType = deviceType;
+									deviceInfo.deviceNumber = deviceNumber;
+									deviceInfo.port = port;
+									deviceInfo.uuid = uuid;
+									if("HardDisk".Equals(deviceType))
+										devices.Add(deviceInfo);
 								}
 							}
 						}
 					}
 				}
 			}
+			Assert.IsNotEmpty(devices);
 		}
-		
+
+		[Test]
+		public void test2() {
+			Assert.IsNotNull(document);
+			var devices = new List<DeviceInfo>();
+			XElement root = document.Root;
+			var defaultNamespace = root.GetDefaultNamespace();
+			XElement machine = root.Element(defaultNamespace + "Machine");
+
+			XElement controllers = machine.Element(defaultNamespace + "StorageControllers");
+
+			foreach (XElement controller in controllers.Elements()) {
+
+				if ("StorageController".Equals(controller.Name.LocalName)) {
+
+					var controllerName = controller.Attribute("name").Value;
+					var controllerType = controller.Attribute("type").Value;
+
+					foreach (XElement device in controller.Elements()) {
+
+						if ("AttachedDevice".Equals(device.Name.LocalName)) {
+
+							var deviceType = device.Attribute("type").Value;
+							var port = device.Attribute("port").Value;
+							var deviceNumber = device.Attribute("device").Value;
+
+							XElement image = device.Elements().FirstOrDefault((XElement xElement) => "Image".Equals(xElement.Name.LocalName));
+
+							var uuid = image == null ? null : image.Attribute("uuid").Value;
+
+							Console.WriteLine("Device: controller={0}, controllerType={1}, deviceType={2}, port={3}, deviceNumber={4}, uuid={5}", controllerName, controllerType, deviceType, port, deviceNumber, uuid);
+							var deviceInfo = new DeviceInfo();
+							deviceInfo.controller = controllerName;
+							deviceInfo.controllerType = controllerType;
+							deviceInfo.deviceType = deviceType;
+							deviceInfo.deviceNumber = deviceNumber;
+							deviceInfo.port = port;
+							deviceInfo.uuid = uuid;
+							if("HardDisk".Equals(deviceType))
+								devices.Add(deviceInfo);
+						}
+					}
+				}
+			}
+			Assert.IsNotEmpty(devices);
+		}
+
+		[Test]
+		public void test3() {
+			var devices = new List<DeviceInfo>();
+			XElement root = document.Root;
+			Assert.IsNotNull(document);
+            XNamespace defaultNameSpace = root.GetDefaultNamespace();
+
+			XElement machine = root.Element(defaultNameSpace + "Machine");
+			XElement controllers = machine.Element(defaultNameSpace + "StorageControllers");
+
+			foreach (XElement controller in controllers.Elements(defaultNameSpace + "StorageController")) {
+
+				var controllerName = controller.Attribute("name").Value;
+				var controllerType = controller.Attribute("type").Value;
+
+				foreach (XElement device in controller.Elements(defaultNameSpace + "AttachedDevice")) {
+
+					var deviceType = device.Attribute("type").Value;
+					var port = device.Attribute("port").Value;
+					var deviceNumber = device.Attribute("device").Value;
+
+					XElement image = device.Element(defaultNameSpace + "Image");
+
+					var uuid =
+						image == null ? null : image.Attribute("uuid").Value;
+
+					Console.WriteLine("Device: controller={0}, controllerType={1}, deviceType={2}, port={3}, deviceNumber={4}, uuid={5}", controllerName, controllerType, deviceType, port, deviceNumber, uuid);
+					var deviceInfo = new DeviceInfo();
+					deviceInfo.controller = controllerName;
+					deviceInfo.controllerType = controllerType;
+					deviceInfo.deviceType = deviceType;
+					deviceInfo.deviceNumber = deviceNumber;
+					deviceInfo.port = port;
+					deviceInfo.uuid = uuid;
+					if("HardDisk".Equals(deviceType))
+						devices.Add(deviceInfo);
+				}
+			}
+			Assert.IsNotEmpty(devices);
+		}
 	}
-	public class ImageInfo
-	{
+
+	public class ImageInfo {
+		public string uuid { get; set; }
+	}
+
+	public class DeviceInfo {
 		public string deviceType { get; set; }
 		public string port { get; set; }
+		public string controller { get; set; }
+		public string controllerType { get; set; }
 		public string deviceNumber { get; set; }
 		public string uuid { get; set; }
 	}
