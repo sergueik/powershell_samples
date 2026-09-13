@@ -17,27 +17,64 @@ namespace Test {
 		[SetUp]
 		public void SetUp() {
 			data = @"
-			[
+[
   {
-    ""netid"": ""tcp"",
-    ""state"": ""ESTAB"",
-    ""local"": ""127.0.0.1:22"",
-    ""remote"": ""127.0.0.1:51432""
-  },
-  {
-    ""netid"": ""tcp"",
     ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 128,
     ""local"": ""0.0.0.0:22"",
-    ""remote"": ""0.0.0.0:*""
+    ""peer"": ""0.0.0.0:*""
   },
   {
-    ""netid"": ""tcp"",
-    ""state"": ""TIME-WAIT"",
-    ""local"": ""192.168.1.10:54321"",
-    ""remote"": ""192.168.1.20:443""
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 4096,
+    ""local"": ""0.0.0.0:8443"",
+    ""peer"": ""0.0.0.0:*""
+  },
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 4096,
+    ""local"": ""0.0.0.0:8480"",
+    ""peer"": ""0.0.0.0:*""
+  },
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 128,
+    ""local"": ""[::]:22"",
+    ""peer"": ""[::]:*""
+  },
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 4096,
+    ""local"": ""[::]:8443"",
+    ""peer"": ""[::]:*""
+  },
+  {
+    ""state"": ""LISTEN"",
+    ""recv-q"": 0,
+    ""send-q"": 4096,
+    ""local"": ""[::]:8080"",
+    ""peer"": ""[::]:*""
   }
 ]
-			";
+	";
+	
+	/*
+State   Recv-Q   Send-Q     Local Address:Port      Peer Address:Port  Process  
+LISTEN  0        128              0.0.0.0:22             0.0.0.0:*              
+LISTEN  0        4096             0.0.0.0:8443           0.0.0.0:*              
+LISTEN  0        128              0.0.0.0:51413          0.0.0.0:*              
+LISTEN  0        4096           127.0.0.1:42961          0.0.0.0:*              
+LISTEN  0        4096             0.0.0.0:8081           0.0.0.0:*              
+LISTEN  0        128                 [::]:22                [::]:*              
+LISTEN  0        4096                [::]:8443              [::]:*              
+LISTEN  0        128                 [::]:51413             [::]:*              
+LISTEN  0        4096                [::]:8081              [::]:*
+*/
 		}
 
 		[Test]

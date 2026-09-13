@@ -51,7 +51,7 @@ data = @"
 			var tokens = data.Replace("\r", "").Replace("\n", " ").Split(new char[]{ ',' });
 			foreach (var token in tokens) {
 
-				var publishedPortPattern = @"(?<host_address>(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|\[::\])):(?<host_port>\d{2,6})->(?<container_port>\d{2,6})/(?<protocol>(?:tcp|udp))";
+				var publishedPortPattern = @"(?<host_address>(?:\d{1,3}(?:\.\d{1,3}){3}|\[[^\]]+\])):(?<host_port>\d{2,6})->(?<container_port>\d{2,6})/(?<protocol>(?:tcp|udp))";
 
 				// NOTE: publishedPortPattern = @"(?<host_address>0.0.0.0):(?<host_port>8443)->(?<container_port>8443)/(?<protocol>tcp) *";
 				// System.ArgumentException : parsing "^(?<host address>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(?<host port>\d{2,4})->(?<container port>\d{2,4})/(?<protocol>(?:tcp|udp))$" -
@@ -70,8 +70,11 @@ data = @"
 
 				publishedPort.containerPort = dictionary["container_port"];
 				publishedPort.protocol = dictionary["protocol"];
-				results.Add(publishedPort.hostPort);
-			
+				
+				publishedPort.addressFamily = (publishedPort.hostAddress.IndexOf(":") >= 0) ?
+					"IPv6": "IPv4";
+				if ("IPv4".Equals(publishedPort.addressFamily))
+					results.Add(publishedPort.hostPort);
 			}
 			// NOTE: Argument 2: cannot convert from 'System.Collections.Generic.HashSet<string>' to 'System.Collections.ICollection' (CS1503)
 			// Assert.Contains("8080", results);
@@ -85,5 +88,6 @@ data = @"
 		public string hostPort { get; set; }
 		public string containerPort { get; set; }
 		public string protocol { get; set; }		
+		public string addressFamily { get; set; }
 	}
 }
