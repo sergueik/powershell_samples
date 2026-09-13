@@ -38,11 +38,18 @@
     <Reference Include="System.Configuration">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JSONHelperTest.cs" />
     <Compile Include="ExtractInfoTest.cs" />
     <Compile Include="ParsePublishedPortsTest.cs" />
+    <Compile Include="VirtualBoxVMInfoTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
