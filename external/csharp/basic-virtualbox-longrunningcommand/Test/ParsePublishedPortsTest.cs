@@ -32,7 +32,7 @@ data1 = @"
  0.0.0.0:8080->8080/tcp,
  [::]:8080->8080/tcp
 		";
-		
+
 
 		// expect to find IPv4 published ports:		
 		// 8443->8443/tcp		
@@ -89,7 +89,7 @@ data1 = @"
   }
 ]
 	";
-// without -j option or when not supported by iproute version
+	// without -j option or when not supported by iproute version
 	/*
 State   Recv-Q   Send-Q     Local Address:Port      Peer Address:Port  Process  
 LISTEN  0        128              0.0.0.0:22             0.0.0.0:*              
@@ -133,7 +133,7 @@ LISTEN  0        4096                [::]:8081              [::]:*
 
 				publishedPort.containerPort = dictionary["container_port"];
 				publishedPort.protocol = dictionary["protocol"];
-				
+
 				publishedPort.addressFamily = (publishedPort.hostAddress.IndexOf(":") >= 0) ?
 					"IPv6": "IPv4";
 				if ("IPv4".Equals(publishedPort.addressFamily))
@@ -168,12 +168,12 @@ LISTEN  0        4096                [::]:8081              [::]:*
 						results.Add(publishedPort.hostPort);
 						Console.Error.WriteLine(String.Format("Captured: {0}", publishedPort.hostPort));
 					}
-
 				}
 			});
 			Assert.IsTrue(results.Contains("8080"));
 			Assert.IsTrue(results.Contains("8443"));
 		}
+
 		[Test]
 		public void test3() {
 			var ssPortPattern = @"(?<host_address>(?:\d{1,3}(?:\.\d{1,3}){3}|\[[^\]]+\])):(?<host_port>\d{2,6})";
