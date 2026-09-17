@@ -2317,7 +2317,8 @@ popd
     + https://learn.microsoft.com/en-us/windows/wsl/basic-commands
     + https://gist.github.com/karthiks/1700a56b7bfb79e6e1c345230c2e26b6
     + https://learn.microsoft.com/en-us/windows/wsl/wsl-config
-
+ * https://github.com/wolfoerster/VirtualDisks
+ * [electro-logic/VBoxManageUI](https://github.com/electro-logic/VBoxManageUI) - User Interface for VirtualBox VBoxManage CLI utility 
 ----
 
 ### Author
