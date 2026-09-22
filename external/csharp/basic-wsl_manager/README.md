@@ -412,6 +412,8 @@ in WSL2 envronment it is phrased as:
 
 #### WSL Case
 
+> NOTE older version:
+
 ```code
 flowchart TB
 %% Shrink Windows-visible<br/>dynamic image
@@ -428,6 +430,28 @@ CLEANER  -- "free space<br/>inside guest disk" --> PINVOKE
 PINVOKE--> API
 API -- "Shrink Windows<br/>dynamic VHDX image File" --> END
 ```
+```code
+flowchart TB
+%% Shrink Windows-visible<br/>dynamic image
+BEGIN(((BEGIN)))
+END((END))
+API[["low-level<br/>🛠<br/>VHD / NTFS API"]]
+CLEANER[/"cleaner.sh<br/>multi-purpose<br/>baked into image"/]
+
+BEGIN --> WSLRUN
+WSLRUN["WSL runner<br/>💻<br/>wsl.exe /tmp/cleaner.sh ..."]
+PINVOKE["WSL Kick Start<br/>🔧<br/>P/Invoke"]
+WSLRUN --> CLEANER
+CLEANER  -- "free space<br/>inside guest disk" --> PINVOKE
+PINVOKE--> API
+API -- "Shrink Windows<br/>dynamic VHDX image File" --> END
+
+style WSLRUN fill:#C9F7FF,stroke:#2e7d32,stroke-width:2px
+
+style API fill:#C9EEE4,stroke:#2e7d32,stroke-width:2px
+
+
+```
 ```mermaid
 flowchart TB
 %% Shrink Windows-visible<br/>dynamic image
@@ -443,6 +467,11 @@ WSLRUN --> CLEANER
 CLEANER  -- "free space<br/>inside guest disk" --> PINVOKE
 PINVOKE--> API
 API -- "Shrink Windows<br/>dynamic VHDX image File" --> END
+
+style WSLRUN fill:#C9F7FF,stroke:#2e7d32,stroke-width:2px
+
+style API fill:#C9EEE4,stroke:#2e7d32,stroke-width:2px
+
 ```
 ![WSL Shrink Process](screenshots/capture-shrink-wsl.png)
 
@@ -453,7 +482,7 @@ flowchart TB
   BEGIN(((BEGIN)))
   END((END))
 
-  RUNTIME{"Container<br/>Runtime"}
+  RUNTIME{"Container<br/>Runtime<br/>❓"}
 
   SCRIPT1[/"docker script"/]
   SCRIPT2[/"podman script"/]
@@ -479,6 +508,49 @@ FSTRIM[["fstrim"]]
 FSTRIM -- "free space<br/>inside guest disk" --> VBMANAGE1
   VBMANAGE1 -- Fixed --> END
   VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
+style FSTRIM fill:#C9F7FF,stroke:#2e7d32,stroke-width:2px
+
+style GUESTCTRL1 fill:#C9EEE4,stroke:#2e7d32,stroke-width:2px
+style RUNTIME fill:#fff3cd,stroke:#d39e00,stroke-width:2px
+
+```
+
+```mermaid
+flowchart TB
+  BEGIN(((BEGIN)))
+  END((END))
+
+  RUNTIME{"Container<br/>Runtime<br/>❓"}
+
+  SCRIPT1[/"docker script"/]
+  SCRIPT2[/"podman script"/]
+
+
+  GUESTCTRL1["VBoxManage<br/>💻<br/>guestcontrol exec"]
+  GUESTCTRL2["VBoxManage<br/>💻<br/>guestcontrol start"]
+FSTRIM[["fstrim"]]
+  VBMANAGE1["VBoxManage<br/>🛠<br/>showmediuminfo"]
+  VBMANAGE2["VBoxManage<br/>🛠<br/>modifyhd<br/>compact"]
+
+  BEGIN --> GUESTCTRL1
+  GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
+
+  RUNTIME -- "⚙ Docker" --> SCRIPT1
+  RUNTIME -- "⚙ Podman" --> SCRIPT2
+
+  SCRIPT1 --> GUESTCTRL2
+  SCRIPT2 --> GUESTCTRL2
+
+  GUESTCTRL2--> FSTRIM
+
+FSTRIM -- "free space<br/>inside guest disk" --> VBMANAGE1
+  VBMANAGE1 -- Fixed --> END
+  VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
+style FSTRIM fill:#C9F7FF,stroke:#2e7d32,stroke-width:2px
+
+style GUESTCTRL1 fill:#C9EEE4,stroke:#2e7d32,stroke-width:2px
+style RUNTIME fill:#fff3cd,stroke:#d39e00,stroke-width:2px
+
 ```
 > NOTE: more precisely
 > ```text
