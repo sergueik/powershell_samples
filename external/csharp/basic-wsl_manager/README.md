@@ -400,13 +400,13 @@ The `.wslconfig` configuration even has:
 [wsl2]
 localhostForwarding=true
 ```
-therefore insread of stating the usual
+therefore insread of observing the usual
 
 > _we have booted an Linux VM on_ `172.30.98.229`
 
-in WSL2 envronment it becomes often:
+in WSL2 envronment it is phrased as:
 
-> _wehave a Linux process listening on port_ `8000`
+> _we have a Linux process listening on port_ `8000`
 
 ### Disk Free Space Management, Virtual Hard Disk Schrinking
 
@@ -433,12 +433,12 @@ flowchart TB
 %% Shrink Windows-visible<br/>dynamic image
 BEGIN(((BEGIN)))
 END((END))
-API[["low-level VHD / NTFS API"]]
+API[["low-level<br/>🛠<br/>VHD / NTFS API"]]
 CLEANER[/"cleaner.sh<br/>multi-purpose<br/>baked into image"/]
 
 BEGIN --> WSLRUN
-WSLRUN["WSL runner<br/>wsl.exe /tmp/cleaner.sh ..."]
-PINVOKE["WSL Kick Start<br/>P/Invoke"]
+WSLRUN["WSL runner<br/>💻<br/>wsl.exe /tmp/cleaner.sh ..."]
+PINVOKE["WSL Kick Start<br/>🔧<br/>P/Invoke"]
 WSLRUN --> CLEANER
 CLEANER  -- "free space<br/>inside guest disk" --> PINVOKE
 PINVOKE--> API
@@ -453,60 +453,44 @@ flowchart TB
   BEGIN(((BEGIN)))
   END((END))
 
-  RUNTIME{Container<br/>Runtime}
+  RUNTIME{"Container<br/>Runtime"}
 
   SCRIPT1[/"docker script"/]
   SCRIPT2[/"podman script"/]
 
 
-  GUESTCTRL1["VBoxManage guestcontrol"]
-  GUESTCTRL2["VBoxManage guestcontrol"]
-  VBMANAGE1["VBoxManage showmediuminfo"]
-  VBMANAGE2["VBoxManage modifyhd"]
+  GUESTCTRL1["VBoxManage<br/>💻<br/>guestcontrol exec"]
+  GUESTCTRL2["VBoxManage<br/>💻<br/>guestcontrol start"]
+FSTRIM[["fstrim"]]
+  VBMANAGE1["VBoxManage<br/>🛠<br/>showmediuminfo"]
+  VBMANAGE2["VBoxManage<br/>🛠<br/>modifyhd<br/>compact"]
 
   BEGIN --> GUESTCTRL1
   GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
 
-  RUNTIME -- Docker --> SCRIPT1
-  RUNTIME -- Podman --> SCRIPT2
+  RUNTIME -- "⚙ Docker" --> SCRIPT1
+  RUNTIME -- "⚙ Podman" --> SCRIPT2
 
   SCRIPT1 --> GUESTCTRL2
   SCRIPT2 --> GUESTCTRL2
 
-  GUESTCTRL2 -- "free space<br/>inside guest disk" --> VBMANAGE1
+  GUESTCTRL2--> FSTRIM
+
+FSTRIM -- "free space<br/>inside guest disk" --> VBMANAGE1
   VBMANAGE1 -- Fixed --> END
   VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
 ```
-
-```mermaid
-
-flowchart TB
-  BEGIN(((BEGIN)))
-  END((END))
-
-  RUNTIME{Container<br/>Runtime}
-
-  SCRIPT1[/"docker script"/]
-  SCRIPT2[/"podman script"/]
-
-
-  GUESTCTRL1["VBoxManage guestcontrol"]
-  GUESTCTRL2["VBoxManage guestcontrol"]
-  VBMANAGE1["VBoxManage showmediuminfo"]
-  VBMANAGE2["VBoxManage modifyhd"]
-
-  BEGIN --> GUESTCTRL1
-  GUESTCTRL1 -- "Detect operational<br/>container runtime" --> RUNTIME
-
-  RUNTIME -- Docker --> SCRIPT1
-  RUNTIME -- Podman --> SCRIPT2
-
-  SCRIPT1 --> GUESTCTRL2
-  SCRIPT2 --> GUESTCTRL2
-
-  GUESTCTRL2 -- "free space<br/>inside guest disk" --> VBMANAGE1
-  VBMANAGE1 -- Fixed --> END
-  VBMANAGE1 -- Dynamic --> VBMANAGE2 --> END
+> NOTE: more precisely
+> ```text
+> guestcontrol start fstrim
+>              ↓
+>        fstrim finishes
+>              ↓
+>       guest is shut down
+>              ↓
+>    showmediuminfo
+>              ↓
+>       --compact
 ```
 ![VB Shrink Process](screenshots/capture-shrink-vb.png)
 

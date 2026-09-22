@@ -1,4 +1,4 @@
-### VM Appliance Configuration (VirtualBox Guest Script Model)
+## VM Appliance Configuration (VirtualBox Guest Script Model)
 
 #### Goal
 e.g. to exercise the  Docker Login Flow by launching the shell script through
@@ -44,9 +44,7 @@ This design avoids:
 - state inference on the host
 
 
-
-      
-```cmd`
+```cmd
 vboxmanage.exe list runningvms
 ```
 ```text
@@ -355,7 +353,7 @@ GuestAdditionsFacility_VirtualBox System Service=50,1788999298549
 GuestAdditionsFacility_Seamless Mode=50,1788999291413
 GuestAdditionsFacility_Graphics Mode=50,1788999299634
 ```
-```
+```cmd
 set HDD=e31692be-ff5c-424f-818d-07a377758041
 vboxmanage.exe showmediuminfo %HDD%
 ```
@@ -391,7 +389,8 @@ Encryption:     disabled
 ```
 ```cmd
 set HDD=b0ade65c-b81d-490e-aca2-8e43841e6879DD%}
-c:\Program Files\Oracle\VirtualBox\vboxmanage.exe showmediuminfo {%HDD%}
+pushd "c:\Program Files\Oracle\VirtualBox"
+vboxmanage.exe showmediuminfo {%HDD%}
 ```
 ```text
 UUID:           b0ade65c-b81d-490e-aca2-8e43841e6879
@@ -471,13 +470,13 @@ Header: uuidParentModification={00000000-0000-0000-0000-000000000000}
 > ```
 
 
-### Testing VHD 
+### Testing VHD
 
 `VHD` is a mature __VirtualBox__-supported disk-image format:
 
 ```cmd
 VBoxManage.exe list hddbackends
-``` 
+```
 ```text
 Backend 0: id='VMDK' description='VMDK' capabilities=0x0a7f extensions='vmdk (HardDisk)' properties=()
 Backend 1: id='VDI' description='VDI' capabilities=0x0e77 extensions='vdi (HardDisk)' properties=()
@@ -498,25 +497,22 @@ VirtualBox
 
 Windows itself supports `VHD`/`VHDX`, including attaching them as virtual disks. The dynamic `VHD` is an excellent experimental target for comparing:
 ```cmd
-VBoxManage modifymedium
+VBoxManage.exe modifymedium
 ```
 against:
-```
+```text
 virtdisk.dll
     │
     p/invoke
     │
     ├── OpenVirtualDisk()
     └── ResizeVirtualDisk()
-    
-
-```          
+```
 ```c#
 using System;
 using System.Runtime.InteropServices;
 
-public static class VirtDiskApi
-{
+public static class VirtDiskApi {
     // Native function to resize a virtual disk
     [DllImport("virtdisk.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern uint ResizeVirtualDisk(
@@ -527,27 +523,23 @@ public static class VirtDiskApi
 
     // Flags determining the behavior of the resize operation
     [Flags]
-    public enum ResizeVirtualDiskFlags : uint
-    {
+    public enum ResizeVirtualDiskFlags : uint {
         None = 0x00000000,
         AllowShrink = 0x00000001 // Crucial flag to explicitly allow shrinking
     }
    // Structure specifying the version and target size
     [StructLayout(LayoutKind.Sequential)]
-    public struct ResizeVirtualDiskParameters
-    {
+    public struct ResizeVirtualDiskParameters {
         public ResizeVirtualDiskVersion Version;
         public ResizeVirtualDiskVersion1 Version1;
     }
 
-    public enum ResizeVirtualDiskVersion : uint
-    {
+    public enum ResizeVirtualDiskVersion : uint {
         Version1 = 1
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct ResizeVirtualDiskVersion1
-    {
+    public struct ResizeVirtualDiskVersion1 {
         public ulong NewSize; // New maximum size in bytes
     }
 }
@@ -562,8 +554,8 @@ public static class VirtDiskApi
 
 #### Sockets
 
-> NOTE: need recent `iproute` (__5.0__ or later) or ned to install `jc` - JSON CLI output utility - to collect socket information in the __JSON__ format 
-which is critical for subsequent parsing. 
+> NOTE: need recent `iproute` (__5.0__ or later) or ned to install `jc` - JSON CLI output utility - to collect socket information in the __JSON__ format
+which is critical for subsequent parsing.
 
 > NOTE: need recent `iproute` (__5.0__ or later), or need to install `jc` — a JSON CLI output utility — to
 > receive socket information in JSON format, which is critical for subsequent parsing.
@@ -961,7 +953,7 @@ Exception: The system cannot find the file specified"
 
 ```powershell
 pushd Program\bin\Debug
-.\VboxManageSystemTrayApp.exe
+& .\VboxManageSystemTrayApp.exe
 ```
 > NOTE: Like a Unix shell, Windows PowerShell does not load commands from the current location by default
 
@@ -1068,12 +1060,13 @@ echo $ARG
 ```
 
 ```powershell
-pushd "c:\Program Files\Oracle\VirtualBox"
+pushd 'c:\Program Files\Oracle\VirtualBox'
 $env:PASSWORD=
 $env:VM='{7e261a39-d356-4eb1-a8ed-75675b149241}'
 .\VBoxManage.exe guestcontrol $env:VM run --username sergueik --password $env:PASSWORD --exe /bin/sh -- -c "uname -a"
 ```
 ```powershell
+pushd 'c:\Program Files\Oracle\VirtualBox'
 .\VBoxManage.exe guestcontrol $env:VM run --username sergueik --password $env:PASSWORD --exe "/bin/sh -- -c 'uname -a'"
 ```
 ```text
@@ -1093,7 +1086,8 @@ this is a test with argument: sample
 ```
 
 ```powershell
-.\VBoxManage.exe guestcontrol $env:VM run --username sergueik --password $env:PASSWORD  --exe /bin/sh -- /bin/sh -c "/tmp/a.sh 'sample aergument with spaces'"
+pushd 'c:\Program Files\Oracle\VirtualBox'
+.\VBoxManage.exe guestcontrol $env:VM run --username sergueik --password $env:PASSWORD --exe /bin/sh -- /bin/sh -c "/tmp/a.sh 'sample argument with spaces'"
 ```
 ```text
 this is a test with argument: sample aergument with spaces
@@ -1151,7 +1145,7 @@ VBoxManage.exe: error: Context: "WaitForArray(ComSafeArrayAsInParam(aWaitStartFl
 ```text
 [INFO] Starting login test for testuser 123
 ```
-#### Set Up 
+#### Set Up
 ```
 
 ```
@@ -1516,10 +1510,10 @@ There are actually three possible storage mechanisms in the finished executable
 
 WSL2 additional features
 
-  * Hyper-V Manager	
-  * Hyper-V virtual machines	
-  * Windows Sandbox	
-  * Group Policy Editor	
+  * Hyper-V Manager
+  * Hyper-V virtual machines
+  * Windows Sandbox
+  * Group Policy Editor
   * Domain Join
 ### Code Review
 
@@ -1716,7 +1710,7 @@ The new practices are optimized for:
 ---
 
 The important
-point is that __Visio__ itself has an unavoidable structural toll before one 
+point is that __Visio__ itself has an unavoidable structural toll before one
 even get to the semantic payload
 
 The toll is structural, not semantic: you pay it before you know how much knowledge you actually need.
@@ -2052,8 +2046,8 @@ if (true) {
 
 ### WSL2
 
-WSL is not Hypervisor and offers a somewhat much reduced functionality. Direct Registry calls can help fill the gap
- 
+__WSL__ is not Hypervisor and offers a somewhat strongly reduced functionality. Direct Registry calls can help fill the gap
+
 
 ```cmd
 wsl.exe --list
@@ -2063,14 +2057,14 @@ wsl.exe --list
 * Alpine    Stopped         2
 ```
 
-the WSL 2 is simply lightweight utility virtual machine. So "it" accepts a global  
+the WSL 2 is simply lightweight utility virtual machine. So "it" accepts a global
 
-```cmd
+```text
 		--shutdown
         Immediately terminates all running
 ```
-interestingly is also offers
-```
+interestingly is also offers options
+```text
    --exec, -e <CommandLine>
         Execute the specified command without using the default Linux shell.
 ```
@@ -2089,11 +2083,11 @@ wsl.exe -d Alpine
 ```
 
 __WSL__ operates as a highly integrated, lightweight container-like ecosystem rather than a traditional monolithic
-virtual machine manager, it does not have a single exact equivalent to 
+virtual machine manager, it does not have a single exact equivalent to
 ```sh
 vboxctl.exe describe vm
 ```
-or 
+or
 
 ```sh
 VBoxManage.exe showvminfo
@@ -2104,14 +2098,14 @@ commands
 Insufficient system resources exist to complete the requested service
 ```
 ```cmd
-wsl -d alpine cat /etc/alpine-release
+wsl.exe -d alpine cat /etc/alpine-release
 ```
 
 `3.17.0`
 
-Registry Location and DetailsPath: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\LxssContents`: 
+Registry Location and DetailsPath: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\LxssContents`:
 Each subkey inside `Lxss` represents an installed Linux distribution, identified by a unique `GUID`.
-Stored Information: Distribution-specific configurations 
+Stored Information: Distribution-specific configurations
 like the default user, base path for virtual hard disks (`VHDX`), kernel command lines, and distribution state flags
 
 ```powershell
@@ -2119,8 +2113,7 @@ get-childitem -path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss" | sel
 $keys = get-childitem -path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss" | select-object -expandproperty property
 ```
 ```powershell
-
-$names =  get-childitem -path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss" | 
+$names =  get-childitem -path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss" |
 select-object -expandpropert name | out-string
 write-output $names
 ```
@@ -2130,21 +2123,22 @@ HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{684f6691-1413-
 HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{9d51c0ac-cf84-46ab-bbfb-b8d417429ea5}
 ```
 
-> NOTE: need to deal with out-string -split 
-> ``` 
+> NOTE: need to deal with out-string -split
+> ```text
 > get-item : Cannot find path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVe
 >  rsion\Lxss\{31f11a3f-ff27-422e-8345-c6460043c517}' because it does not exist.
 >  At line:1 char:1
 > ```
 > NOTE line break in the registry path
+
 ```powershell
-$names -split "\n" | foreach-object { 
+$names -split "\n" | foreach-object {
 $name = $_
 write-output $name
 $name = $name -replace 'HKEY_CURRENT_USER', 'HKCU:'
  $x = 'DistributionName'
  (get-itemproperty -path $name -name $x )."${x}"
- 
+
 }
 ```
 ```text
@@ -2172,7 +2166,7 @@ $keys | foreach-object {$x = $_ ; (get-itemproperty -path $name -name $x )."${x}
  (get-itemproperty -path $name -name BasePath ).BasePath
  $x = 'BasePath'
  (get-itemproperty -path $name -name $x )."${x}"
-``` 
+```
 
 ```powershell
 get-item -path ("HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{0}" -f $name ) | select-object -expandproperty name
@@ -2190,17 +2184,17 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/us
 TERM=xterm-256color
 ```
 not all shell features work with __Wsl__:
-```
+```cmd
 wsl.exe -d alpine cat /etc/{alpine-release,lsb-release}
 ```
 e.g. brace expansion doesn't
-```
+```text
 cat: can't open '/etc/{alpine-release,lsb-release}': No such file or directory
 ```
 ```
 wsl.exe -d alpine cat /etc/os-release
 ```
-```
+```cmd
 NAME="Alpine Linux"
 ID=alpine
 VERSION_ID=3.17.0
@@ -2215,14 +2209,14 @@ wsl.exe --install -d Ubuntu-18.04
 Downloading: Ubuntu 18.04 LTS
 An error occurred during installation. Distribution Name: 'Ubuntu 18.04 LTS' Error Code: 0x80072ee7
 ```
-The WSL error code `0x80072ee7` means "The server name or address could not be resolved". 
-It is a network-related DNS failure that occurs because your Windows system cannot reach Microsoft's servers to download the 
+The WSL error code `0x80072ee7` means "The server name or address could not be resolved".
+It is a network-related DNS failure that occurs because your Windows system cannot reach Microsoft's servers to download the
 WSL kernel or Linux distributions.
 needto switch to "Microsoft Store" and "Open" after "Install":
 
 ![capture open when the OS finishing the install](screenshots/capture-debian-open.png)
 
-NOTE: distributions e.g. `ubuntu` may still fail with
+NOTE: certain distributions e.g. `ubuntu` may still fail with
 ```text
 Installing, this may take a few minutes...
 WslRegisterDistribution failed with error: 0x80070040
@@ -2230,10 +2224,9 @@ Error: 0x80070040 The specified network name is no longer available.
 ```
 
 The error `0x80070040` ("The specified network name is no longer available") during WSL registration usually happens
-when the background Hyper-V or LxssManager services lose communication, or when network/winsock 
+when the background Hyper-V or LxssManager services lose communication, or when network/winsock
 configurations block the internal virtual switch creation
-it is fixed via
-elevated shell commands:
+it is fixed via elevated shell commands:
 ```cmd
 wsl.exe --shutdown
 netsh.exe winsock reset
@@ -2249,18 +2242,18 @@ For more information visit: https://aka.ms/wslusers
 ```
 and just create the user (e.g. `wsl2user`)
 
-How to Do ItInstall a base instance: Download your preferred distribution (such as Ubuntu) from the Microsoft Store or by running 
-```text
+How to Do ItInstall a base instance: Download your preferred distribution (such as Ubuntu) from the Microsoft Store or by running
+```cmd
 wsl.exe --install -d <distro>
 ```
-Export the base system: 
+Export the base system:
 Turn your existing distribution into a .tar backup file by running this command:
-```
+```cmd
 wsl.exe --export <distro-name> <path-to-tar-file>
 ```
 Import as a new instance: Create the second, independent copy under a new name and destination folder using command:
-```
-wsl --import <new-name> <install-folder> 
+```cmd
+wsl.exe --import <new-name> <install-folder>
 <path-to-tar-file>
 ```
 e.g.
@@ -2286,7 +2279,7 @@ Ubuntu
 |`HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss\{9d51c0ac-cf84-46ab-bbfb-b8d417429ea5}`| Ubuntu|
 
 The "copy" element will have less Registry values initially:  no `DefaultEnvironment` or `KernelCommandLine`
-These appear after first run presumably - no they do not . 
+These appear after first run presumably - no they do not .
 The new image is run by root but has correctly configured `wsluser`
 
 ### Bookkeeping
@@ -2313,12 +2306,12 @@ popd
  * https://icons8.com/icon/50196/rest-api
  * https://github.com/mikemajesty/cooldatagridview
  * https://github.com/datarza/DataViewExtenders
- * WSL2  
+ * WSL2
     + https://learn.microsoft.com/en-us/windows/wsl/basic-commands
     + https://gist.github.com/karthiks/1700a56b7bfb79e6e1c345230c2e26b6
     + https://learn.microsoft.com/en-us/windows/wsl/wsl-config
  * https://github.com/wolfoerster/VirtualDisks
- * [electro-logic/VBoxManageUI](https://github.com/electro-logic/VBoxManageUI) - User Interface for VirtualBox VBoxManage CLI utility 
+ * [electro-logic/VBoxManageUI](https://github.com/electro-logic/VBoxManageUI) - User Interface for VirtualBox VBoxManage CLI utility
 ----
 
 ### Author
