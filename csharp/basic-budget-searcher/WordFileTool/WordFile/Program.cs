@@ -1,13 +1,8 @@
 using System;
 using System.Windows.Forms;
 
-namespace WordFile
-{
-    internal static class Program
-    {
-        /// <summary>
-        /// 应用程序的主入口点。
-        /// </summary>
+namespace WordFile {
+    internal static class Program {
         [STAThread]
         static void Main()
         {
