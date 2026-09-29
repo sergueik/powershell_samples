@@ -39,3 +39,16 @@ That is much more appropriate for an SMB environment than pretending the user is
 
   * https://github.com/WuLex/WordFileTool 
   * https://github.com/ToolsByXLG/NPOI.Word2Html
+  * https://github.com/IS4Code/npoi - 
+  * https://www.nuget.org/packages/npoi/
+  * [nissl-lab/POIFSExplorer](https://github.com/nissl-lab/POIFSExplorer) - NPOI based tool helps you explore internal structure of OLE2(ActiveX) documents, including
+    + `.xls` __Excel__ document
+    + `.doc` __Word__ document
+    + `.ppt` __Powerpoint__ document
+  * [nissl-lab/OLE2Storage](https://github.com/nissl-lab/OLE2Storage) -  straight (pure-no COM interop) .NET IStorge interface library to read/write __OLE2__(ActiveX) document
+
+  * https://hackernoon.com/comparing-apache-npoi-and-ironxl-in-c-a-complete-guide 
+
+---
+### Author
+[Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)

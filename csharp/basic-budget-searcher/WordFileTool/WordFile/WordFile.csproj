@@ -94,12 +94,11 @@
   <ItemGroup>
     <Compile Include="MainForm.cs" />
     <Compile Include="Program.cs" />
-    <EmbeddedMainForm Include="Properties\MainForm.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>MainForm.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedMainForm>
-    <Compile Include="Properties\MainForm.Designer.cs">
+    </EmbeddedResource>
+    <Compile Include="MainForm.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>MainForm.resx</DependentUpon>
     </Compile>
