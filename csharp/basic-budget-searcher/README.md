@@ -32,6 +32,10 @@ Search `\\server\share\department`, recursively, for `*.xml` containing `CUSTOME
 
 That is much more appropriate for an SMB environment than pretending the user is doing a normal local Windows Explorer search.
 
+### NPOI
+
+> NOTE: __NPOI__ cannot read or process `.PDF` files (is designed exclusively to read, write, and manipulate Office documents without requiring Microsoft Office Interop) and despite what its official project description claims, is weak in handling `.PPT`/`.PPTX` files
+
 ### See Also
 
   * https://github.com/hanzhaoxin/ExcelReport - currently on .netstandard, but commit [f3988](https://github.com/hanzhaoxin/ExcelReport/tree/f3988ec14003d2a167552144f458d2a774bcd4bd/ExcelReport) - is .net 4.0 version and see also [project documentation](http://www.cnblogs.com/hanzhaoxin/tag/ExcelReport)

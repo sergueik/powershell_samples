@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace WordFile {
+namespace Program {
 	partial class MainForm {
 		private System.ComponentModel.IContainer components = null;
 
@@ -310,8 +310,6 @@ namespace WordFile {
 			Controls.Add(txtDocDirectory);
 			Controls.Add(label1);
 			Controls.Add(btnSelectFile);
-			// System.Resources.MissingManifestResourceException: Could not find any resources appropriate for the specified culture or the neutral culture.  Make sure "WordFile.MainForm.resources" was correctly embedded or linked into assembly "WordFile" at compile time, or that all the satellite assemblies required are loadable and fully signed.
-			// at System.Resources.ManifestBasedResourceGroveler.HandleResourceStreamMissing(String fileName)
 			this.Icon = ((Icon)(resources.GetObject("$this.Icon")));
 			Margin = new Padding(4, 5, 4, 5);
 			Name = "MainForm";

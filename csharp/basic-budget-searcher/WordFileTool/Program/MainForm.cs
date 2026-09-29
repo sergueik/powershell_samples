@@ -6,8 +6,9 @@ using NPOI.XWPF.UserModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Diagnostics;
 
-namespace WordFile {
+namespace Program {
 	public partial class MainForm : Form {
 		public MainForm() {
 			InitializeComponent();
@@ -21,13 +22,13 @@ namespace WordFile {
 			}
 		}
 
-
 		private void btnReplaceText_Click(object sender, EventArgs e) {
 			string docDirectory = txtDocDirectory.Text;
 
 			ThreadPool.QueueUserWorkItem(
 				(o) => {
 					var directoryInfo = new DirectoryInfo(docDirectory);
+					Debug.WriteLine(String.Format("Scanning {0}",directoryInfo.FullName));
 					FileInfo[] files = directoryInfo.GetFiles("*.docx");
 
 					foreach (FileInfo f in files) {
@@ -58,8 +59,8 @@ namespace WordFile {
 									dic.Add(txtSearchKey5.Text, txtReplace5.Text);
 								}
 
-								foreach (var para in doc.Paragraphs) {
-									ReplaceKey(para, dic);
+								foreach (var paragraph in doc.Paragraphs) {
+									ReplaceKey(paragraph, dic);
 									//ReplaceKeyword(para, dic);
 								}
 
@@ -80,19 +81,19 @@ namespace WordFile {
 			this.Close();
 		}
 
-		private void ReplaceKey(XWPFParagraph para, IDictionary<string, string> redic) {
-			string text = para.ParagraphText;
+		private void ReplaceKey(XWPFParagraph paragraph, IDictionary<string, string> redic) {
+			string text = paragraph.ParagraphText;
 			foreach (var kv in redic) {
 				if (text.Contains(kv.Key)) {
-					para.ReplaceText(kv.Key, kv.Value);
+					paragraph.ReplaceText(kv.Key, kv.Value);
 				}
 			}
 		}
 
-		private void ReplaceKeyword(XWPFParagraph para, IDictionary<string, string> redic) {
+		private void ReplaceKeyword(XWPFParagraph paragraph, IDictionary<string, string> redic) {
 			string text = string.Empty; 
-			string styleid = para.Style;
-			var runs = para.Runs;
+			string styleid = paragraph.Style;
+			var runs = paragraph.Runs;
 			for (int i = 0; i < runs.Count; i++) {
 				var run = runs[i];
 				text = run.ToString();

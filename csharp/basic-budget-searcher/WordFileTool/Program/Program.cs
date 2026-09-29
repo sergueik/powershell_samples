@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace WordFile {
+namespace Program {
     internal static class Program {
         [STAThread]
         static void Main()
