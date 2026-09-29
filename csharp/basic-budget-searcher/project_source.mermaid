@@ -1,0 +1,34 @@
+classDiagram
+    direction TB
+
+    class Solution {
+        <<Solution>>
+    }
+
+    class Code {
+        <<C# Code>>
+    }
+
+    class Resources {
+        <<Embedded Resources>>
+    }
+
+    class Configuration {
+        <<Configuration>>
+    }
+
+    class Packages {
+        <<Signed, Vetted Vendor External Packages>>
+    }
+
+    Solution --> Code
+    Solution --> Resources
+    Solution --> Configuration
+    Solution --> Packages
+
+    Code --> Resources
+    Code --> Configuration
+    Code --> Packages
+
+    Configuration --> Packages
+    Resources --> Code

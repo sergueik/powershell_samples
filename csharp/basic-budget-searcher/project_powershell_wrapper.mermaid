@@ -1,0 +1,13 @@
+flowchart TB
+
+subgraph Project["Powershell Script"]
+  direction TB
+  Code["Project"]
+end
+
+Packages[/"Trusted\nExternal Packages"/]
+
+Packages -- loads-->  Code
+
+style Code fill:#AAAAAA,stroke:#080808,stroke-width:2px
+
