@@ -87,6 +87,12 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="UglyToad.PdfPig">
+      <HintPath>..\packages\PdfPig.2.5.0\lib\net45\UglyToad.PdfPig.dll</HintPath>
+    </Reference>
+    <Reference Include="UglyToad.PdfPig.DocumentLayoutAnalysis">
+      <HintPath>..\packages\PdfPig.2.5.0\lib\net45\UglyToad.PdfPig.DocumentLayoutAnalysis.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
