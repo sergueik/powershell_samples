@@ -35,6 +35,36 @@ That is much more appropriate for an SMB environment than pretending the user is
 ### NPOI
 
 > NOTE: __NPOI__ cannot read or process `.PDF` files (is designed exclusively to read, write, and manipulate Office documents without requiring Microsoft Office Interop) and despite what its official project description claims, is weak in handling `.PPT`/`.PPTX` files
+### Packaging Notes
+
+* The scanner/searcher has a deliberately narrow responsibility: traverse files, inspect what is necessary, and dump runs/results as plain text.
+* It does not need to become an Office automation framework, document-generation framework, PDF-processing platform, etc.
+* Therefore every *additional* dependency should have a concrete *reason to exist* in that component.
+* If NPOI is sufficient for the Office-reading/writing portion, there is little architectural value in continuously chasing every new NPOI release merely because releases exist.
+* Also, A PDF dependency can remain undecided until the actual PDF requirement is established.
+* The fact that NPOI continues to evolve does not automatically mean that the scanner should continuously evolve with it
+* the actual scanner logic may be almost embarrassingly small:
+```
+document
+   │
+   ▼
+POI proxy
+   │
+   └── ToString()
+         │
+         ├── useful text → emit
+         │
+         └── otherwise → known Regex matcher
+```
+
+When filling the candidate slot for PDF, it is good to remember:
+
+**PDF reading ≠ PDF engineering.**
+
+If the QA tool already has a PDF helper library to confirm “yes, this downloaded object is a valid PDF,” that same library is quite possibly capable of producing a textual dump of a PDF.
+
+No reason to consider a heavyweight PDF creation/manipulation framework merely because there is a need to “grep” a PDF.
+
 
 ### See Also
 

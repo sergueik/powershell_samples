@@ -1,0 +1,20 @@
+flowchart TB
+
+subgraph Project["PROJECT"]
+  direction TB
+
+  Code["Code"]
+  Resources["Resources"]
+  Configuration["Configuration"]
+
+end
+
+Resources -- embed --> Code 
+Configuration -- "runtime\nbehavior" --> Code
+
+Solution["Solution"]
+Packages[/"Trusted\nExternal Packages"/]
+
+Solution -. construct .-> Project
+Packages -- external -->  Project
+
