@@ -35,6 +35,54 @@ That is much more appropriate for an SMB environment than pretending the user is
 ### NPOI
 
 > NOTE: __NPOI__ cannot read or process `.PDF` files (is designed exclusively to read, write, and manipulate Office documents without requiring Microsoft Office Interop) and despite what its official project description claims, is weak in handling `.PPT`/`.PPTX` files
+
+### PdfPig
+```sh
+export V=0.1.7
+curl -skLo ~/Downloads/pdfpig.$V.zip  https://www.nuget.org/api/v2/package/PdfPig/$V
+unzip -ql ~/Downloads/pdfpig.$V.zip lib/net45/*
+```
+```text
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+    11776  2022-12-13 01:14   lib/net45/UglyToad.PdfPig.Package.pdb
+    38400  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Core.dll
+  4078080  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.dll
+   242688  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.DocumentLayoutAnalysis.dll
+  1068032  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Fonts.dll
+    19968  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Tokenization.dll
+    42496  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Tokens.dll
+    13936  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Core.pdb
+    59973  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Core.xml
+    83760  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.DocumentLayoutAnalysis.pdb
+   383110  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.DocumentLayoutAnalysis.xml
+   101580  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Fonts.pdb
+   246421  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Fonts.xml
+     9032  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Tokenization.pdb
+     9962  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Tokenization.xml
+    11024  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.Tokens.pdb
+    37338  2022-12-13 01:13   lib/ne
+   249992  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.pdb
+   577595  2022-12-13 01:13   lib/net45/UglyToad.PdfPig.xml
+     4608  2022-12-13 01:14   lib/net45/UglyToad.PdfPig.Package.dll
+      148  2022-12-13 01:14   lib/net45/UglyToad.PdfPig.Package.xml
+```
+```sh
+mkdir -p packages/PdfPig.2.5.0/lib/net45
+unzip -d packages/PdfPig.2.5.0 ~/Downloads/pdfpig.$V.zip lib/net45/*
+```
+```sh
+find  packages/PdfPig.2.5.0/lib/net45/ -iname '*dll' -exec basename {} \;
+```
+```text
+UglyToad.PdfPig.Core.dll
+UglyToad.PdfPig.dll
+UglyToad.PdfPig.DocumentLayoutAnalysis.dll
+UglyToad.PdfPig.Fonts.dll
+UglyToad.PdfPig.Package.dll
+UglyToad.PdfPig.Tokenization.dll
+UglyToad.PdfPig.Tokens.dll
+```
 ### Packaging Notes
 
 * The scanner/searcher has a deliberately narrow responsibility: traverse files, inspect what is necessary, and dump runs/results as plain text.
@@ -82,6 +130,7 @@ No reason to consider a heavyweight PDF creation/manipulation framework merely b
   * [nissl-lab/OLE2Storage](https://github.com/nissl-lab/OLE2Storage) -  straight (pure-no COM interop) .NET IStorge interface library to read/write __OLE2__(ActiveX) document
 
   * https://hackernoon.com/comparing-apache-npoi-and-ironxl-in-c-a-complete-guide 
+  * for Text Extraction & Parsing - best option is [PdfPig](https://www.nuget.org/packages/PdfPig/0.1.7#supportedframeworks-body-tab)
 
 ---
 ### Author
