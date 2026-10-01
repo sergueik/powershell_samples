@@ -69,16 +69,16 @@
       <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="NPOI">
-      <HintPath>..\packages\NPOI.2.5.0\lib\net45\NPOI.dll</HintPath>
+      <HintPath>..\packages\NPOI.0.1.7\lib\net45\NPOI.dll</HintPath>
     </Reference>
     <Reference Include="NPOI.OOXML">
-      <HintPath>..\packages\NPOI.2.5.0\lib\net45\NPOI.OOXML.dll</HintPath>
+      <HintPath>..\packages\NPOI.0.1.7\lib\net45\NPOI.OOXML.dll</HintPath>
     </Reference>
     <Reference Include="NPOI.OpenXml4Net">
-      <HintPath>..\packages\NPOI.2.5.0\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+      <HintPath>..\packages\NPOI.0.1.7\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
     </Reference>
     <Reference Include="NPOI.OpenXmlFormats">
-      <HintPath>..\packages\NPOI.2.5.0\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
+      <HintPath>..\packages\NPOI.0.1.7\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -88,26 +88,17 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="UglyToad.PdfPig">
-      <HintPath>..\packages\PdfPig.2.5.0\lib\net45\UglyToad.PdfPig.dll</HintPath>
+      <HintPath>..\packages\PdfPig.0.1.7\lib\net45\UglyToad.PdfPig.dll</HintPath>
     </Reference>
     <Reference Include="UglyToad.PdfPig.DocumentLayoutAnalysis">
-      <HintPath>..\packages\PdfPig.2.5.0\lib\net45\UglyToad.PdfPig.DocumentLayoutAnalysis.dll</HintPath>
+      <HintPath>..\packages\PdfPig.0.1.7\lib\net45\UglyToad.PdfPig.DocumentLayoutAnalysis.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainForm.cs" />
     <Compile Include="Program.cs" />
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="MainForm.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>MainForm.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

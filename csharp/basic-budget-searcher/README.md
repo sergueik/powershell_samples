@@ -68,11 +68,11 @@ unzip -ql ~/Downloads/pdfpig.$V.zip lib/net45/*
       148  2022-12-13 01:14   lib/net45/UglyToad.PdfPig.Package.xml
 ```
 ```sh
-mkdir -p packages/PdfPig.2.5.0/lib/net45
-unzip -d packages/PdfPig.2.5.0 ~/Downloads/pdfpig.$V.zip lib/net45/*
+mkdir -p packages/PdfPig.0.1.7/lib/net45
+unzip -d packages/PdfPig.0.1.7 ~/Downloads/pdfpig.$V.zip lib/net45/*
 ```
 ```sh
-find  packages/PdfPig.2.5.0/lib/net45/ -iname '*dll' -exec basename {} \;
+find  packages/PdfPig.0.1.7/lib/net45/ -iname '*dll' -exec basename {} \;
 ```
 ```text
 UglyToad.PdfPig.Core.dll
@@ -82,6 +82,15 @@ UglyToad.PdfPig.Fonts.dll
 UglyToad.PdfPig.Package.dll
 UglyToad.PdfPig.Tokenization.dll
 UglyToad.PdfPig.Tokens.dll
+```
+For this tool it is not necessary to tarrget 64 bit, otherwise update to
+```cmd
+path=%path%;c:\Windows\Microsoft.NET\Framework\v4.0.30319
+msuilb.exe WordFile.sln /T:Clean,Build
+```
+
+```cmd
+Program\bin\Debug\WordFile.exe
 ```
 ### Packaging Notes
 
@@ -113,6 +122,39 @@ If the QA tool already has a PDF helper library to confirm “yes, this download
 
 No reason to consider a heavyweight PDF creation/manipulation framework merely because there is a need to “grep” a PDF.
 
+### Running From Powershell ISE
+
+```sh
+cp WordFileTool/packages/NPOI.2.5.0/lib/net45/*dll .
+cp WordFileTool/packages/SharpZipLib.1.2.0/lib/net45/*dll .
+cp WordFileTool/packages/PdfPig.0.1.7/lib/net45/*dll .
+```
+launch Powershell console
+
+```powershell
+. .\wordfiletool.ps1
+```
+ignore the error message:
+```text
+Add-Type : Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+At ..\wordfiletool.ps1:32 char:5
++     Add-Type -Path $_
++     ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Add-Type], ReflectionTypeLoad
+   Exception
+    + FullyQualifiedErrorId : System.Reflection.ReflectionTypeLoadException,Microsoft.PowerShell.Commands.AddTypeCommand
+
+```
+> NOTE: only first launch succeeds drawing theform. The subsqeuent runs print error
+```text
+Exception calling "Main" with "0" argument(s): "SetCompatibleTextRenderingDefault must be called before the first IWin32Window object is created in the application."
+At ..\wordfiletool.ps1:460 char:1
++ [Program.Program]::Main()
+```
+Open Powershell ISE. Paste the script into Edit pane and run. 
+> NOTE: screen dimensions are wrong:
+![powershell ISE run](screenshots/capture-powershell-ise.png)
+
 
 ### See Also
 
@@ -130,7 +172,13 @@ No reason to consider a heavyweight PDF creation/manipulation framework merely b
   * [nissl-lab/OLE2Storage](https://github.com/nissl-lab/OLE2Storage) -  straight (pure-no COM interop) .NET IStorge interface library to read/write __OLE2__(ActiveX) document
 
   * https://hackernoon.com/comparing-apache-npoi-and-ironxl-in-c-a-complete-guide 
-  * for Text Extraction & Parsing - best option is [PdfPig](https://www.nuget.org/packages/PdfPig/0.1.7#supportedframeworks-body-tab)
+  * For Text Extraction & Parsing - best option is [PdfPig](https://www.nuget.org/packages/PdfPig/0.1.7#supportedframeworks-body-tab)
+  * [PdfPig Wiki](https://github.com/UglyToad/PdfPig/wiki)
+
+### TLDR
+[Neuschwanstein Castle](https://en.wikipedia.org/wiki/Neuschwanstein_Castle) in southern Germany is the famous
+fairytale palace that inspired Disney's [Cinderella](https://en.wikipedia.org/wiki/Cinderella_Castle) and [Sleeping Beauty](https://en.wikipedia.org/wiki/Sleeping_Beauty_Castle) Magic
+Kindom Orlando Disney World castles
 
 ---
 ### Author
