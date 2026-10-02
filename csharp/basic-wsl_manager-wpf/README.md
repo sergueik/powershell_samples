@@ -85,7 +85,7 @@ Under UAC, an administrator account can have a __filtered access token__. The re
 ![capture new look](screenshots/capture-app-new-look.png)
 
 
-To finish the UI without the need to operate real VM, use 
+To finish the UI without the need to operate real VM, use
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
@@ -103,7 +103,7 @@ To finish the UI without the need to operate real VM, use
 </configuration>
 ```
 
-and 
+and
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -378,7 +378,7 @@ on the contrary __WSL__ starts more like:
        +------ integration -------+
                     |
               "Linux applications"
-```              
+```
 The fact that __WSL2__ underneath has a lightweight VM and a virtual NIC is almost an implementation detail.
 
 Microsoft documents the default as NAT-based networking. The Linux instance gets its own IP, and Windows can discover it with:
@@ -394,7 +394,7 @@ curl http://localhost:8000
 
 from Windows reaching the port 8000 in the VM.
 
-Microsoft calls this __localhost forwarding__. 
+Microsoft calls this __localhost forwarding__.
 The `.wslconfig` configuration even has:
 ```text
 [wsl2]
@@ -566,14 +566,14 @@ style RUNTIME fill:#fff3cd,stroke:#d39e00,stroke-width:2px
 ```
 ![VB Shrink Process](screenshots/capture-shrink-vb.png)
 
-      
+
 ### Troubleshooting
 
 Porting Widows Forms code:
 ```c#
-// 
+//
 // imageButton5
-// 
+//
 imageButton5.DialogResult = DialogResult.None;
 imageButton5.DownImage = global::Utils.Properties.Resources.ExampleButtonDownA;
 imageButton5.HoverImage = global::Utils.Properties.Resources.ExampleButtonHoverA;
@@ -791,15 +791,19 @@ U+E107: difference = 22.0048
 
   * [WPF WSL Manager](https://github.com/wslhub/WslManager) — __.NET 6__
   * [WSL Maui Universal](https://github.com/Forz70043/bridge) — requires the VS 2022 build environment
-  * https://github.com/fw867/WslManager - another WPF WSL Manager with direct calling `wsl.exe` 
-  * https://github.com/Ziocash/LxssManager_Restarter/tree/master/LxssManager_Restarter - deal with 
-  * https://github.com/fw867/WslManager  
+  * https://github.com/fw867/WslManager - another WPF WSL Manager with direct calling `wsl.exe`
+  * https://github.com/Ziocash/LxssManager_Restarter/tree/master/LxssManager_Restarter - deal with
+  * https://github.com/fw867/WslManager
   * https://github.com/tiwut/WSL-Manager - __.Net__ __8.0__ - supports(?)
     + launch or Windows File Explorer directly inside any VM root directory
     + Execute shell commands inside any target distro and view the output streamed in real-time
   * https://github.com/Pi-Bouf/Wsl-Dev-Manager
   * https://github.com/MoyashiWithDevice/WSL_Manager
   * [Native Windows desktop manager for WSL Container](https://github.com/A-Words/ExWSLC) - many features, alternative UX layout
+  * https://habr.com/ru/news/1088392/ (in Russian)
+  * https://winaero.com/microsoft-has-released-wsl-3-0-with-linux-containers-on-windows/
+  * https://en.linuxadictos.com/WSL-3.0-is-here%21-Microsoft-reinvents-its-Linux-integration-in-Windows.html
+
 ---
 
 ### Author

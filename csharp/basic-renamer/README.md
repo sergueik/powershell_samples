@@ -222,7 +222,7 @@ The phrase “files with funny names” is particularly effective here. It makes
 i
 
 he key distinction is that the filesystem becomes merely the input/output boundary. The actual rename logic can be tested entirely in memory:
-
+```code
                     JUnit
                       │
               ┌───────┴────────┐
@@ -235,9 +235,10 @@ he key distinction is that the filesystem becomes merely the input/output bounda
                                 │
                                 ▼
                          expected alias
+```
 
 So instead of:
-
+```
 populate directory
     ↓
 invoke script
@@ -245,9 +246,9 @@ invoke script
 look at renamed files
     ↓
 decide whether it worked
-
+```
 you get atomic tests such as:
-
+```
 @Test
 void extractsTrackTitle() {
     assertEquals(
@@ -259,24 +260,28 @@ void extractsTrackTitle() {
         )
     );
 }
-
+```
 And then separately:
-
+```
 @Test
 void removesCatalogMetadata() { ... }
-
+```
+```
 @Test
 void preservesTrackNumber() { ... }
-
+```
+```
 @Test
 void preservesExtension() { ... }
-
+```
+```
 @Test
 void compressesArtistList() { ... }
-
+```
+```
 @Test
 void rejectsAliasTooLongForDevice() { ... }
-
+```
 That's a very different development model.
 
 And yes, JUnit is particularly attractive here because this isn't some home-grown test harness. You're standing on decades of established machinery: lifecycle annotations, assertions, parameterized tests, fixtures, IDE integration, failure reporting, etc.
