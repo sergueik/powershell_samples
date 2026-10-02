@@ -1,23 +1,28 @@
+
 param (
   [switch] $debug # currently unused
 )
 
 [bool]$debug_flag = [bool]$PSBoundParameters['debug'].IsPresent -bor $DebugPreference -eq 'Continue'
+# with Powershell ISE the '.' will be  'c:\WINDOWS\system32'
+
+pushd 'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher'
 $shared_assemblies_path = (resolve-path -path '.').Path
-$shared_assemblies_path = 'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher'
+write-host $shared_assemblies_path
+
 $shared_assemblies  = @(
-'ICSharpCode.SharpZipLib.dll',
-'NPOI.OOXML.dll',
-'NPOI.OpenXml4Net.dll',
-'NPOI.OpenXmlFormats.dll',
-'NPOI.dll',
-'UglyToad.PdfPig.Core.dll',
-'UglyToad.PdfPig.DocumentLayoutAnalysis.dll',
-'UglyToad.PdfPig.Fonts.dll',
-'UglyToad.PdfPig.Package.dll',
-'UglyToad.PdfPig.Tokenization.dll',
-'UglyToad.PdfPig.Tokens.dll',
-'UglyToad.PdfPig.dll'
+  'ICSharpCode.SharpZipLib.dll',
+  'NPOI.OOXML.dll',
+  'NPOI.OpenXml4Net.dll',
+  'NPOI.OpenXmlFormats.dll',
+  'NPOI.dll',
+  'UglyToad.PdfPig.Core.dll',
+  'UglyToad.PdfPig.DocumentLayoutAnalysis.dll',
+  'UglyToad.PdfPig.Fonts.dll',
+  'UglyToad.PdfPig.Package.dll',
+  'UglyToad.PdfPig.Tokenization.dll',
+  'UglyToad.PdfPig.Tokens.dll',
+  'UglyToad.PdfPig.dll'
 )
 
 
@@ -27,13 +32,13 @@ $shared_assemblies  = @(
     if ($host.Version.Major -gt 2) {
       Unblock-File -Path $_
     }
-    write-debug $_
+    write-host ('loading {0}' -f $_ )
     # TODO: Add-Type : Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
     Add-Type -Path $_
   }
   popd
 
-$source = @"
+$source = @'
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -56,7 +61,11 @@ namespace Program {
 		[STAThread]
 		public static void Main() {
 			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
+			// NOTE: can only call this method before
+			// the first window is created by Windows Forms application
+			try {
+				Application.SetCompatibleTextRenderingDefault(false);
+			} catch(InvalidOperationException) {}
 			Application.Run(new Program());
 		}
 
@@ -442,21 +451,22 @@ namespace Program {
 		}
 	}
 }
-"@
+'@
 
 
 add-type -typedefinition $source -language CSharp -ReferencedAssemblies 'System.Windows.Forms.dll','System.Drawing.dll','System.Data.dll', 'System.Collections.dll', 'System.xml.dll','System.Xml.Linq.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\ICSharpCode.SharpZipLib.dll','C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\NPOI.OOXML.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\NPOI.OpenXml4Net.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\NPOI.OpenXmlFormats.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\NPOI.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\UglyToad.PdfPig.Core.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\UglyToad.PdfPig.DocumentLayoutAnalysis.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\UglyToad.PdfPig.Fonts.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\UglyToad.PdfPig.Package.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\UglyToad.PdfPig.Tokenization.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\UglyToad.PdfPig.Tokens.dll',`
-'C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\UglyToad.PdfPig.dll'
+('{0}\ICSharpCode.SharpZipLib.dll' -f $shared_assemblies_path ), `
+('{0}\NPOI.OOXML.dll' -f $shared_assemblies_path ),`
+('{0}\NPOI.OpenXml4Net.dll' -f $shared_assemblies_path ),`
+('{0}\NPOI.OpenXmlFormats.dll' -f $shared_assemblies_path ),`
+('{0}\NPOI.dll' -f $shared_assemblies_path ),`
+('{0}\UglyToad.PdfPig.Core.dll' -f $shared_assemblies_path ),`
+('{0}\UglyToad.PdfPig.DocumentLayoutAnalysis.dll' -f $shared_assemblies_path ),`
+('{0}\UglyToad.PdfPig.Fonts.dll' -f $shared_assemblies_path ),`
+('{0}\UglyToad.PdfPig.Package.dll' -f $shared_assemblies_path ),`
+('{0}\UglyToad.PdfPig.Tokenization.dll' -f $shared_assemblies_path ),`
+('{0}\UglyToad.PdfPig.Tokens.dll' -f $shared_assemblies_path ),`
+('{0}\UglyToad.PdfPig.dll' -f $shared_assemblies_path )
 [Program.Program]::Main()
 # TODO: Exception calling "Main" with "0" argument(s):
 # "SetCompatibleTextRenderingDefault must be called before the first

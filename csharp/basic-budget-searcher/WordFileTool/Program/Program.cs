@@ -20,7 +20,12 @@ namespace Program {
 		[STAThread]
 		public static void Main() {
 			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
+			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.application.setcompatibletextrenderingdefault?view=netframework-4.5
+			// NOTE: can only call this method before
+			// the first window is created by Windows Forms application
+			try {
+				Application.SetCompatibleTextRenderingDefault(false);
+			} catch(InvalidOperationException) {}
 			Application.Run(new Program());
 		}
 
@@ -132,7 +137,9 @@ namespace Program {
 			this.btnReplace.Name = "btnReplace";
 			this.btnReplace.Size = new System.Drawing.Size(137, 46);
 			this.btnReplace.TabIndex = 5;
-			this.btnReplace.Text = "Start replacing";
+			// NOTE: "Start Replacing" only rendered when SetCompatibleTextRenderingDefault is true
+			// this.btnReplace.Text = "Start Replacing";
+			this.btnReplace.Text = "Start";
 			this.btnReplace.UseVisualStyleBackColor = true;
 			this.btnReplace.Click += new System.EventHandler(this.btnReplaceText_Click);
 			//
