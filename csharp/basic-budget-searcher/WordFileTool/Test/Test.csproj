@@ -100,7 +100,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IniTest.cs" />
+    <Compile Include="POIXMLDocumentTest.cs" />
     <None Include="sample-presentation.pptx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
