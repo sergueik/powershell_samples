@@ -151,7 +151,7 @@ Exception calling "Main" with "0" argument(s): "SetCompatibleTextRenderingDefaul
 At ..\wordfiletool.ps1:460 char:1
 + [Program.Program]::Main()
 ```
-Open Powershell ISE. Paste the script into Edit pane and run. 
+Open Powershell ISE. Paste the script into Edit pane and run.
 > NOTE: screen dimensions are wrong:
 ![powershell ISE run](screenshots/capture-powershell-ise.png)
 
@@ -161,9 +161,9 @@ Open Powershell ISE. Paste the script into Edit pane and run.
   * https://github.com/hanzhaoxin/ExcelReport - currently on .netstandard, but commit [f3988](https://github.com/hanzhaoxin/ExcelReport/tree/f3988ec14003d2a167552144f458d2a774bcd4bd/ExcelReport) - is .net 4.0 version and see also [project documentation](http://www.cnblogs.com/hanzhaoxin/tag/ExcelReport)
   * [nuget npoi 2.8.1](https://www.nuget.org/packages/npoi/#supportedframeworks-body-tab) supports .Net __4.7.2__. For [Npoi.Extend](https://www.nuget.org/packages/NPOI.Extend/1.0.4) one has to use much older version __1.0.4__ - latest is __1.1.3__ but only list __netstandard 2.0__ which is basically the same but incompatible
 
-  * https://github.com/WuLex/WordFileTool 
+  * https://github.com/WuLex/WordFileTool
   * https://github.com/ToolsByXLG/NPOI.Word2Html
-  * https://github.com/IS4Code/npoi - 
+  * https://github.com/IS4Code/npoi -
   * https://www.nuget.org/packages/npoi/
   * [nissl-lab/POIFSExplorer](https://github.com/nissl-lab/POIFSExplorer) - NPOI based tool helps you explore internal structure of OLE2(ActiveX) documents, including
     + `.xls` __Excel__ document
@@ -171,10 +171,21 @@ Open Powershell ISE. Paste the script into Edit pane and run.
     + `.ppt` __Powerpoint__ document
   * [nissl-lab/OLE2Storage](https://github.com/nissl-lab/OLE2Storage) -  straight (pure-no COM interop) .NET IStorge interface library to read/write __OLE2__(ActiveX) document
 
-  * https://hackernoon.com/comparing-apache-npoi-and-ironxl-in-c-a-complete-guide 
+  * https://hackernoon.com/comparing-apache-npoi-and-ironxl-in-c-a-complete-guide
   * For Text Extraction & Parsing - best option is [PdfPig](https://www.nuget.org/packages/PdfPig/0.1.7#supportedframeworks-body-tab)
   * [PdfPig Wiki](https://github.com/UglyToad/PdfPig/wiki)
+  * [NPOI Tutorials](https://nissl-lab.github.io/npoi/) - non-free
+     + Extract text from XLSX
+  * https://github.com/nissl-lab/npoi-tutorial/blob/main/advanced-examples-list.md - non-free
+     + `ExtractStringsFromXls`
+     + `ExtractTextFromXlsx`
+  * [toxy](https://github.com/nissl-lab/toxy) - newer versions that [1.6.1.1](https://www.nuget.org/packages/Toxy/1.6.1.1) do not support .Net Framework
+     + `Powerpoint2007TextParserTest.cs`
+     + `Powerpoint2007SlideshowParserTest.cs`
+  * https://github.com/nissl-lab/npoi has some support for PPTX:
+     + `TestPOIXMLDocument.cs`
 
+---
 ### TLDR
 [Neuschwanstein Castle](https://en.wikipedia.org/wiki/Neuschwanstein_Castle) in southern Germany is the famous
 fairytale palace that inspired Disney's [Cinderella](https://en.wikipedia.org/wiki/Cinderella_Castle) and [Sleeping Beauty](https://en.wikipedia.org/wiki/Sleeping_Beauty_Castle) Magic
