@@ -1,26 +1,26 @@
 using System;
-using System.Text;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Linq;
+using System.Xml;
+
 using NPOI;
 using NPOI.OpenXml4Net.Exceptions;
 using NPOI.OpenXml4Net.OPC;
 using NPOI.Util;
-using NPOI.XSSF.UserModel;
-using NPOI.XWPF.UserModel;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
+
 using NUnit.Framework;
 
 // origin: https://github.com/nissl-lab/npoi/blob/master/testcases/ooxml/TestPOIXMLDocument.cs
-namespace Tests
-{
+namespace Tests {
 
 	[TestFixture]
 	public class POIXMLDocumentTest {
+
+		private static readonly Dictionary<String, POIXMLDocumentPart> context = new Dictionary<String, POIXMLDocumentPart>();
+		private static readonly StringBuilder stringBuilder = new StringBuilder(); 
 
 		private void Traverse(POIXMLDocumentPart part, Dictionary<String, POIXMLDocumentPart> context) {
 
@@ -30,10 +30,11 @@ namespace Tests
 			context[part.GetPackagePart().PartName.Name] = part;
 			foreach (POIXMLDocumentPart documentPart in part.GetRelations()) {
 				Assert.IsNotNull(documentPart);
-				Console.WriteLine("Document Part: " + documentPart.ToString());
-				Console.WriteLine("Document Content Type: " + documentPart.GetPackagePart().ContentType.ToString());
+				Console.Error.WriteLine("Document Part: " + documentPart.ToString());
+				// Console.WriteLine("Document Content Type: " + documentPart.GetPackagePart().ContentType.ToString());
 				if ("application/vnd.openxmlformats-officedocument.presentationml.slide+xml".Equals(documentPart.GetPackagePart().ContentType.ToString())) {
-					Console.WriteLine(new StreamReader(documentPart.GetPackagePart().GetStream(FileMode.Open)).ReadToEnd());
+					PrintSlideText(documentPart.GetPackagePart().GetStream(FileMode.Open), stringBuilder);
+					// Console.Error.WriteLine(new StreamReader(documentPart.GetPackagePart().GetStream(FileMode.Open)).ReadToEnd());
 				}
 				String uri = documentPart.GetPackagePart().PartName.URI.ToString();
 				StringAssert.AreEqualIgnoringCase(uri, documentPart.GetPackageRelationship().TargetUri.ToString());
@@ -45,20 +46,81 @@ namespace Tests
 				}
 			}
 		}
+		private void PrintSlideText(Stream stream, StringBuilder stringBuilder) {
+		    var xml = new XmlDocument();
+		    xml.Load(stream);
 
+		    var namespaceManager = new XmlNamespaceManager(xml.NameTable);
+
+		    namespaceManager.AddNamespace( "a", "http://schemas.openxmlformats.org/drawingml/2006/main");
+
+		    XmlNodeList textNodes = xml.SelectNodes("//a:t", namespaceManager);
+
+		    foreach (XmlNode node in textNodes) {
+		    	stringBuilder.Append(node.InnerText).Append(Environment.NewLine);
+		    }
+		}
+
+		private void PrintSlideText(Stream stream) {
+		    var xml = new XmlDocument();
+		    xml.Load(stream);
+
+		    var namespaceManager = new XmlNamespaceManager(xml.NameTable);
+
+		    namespaceManager.AddNamespace( "a", "http://schemas.openxmlformats.org/drawingml/2006/main");
+
+		    XmlNodeList textNodes = xml.SelectNodes("//a:t", namespaceManager);
+
+		    foreach (XmlNode node in textNodes) {
+		        Console.WriteLine(node.InnerText);
+		    }
+		}
+    [TearDown]
+    public void AfterEachTest() {
+			stringBuilder.Clear();
+			context.Clear();
+    }
+
+    [TestFixtureSetUp]
+    public void BeforeFixture()
+    {
+        // Runs once before any tests in the class
+    }
 		[Test]
 		public void test1() {
+			// TODO: instantiate stringBuilder locally and pass it through Traverse 
 			POIDataSamples pds = POIDataSamples.GetSlideShowInstance();
 			OPCPackage pkg = PackageHelper.Open(pds.OpenResourceAsStream("sample-presentation.pptx"));
 			var doc = new OPCParser(pkg);
 			doc.Parse(new TestFactory());
-
-			var context = new Dictionary<String, POIXMLDocumentPart>();
 			Traverse(doc, context);
-			context.Clear();
-
+			StringAssert.Contains("Project Goals",stringBuilder.ToString(),"not found expected content");
 		}
 
+		// simply calling an NPOI TextShape Text convenience method is not possible with NPOI:
+		// XMLSlideShow is an Apache POI Java class, not the NPOI in C# project. 
+		// Apache POI 3.17 does indeed have org.apache.poi.xslf.usermodel.XMLSlideShow.
+		// but NPOI is a .NET port of POI, but its API is not necessarily a 1:1 namespace/type translation
+		/*
+		[Test]
+		public void test2() {
+			POIDataSamples pds = POIDataSamples.GetSlideShowInstance();
+
+			using (Stream stream =
+				        pds.OpenResourceAsStream("sample-presentation.pptx")) {
+				var slideshow = new XMLSlideShow(stream);
+
+				foreach (XSLFSlide slide in slideshow.GetSlides()) {
+					foreach (XSLFShape shape in slide.GetShapes()) {
+						var textShape = shape as XSLFTextShape;
+						if (textShape != null) {
+							Console.WriteLine(textShape.Text);
+						}
+					}
+				}
+			}
+		}
+		*/
 	}
 
 	// https://github.com/nissl-lab/npoi/blob/master/testcases/main/POIDataSamples.cs
@@ -67,16 +129,6 @@ namespace Tests
 		public static String TEST_PROPERTY = "POI.testdata.path";
 
 		private static POIDataSamples _instSlideshow;
-		private static POIDataSamples _instSpreadsheet;
-		private static POIDataSamples _instDocument;
-		private static POIDataSamples _instDiagram;
-		private static POIDataSamples _instOpenxml4j;
-		private static POIDataSamples _instPOIFS;
-		private static POIDataSamples _instDDF;
-		private static POIDataSamples _instHPSF;
-		private static POIDataSamples _instHPBF;
-		private static POIDataSamples _instHSMF;
-		private static POIDataSamples _instXmlDSign;
 
 		private string _resolvedDataDir;
 		/** <c>true</c> if standard system propery is not set,
@@ -128,7 +180,7 @@ namespace Tests
 
 		/**
 * Opens a sample file from the standard HSSF test data directory
-* 
+*
 * @return an Open <c>Stream</c> for the specified sample file
 */
 		public Stream OpenResourceAsStream(String sampleFileName)
@@ -182,54 +234,36 @@ namespace Tests
          * @return
          * @throws RuntimeException if the file was not found
          */
-		public FileStream GetFile(String sampleFileName)
-		{
+		public FileStream GetFile(String sampleFileName) {
 			string path = _resolvedDataDir + sampleFileName;
 			if (!File.Exists(path)) {
 				throw new Exception("Sample file '" + sampleFileName
 				+ "' not found in data dir '" + _resolvedDataDir + "'");
 			}
-			//try
-			//{
-			//    if (sampleFileName.Length > 0 && !sampleFileName.Equals(f.getCanonicalFile().getName()))
-			//    {
-			//        throw new RuntimeException("File name is case-sensitive: requested '" + sampleFileName
-			//                + "' but actual file is '" + f.getCanonicalFile().getName() + "'");
-			//    }
-			//}
-			//catch (IOException e)
-			//{
-			//    throw new RuntimeException(e);
-			//}
-			// Read-only with ReadWrite sharing: the net472 and net10.0 test hosts run in parallel and
-			// read the same sample files, and a ReadWrite handle here makes every concurrent
-			// reader fail with "being used by another process" on Windows.
 			return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		}
-		public string[] GetFiles()
-		{
+
+        public string[] GetFiles() {
 			return Directory.GetFiles(_resolvedDataDir);
 		}
-		public string[] GetFiles(string searchPattern)
-		{
+
+        public string[] GetFiles(string searchPattern) {
 			return Directory.GetFiles(_resolvedDataDir, searchPattern);
 		}
-		/**
-         * @return byte array of sample file content from file found in standard hssf test data dir 
-         */
-		public byte[] ReadFile(String fileName) {
+
+        public byte[] ReadFile(String fileName) {
 			var memoryStream = new MemoryStream();
 
 			try {
 				Stream fileStream = OpenResourceAsStream(fileName);
 
-				byte[] buf = new byte[512];
+				var buffer = new byte[512];
 				while (true) {
-					int bytesRead = fileStream.Read(buf, 0, buf.Length);
+					int bytesRead = fileStream.Read(buffer, 0, buffer.Length);
 					if (bytesRead < 1) {
 						break;
 					}
-					memoryStream.Write(buf, 0, bytesRead);
+					memoryStream.Write(buffer, 0, bytesRead);
 				}
 				fileStream.Close();
 			} catch (IOException) {
@@ -300,12 +334,10 @@ namespace Tests
 			}
 		}
 	}
-        
+
 	public class OPCParser : POIXMLDocument {
 
-		public OPCParser(OPCPackage pkg)
-			: base(pkg) {
-
+		public OPCParser(OPCPackage pkg) : base(pkg) {
 		}
 
 		public override List<PackagePart> GetAllEmbedds() {

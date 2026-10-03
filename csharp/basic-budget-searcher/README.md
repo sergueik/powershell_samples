@@ -155,7 +155,33 @@ Open Powershell ISE. Paste the script into Edit pane and run.
 > NOTE: screen dimensions are wrong:
 ![powershell ISE run](screenshots/capture-powershell-ise.png)
 
+### Printing Power Point Slides
 
+```mermaid
+
+flowchart TB
+
+
+PPTX["PPTX"]
+PACKAGE[["📂<br/>OPC package"]]
+PackagePart(["🔧<br/>PackagePart"])
+XmlDocument["XmlDocument"]
+PARSER[["⚙<br/>PARSER"]]
+
+
+plaintext[/"📄<br/>plain text"/]
+
+subgraph SUBGRAPH2["Power Point Document"]
+PPTX --> PACKAGE
+PACKAGE -- "/ppt/slides/slide.xml"--> PackagePart 
+end
+PackagePart --> XmlDocument
+
+XmlDocument -- "DrawingML namespace" -->PARSER
+
+PARSER -- "XPath //a:t" --> plaintext
+
+```
 ### See Also
 
   * https://github.com/hanzhaoxin/ExcelReport - currently on .netstandard, but commit [f3988](https://github.com/hanzhaoxin/ExcelReport/tree/f3988ec14003d2a167552144f458d2a774bcd4bd/ExcelReport) - is .net 4.0 version and see also [project documentation](http://www.cnblogs.com/hanzhaoxin/tag/ExcelReport)
