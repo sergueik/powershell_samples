@@ -474,11 +474,15 @@ namespace Program {
 				txtDocDirectory.Text = folderBrowserDialog.SelectedPath;
 			}
 		}
+
+
 		private void scan(object sender, EventArgs eventArgs) {
 			string docDirectory = txtDocDirectory.Text;
+			Log(String.Format("Starting scan {0}", docDirectory ));
 			FileInfo[] files = { };
 			DirectoryInfo directoryInfo = null;
 			string filePath = null;
+			try {
 			ThreadPool.QueueUserWorkItem(
 				// Error CS1593: Delegate 'System.Threading.WaitCallback' does not take 0 arguments
 				(object state) => {
@@ -560,8 +564,25 @@ namespace Program {
 						}						
 					}
 				});
+			} catch (NotSupportedException e){
+			  MessageBox.Show("Not supported in this runtime: " + e.Message);
+			} catch (Exception e){
+							File.AppendAllText(
+								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.5
+								// String.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "replace-text-error.log"),
+								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.expandenvironmentvariables?view=netframework-4.5`	
+								Environment.ExpandEnvironmentVariables(@"%TEMP%\replace-text-error.log"),
+								DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") +
+								Environment.NewLine +
+								e.ToString() +
+								Environment.NewLine +
+								"--------------------------------" +
+								Environment.NewLine);
+			  MessageBox.Show("Exception: " + e.Message);
+			}
 		}
-		
+
+
 		private void btnClose_Click(object sender, EventArgs e) {
 			this.Close();
 		}

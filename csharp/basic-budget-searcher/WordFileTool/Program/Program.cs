@@ -429,11 +429,14 @@ namespace Program {
 				txtDocDirectory.Text = folderBrowserDialog.SelectedPath;
 			}
 		}
+
 		private void scan(object sender, EventArgs eventArgs) {
 			string docDirectory = txtDocDirectory.Text;
+			Log(String.Format("Starting scan {0}", docDirectory ));
 			FileInfo[] files = { };
 			DirectoryInfo directoryInfo = null;
 			string filePath = null;
+			try {
 			ThreadPool.QueueUserWorkItem(
 				// Error CS1593: Delegate 'System.Threading.WaitCallback' does not take 0 arguments
 				(object state) => {
@@ -515,6 +518,9 @@ namespace Program {
 						}						
 					}
 				});
+			} catch (NotSupportedException e){
+			 MessageBox.Show("Exception: " + e.Message);
+			}
 		}
 		
 		private void btnClose_Click(object sender, EventArgs e) {
