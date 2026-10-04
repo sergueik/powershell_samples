@@ -20,27 +20,32 @@ $shared_assemblies  = @(
 )
 
 
-  pushd $shared_assemblies_path
-  $shared_assemblies_full_paths = @()
-  
-  $shared_assemblies | foreach-object {
-    if ($host.Version.Major -gt 2) {
-      Unblock-File -Path $_
-    }
-    $shared_assembly = (resolve-path -path $_).Path
-    write-host ('loading {0}' -f $shared_assembly)
-    $shared_assemblies_full_paths += $shared_assembly 
-    try {
-      Add-Type -Path $shared_assembly -erroracthion stop
-    } catch [Exception] {
-       # TODO: Add-Type : Unable to load one or more of the requested types. 
-       # Retrieve the LoaderExceptions property for more information.
-       # not reached
-       write-host ('{0}' -f $_.Exception.LoaderExceptions )
-   }
-  }
-  popd
+pushd $shared_assemblies_path
+$shared_assemblies_full_paths = @()
 
+$shared_assemblies | foreach-object {
+  if ($host.Version.Major -gt 2) {
+    Unblock-File -Path $_
+  }
+  $shared_assembly = (resolve-path -path $_).Path
+  if ($debug_flag) {
+    write-host ('loading {0}' -f $shared_assembly)
+  }
+  $shared_assemblies_full_paths += $shared_assembly 
+  try {
+    [Reflection.Assembly]::LoadFrom($shared_assembly)
+  } catch [Exception] {
+    write-host ('{0}' -f $_.Exception.LoaderExceptions )
+ }
+}
+popd
+if ($debug_flag) {
+  [AppDomain]::CurrentDomain.GetAssemblies() |
+  where-object { $_.GetName().Name -like '*PdfPig*' } |
+    forEach-object {
+      write-host ('Fullname: {0} Location: {1}' -f $_.FullName, $_.Location )
+  }
+}    
 $source = @'
 using System;
 using System.ComponentModel;
@@ -132,6 +137,7 @@ namespace Program {
 			// 
 			// label1
 			// 
+			this.label1.AutoSize = true;
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(341, 101);
 			this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
@@ -458,7 +464,7 @@ namespace Program {
 
 		private void Log(string message){
 			Debug.WriteLine(message);
-			MessageBox.Show(message);
+			// MessageBox.Show(message);
 
 			if (txtResult1.InvokeRequired){
 				txtResult1.Invoke(new Action<string>(Log), message);
@@ -475,110 +481,93 @@ namespace Program {
 			}
 		}
 
-
 		private void scan(object sender, EventArgs eventArgs) {
 			string docDirectory = txtDocDirectory.Text;
-			Log(String.Format("Starting scan {0}", docDirectory ));
+			Log(String.Format("Starting scan {0}", docDirectory));
 			FileInfo[] files = { };
 			DirectoryInfo directoryInfo = null;
 			string filePath = null;
 			try {
-			ThreadPool.QueueUserWorkItem(
-				// Error CS1593: Delegate 'System.Threading.WaitCallback' does not take 0 arguments
-				(object state) => {
-					try {
-						directoryInfo = new DirectoryInfo(docDirectory);
-						// Debug.WriteLine(String.Format("Scanning {0}", directoryInfo.FullName));
-						Log(String.Format("Scanning {0}", directoryInfo.FullName));
+				Log(String.Format("Starting PDF scan {0}", docDirectory));
+				directoryInfo = new DirectoryInfo(docDirectory);
+				if (!directoryInfo.Exists) {
+					Log(String.Format("Directory {0} does not exist", docDirectory));
+				}
+				// Debug.WriteLine(String.Format("Scanning {0}", directoryInfo.FullName));
+				Log(String.Format("Scanning {0}", directoryInfo.FullName));
 
-						files = directoryInfo.GetFiles("*.pdf");
+				files = directoryInfo.GetFiles("*.pdf");
 					
-						foreach (FileInfo fileInfo in files) {
-							// origin: https://github.com/UglyToad/PdfPig/blob/master/examples/ExtractTextWithNewlines.cs
-							filePath = fileInfo.FullName;
-							using (var document = PdfDocument.Open(filePath)) {
-								// Debug.WriteLine(String.Format("Reading {0}", filePath));
-								Log(String.Format("Reading {0}", filePath));
-								foreach (var page in document.GetPages()) {
+				foreach (FileInfo fileInfo in files) {
+					// origin: https://github.com/UglyToad/PdfPig/blob/master/examples/ExtractTextWithNewlines.cs
+					filePath = fileInfo.FullName;
+					using (var document = PdfDocument.Open(filePath)) {
+						// Debug.WriteLine(String.Format("Reading {0}", filePath));
+						Log(String.Format("Reading {0}", filePath));
+						foreach (var page in document.GetPages()) {
 								
-									var text = ContentOrderTextExtractor.GetText(page, true);
+							var text = ContentOrderTextExtractor.GetText(page, true);
 
-									Log(String.Format("text: {0}", text));
-									// Debug.WriteLine(String.Format("text: {0}", text));
-								}
-							}
+							Log(String.Format("text: {0}", text));
+							// Debug.WriteLine(String.Format("text: {0}", text));
 						}
-						files = directoryInfo.GetFiles("*.docx");
+					}
+				}
+				files = directoryInfo.GetFiles("*.docx");
+				Log(String.Format("Starting Word scan {0}", docDirectory));
+	
+				foreach (FileInfo fileInfo in files) {
+					filePath = fileInfo.FullName;
+					var dic = new Dictionary<string, string> { };
 
-						foreach (FileInfo fileInfo in files) {
-							filePath = fileInfo.FullName;
-							var dic = new Dictionary<string, string> { };
+					using (var stream = File.OpenRead(filePath)) {
+						var document = new XWPFDocument(stream);
 
-							using (var stream = File.OpenRead(filePath)) {
-								var document = new XWPFDocument(stream);
+						if (txtSearchKey1.Text != "") {
+							dic.Add(txtSearchKey1.Text, txtReplace1.Text);
+						}
 
-								if (txtSearchKey1.Text != "") {
-									dic.Add(txtSearchKey1.Text, txtReplace1.Text);
-								}
+						if (txtSearchKey4.Text != "") {
+							dic.Add(txtSearchKey4.Text, null);
+						}
 
-								if (txtSearchKey4.Text != "") {
-									dic.Add(txtSearchKey4.Text, null);
-								}
+						if (txtSearchKey3.Text != "") {
+							dic.Add(txtSearchKey3.Text, null);
+						}
 
-								if (txtSearchKey3.Text != "") {
-									dic.Add(txtSearchKey3.Text, null);
-								}
-
-								foreach (var paragraph in document.Paragraphs) {
-									ReplaceKey(paragraph, dic);
-									//ReplaceKeyword(paragraph, dic);
-								}
-								// replace - not used
-								/*
+						foreach (var paragraph in document.Paragraphs) {
+							ReplaceKey(paragraph, dic);
+							//ReplaceKeyword(paragraph, dic);
+						}
+						// replace - not used
+						/*
 								using (var newstream = File.Create(fileInfo.Directory + "/" + fileInfo.Name)) { // "/poutput.docx"
 									doc.Write(newstream);
 									newstream.Flush();
 								}
 								
 								*/
-							}
-						}
-						MessageBox.Show("Done.");
-					} catch (Exception e) {
-						// MessageBox.Show("Exception: " + e.Message);
-
-						try {
-							File.AppendAllText(
-								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.5
-								// String.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "replace-text-error.log"),
-								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.expandenvironmentvariables?view=netframework-4.5`	
-								Environment.ExpandEnvironmentVariables(@"%TEMP%\replace-text-error.log"),
-								DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") +
-								Environment.NewLine +
-								e.ToString() +
-								Environment.NewLine +
-								"--------------------------------" +
-								Environment.NewLine);
-						} catch {
-							// deliberately do nothing
-						}						
 					}
-				});
-			} catch (NotSupportedException e){
-			  MessageBox.Show("Not supported in this runtime: " + e.Message);
-			} catch (Exception e){
-							File.AppendAllText(
+				}
+				MessageBox.Show("Done.");
+			} catch (Exception e) {
+				// MessageBox.Show("Exception: " + e.Message);
+
+				try {
+					File.AppendAllText(
 								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.5
 								// String.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "replace-text-error.log"),
 								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.expandenvironmentvariables?view=netframework-4.5`	
-								Environment.ExpandEnvironmentVariables(@"%TEMP%\replace-text-error.log"),
-								DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") +
-								Environment.NewLine +
-								e.ToString() +
-								Environment.NewLine +
-								"--------------------------------" +
-								Environment.NewLine);
-			  MessageBox.Show("Exception: " + e.Message);
+						Environment.ExpandEnvironmentVariables(@"%TEMP%\replace-text-error.log"),
+						DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") +
+						Environment.NewLine +
+						e.ToString() +
+						Environment.NewLine +
+						"--------------------------------" +
+						Environment.NewLine);
+				} catch {
+					// deliberately do nothing
+				}						
 			}
 		}
 

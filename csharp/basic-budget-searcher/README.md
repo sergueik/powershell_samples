@@ -229,6 +229,175 @@ $shared_assemblies  = @(
 )
 
 ```
+finally the exception was made visible:
+
+![capture exception](screenshots/capture-exception.png)
+
+```text
+See the end of this message for details on invoking 
+just-in-time (JIT) debugging instead of this dialog box.
+
+************** Exception Text **************
+System.IO.FileNotFoundException: Could not load file or assembly 'UglyToad.PdfPig, Version=0.1.7.0, Culture=neutral, PublicKeyToken=605d367334e74123' or one of its dependencies. The system cannot find the file specified.
+File name: 'UglyToad.PdfPig, Version=0.1.7.0, Culture=neutral, PublicKeyToken=605d367334e74123'
+   at Program.Program.scan(Object sender, EventArgs eventArgs)
+   at System.Windows.Forms.Control.OnClick(EventArgs e)
+   at System.Windows.Forms.Button.OnMouseUp(MouseEventArgs mevent)
+   at System.Windows.Forms.Control.WmMouseUp(Message& m, MouseButtons button, Int32 clicks)
+   at System.Windows.Forms.Control.WndProc(Message& m)
+   at System.Windows.Forms.ButtonBase.WndProc(Message& m)
+   at System.Windows.Forms.Button.WndProc(Message& m)
+   at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+
+WRN: Assembly binding logging is turned OFF.
+To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!EnableLog] (DWORD) to 1.
+Note: There is some performance penalty associated with assembly bind failure logging.
+To turn this feature off, remove the registry value [HKLM\Software\Microsoft\Fusion!EnableLog].
+
+
+
+************** Loaded Assemblies **************
+mscorlib
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9345.0 built by: NET481REL1LAST_25H2_C
+    CodeBase: file:///C:/Windows/Microsoft.NET/Framework64/v4.0.30319/mscorlib.dll
+----------------------------------------
+Microsoft.PowerShell.ConsoleHost
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.9278
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.ConsoleHost/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.ConsoleHost.dll
+----------------------------------------
+System
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9340.0 built by: NET481REL1LAST_25H2_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System/v4.0_4.0.0.0__b77a5c561934e089/System.dll
+----------------------------------------
+System.Core
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9347.0 built by: NET481REL1LAST_25H2_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Core/v4.0_4.0.0.0__b77a5c561934e089/System.Core.dll
+----------------------------------------
+System.Management.Automation
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.9444
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Management.Automation/v4.0_3.0.0.0__31bf3856ad364e35/System.Management.Automation.dll
+----------------------------------------
+Microsoft.Management.Infrastructure
+    Assembly Version: 1.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.Management.Infrastructure/v4.0_1.0.0.0__31bf3856ad364e35/Microsoft.Management.Infrastructure.dll
+----------------------------------------
+System.Xml
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9340.0 built by: NET481REL1LAST_25H2_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Xml/v4.0_4.0.0.0__b77a5c561934e089/System.Xml.dll
+----------------------------------------
+System.Management
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Management/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Management.dll
+----------------------------------------
+System.DirectoryServices
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.DirectoryServices/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.DirectoryServices.dll
+----------------------------------------
+System.Numerics
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Numerics/v4.0_4.0.0.0__b77a5c561934e089/System.Numerics.dll
+----------------------------------------
+System.Data
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_64/System.Data/v4.0_4.0.0.0__b77a5c561934e089/System.Data.dll
+----------------------------------------
+System.Configuration
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Configuration/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Configuration.dll
+----------------------------------------
+Anonymously Hosted DynamicMethods Assembly
+    Assembly Version: 0.0.0.0
+    Win32 Version: 4.8.9345.0 built by: NET481REL1LAST_25H2_C
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_64/mscorlib/v4.0_4.0.0.0__b77a5c561934e089/mscorlib.dll
+----------------------------------------
+Microsoft.PowerShell.Security
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Security/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Security.dll
+----------------------------------------
+System.Transactions
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_64/System.Transactions/v4.0_4.0.0.0__b77a5c561934e089/System.Transactions.dll
+----------------------------------------
+Microsoft.PowerShell.PSReadLine
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.9278
+    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PSReadLine/2.0.0/Microsoft.PowerShell.PSReadLine.dll
+----------------------------------------
+Microsoft.CSharp
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.CSharp/v4.0_4.0.0.0__b03f5f7f11d50a3a/Microsoft.CSharp.dll
+----------------------------------------
+Microsoft.PowerShell.Commands.Management
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.9278
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Commands.Management/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Commands.Management.dll
+----------------------------------------
+System.Configuration.Install
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Configuration.Install/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Configuration.Install.dll
+----------------------------------------
+Microsoft.PowerShell.Commands.Utility
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.9278
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Commands.Utility/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Commands.Utility.dll
+----------------------------------------
+vubv2qfv
+    Assembly Version: 0.0.0.0
+    Win32 Version: 4.8.9340.0 built by: NET481REL1LAST_25H2_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System/v4.0_4.0.0.0__b77a5c561934e089/System.dll
+----------------------------------------
+System.Windows.Forms
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9325.0 built by: NET481REL1LAST_25H2_C
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Windows.Forms/v4.0_4.0.0.0__b77a5c561934e089/System.Windows.Forms.dll
+----------------------------------------
+System.Drawing
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Drawing/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Drawing.dll
+----------------------------------------
+Accessibility
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Accessibility/v4.0_4.0.0.0__b03f5f7f11d50a3a/Accessibility.dll
+----------------------------------------
+
+************** JIT Debugging **************
+To enable just-in-time (JIT) debugging, the .config file for this
+application or computer (machine.config) must have the
+jitDebugging value set in the system.windows.forms section.
+The application must also be compiled with debugging
+enabled.
+
+For example:
+
+<configuration>
+    <system.windows.forms jitDebugging="true" />
+</configuration>
+
+When JIT debugging is enabled, any unhandled exception
+will be sent to the JIT debugger registered on the computer
+rather than be handled by this dialog box.
+
+
+
+```
 does not help
 ### Packaging Notes
 
