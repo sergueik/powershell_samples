@@ -4,6 +4,7 @@ using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using NPOI.XWPF.UserModel;
+using NPOI;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 using System.Collections.Generic;
@@ -401,7 +402,11 @@ namespace Program {
 		private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
 		private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
 		private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+
 		private void Log(string message){
+			Debug.WriteLine(message);
+			MessageBox.Show(message);
+
 			if (txtResult1.InvokeRequired){
 				txtResult1.Invoke(new Action<string>(Log), message);
               return;

@@ -1,16 +1,16 @@
-Exactly. The missing input isn't really another search criterion. It is a search budget / termination policy.
+### Info
+
+### Background
+
+The missing input isn't really another search criterion. It is a search budget / termination policy.
 bounded asynchronous filesystem traversal engine with pluggable result sinks
-NOTE: cancellation and inaccessible folders/files as first-class outcomes,
-immediate children of the selected root:
-concept it becomes a set of global counters + events.
-the traversal itself doesn't need to know why it has stopped
+> NOTE: cancellation and inaccessible folders/files as first-class outcomes, immediate children of the selected root: concept it becomes a set of global counters + events. the traversal itself doesn't need to know why it has stopped
 
 What to search
 
 * Root folder — `BrowseForFolder`
 * File mask —  e.g. `*.xml`, `invoice*.pdf`, etc.
 * Content condition — literal text, regex, perhaps eventually metadata/size/date conditions.
-
 
 **When to stop**
 
@@ -22,7 +22,6 @@ What to search
 |Unlimited|—|Search until the entire reachable tree is exhausted|
 
 these condition could be composable, rather than mutually exclusive:
-
 
 *Stop when any limit is reached*.
 
@@ -92,6 +91,145 @@ msuilb.exe WordFile.sln /T:Clean,Build
 ```cmd
 Program\bin\Debug\WordFile.exe
 ```
+
+### Troubleshooting
+
+```xml
+Log Name:      Application
+Source:        Windows Error Reporting
+Date:          10/4/2026 10:27:09 AM
+Event ID:      1001
+Task Category: None
+Level:         Information
+Keywords:      
+User:          SERGUEIK59\kouzm
+Computer:      sergueik59
+Description:
+Fault bucket 2018061923199287820, type 5
+Event Name: PowerShell
+Response: Not available
+Cab Id: 0
+
+Problem signature:
+P1: powershell.exe
+P2: 10.0.26100.9444
+P3: System.IO.FileNotFoundException
+P4: System.IO.FileNotFoundException
+P5: unknown
+P6: gram+<>c__DisplayClass1.<btnReplaceText_Click>b__0
+P7: unknown
+P8: 
+P9: 
+P10: 
+
+Attached files:
+\\?\C:\ProgramData\Microsoft\Windows\WER\Temp\WER.5ce829e5-df4e-4f5b-a57a-ad938245fe28.tmp.WERInternalMetadata.xml
+\\?\C:\ProgramData\Microsoft\Windows\WER\Temp\WER.e4a4b3e8-0e04-4d04-a869-657d52abadb3.tmp.csv
+\\?\C:\ProgramData\Microsoft\Windows\WER\Temp\WER.da1ebb52-25d5-4b8a-80c8-7ff12b474a5a.tmp.txt
+\\?\C:\ProgramData\Microsoft\Windows\WER\Temp\WER.a824c9f5-d750-4dbe-8986-924a898b4da0.tmp.xml
+
+These files may be available here:
+\\?\C:\ProgramData\Microsoft\Windows\WER\ReportArchive\Critical_powershell.exe_1ec53acccea1864ea40be61c4bb92aeebea84e0_00000000_09707fbf-9632-4ad8-8aaf-fa8ff4b8fc78
+
+Analysis symbol: 
+Rechecking for solution: 0
+Report Id: 09707fbf-9632-4ad8-8aaf-fa8ff4b8fc78
+Report Status: 268435456
+Hashed bucket: 8b36dee2444a2a6f8c0198a08309020c
+Cab Guid: 0
+Event Xml:
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+    <Provider Name="Windows Error Reporting" Guid="{0ead09bd-2157-539a-8d6d-c87f95b64d70}" />
+    <EventID>1001</EventID>
+    <Version>0</Version>
+    <Level>4</Level>
+    <Task>0</Task>
+    <Opcode>0</Opcode>
+    <Keywords>0x8000000000000000</Keywords>
+    <TimeCreated SystemTime="2026-10-04T14:27:09.8247958Z" />
+    <EventRecordID>39872</EventRecordID>
+    <Correlation />
+    <Execution ProcessID="18036" ThreadID="21568" />
+    <Channel>Application</Channel>
+    <Computer>sergueik59</Computer>
+    <Security UserID="S-1-5-21-664078621-855368299-4271440980-1002" />
+  </System>
+  <EventData>
+    <Data Name="Bucket">2018061923199287820</Data>
+    <Data Name="BucketType">5</Data>
+    <Data Name="EventName">PowerShell</Data>
+    <Data Name="Response">Not available</Data>
+    <Data Name="CabId">0</Data>
+    <Data Name="P1">powershell.exe</Data>
+    <Data Name="P2">10.0.26100.9444</Data>
+    <Data Name="P3">System.IO.FileNotFoundException</Data>
+    <Data Name="P4">System.IO.FileNotFoundException</Data>
+    <Data Name="P5">unknown</Data>
+    <Data Name="P6">gram+&lt;&gt;c__DisplayClass1.&lt;btnReplaceText_Click&gt;b__0</Data>
+    <Data Name="P7">unknown</Data>
+    <Data Name="P8">
+    </Data>
+    <Data Name="P9">
+    </Data>
+    <Data Name="P10">
+    </Data>
+    <Data Name="AttachedFiles">
+\\?\C:\ProgramData\Microsoft\Windows\WER\Temp\WER.5ce829e5-df4e-4f5b-a57a-ad938245fe28.tmp.WERInternalMetadata.xml
+\\?\C:\ProgramData\Microsoft\Windows\WER\Temp\WER.e4a4b3e8-0e04-4d04-a869-657d52abadb3.tmp.csv
+\\?\C:\ProgramData\Microsoft\Windows\WER\Temp\WER.da1ebb52-25d5-4b8a-80c8-7ff12b474a5a.tmp.txt
+\\?\C:\ProgramData\Microsoft\Windows\WER\Temp\WER.a824c9f5-d750-4dbe-8986-924a898b4da0.tmp.xml</Data>
+    <Data Name="StorePath">\\?\C:\ProgramData\Microsoft\Windows\WER\ReportArchive\Critical_powershell.exe_1ec53acccea1864ea40be61c4bb92aeebea84e0_00000000_09707fbf-9632-4ad8-8aaf-fa8ff4b8fc78</Data>
+    <Data Name="AnalysisSymbol">
+    </Data>
+    <Data Name="Rechecking">0</Data>
+    <Data Name="ReportId">09707fbf-9632-4ad8-8aaf-fa8ff4b8fc78</Data>
+    <Data Name="ReportStatus">268435456</Data>
+    <Data Name="HashedBucket">8b36dee2444a2a6f8c0198a08309020c</Data>
+    <Data Name="CabGuid">0</Data>
+  </EventData>
+</Event>
+```
+the referenced WER files are not always present: 
+```text
+Directory of C:\ProgramData\Microsoft\Windows\WER\ReportArchive
+
+10/04/2026  10:27 AM    <DIR>          .
+10/04/2026  10:27 AM    <DIR>          ..
+10/04/2026  10:27 AM    <DIR>          Critical_powershell.exe_1ec53acccea1864ea40be61c4bb92aeebea84e0_00000000_09707fbf-9632-4ad8-8aaf-fa8ff4b8fc78
+               0 File(s)              0 bytes
+```
+replacing the 
+```powershell
+$shared_assemblies  = @(
+  'ICSharpCode.SharpZipLib.dll',
+  'NPOI.OOXML.dll',
+  'NPOI.OpenXml4Net.dll',
+  'NPOI.dll',
+  'UglyToad.PdfPig.DocumentLayoutAnalysis.dll',
+  'UglyToad.PdfPig.dll'
+)
+
+```
+with
+```powershell
+$shared_assemblies  = @(
+  'ICSharpCode.SharpZipLib.dll',
+  'NPOI.OOXML.dll',
+  'NPOI.OpenXml4Net.dll',
+  'NPOI.OpenXmlFormats.dll',
+  'NPOI.dll',
+  'UglyToad.PdfPig.Core.dll',
+  'UglyToad.PdfPig.DocumentLayoutAnalysis.dll',
+  'UglyToad.PdfPig.Fonts.dll',
+  'UglyToad.PdfPig.Package.dll',
+  'UglyToad.PdfPig.Tokenization.dll',
+  'UglyToad.PdfPig.Tokens.dll',
+  'UglyToad.PdfPig.dll'
+)
+
+```
+does not help
 ### Packaging Notes
 
 * The scanner/searcher has a deliberately narrow responsibility: traverse files, inspect what is necessary, and dump runs/results as plain text.
@@ -151,8 +289,12 @@ Exception calling "Main" with "0" argument(s): "SetCompatibleTextRenderingDefaul
 At ..\wordfiletool.ps1:460 char:1
 + [Program.Program]::Main()
 ```
+![ShareDevelop jIDE run](screenshots/capture-sharpdevelop.pngg)
+
 Open Powershell ISE. Paste the script into Edit pane and run.
+
 > NOTE: screen dimensions are wrong:
+
 ![powershell ISE run](screenshots/capture-powershell-ise.png)
 
 ### Printing Power Point Slides
