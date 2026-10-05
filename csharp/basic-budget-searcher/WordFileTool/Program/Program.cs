@@ -31,8 +31,10 @@ namespace Program {
 		}
 
 		public Program() { InitializeComponent(); }
-		private System.ComponentModel.IContainer components = null;
-
+		private IContainer components = null;
+		private Font font1 = null;
+		private Font font2 = null;
+ 
 		protected override void Dispose(bool disposing) {
 			if (disposing && (components != null)) {
 				components.Dispose();
@@ -43,6 +45,8 @@ namespace Program {
 		// https://pbdd.org/wp-content/uploads/2015/06/WordPractice2007.docx
 		private void InitializeComponent() {
 
+      font1 = new Font("Microsoft Sans Serif", 16F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+      font2 = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 			btnSelectFile = new Button();
 			label1 = new Label();
 			txtDocDirectory = new TextBox();
@@ -58,7 +62,7 @@ namespace Program {
 			label8 = new Label();
 			btn1 = new Button();
 			label12 = new Label();
-			this.textBox1 = new TextBox();
+			textBox1 = new TextBox();
 			tabControl = new TabControl();
 			tabPage1 = new TabPage();
 			txtResult1 = new TextBox();
@@ -74,9 +78,9 @@ namespace Program {
 			tabPage2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(dataGridView)).BeginInit();
 			this.SuspendLayout();
-			// 
+			//
 			// btnSelectFile
-			// 
+			//
 			btnSelectFile.Location = new Point(112, 89);
 			btnSelectFile.Margin = new Padding(5, 6, 5, 6);
 			btnSelectFile.Name = "btnSelectFile";
@@ -85,9 +89,9 @@ namespace Program {
 			btnSelectFile.Text = "Choose Folder";
 			btnSelectFile.UseVisualStyleBackColor = true;
 			btnSelectFile.Click += new System.EventHandler(btnSelectFile_Click);
-			// 
+			//
 			// label1
-			// 
+			//
 			label1.AutoSize = true;
 			label1.Location = new Point(341, 101);
 			label1.Margin = new Padding(5, 0, 5, 0);
@@ -95,18 +99,19 @@ namespace Program {
 			label1.Size = new Size(120, 25);
 			label1.TabIndex = 1;
 			label1.Text = "Base folder：";
-			// 
+			//
 			// txtDocDirectory
-			// 
+			//
 			txtDocDirectory.Location = new Point(486, 89);
 			txtDocDirectory.Margin = new Padding(5, 6, 5, 6);
 			txtDocDirectory.Name = "txtDocDirectory";
+			txtDocDirectory.Font = font1;
 			txtDocDirectory.Size = new Size(256, 29);
 			txtDocDirectory.TabIndex = 2;
 			txtDocDirectory.TextAlign = HorizontalAlignment.Right;
-			// 
+			//
 			// label2
-			// 
+			//
 			label2.AutoSize = true;
 			label2.Location = new Point(154, 161);
 			label2.Margin = new Padding(5, 0, 5, 0);
@@ -114,9 +119,9 @@ namespace Program {
 			label2.Size = new Size(124, 25);
 			label2.TabIndex = 3;
 			label2.Text = "1.Text to find";
-			// 
+			//
 			// label3
-			// 
+			//
 			label3.AutoSize = true;
 			label3.BackColor = Color.Tan;
 			label3.Location = new Point(154, 215);
@@ -125,27 +130,29 @@ namespace Program {
 			label3.Size = new Size(179, 25);
 			label3.TabIndex = 3;
 			label3.Text = "Text to be replaced";
-			// 
+			//
 			// txtSearchKey1
-			// 
+			//
 			txtSearchKey1.Location = new Point(341, 156);
 			txtSearchKey1.Margin = new Padding(5, 6, 5, 6);
 			txtSearchKey1.Name = "txtSearchKey1";
+			txtSearchKey1.Font = font1;
 			txtSearchKey1.Size = new Size(401, 29);
 			txtSearchKey1.TabIndex = 4;
-			// 
+			//
 			// txtReplace1
-			// 
+			//
 			txtReplace1.BackColor = SystemColors.Window;
 			txtReplace1.Enabled = false;
 			txtReplace1.Location = new Point(341, 209);
 			txtReplace1.Margin = new Padding(5, 6, 5, 6);
 			txtReplace1.Name = "txtReplace1";
+			txtReplace1.Font = font1;
 			txtReplace1.Size = new Size(401, 29);
 			txtReplace1.TabIndex = 4;
-			// 
+			//
 			// btnReplace
-			// 
+			//
 			btnReplace.Location = new Point(112, 770);
 			btnReplace.Margin = new Padding(5, 6, 5, 6);
 			btnReplace.Name = "btnReplace";
@@ -154,9 +161,9 @@ namespace Program {
 			btnReplace.Text = "Start";
 			btnReplace.UseVisualStyleBackColor = true;
 			btnReplace.Click += new System.EventHandler(this.scan);
-			// 
+			//
 			// btnClose
-			// 
+			//
 			btnClose.Location = new Point(605, 770);
 			btnClose.Margin = new Padding(5, 6, 5, 6);
 			btnClose.Name = "btnClose";
@@ -165,9 +172,9 @@ namespace Program {
 			btnClose.Text = "Close";
 			btnClose.UseVisualStyleBackColor = true;
 			btnClose.Click += new System.EventHandler(btnClose_Click);
-			// 
+			//
 			// label6
-			// 
+			//
 			label6.AutoSize = true;
 			label6.Location = new Point(154, 261);
 			label6.Margin = new Padding(5, 0, 5, 0);
@@ -175,26 +182,28 @@ namespace Program {
 			label6.Size = new Size(124, 25);
 			label6.TabIndex = 3;
 			label6.Text = "3.Text to find";
-			// 
+			//
 			// txtSearchKey3
-			// 
+			//
 			txtSearchKey3.Location = new Point(343, 258);
 			txtSearchKey3.Margin = new Padding(5, 6, 5, 6);
 			txtSearchKey3.Name = "txtSearchKey3";
 			txtSearchKey3.Size = new Size(399, 29);
+			txtSearchKey3.Font = font1;
 			txtSearchKey3.TabIndex = 4;
-			// 
+			//
 			// txtSearchKey4
-			// 
+			//
 			txtSearchKey4.Location = new Point(343, 308);
 			txtSearchKey4.Margin = new Padding(5, 6, 5, 6);
 			txtSearchKey4.Name = "txtSearchKey4";
 			txtSearchKey4.Size = new Size(399, 29);
 			txtSearchKey4.TabIndex = 4;
+			txtSearchKey4.Font = font1;
 			txtSearchKey4.TextChanged += new System.EventHandler(this.TxtSearchKey4TextChanged);
-			// 
+			//
 			// label8
-			// 
+			//
 			label8.AutoSize = true;
 			label8.Location = new Point(154, 308);
 			label8.Margin = new Padding(5, 0, 5, 0);
@@ -202,9 +211,9 @@ namespace Program {
 			label8.Size = new Size(124, 25);
 			label8.TabIndex = 3;
 			label8.Text = "4.Text to find";
-			// 
+			//
 			// button1
-			// 
+			//
 			btn1.Location = new Point(112, 702);
 			btn1.Margin = new Padding(5, 6, 5, 6);
 			btn1.Name = "button1";
@@ -213,9 +222,9 @@ namespace Program {
 			btn1.Text = "Choose File";
 			btn1.UseVisualStyleBackColor = true;
 			btn1.Click += new System.EventHandler(chooseFile);
-			// 
+			//
 			// label12
-			// 
+			//
 			label12.AutoSize = true;
 			label12.Location = new Point(343, 710);
 			label12.Margin = new Padding(5, 0, 5, 0);
@@ -223,18 +232,19 @@ namespace Program {
 			label12.Size = new Size(133, 25);
 			label12.TabIndex = 8;
 			label12.Text = "Heuristics File";
-			// 
+			//
 			// textBox1
-			// 
-			this.textBox1.Location = new Point(486, 710);
-			this.textBox1.Margin = new Padding(5, 6, 5, 6);
-			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new Size(256, 29);
-			this.textBox1.TabIndex = 9;
-			this.textBox1.TextAlign = HorizontalAlignment.Right;
-			// 
+			//
+			textBox1.Location = new Point(486, 710);
+			textBox1.Font = font1;
+			textBox1.Margin = new Padding(5, 6, 5, 6);
+			textBox1.Name = "textBox1";
+			textBox1.Size = new Size(256, 29);
+			textBox1.TabIndex = 9;
+			textBox1.TextAlign = HorizontalAlignment.Right;
+			//
 			// tabControl
-			// 
+			//
 			tabControl.Controls.Add(tabPage1);
 			tabControl.Controls.Add(tabPage2);
 			tabControl.Location = new Point(20, 358);
@@ -243,9 +253,11 @@ namespace Program {
 			tabControl.SelectedIndex = 0;
 			tabControl.Size = new Size(720, 320);
 			tabControl.TabIndex = 12;
-			// 
+      tabControl.Font = font1;
+
+			//
 			// tabPage1
-			// 
+			//
 			tabPage1.Controls.Add(txtResult1);
 			tabPage1.Location = new Point(4, 33);
 			tabPage1.Margin = new Padding(5, 0, 5, 0);
@@ -254,10 +266,11 @@ namespace Program {
 			tabPage1.Size = new Size(712, 283);
 			tabPage1.TabIndex = 0;
 			tabPage1.Text = "Log";
+			tabPage1.Font = font1;
 			tabPage1.UseVisualStyleBackColor = true;
-			// 
+			//
 			// txtResult1
-			// 
+			//
 			txtResult1.Dock = DockStyle.Fill;
 			txtResult1.Location = new Point(5, 0);
 			txtResult1.Margin = new Padding(4, 5, 4, 5);
@@ -266,9 +279,10 @@ namespace Program {
 			txtResult1.ScrollBars = ScrollBars.Vertical;
 			txtResult1.Size = new Size(702, 283);
 			txtResult1.TabIndex = 9;
-			// 
+			txtResult1.Font = font1;
+			//
 			// tabPage2
-			// 
+			//
 			tabPage2.Controls.Add(dataGridView);
 			tabPage2.Location = new Point(4, 33);
 			tabPage2.Margin = new Padding(5, 0, 5, 0);
@@ -277,13 +291,17 @@ namespace Program {
 			tabPage2.Size = new Size(712, 283);
 			tabPage2.TabIndex = 1;
 			tabPage2.Text = "Results";
+			tabPage2.Font = font1;
 			tabPage2.UseVisualStyleBackColor = true;
-			// 
+			//
 			// dataGridView
-			// 
+			//
+      dataGridView.ColumnHeadersHeight = 32;
 			dataGridView.AllowUserToAddRows = false;
 			dataGridView.AllowUserToDeleteRows = false;
 			dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+      dataGridView.DefaultCellStyle.Font = font2;
+      dataGridView.RowTemplate.Height = 32;
 			dataGridView.Columns.AddRange(new DataGridViewColumn[] {
 			dataGridViewTextBoxColumn1,
 			dataGridViewTextBoxColumn2,
@@ -297,37 +315,57 @@ namespace Program {
 			dataGridView.RowHeadersVisible = false;
 			dataGridView.Size = new Size(702, 283);
 			dataGridView.TabIndex = 0;
-			// 
+			dataGridView.Font = font2;
+      
+			dataGridView.Rows.Add(
+				"File",
+				"report.pdf",
+				"invoice",
+				@"C:\Documents\report.pdf");
+
+			dataGridView.Rows.Add(
+				"File",
+				"presentation.pptx",
+				"architecture",
+				@"C:\Documents\presentation.pptx");
+
+			dataGridView.Rows.Add(
+				"Directory",
+				"2026",
+				"2026",
+				@"C:\Documents\2026");
+    
+			//
 			// dataGridViewTextBoxColumn1
-			// 
+			//
 			dataGridViewTextBoxColumn1.FillWeight = 60F;
 			dataGridViewTextBoxColumn1.HeaderText = "Type";
 			dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
 			dataGridViewTextBoxColumn1.ReadOnly = true;
-			// 
+			//
 			// dataGridViewTextBoxColumn2
-			// 
+			//
 			dataGridViewTextBoxColumn2.FillWeight = 160F;
 			dataGridViewTextBoxColumn2.HeaderText = "Name";
 			dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
 			dataGridViewTextBoxColumn2.ReadOnly = true;
-			// 
+			//
 			// dataGridViewTextBoxColumn3
-			// 
+			//
 			dataGridViewTextBoxColumn3.FillWeight = 260F;
 			dataGridViewTextBoxColumn3.HeaderText = "Match";
 			dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
 			dataGridViewTextBoxColumn3.ReadOnly = true;
-			// 
+			//
 			// dataGridViewTextBoxColumn4
-			// 
+			//
 			dataGridViewTextBoxColumn4.FillWeight = 140F;
 			dataGridViewTextBoxColumn4.HeaderText = "Path";
 			dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
 			dataGridViewTextBoxColumn4.ReadOnly = true;
-			// 
+			//
 			// button3
-			// 
+			//
 			btn3.Location = new Point(341, 770);
 			btn3.Margin = new Padding(5, 6, 5, 6);
 			btn3.Name = "button3";
@@ -336,14 +374,14 @@ namespace Program {
 			btn3.Text = "Logging";
 			btn3.UseVisualStyleBackColor = true;
 			btn3.Click += new System.EventHandler(this.logging);
-			// 
+			//
 			// Program
-			// 
+			//
 			this.AutoScaleDimensions = new SizeF(11F, 24F);
-			this.AutoScaleMode = AutoScaleMode.Font;
+			this.AutoScaleMode = AutoScaleMode.None;
 			this.ClientSize = new Size(834, 931);
 			Controls.Add(btn3);
-			Controls.Add(this.textBox1);
+			Controls.Add(textBox1);
 			Controls.Add(tabControl);
 			Controls.Add(label12);
 			Controls.Add(btn1);
@@ -374,10 +412,11 @@ namespace Program {
 			this.Margin = new Padding(5, 6, 5, 6);
 			this.Name = "Program";
 			this.Text = "word pdf search";
-			tabControl.ResumeLayout(false);
 			tabPage1.ResumeLayout(false);
 			tabPage1.PerformLayout();
 			tabPage2.ResumeLayout(false);
+			tabControl.ResumeLayout(false);
+			tabControl.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(dataGridView)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -415,7 +454,7 @@ namespace Program {
 			Debug.WriteLine(message);
 			// MessageBox.Show(message);
 
-			if (txtResult1.InvokeRequired){
+		if (txtResult1.InvokeRequired){
 				txtResult1.Invoke(new Action<string>(Log), message);
               return;
 			}
@@ -506,7 +545,7 @@ namespace Program {
 					File.AppendAllText(
 								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.5
 								// String.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "replace-text-error.log"),
-								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.expandenvironmentvariables?view=netframework-4.5`	
+								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.expandenvironmentvariables?view=netframework-4.5`
 						Environment.ExpandEnvironmentVariables(@"%TEMP%\replace-text-error.log"),
 						DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") +
 						Environment.NewLine +
@@ -516,7 +555,7 @@ namespace Program {
 						Environment.NewLine);
 				} catch {
 					// deliberately do nothing
-				}						
+				}
 			}
 		}
 

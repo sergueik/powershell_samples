@@ -1,5 +1,7 @@
 ### Info
 
+![Console run](screenshots/capture-app.png)
+
 ### Background
 
 The missing input isn't really another search criterion. It is a search budget / termination policy.
@@ -94,6 +96,9 @@ Program\bin\Debug\WordFile.exe
 
 ### Troubleshooting
 
+![capture event log error](screenshots/capture-eventlog.png)
+
+The error 
 ```xml
 Log Name:      Application
 Source:        Windows Error Reporting
@@ -199,7 +204,8 @@ Directory of C:\ProgramData\Microsoft\Windows\WER\ReportArchive
 10/04/2026  10:27 AM    <DIR>          Critical_powershell.exe_1ec53acccea1864ea40be61c4bb92aeebea84e0_00000000_09707fbf-9632-4ad8-8aaf-fa8ff4b8fc78
                0 File(s)              0 bytes
 ```
-replacing the 
+replacing the
+
 ```powershell
 $shared_assemblies  = @(
   'ICSharpCode.SharpZipLib.dll',
@@ -227,9 +233,10 @@ $shared_assemblies  = @(
   'UglyToad.PdfPig.Tokens.dll',
   'UglyToad.PdfPig.dll'
 )
-
 ```
-finally the exception was made visible:
+does not help
+
+finally the exception was made visible after extensively adding try-catch in the failing code:
 
 ![capture exception](screenshots/capture-exception.png)
 
@@ -395,10 +402,15 @@ When JIT debugging is enabled, any unhandled exception
 will be sent to the JIT debugger registered on the computer
 rather than be handled by this dialog box.
 
-
-
 ```
-does not help
+The real fix was in replacing 
+```powershell
+add-type $shared_assembly
+```
+Powershell cmdlet with
+```powershell
+[Reflection.Assembly]::LoadFrom($shared_assembly)
+```
 ### Packaging Notes
 
 * The scanner/searcher has a deliberately narrow responsibility: traverse files, inspect what is necessary, and dump runs/results as plain text.
@@ -458,13 +470,41 @@ Exception calling "Main" with "0" argument(s): "SetCompatibleTextRenderingDefaul
 At ..\wordfiletool.ps1:460 char:1
 + [Program.Program]::Main()
 ```
-![ShareDevelop jIDE run](screenshots/capture-sharpdevelop.pngg)
+![ShareDevelop IDE run](screenshots/capture-sharpdevelop.png)
 
 Open Powershell ISE. Paste the script into Edit pane and run.
 
 > NOTE: screen dimensions are wrong:
 
 ![powershell ISE run](screenshots/capture-powershell-ise.png)
+
+
+#### Fixing The Dimensions
+
+* adding the explicit fonts
+```c#
+font1 = new Font("Microsoft Sans Serif", 16F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+font2 = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+...
+txtDocDirectory.Font = font1;
+...
+dataGridView.DefaultCellStyle.Font = font2;
+dataGridView.RowTemplate.Height = 32;
+dataGridView.Font = font2;
+```
+ and setting  
+```c#
+this.AutoScaleMode = AutoScaleMode.None;
+
+``` is work in progress:
+ 
+ 
+![Fixed Powershell ISE run](screenshots/capture-powershell-ise-fixed.png)
+
+
+![IDE dimension issue](screenshots/capture-sharpdevelop-unscaled.png)
+ 
+
 
 ### Printing Power Point Slides
 
