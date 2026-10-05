@@ -121,7 +121,6 @@ namespace Program {
 			dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
 			dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
 			dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
-			btn3 = new Button();
 			tabControl.SuspendLayout();
 			tabPage1.SuspendLayout();
 			tabPage2.SuspendLayout();
@@ -413,23 +412,11 @@ dataGridView.Rows.Add(
 			dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
 			dataGridViewTextBoxColumn4.ReadOnly = true;
 			//
-			// button3
-			//
-			btn3.Location = new Point(341, 770);
-			btn3.Margin = new Padding(5, 6, 5, 6);
-			btn3.Name = "button3";
-			btn3.Size = new Size(137, 46);
-			btn3.TabIndex = 14;
-			btn3.Text = "Logging";
-			btn3.UseVisualStyleBackColor = true;
-			btn3.Click += new System.EventHandler(this.logging);
-			//
 			// Program
 			//
 			this.AutoScaleDimensions = new SizeF(11F, 24F);
 			this.AutoScaleMode = AutoScaleMode.None;
 			this.ClientSize = new Size(834, 931);
-			Controls.Add(btn3);
 			Controls.Add(textBox1);
 			Controls.Add(tabControl);
 			Controls.Add(label12);
@@ -497,7 +484,6 @@ dataGridView.Rows.Add(
 		private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
 		private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
 		private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-		private Button btn3;
 
 		private void Log(string message){
 			Debug.WriteLine(message);
@@ -524,89 +510,69 @@ dataGridView.Rows.Add(
 			FileInfo[] files = { };
 			DirectoryInfo directoryInfo = null;
 			string filePath = null;
-			try {
-				Log(String.Format("Starting PDF scan {0}", docDirectory));
-				directoryInfo = new DirectoryInfo(docDirectory);
-				if (!directoryInfo.Exists) {
-					Log(String.Format("Directory {0} does not exist", docDirectory));
-				}
-				// Debug.WriteLine(String.Format("Scanning {0}", directoryInfo.FullName));
-				Log(String.Format("Scanning {0}", directoryInfo.FullName));
+			ThreadPool.QueueUserWorkItem(
+				// Error CS1593: Delegate 'System.Threading.WaitCallback' does not take 0 arguments
+				(object state) => {
+					directoryInfo = new DirectoryInfo(docDirectory);
+					// Debug.WriteLine(String.Format("Scanning {0}", directoryInfo.FullName));
+					Log(String.Format("Scanning {0}", directoryInfo.FullName));
 
-				files = directoryInfo.GetFiles("*.pdf");
+					files = directoryInfo.GetFiles("*.pdf");
 					
-				foreach (FileInfo fileInfo in files) {
-					// origin: https://github.com/UglyToad/PdfPig/blob/master/examples/ExtractTextWithNewlines.cs
-					filePath = fileInfo.FullName;
-					using (var document = PdfDocument.Open(filePath)) {
-						// Debug.WriteLine(String.Format("Reading {0}", filePath));
-						Log(String.Format("Reading {0}", filePath));
-						foreach (var page in document.GetPages()) {
+					foreach (FileInfo fileInfo in files) {
+						// origin: https://github.com/UglyToad/PdfPig/blob/master/examples/ExtractTextWithNewlines.cs
+						filePath = fileInfo.FullName;
+						using (var document = PdfDocument.Open(filePath)) {
+							// Debug.WriteLine(String.Format("Reading {0}", filePath));
+							Log(String.Format("Reading {0}", filePath));
+							foreach (var page in document.GetPages()) {
 								
-							var text = ContentOrderTextExtractor.GetText(page, true);
+								var text = ContentOrderTextExtractor.GetText(page, true);
 
-							Log(String.Format("text: {0}", text));
-							// Debug.WriteLine(String.Format("text: {0}", text));
+								Log(String.Format("text: {0}", text));
+								// Debug.WriteLine(String.Format("text: {0}", text));
+							}
 						}
 					}
-				}
-				files = directoryInfo.GetFiles("*.docx");
-				Log(String.Format("Starting Word scan {0}", docDirectory));
-	
-				foreach (FileInfo fileInfo in files) {
-					filePath = fileInfo.FullName;
-					var dic = new Dictionary<string, string> { };
+					files = directoryInfo.GetFiles("*.docx");
 
-					using (var stream = File.OpenRead(filePath)) {
-						var document = new XWPFDocument(stream);
+					foreach (FileInfo fileInfo in files) {
+						filePath = fileInfo.FullName;
+						var dic = new Dictionary<string, string> { };
 
-						if (txtSearchKey1.Text != "") {
-							dic.Add(txtSearchKey1.Text, txtReplace1.Text);
-						}
+						using (var stream = File.OpenRead(filePath)) {
+							var document = new XWPFDocument(stream);
 
-						if (txtSearchKey4.Text != "") {
-							dic.Add(txtSearchKey4.Text, null);
-						}
+								if (txtSearchKey1.Text != "") {
+									dic.Add(txtSearchKey1.Text, txtReplace1.Text);
+								}
 
-						if (txtSearchKey3.Text != "") {
-							dic.Add(txtSearchKey3.Text, null);
-						}
+								if (txtSearchKey4.Text != "") {
+									dic.Add(txtSearchKey4.Text, null);
+								}
 
-						foreach (var paragraph in document.Paragraphs) {
-							ReplaceKey(paragraph, dic);
-							//ReplaceKeyword(paragraph, dic);
-						}
-						// replace - not used
-						/*
+								if (txtSearchKey3.Text != "") {
+									dic.Add(txtSearchKey3.Text, null);
+								}
+
+								foreach (var paragraph in document.Paragraphs) {
+									ReplaceKey(paragraph, dic);
+									//ReplaceKeyword(paragraph, dic);
+								}
+								// replace - not used
+								/*
 								using (var newstream = File.Create(fileInfo.Directory + "/" + fileInfo.Name)) { // "/poutput.docx"
 									doc.Write(newstream);
 									newstream.Flush();
 								}
 								
 								*/
+						}
 					}
-				}
-				MessageBox.Show("Done.");
-			} catch (Exception e) {
-				// MessageBox.Show("Exception: " + e.Message);
-
-				try {
-					File.AppendAllText(
-								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.5
-								// String.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "replace-text-error.log"),
-								// https://learn.microsoft.com/en-us/dotnet/api/system.environment.expandenvironmentvariables?view=netframework-4.5`
-						Environment.ExpandEnvironmentVariables(@"%TEMP%\replace-text-error.log"),
-						DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") +
-						Environment.NewLine +
-						e.ToString() +
-						Environment.NewLine +
-						"--------------------------------" +
-						Environment.NewLine);
-				} catch {
-					// deliberately do nothing
-				}
-			}
+					MessageBox.Show("Done.");
+				});
 		}
+
 
 		private void btnClose_Click(object sender, EventArgs e) {
 			this.Close();
@@ -663,29 +629,6 @@ dataGridView.Rows.Add(
 	
 		}
 
-		void logging(object sender, EventArgs eventArgs) {
-			ThreadPool.QueueUserWorkItem(
-				(object state) => {
-					try {
-						File.AppendAllText(
-							Environment.ExpandEnvironmentVariables(
-								@"%TEMP%\replace-text-test.log"),
-							"ENTERED WORKER " +
-							DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") +
-							Environment.NewLine);
-
-						throw new Exception("INTENTIONAL TEST EXCEPTION");
-					} catch (Exception e) {
-						File.AppendAllText(
-							Environment.ExpandEnvironmentVariables(
-								@"%TEMP%\replace-text-test.log"),
-							"CAUGHT: " +
-							e.ToString() +
-							Environment.NewLine);
-					}
-				});
-	
-		}
 	}
 }
 '@
