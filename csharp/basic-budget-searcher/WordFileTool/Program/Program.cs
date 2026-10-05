@@ -4,7 +4,10 @@ using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using NPOI.XWPF.UserModel;
+
 using NPOI;
+using NPOI.Util;
+
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 using System.Collections.Generic;
@@ -479,6 +482,22 @@ namespace Program {
 								Log(String.Format("text: {0}", text));
 								// Debug.WriteLine(String.Format("text: {0}", text));
 							}
+						}
+					}
+					
+					files = directoryInfo.GetFiles("*.pdf");
+
+					foreach (FileInfo fileInfo in files) {
+						filePath = fileInfo.FullName;
+						var dic = new Dictionary<string, string> { };
+
+						using (var stream = File.OpenRead(filePath)) {
+							var document = new XWPFDocument(stream);
+
+								if (txtSearchKey1.Text != "") {
+									dic.Add(txtSearchKey1.Text, txtReplace1.Text);
+								}
+
 						}
 					}
 					files = directoryInfo.GetFiles("*.docx");

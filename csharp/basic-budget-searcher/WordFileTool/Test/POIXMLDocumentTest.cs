@@ -22,6 +22,32 @@ namespace Tests {
 		private static readonly Dictionary<String, POIXMLDocumentPart> context = new Dictionary<String, POIXMLDocumentPart>();
 		private static readonly StringBuilder stringBuilder = new StringBuilder(); 
 
+
+		private void Traverse2(POIXMLDocumentPart part, ref Dictionary<String, POIXMLDocumentPart> context, ref StringBuilder stringBuilderRef) {
+
+			// NOTE: deprecated in POI 3.14, scheduled for removal in POI 3.16")]
+			Assert.AreEqual(part.GetPackageRelationship().TargetUri.ToString(), part.GetPackagePart().PartName.Name);
+
+			context[part.GetPackagePart().PartName.Name] = part;
+			foreach (POIXMLDocumentPart documentPart in part.GetRelations()) {
+				Assert.IsNotNull(documentPart);
+				Console.Error.WriteLine("Document Part: " + documentPart.ToString());
+				// Console.WriteLine("Document Content Type: " + documentPart.GetPackagePart().ContentType.ToString());
+				if ("application/vnd.openxmlformats-officedocument.presentationml.slide+xml".Equals(documentPart.GetPackagePart().ContentType.ToString())) {
+					PrintSlideText(documentPart.GetPackagePart().GetStream(FileMode.Open), stringBuilderRef);
+					// Console.Error.WriteLine(new StreamReader(documentPart.GetPackagePart().GetStream(FileMode.Open)).ReadToEnd());
+				}
+				String uri = documentPart.GetPackagePart().PartName.URI.ToString();
+				StringAssert.AreEqualIgnoringCase(uri, documentPart.GetPackageRelationship().TargetUri.ToString());
+				if (!context.ContainsKey(uri)) {
+					Traverse2(documentPart, ref context, ref stringBuilderRef);
+				} else {
+					POIXMLDocumentPart prev = context[uri];
+					Assert.AreSame(prev, documentPart, "Duplicate POIXMLDocumentPart instance for targetURI=" + uri);
+				}
+			}
+
+		}
 		private void Traverse(POIXMLDocumentPart part, Dictionary<String, POIXMLDocumentPart> context) {
 
 			// NOTE: deprecated in POI 3.14, scheduled for removal in POI 3.16")]
@@ -75,17 +101,19 @@ namespace Tests {
 		        Console.WriteLine(node.InnerText);
 		    }
 		}
-    [TearDown]
-    public void AfterEachTest() {
-			stringBuilder.Clear();
-			context.Clear();
-    }
-
-    [TestFixtureSetUp]
-    public void BeforeFixture()
-    {
-        // Runs once before any tests in the class
-    }
+	    [TearDown]
+	    public void AfterEachTest() {
+				stringBuilder.Clear();
+				context.Clear();
+				// FileStream.Dispose();
+			//	OPCPackage.Dispose();
+	    }
+	
+	    [TestFixtureSetUp]
+	    public void BeforeFixture()
+	    {
+	        // Runs once before any tests in the class
+	    }
 		[Test]
 		public void test1() {
 			// TODO: instantiate stringBuilder locally and pass it through Traverse 
@@ -97,13 +125,42 @@ namespace Tests {
 			StringAssert.Contains("Project Goals",stringBuilder.ToString(),"not found expected content");
 		}
 
+		[Test]
+		public void test2() {
+			OPCPackage pkg = PackageHelper.Open(File.OpenRead("sample-presentation.pptx"));
+			var doc = new OPCParser(pkg);
+			doc.Parse(new TestFactory());
+			Traverse(doc, context);
+			StringAssert.Contains("Project Goals",stringBuilder.ToString(),"not found expected content");
+		}
+		
+		[Test]
+		public void test3() {
+		var context2 = new Dictionary<String, POIXMLDocumentPart>();
+		var stringBuilder2 = new StringBuilder(); 
+			// NOTE: on C#, StringBuilder is a reference type. 
+			// When passed a StringBuilder arg into a method, a reference to that object is 
+			// passed by value meaning callee can modify its internal contents inside the method without needing 
+			// the ref keyword. But
+			OPCPackage pkg = PackageHelper.Open(File.OpenRead("sample-presentation.pptx"));
+			var doc = new OPCParser(pkg);
+			doc.Parse(new TestFactory());
+			Traverse2(doc, ref context2,ref stringBuilder2);
+			List<string> fragments = new List<string> { "Sample Presentation", "Agenda", "Roadmap", "Project Goals", "Reduce churn", "Quarterly Revenue", "Sales by Quarter", "Embedded Image", "Trade-offs"};
+foreach (string fragment in fragments)
+
+	StringAssert.Contains(fragment,stringBuilder2.ToString(),String.Format("{0} not found", fragment));
+//			FileStream.Dispose();
+//			pkg.Dispose();
+		}
+		
 		// simply calling an NPOI TextShape Text convenience method is not possible with NPOI:
 		// XMLSlideShow is an Apache POI Java class, not the NPOI in C# project. 
 		// Apache POI 3.17 does indeed have org.apache.poi.xslf.usermodel.XMLSlideShow.
 		// but NPOI is a .NET port of POI, but its API is not necessarily a 1:1 namespace/type translation
 		/*
 		[Test]
-		public void test2() {
+		public void test4() {
 			POIDataSamples pds = POIDataSamples.GetSlideShowInstance();
 
 			using (Stream stream =
@@ -183,8 +240,7 @@ namespace Tests {
 *
 * @return an Open <c>Stream</c> for the specified sample file
 */
-		public Stream OpenResourceAsStream(String sampleFileName)
-		{
+		public Stream OpenResourceAsStream(String sampleFileName) {
 			Initialise();
 
 			if (_sampleDataIsAvaliableOnClassPath) {
@@ -218,8 +274,7 @@ namespace Tests {
 			}
 		}
 
-		public FileInfo GetFileInfo(String sampleFileName)
-		{
+		public FileInfo GetFileInfo(String sampleFileName) {
 			string path = _resolvedDataDir + sampleFileName;
 			if (!File.Exists(path)) {
 				throw new Exception("Sample file '" + sampleFileName
