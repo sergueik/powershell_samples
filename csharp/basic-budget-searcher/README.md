@@ -13,31 +13,16 @@
 |`/ppt/printerSettings/printerSettings1.bin`|`application/vnd.openxmlformats-officedocument.presentationml.printerSettings`|
 |`/ppt/slideLayouts/slideLayout1.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
 |`/ppt/slideLayouts/slideLayout10.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
-|`/ppt/slideLayouts/slideLayout11.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
-|`/ppt/slideLayouts/slideLayout2.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
-|`/ppt/slideLayouts/slideLayout3.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
-|`/ppt/slideLayouts/slideLayout4.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
-|`/ppt/slideLayouts/slideLayout5.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
-|`/ppt/slideLayouts/slideLayout6.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
-|`/ppt/slideLayouts/slideLayout7.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
-|`/ppt/slideLayouts/slideLayout8.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
-|`/ppt/slideLayouts/slideLayout9.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
 |`/ppt/slideMasters/slideMaster1.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml`|
 |`/ppt/slides/slide1.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
 |`/ppt/slides/slide2.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
-|`/ppt/slides/slide3.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
-|`/ppt/slides/slide4.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
-|`/ppt/slides/slide5.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
-|`/ppt/slides/slide6.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
-|`/ppt/slides/slide7.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
-|`/ppt/slides/slide8.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
 |`/ppt/tableStyles.xml`|`application/vnd.openxmlformats-officedocument.presentationml.tableStyles+xml`|
 |`/ppt/theme/theme1.xml`|`application/vnd.openxmlformats-officedocument.theme+xml`|
 |`/ppt/viewProps.xml`|`application/vnd.openxmlformats-officedocument.presentationml.viewProps+xml`|
 
 to explicitly confirm
 
-![Capture 7-zip](screenhots/capture-7-zip.png)
+![Capture 7-zip](screenshots/capture-7-zip.png)
 
 ```cmd
 "c:\Program Files\7-Zip\7z.exe" l sample-presentation.pptx | awk.exe "{print $NF}"
@@ -135,7 +120,9 @@ xml fo ppt\slides\slide2.xml
 ```
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" 
+       xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" 
+       xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <p:cSld>
     <p:spTree>
       <p:nvGrpSpPr>

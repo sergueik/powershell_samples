@@ -14,17 +14,15 @@ using NPOI.Util;
 
 using NUnit.Framework;
 
-// origin: https://github.com/nissl-lab/npoi/blob/master/testcases/ooxml/TestPOIXMLDocument.cs
-namespace Tests
-{
+// based on: https://github.com/nissl-lab/npoi/blob/master/testcases/ooxml/TestPOIXMLDocument.cs
+namespace Tests {
 
 	[TestFixture]
 	public class POIXMLDocumentTest
 	{
 
-		private void Traverse(POIXMLDocumentPart part, Dictionary<String, POIXMLDocumentPart> context, StringBuilder stringBuilder)
+		private void traverseDocumentPart(POIXMLDocumentPart part, string region, Dictionary<String, POIXMLDocumentPart> context, StringBuilder stringBuilder)
 		{
-
 			// NOTE: deprecated in POI 3.14, scheduled for removal in POI 3.16")]
 			Assert.AreEqual(part.GetPackageRelationship().TargetUri.ToString(), part.GetPackagePart().PartName.Name);
 
@@ -33,14 +31,14 @@ namespace Tests
 				Assert.IsNotNull(documentPart);
 				Console.Error.WriteLine("Document Part: " + documentPart.ToString());
 				// Console.WriteLine("Document Content Type: " + documentPart.GetPackagePart().ContentType.ToString());
-				if ("application/vnd.openxmlformats-officedocument.presentationml.slide+xml".Equals(documentPart.GetPackagePart().ContentType.ToString())) {
-					PrintSlideText(documentPart.GetPackagePart().GetStream(FileMode.Open), stringBuilder);
+				if (nestedDict[region]["contenttype"].Equals(documentPart.GetPackagePart().ContentType.ToString())) {
+					getText(documentPart.GetPackagePart().GetStream(FileMode.Open), region, stringBuilder);
 					// Console.Error.WriteLine(new StreamReader(documentPart.GetPackagePart().GetStream(FileMode.Open)).ReadToEnd());
 				}
 				String uri = documentPart.GetPackagePart().PartName.URI.ToString();
 				StringAssert.AreEqualIgnoringCase(uri, documentPart.GetPackageRelationship().TargetUri.ToString());
 				if (!context.ContainsKey(uri)) {
-					Traverse(documentPart, context, stringBuilder);
+					traverseDocumentPart(documentPart, region, context, stringBuilder);
 				} else {
 					POIXMLDocumentPart prev = context[uri];
 					Assert.AreSame(prev, documentPart, "Duplicate POIXMLDocumentPart instance for targetURI=" + uri);
@@ -48,16 +46,40 @@ namespace Tests
 			}
 		}
 
-		private void PrintSlideText(Stream stream, StringBuilder stringBuilder)
-		{
+		private void traverseDocumentPart(POIXMLDocumentPart part, Dictionary<String, POIXMLDocumentPart> context, StringBuilder stringBuilder){
+	
+			traverseDocumentPart(part, "slide", context, stringBuilder);
+		}
+
+		Dictionary<string, Dictionary<string, string>> nestedDict = new Dictionary<string, Dictionary<string, string>> { {  "slide", new Dictionary<string, string> { {
+						"contenttype",
+						"application/vnd.openxmlformats-officedocument.presentationml.slide+xml"
+					},
+					{ "selector", "//a:t" },
+					{ "prefix", "a" },
+					{ "namespace", "http://schemas.openxmlformats.org/drawingml/2006/main" }
+				}
+			}, {"chart", new Dictionary<string, string> { {
+						"contenttype",
+						"application/vnd.openxmlformats-officedocument.drawingml.chart+xml"
+					},
+					{ "selector", "//c:v" },
+					{ "prefix", "c" },
+					{ "namespace", "http://schemas.openxmlformats.org/drawingml/2006/chart" }
+            
+				}
+			}
+    
+		};
+		private void getText(Stream stream, string region, StringBuilder stringBuilder) {
 			var xml = new XmlDocument();
 			xml.Load(stream);
 
 			var namespaceManager = new XmlNamespaceManager(xml.NameTable);
 
-			namespaceManager.AddNamespace("a", "http://schemas.openxmlformats.org/drawingml/2006/main");
+			namespaceManager.AddNamespace(nestedDict[region]["prefix"], nestedDict[region]["namespace"]);
 
-			XmlNodeList textNodes = xml.SelectNodes("//a:t", namespaceManager);
+			XmlNodeList textNodes = xml.SelectNodes(nestedDict[region]["selector"], namespaceManager);
 
 			foreach (XmlNode node in textNodes) {
 				stringBuilder.Append(node.InnerText).Append(Environment.NewLine);
@@ -65,9 +87,9 @@ namespace Tests
 			}
 		}
 
+		
 		[Test]
-		public void test1()
-		{
+		public void test1() {
 			var context = new Dictionary<String, POIXMLDocumentPart>();
 			var stringBuilder = new StringBuilder(); 
 			// NOTE: on C#, StringBuilder is a reference type
@@ -76,7 +98,7 @@ namespace Tests
 			// the ref keyword - explicit is dicouraged
 			var doc = new OPCParser(PackageHelper.Open(File.OpenRead("sample-presentation.pptx")));
 			doc.Parse(new TestFactory());
-			Traverse(doc, context, stringBuilder);
+			traverseDocumentPart(doc, context, stringBuilder);
 			var fragments = new List<string> {
 				"Sample Presentation",
 				"Agenda",
@@ -92,7 +114,31 @@ namespace Tests
 			var result = stringBuilder.ToString();
 			foreach (string fragment in fragments)
 				StringAssert.Contains(fragment, result, String.Format("{0} not found", fragment));
-			StringAssert.DoesNotContain( "Product A", result,"legend");
+			StringAssert.DoesNotContain( "Product A", result,"legend is not in slides");
+			doc.Close();
+			
+		}
+
+		[Test]
+		public void test2() {
+			var context = new Dictionary<String, POIXMLDocumentPart>();
+			var stringBuilder = new StringBuilder(); 
+			// NOTE: on C#, StringBuilder is a reference type
+			// When passed a StringBuilder arg into a method, a reference to that object is 
+			// passed by value meaning callee can modify its internal contents inside the method without needing 
+			// the ref keyword - explicit is dicouraged
+			var doc = new OPCParser(PackageHelper.Open(File.OpenRead("sample-presentation.pptx")));
+			doc.Parse(new TestFactory());
+			traverseDocumentPart(doc, "chart", context, stringBuilder);
+			var fragments = new List<string> {
+				"Product A",
+				"Product B"
+			};
+			Assert.AreNotEqual("",stringBuilder.ToString() );
+			var result = stringBuilder.ToString();
+				foreach (string fragment in fragments)
+				StringAssert.Contains(fragment, result, String.Format("{0} not found", fragment));
+			StringAssert.DoesNotContain( "Project Goals", result,"slide title is not in chart");
 			doc.Close();
 			
 		}
@@ -103,7 +149,7 @@ namespace Tests
 		// but NPOI is a .NET port of POI, but its API is not necessarily a 1:1 namespace/type translation
 		/*
 		[Test]
-		public void test2() {
+		public void test3() {
 			POIDataSamples pds = POIDataSamples.GetSlideShowInstance();
 
 			using (Stream stream =
