@@ -2,6 +2,252 @@
 
 ![Console run](screenshots/capture-app.png)
 
+### Catalog of Power Point Inner Directory
+
+|Document Part  | Content Type |
+|---------------|--------------|
+|`/ppt/charts/chart1.xml`|`application/vnd.openxmlformats-officedocument.drawingml.chart+xml`|
+|`/ppt/embeddings/Microsoft_Excel_Sheet1.xlsx`|`application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`|
+|`/ppt/media/image1.png`|`image/png`|
+|`/ppt/presProps.xml`|`application/vnd.openxmlformats-officedocument.presentationml.presProps+xml`|
+|`/ppt/printerSettings/printerSettings1.bin`|`application/vnd.openxmlformats-officedocument.presentationml.printerSettings`|
+|`/ppt/slideLayouts/slideLayout1.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout10.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout11.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout2.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout3.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout4.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout5.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout6.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout7.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout8.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideLayouts/slideLayout9.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml`|
+|`/ppt/slideMasters/slideMaster1.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml`|
+|`/ppt/slides/slide1.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
+|`/ppt/slides/slide2.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
+|`/ppt/slides/slide3.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
+|`/ppt/slides/slide4.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
+|`/ppt/slides/slide5.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
+|`/ppt/slides/slide6.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
+|`/ppt/slides/slide7.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
+|`/ppt/slides/slide8.xml`|`application/vnd.openxmlformats-officedocument.presentationml.slide+xml`|
+|`/ppt/tableStyles.xml`|`application/vnd.openxmlformats-officedocument.presentationml.tableStyles+xml`|
+|`/ppt/theme/theme1.xml`|`application/vnd.openxmlformats-officedocument.theme+xml`|
+|`/ppt/viewProps.xml`|`application/vnd.openxmlformats-officedocument.presentationml.viewProps+xml`|
+
+to explicitly confirm
+
+![Capture 7-zip](screenhots/capture-7-zip.png)
+
+```cmd
+"c:\Program Files\7-Zip\7z.exe" l sample-presentation.pptx | awk.exe "{print $NF}"
+```
+
+produces listing
+
+```text
+sample-presentation.pptx
+
+
+Name
+------------------------
+[Content_Types].xml
+_rels\.rels
+docProps\core.xml
+docProps\app.xml
+ppt\presentation.xml
+ppt\_rels\presentation.xml.rels
+ppt\presProps.xml
+ppt\viewProps.xml
+ppt\theme\theme1.xml
+ppt\tableStyles.xml
+ppt\slideMasters\slideMaster1.xml
+ppt\slideMasters\_rels\slideMaster1.xml.rels
+ppt\slideLayouts\slideLayout11.xml
+ppt\slideLayouts\_rels\slideLayout11.xml.rels
+ppt\slideLayouts\slideLayout1.xml
+ppt\slideLayouts\_rels\slideLayout1.xml.rels
+ppt\slideLayouts\slideLayout2.xml
+ppt\slideLayouts\_rels\slideLayout2.xml.rels
+ppt\slideLayouts\slideLayout3.xml
+ppt\slideLayouts\_rels\slideLayout3.xml.rels
+ppt\slideLayouts\slideLayout4.xml
+ppt\slideLayouts\_rels\slideLayout4.xml.rels
+ppt\slideLayouts\slideLayout5.xml
+ppt\slideLayouts\_rels\slideLayout5.xml.rels
+ppt\slideLayouts\slideLayout6.xml
+ppt\slideLayouts\_rels\slideLayout6.xml.rels
+ppt\slideLayouts\slideLayout7.xml
+ppt\slideLayouts\_rels\slideLayout7.xml.rels
+ppt\slideLayouts\slideLayout8.xml
+ppt\slideLayouts\_rels\slideLayout8.xml.rels
+ppt\slideLayouts\slideLayout9.xml
+ppt\slideLayouts\_rels\slideLayout9.xml.rels
+ppt\slideLayouts\slideLayout10.xml
+ppt\slideLayouts\_rels\slideLayout10.xml.rels
+ppt\printerSettings\printerSettings1.bin
+ppt\slides\slide1.xml
+ppt\slides\_rels\slide1.xml.rels
+ppt\slides\slide2.xml
+ppt\slides\_rels\slide2.xml.rels
+ppt\slides\slide3.xml
+ppt\slides\_rels\slide3.xml.rels
+ppt\slides\slide4.xml
+ppt\slides\_rels\slide4.xml.rels
+ppt\slides\slide5.xml
+ppt\slides\_rels\slide5.xml.rels
+ppt\charts\chart1.xml
+ppt\charts\_rels\chart1.xml.rels
+ppt\embeddings\Microsoft_Excel_Sheet1.xlsx
+ppt\slides\slide6.xml
+ppt\slides\_rels\slide6.xml.rels
+ppt\media\image1.png
+ppt\slides\slide7.xml
+ppt\slides\_rels\slide7.xml.rels
+ppt\slides\slide8.xml
+ppt\slides\_rels\slide8.xml.rels
+docProps\thumbnail.jpeg
+```
+
+look into one of slides:
+```cmd
+"c:\Program Files\7-Zip\7z.exe" e sample-presentation.pptx ppt\slides\slide2.xml
+```
+```text
+Scanning the drive for archives:
+1 file, 41840 bytes (41 KiB)
+
+Extracting archive: sample-presentation.pptx
+--
+Path = sample-presentation.pptx
+Type = zip
+Physical Size = 41840
+
+Everything is Ok
+
+Size:       1145
+Compressed: 41840
+
+```
+```cmd
+xml fo ppt\slides\slide2.xml
+
+```
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <p:cSld>
+    <p:spTree>
+      <p:nvGrpSpPr>
+        <p:cNvPr id="1" name=""/>
+        <p:cNvGrpSpPr/>
+        <p:nvPr/>
+      </p:nvGrpSpPr>
+      <p:grpSpPr/>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="2" name="Title 1"/>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph type="title"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr/>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:r>
+              <a:t>Agenda</a:t>
+            </a:r>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="3" name="Content Placeholder 2"/>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph idx="1"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr/>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:r>
+              <a:t>Introduction</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:r>
+              <a:t>Project goals</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:r>
+              <a:t>Quarterly results</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:r>
+              <a:t>Roadmap</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:r>
+              <a:t>Questions &amp; answers</a:t>
+            </a:r>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+    </p:spTree>
+  </p:cSld>
+  <p:clrMapOvr>
+    <a:masterClrMapping/>
+  </p:clrMapOvr>
+</p:sld>
+```
+
+```cmd
+xml.exe sel -t -v "//*[.=\"Product A\"]" chart1.xml
+```
+
+```xml
+Product A
+Product A
+Product A
+```
+```cmd
+xml.exe sel -t -c "//*[.=\"Product A\"]" chart1.xml
+```
+```xml
+<c:strCache 
+  xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" 
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" 
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+    <c:ptCount val="1"/>
+      <c:pt idx="0">
+        <c:v>Product A</c:v>
+      </c:pt>
+    </c:strCache>
+<c:pt 
+  xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" 
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" 
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" idx="0">
+    <c:v>Product A</c:v>
+  </c:pt>
+<c:v 
+  xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" 
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" 
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">Product A</c:v>
+
+```
 ### Background
 
 The missing input isn't really another search criterion. It is a search budget / termination policy.
@@ -294,96 +540,7 @@ Microsoft.Management.Infrastructure
     Win32 Version: 10.0.26100.7309
     CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.Management.Infrastructure/v4.0_1.0.0.0__31bf3856ad364e35/Microsoft.Management.Infrastructure.dll
 ----------------------------------------
-System.Xml
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9340.0 built by: NET481REL1LAST_25H2_B
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Xml/v4.0_4.0.0.0__b77a5c561934e089/System.Xml.dll
-----------------------------------------
-System.Management
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Management/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Management.dll
-----------------------------------------
-System.DirectoryServices
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.DirectoryServices/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.DirectoryServices.dll
-----------------------------------------
-System.Numerics
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Numerics/v4.0_4.0.0.0__b77a5c561934e089/System.Numerics.dll
-----------------------------------------
-System.Data
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_64/System.Data/v4.0_4.0.0.0__b77a5c561934e089/System.Data.dll
-----------------------------------------
-System.Configuration
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Configuration/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Configuration.dll
-----------------------------------------
-Anonymously Hosted DynamicMethods Assembly
-    Assembly Version: 0.0.0.0
-    Win32 Version: 4.8.9345.0 built by: NET481REL1LAST_25H2_C
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_64/mscorlib/v4.0_4.0.0.0__b77a5c561934e089/mscorlib.dll
-----------------------------------------
-Microsoft.PowerShell.Security
-    Assembly Version: 3.0.0.0
-    Win32 Version: 10.0.26100.1
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Security/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Security.dll
-----------------------------------------
-System.Transactions
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_64/System.Transactions/v4.0_4.0.0.0__b77a5c561934e089/System.Transactions.dll
-----------------------------------------
-Microsoft.PowerShell.PSReadLine
-    Assembly Version: 3.0.0.0
-    Win32 Version: 10.0.26100.9278
-    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PSReadLine/2.0.0/Microsoft.PowerShell.PSReadLine.dll
-----------------------------------------
-Microsoft.CSharp
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.CSharp/v4.0_4.0.0.0__b03f5f7f11d50a3a/Microsoft.CSharp.dll
-----------------------------------------
-Microsoft.PowerShell.Commands.Management
-    Assembly Version: 3.0.0.0
-    Win32 Version: 10.0.26100.9278
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Commands.Management/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Commands.Management.dll
-----------------------------------------
-System.Configuration.Install
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Configuration.Install/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Configuration.Install.dll
-----------------------------------------
-Microsoft.PowerShell.Commands.Utility
-    Assembly Version: 3.0.0.0
-    Win32 Version: 10.0.26100.9278
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Commands.Utility/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Commands.Utility.dll
-----------------------------------------
-vubv2qfv
-    Assembly Version: 0.0.0.0
-    Win32 Version: 4.8.9340.0 built by: NET481REL1LAST_25H2_B
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System/v4.0_4.0.0.0__b77a5c561934e089/System.dll
-----------------------------------------
-System.Windows.Forms
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9325.0 built by: NET481REL1LAST_25H2_C
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Windows.Forms/v4.0_4.0.0.0__b77a5c561934e089/System.Windows.Forms.dll
-----------------------------------------
-System.Drawing
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Drawing/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Drawing.dll
-----------------------------------------
-Accessibility
-    Assembly Version: 4.0.0.0
-    Win32 Version: 4.8.9221.0 built by: NET481REL1LAST_25H2
-    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Accessibility/v4.0_4.0.0.0__b03f5f7f11d50a3a/Accessibility.dll
-----------------------------------------
+...
 
 ************** JIT Debugging **************
 To enable just-in-time (JIT) debugging, the .config file for this
