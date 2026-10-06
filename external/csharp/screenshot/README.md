@@ -1,5 +1,5 @@
 ﻿### info
-This directory contains a clone of [Screenshot.NET](https://hithub.com/gilyes/Screenshot.NET) -  a Simple WPF app and the screenshot library for .NET Framework that allows selection and capture of screen region, similar to Snipping Tool.
+This directory contains a clone of [Screenshot.NET](https://github.com/gilyes/Screenshot.NET) -  a Simple WPF app and the screenshot library for .NET Framework that allows selection and capture of screen region, similar to Snipping Tool.
 
 combined with examples
 
@@ -10,7 +10,9 @@ combined with examples
   * hide the Maiwindow form while selecting the screenshot rectangle
   * Add button for brush selector
   * Add Text drawing
-  * debug DPI issue - a lot of screen is not visible when selecting to capure
+  * debug DPI issue - only portion of the desktop screen is selectable when selecting to capure area. The image is drawn with a different resolution
+
+The original project is Multi-target (.NET and .NET Framework).
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

@@ -3,37 +3,32 @@ using System.IO;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 
-namespace Program
-{
+namespace Program {
 
-	public class Program : Form
-	{
+	public class Program : Form {
 		
 		[STAThread]
-		public static void Main()
-		{
+		public static void Main() {
 			Application.EnableVisualStyles();
 			// https://learn.microsoft.com/en-us/dotnet/api/application.setcompatibletextrenderingdefault?view=netframework-4.5
-			// NOTE: can only call this method before
-			// the first window is created by Windows Forms application
 			try {
 				Application.SetCompatibleTextRenderingDefault(false);
-			} catch (InvalidOperationException) {
-			}
+			} catch (InvalidOperationException) { }
 			Application.Run(new Program());
 		}
 
-		public Program()
-		{
+		public Program() {
 			InitializeComponent();
 		}
 		private IContainer components = null;
  
-		protected override void Dispose(bool disposing)
-		{
+		protected override void Dispose(bool disposing) {
 			if (disposing && (components != null)) {
 				components.Dispose();
 			}
@@ -41,80 +36,79 @@ namespace Program
 		}
 
 		// https://pbdd.org/wp-content/uploads/2015/06/WordPractice2007.docx
-		private void InitializeComponent()
-		{
+		private void InitializeComponent() {
 			this.SuspendLayout();
 
 			this.Text = "title";
 
 
-			this.Size = new System.Drawing.Size(700, 450);
+			this.Size = new Size(700, 450);
 
-			panel = new System.Windows.Forms.Panel();
+			panel = new Panel();
 
 
-			p1 = new System.Windows.Forms.Panel();
-			b2 = new System.Windows.Forms.Button();
-			l1 = new System.Windows.Forms.Label();
-			t1 = new System.Windows.Forms.TextBox();
-			t = new System.Windows.Forms.Panel();
+			p1 = new Panel();
+			b2 = new Button();
+			l1 = new Label();
+			t1 = new TextBox();
+			t = new Panel();
 			p1.SuspendLayout();
 
 			p1.Controls.Add(b2);
 			p1.Controls.Add(l1);
 			p1.Controls.Add(t1);
-			p1.Dock = System.Windows.Forms.DockStyle.Top;
-			p1.Location = new System.Drawing.Point(0, 0);
+			p1.Dock = DockStyle.Top;
+			p1.Location = new Point(0, 0);
 			p1.Name = "panel1";
-			p1.Size = new System.Drawing.Size(681, 57);
+			p1.Size = new Size(681, 57);
 			p1.TabIndex = 0;
 
-			cb1 = new System.Windows.Forms.CheckBox();
-			cb1.Location = new System.Drawing.Point(515, 27);
-			cb1.Size = new System.Drawing.Size(120, 20);
+			cb1 = new CheckBox();
+			cb1.Location = new Point(515, 27);
+			cb1.Size = new Size(120, 20);
 			cb1.Text = "Files";
 
 			p1.Controls.Add(cb1);
 
-			b2.Location = new System.Drawing.Point(560, 27);
+			b2.Location = new Point(560, 27);
 			b2.Name = "btnDirectory";
-			b2.Size = new System.Drawing.Size(60, 21);
+			b2.Size = new Size(60, 21);
 			b2.TabIndex = 2;
 			b2.Text = "Select";
 			// b2.add_click({ if (caller.Data -ne null) { f.Close(); } })
 
-			l1.Location = new System.Drawing.Point(9, 9);
+			l1.Location = new Point(9, 9);
 			l1.Name = "label1";
-			l1.Size = new System.Drawing.Size(102, 18);
+			l1.Size = new Size(102, 18);
 			l1.TabIndex = 1;
 			l1.Text = "Selection:";
 
-			t1.Location = new System.Drawing.Point(9, 27);
+			t1.Location = new Point(9, 27);
 			t1.Name = "txtDirectory";
-			t1.Size = new System.Drawing.Size(503, 20);
+			t1.Size = new Size(503, 20);
 			t1.TabIndex = 0;
 			t1.Text = "";
 
-			t.Dock = System.Windows.Forms.DockStyle.Fill;
-			t.Location = new System.Drawing.Point(0, 57);
+			t.Dock = DockStyle.Fill;
+			t.Location = new Point(0, 57);
 			t.Name = "treePanel";
-			t.Size = new System.Drawing.Size(621, 130);
+			t.Size = new Size(621, 130);
 			t.TabIndex = 1;
 
 			c = new FileSystemTreeView();
 
 			c.ShowFiles = true;
-			c.Dock = System.Windows.Forms.DockStyle.Fill;
+			c.Dock = DockStyle.Fill;
 			
-			c.AfterSelect += new System.Windows.Forms.TreeViewEventHandler((object sender, System.Windows.Forms.TreeViewEventArgs  e) => { /* if (c.Debug) { Write-Host c.Data; } t1.Text = caller.Data = c.Data } */
+			c.AfterSelect += new TreeViewEventHandler((object sender, TreeViewEventArgs  e) => { /* if (c.Debug) { Write-Host c.Data; } t1.Text = caller.Data = c.Data } */
 			});
 			c.Load(AppDomain.CurrentDomain.BaseDirectory);
 			t.Controls.Add(c);
 
 			cb1.Click +=  new EventHandler((object sender, EventArgs e) => { if (cb1.Checked ) { c.ShowFiles = true; } else { c.ShowFiles = false; } });
 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(621, 427);
+			this.AutoScaleBaseSize = new Size(5, 13);
+			this.ClientSize = new Size(621, 427);
 			this.Controls.Add(t);
 			this.Controls.Add(p1);
 			this.Name = "Form1";
@@ -122,10 +116,14 @@ namespace Program
 			p1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
-			this.Shown += new System.EventHandler((object sender, EventArgs e) =>{ this.Activate(); });
+			this.Shown += new EventHandler((object sender, EventArgs e) =>{ this.Activate(); });
 			this.KeyPreview = true;
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler((object sender, KeyEventArgs e) => {  
-				if ("Escape".Equals(e.KeyCode)) { /* caller.Data = null */
+			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.keyeventargs?view=netframework-4.5
+			// https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.keys?view=netframework-4.5
+			this.KeyDown += new KeyEventHandler((object sender, KeyEventArgs e) => {  
+			                                                         	if ("Escape".Equals(e.KeyCode.ToString())) {
+			                                                         		// there is no caller
+			                                                         		// caller.Data = null;
 				} else
 					return;
 				this.Close();
@@ -149,8 +147,7 @@ namespace Program
 	// see also:
 	// https://stackoverflow.com/questions/44477583/c-sharp-access-to-treenode-parameter
 	// https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo?view=netframework-4.5
-	public class FileSystemTreeView : TreeView
-	{
+	public class FileSystemTreeView : TreeView {
 		private TreeNode _selectedNode;
 		private bool _showFiles = true;
 		public bool ShowFiles {
@@ -181,16 +178,14 @@ namespace Program
 
 		public static readonly int Folder = 0;
 
-		public FileSystemTreeView()
-		{
+		public FileSystemTreeView() {
 			this.ImageList = _imageList;
 			this.MouseDown += new MouseEventHandler(FileSystemTreeView_MouseDown);
 			this.BeforeExpand += new TreeViewCancelEventHandler(FileSystemTreeView_BeforeExpand);
 			this.AfterSelect += new TreeViewEventHandler(FileSystemTreeView_AfterSelect);
 		}
 
-		void FileSystemTreeView_MouseDown(object sender, MouseEventArgs e)
-		{
+		void FileSystemTreeView_MouseDown(object sender, MouseEventArgs e) {
 			TreeNode node = this.GetNodeAt(e.X, e.Y);
 			_selectedNode = node;
 			if (node == null)
@@ -198,12 +193,11 @@ namespace Program
 			this.SelectedNode = node; //selected the node under the mouse
 		}
 
-		void FileSystemTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
-		{
+		void FileSystemTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
 			if (e.Node is FileNode)
 				return;
 
-			DirectoryNode node = (DirectoryNode)e.Node;
+			var node = (DirectoryNode)e.Node;
 
 			if (!node.Loaded) {
 				node.Nodes[0].Remove(); //remove the fake child node used for virtualization
@@ -212,8 +206,7 @@ namespace Program
 					node.LoadFiles();
 			}
 		}
-		private void FileSystemTreeView_AfterSelect(System.Object sender, System.Windows.Forms.TreeViewEventArgs e)
-		{
+		private void FileSystemTreeView_AfterSelect(System.Object sender, TreeViewEventArgs e) {
 
 			// MessageBox.Show(this._debug.ToString());
 			// e.Action = Unknown
@@ -224,8 +217,7 @@ namespace Program
 			}
 		}
 
-		public void Load(string directoryPath)
-		{
+		public void Load(string directoryPath) {
 			if (Directory.Exists(directoryPath) == false)
 				throw new DirectoryNotFoundException(String.Format("Directory Not Found: {0}", directoryPath));
 
@@ -317,17 +309,14 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAf/8AAH//AAB//wCA//8A////AP///wA=";
 
 			Icon folderIcon = icon;
 
-
-			
 			_imageList.Images.Add(folderIcon);
 			_systemIcons.Add(FileSystemTreeView.Folder, 0);
 
-			DirectoryNode node = new DirectoryNode(this, new DirectoryInfo(directoryPath));
+			var node = new DirectoryNode(this, new DirectoryInfo(directoryPath));
 			node.Expand();
 		}
 
-		public int GetIconImageIndex(string path)
-		{
+		public int GetIconImageIndex(string path) {
 			string extension = Path.GetExtension(path);
 
 			if (_systemIcons.ContainsKey(extension) == false) {
@@ -341,13 +330,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAf/8AAH//AAB//wCA//8A////AP///wA=";
 
 	}
 
-	public class DirectoryNode : TreeNode
-	{
+	public class DirectoryNode : TreeNode {
 		private DirectoryInfo _directoryInfo;
 
-		public DirectoryNode(DirectoryNode parent, DirectoryInfo directoryInfo)
-			: base(directoryInfo.Name)
-		{
+		public DirectoryNode(DirectoryNode parent, DirectoryInfo directoryInfo)	: base(directoryInfo.Name) {
 			this._directoryInfo = directoryInfo;
 
 			this.ImageIndex = FileSystemTreeView.Folder;
@@ -358,9 +344,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAf/8AAH//AAB//wCA//8A////AP///wA=";
 			Virtualize();
 		}
 
-		public DirectoryNode(FileSystemTreeView treeView, DirectoryInfo directoryInfo)
-			: base(directoryInfo.Name)
-		{
+		public DirectoryNode(FileSystemTreeView treeView, DirectoryInfo directoryInfo) : base(directoryInfo.Name) {
 			this._directoryInfo = directoryInfo;
 
 			this.ImageIndex = FileSystemTreeView.Folder;
@@ -372,8 +356,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAf/8AAH//AAB//wCA//8A////AP///wA=";
 
 		}
 
-		void Virtualize()
-		{
+		void Virtualize() {
 			int fileCount = 0;
 
 			try {
@@ -386,15 +369,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAf/8AAH//AAB//wCA//8A////AP///wA=";
 			}
 		}
 
-		public void LoadDirectory()
-		{
+		public void LoadDirectory() {
 			foreach (DirectoryInfo directoryInfo in _directoryInfo.GetDirectories()) {
 				new DirectoryNode(this, directoryInfo);
 			}
 		}
 
-		public void LoadFiles()
-		{
+		public void LoadFiles() {
 			foreach (FileInfo file in _directoryInfo.GetFiles()) {
 				new FileNode(this, file);
 			}
@@ -415,8 +396,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAf/8AAH//AAB//wCA//8A////AP///wA=";
 		}
 	}
 
-	public class FileNode : TreeNode
-	{
+	public class FileNode : TreeNode {
 		private FileInfo _fileInfo;
 		private DirectoryNode _directoryNode;
 
@@ -433,8 +413,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAf/8AAH//AAB//wCA//8A////AP///wA=";
 		}
 	}
 
-	public class FakeChildNode : TreeNode
-	{
+	public class FakeChildNode : TreeNode {
 		public FakeChildNode(TreeNode parent)
 			: base()
 		{
@@ -442,8 +421,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAf/8AAH//AAB//wCA//8A////AP///wA=";
 		}
 	}
 
-	public class ShellIcon
-	{
+	public class ShellIcon {
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SHFILEINFO
 		{
@@ -472,23 +450,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAf/8AAH//AAB//wCA//8A////AP///wA=";
 			// TODO: Add constructor logic here
 		}
 
-       public static Icon GetSmallIcon(string fileName) {
-            IntPtr hImgSmall; //the handle to the system image list
-            SHFILEINFO shinfo = new SHFILEINFO();
-
-            //Use this to get the small Icon
-            hImgSmall = Win32.SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
-
-            //The icon is returned in the hIcon member of the shinfo struct
-            // return System.Drawing.Icon.FromHandle(shinfo.hIcon);
-			// cannot pass instance property into static methos
-			// Icon folderIcon = new Icon(this._iconPath);
-			// WOW Exception
-			// System.ArgumentException: Argument 'picture' must be a picture that can be used as a Icon.
-            // string _iconPath = Path.Combine(Directory.GetCurrentDirectory(), "slide.png");//
-			// Icon folderIcon = new Icon(_iconPath);
-			// return folderIcon;
-			const string iconBase64 = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAAwCAMAAABpN6nPAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+	
+		private static readonly Dictionary<string, string> dictionary = new Dictionary<string, string> { {  "slide", @"iVBORw0KGgoAAAANSUhEUgAAADQAAAAwCAMAAABpN6nPAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
 jwv8YQUAAAKOUExURf///x5atR1atfD1/+/0/+vy/e3z/u70/+ju/env/eLr+uDq+ePs+97o+Nvl
 +LvP7Nzn+Nrk+NTg9tbi9tXh9s3b8tHf9dHf9MfX8cva8c3b8y1lu0h6xGiQz6e/5ebt/MXW8MfX
 8CRguHqf1r/Q7cPU7x1atMDR7nme1kx9xR5btSxluqnA5rrO7L/Q7h1atrXK6qO95aG745244pq2
@@ -522,22 +485,128 @@ Zd/+5KADB4sOHcYRNls9/6WjOObtHC/Bibqkkzjl7RSV4rQ6e8bTNlcYYdJZpeycl3P+glKszl6U
 HU74F1GKS5cF50o5KtgtV2WHEy5du44biR7nJipN7BZ5k8R9IsrNw63b7mcrx527/He19omIIu6h
 7H6V6UFJSWkhKl2O5j6pSXqouJqqVPBn02z5o8dPomKfVj17/uLlq9dv3r577//hY/Gnz1++fvsu
 GwB+/PwV+du9Uo3R+j/VGve7SURb+iMDTrSlJBlwoi39lQEn2lItqafk+9mjvicW9yHJl/wDNsMw
-p67yspwAAAAASUVORK5CYII=";
+p67yspwAAAAASUVORK5CYII="
+			}, {"printersettings",
+				@"iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB
+OklEQVR4nO3XQWrCQBQG4DmFIugug/vkAOG9Rc7xJjdw03PkEi4UwVu0Jcueo5UqdOFqJDWCUnRG
+TedN7fvh37gw/5eMBJWSSCT/J1W9tSGqBHAmAqgFcF8EUDMBENE2DQXA9noC+LMAIhoR0YKINsYY
+y1nab1iWZTm+ZvwH93Dzs6tmmw9gEcFYe6ZzHwD7sTFte68T23+ZHH+2dgK4R5ujNuP7zycA9w+b
+e7RxVABGAEYAF3N4jcda5Qr3QBQAPiAgTVOrtbZJkgSp1tpmWdYd4DAep19BmrSIzgDN3fj+wkAA
+3fUT4PpHhjcCNrECAODTCQCA5TWAwdPb3a38n8DMBzBGxFVsAAB4z/N8qHxSFMUIEecAsOY+QrDf
+MPMefymhAOq30tUREsCtecgjVAlgGw4gkUhUdNkBE3fM1TNxpSEAAAAASUVORK5CYII="
+			}, { "chart",
+				@"iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC
+TElEQVR4nO2WP2/TQBiHjwUx0ImlWcsEUuI/pXM6tmQgnwCaxLbYurKxdEMqtQ0DilTUMiAlFR+A
+5JwYx3GaLgj4AnHis+MtFUgtinToTFxFISlIFbGj3iP9Ng+/5+59bQNAoVBiSUvyMy3R61mS27VE
+tAkWDavg+S2pj1uSi5sSssGioK5V7ii8tm88cXCkAmQELNF1/nUEMMA3FBY+VnnNV/kaPlw/OW8U
+nEFTdLtNCW2AedMSPBSe4Ke8/UNltW2Z11ZJ0cln5VV4V+G0j6Q4icLX9Ndc/d7cS18UStU5Y8sZ
+hgJ6zsYKpwWRWegqLHz/IfP1lSWgfqPQGxyst89VjpTXfHIL0yTnV56rbSgsPD1Mn2Aj55yZguOV
+H35WSemg/EhkfMZ1Ishq+2T+QZSoDMzJDPypsOSktdLbdO3W5DO7Dyor5JTNHPoeCjSEnh/pe3i0
+gDuk+O/Anb+NQVv0Ny3J61qia/+XJT0W+93xJdxLVrfl5J9L+Px+6abMwnfBqTPaUOWqT0EcOB4T
+qG91sMzAIHtM1ZWZcAm9vpHrnR2k2+TUT8n8g7jQHl1xU0DoKPPlhZyqvpFTsBOIsHBiCTtD8ooE
+i8BusrLyMlhC52IJTclBYNFohzckomi+lHEli7CZRRhPyyOEDRB3sjPKhwFxJ0sFrrvActE2E0Ub
+T8ty0TZiL5CYUT4MFYhaYE0fXJrsVQVu50vmUr6MZ8SIvcDS7PJBqIBOBa4o8OzbpaECiAqUqUCC
+CmAqgKlAkQrgSH6nKRQK5XrxC/UtL6QP8cQIAAAAAElFTkSuQmCC"
+			}, { "table",
+				@"iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAE
+YElEQVR4nO2U6VbbRhxHeZaAwawm4RGaPmmbYEgwqw00oU/QpmHzvmu1JC9gwAvLv2dmNNIILUjD
+oacfPOfcL/aX+7sz9tTU5EzO5EzO//Ksfe/9unbSLa392QPMCeGDRdfNd3/es3xDdIL5g5A47jRW
+vxkfIw94f9Jr+IqeRBENJ7saQOK4XYw8IFLVCKIvya4et10kjtqD6AMY0dH4HkajsS+sJPv50ANb
+tg3D4SiQBJGHxCHHALZqkDyCLeglzUqxZYfmZwMfsDz/AI6qjJQXA7bqUdtXnLJyaFCGkQe8edUj
+w/39YIi5M3ndgOP2U+iqR1xVHbJerGQMQlrnGHBkPOF/AHPAgKeqWdSnqqf07R1igFnO6LCc1mH5
+gGNA4tB44ql6F7ZqRrdEWW5uEXcYLI/RRpwDjGhVM35VB+6qad0SZenfIG4xSwe6SSv6gJVD/ZEt
+6yLjBsuxpMOxdMCiefCaAR6iK28mqsHSvpvFfZ4BGf3RJRpWNoyor6zmZE+DhT11HHnAclp79Hur
+7Dt1vlUNrvs3Dq6uKX0MK9q76kPv6hrT7T3nChb3WhiuAUtp7YEOYGUR1/1bhyRblIoiiGDfIUqr
+IrGuKYrodJ/Tg4XdFmZ+l2PA4oH2QMW8i/pVvfapeuWoiuiYou2OF11mgMIzoPUQuqpZlK3qVZSt
+imibokbbjW50YGFHxcS3lfvoA/ZbD/SHFPROo1RFYvYA1ZTtYFkWTW9j5ndUmN9WIZ7iGLCw27q3
+q/q/UyQWtSoW21EtUUQLoRkYFdEysDwZIPMMUK0B9Pq93qldlVw3FXUU9aiKUC1ZHRSKqoOsaph4
+SsHMbXEMmN9R7+2q3kXp9UevqmAUUxSjaCApLQtRblkD4in5gXMAqcoy78V2EEQ2jkiFYMvJHEbi
+GaCMo8kqtmwquuwcRnbzFcExIL6tjN9CNB4oKvvAPYCIOt+p5ninoqw6RAVJgSZCJDREmSDIUBec
+srWmiKk2KAJU6jazX2QT8THygLmUPKZiRJTICghJdYiy109F64KEqTUpRJItWzFFy/UmlGuEEqYB
+pWoDZr9IJlwDlFFgVYHKSg4pZ1ERKkzVslWViJVM0aJFHQoVm9lNCWIYjgGzW8rIsypTNFLV6vOq
+ki1brkHeJFdCVDFYfkOE2IbAMeCrPApXtRlclSmKIEUJOVM0W6xgLhGFMlwg8mVTXoRYUnh61QB6
+/V7vtMhW3bSr5h1VqShbVSSyeUQJzhG5IpwhskU4zRZgJikS1nkGbEpDq2o1oGq5Fly1wFYt2VU3
+RCx6li1g2dPLAvy8zMPPizz8c5HDkAECzKw3XzHgxaoViG3YVakorpoLqJoUbdnzHPw4z8KPsyz8
+jbmEv04vYXpdIHzmGBDbkIZsWQum4HNmKMmXEMyyAmY6iM+E6AOSYulF2YiiMyFEp100YfpTs8Yz
+4GMsKdQjVQ0j6ivbxLyjfDL5vVF491v9l8gDJmdyJmdypv6L8y9mzzo9QpytlQAAAABJRU5ErkJg
+gg=="},
+			{ "layout" , @"iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAE
+CUlEQVR4nO3YXWxTZRzH8QfxLRgTlWBfKNvO0wmTzUCC7kKZE7SnJ23ZWEd7uq2sdNghrF3nurbn
+rOsbwxcQgiTeoAQJcEGIIAk3OkkggqlksJ4zXtzGqEajVxqNxKiZ42+egySG7JxKDMmzpN/k3G0X
+n/ye02crQqVKlZqxcCE95M1F/sKD9pNG4eX5aLYVLmSAPL7hKFRkbZdMr7NPoNlUzzdZBUAe75cR
+KEvZRssE++NottT73SDcRnRNJKF6lxNMCW5sfrThUTQb6vg2AbcR3lwEXjzkg9YvemFR0pbTRSyP
+INpbORaAfyOU43Q9DbXvt4Kx3yqXp+sfRjS39HIb3IkgL3TN7mZoPhUC04BtqDLEPYRorXLUAzMh
+uq/ferFXHfGDUbCeR50rHkA0ZpZ5UEMERkVgBh3AnQiAqZ89htL19yPawjIPWogt40llCe7jTjCK
+ltPI5ZqLaAPgIogNF2PKEi8cWA8LResBlE7fh2gDYBVE10QK8FYHOD8LKUvYTm4CvWg9jhCag2gD
+YBVE4FK/skToWkr5dFq2xwX6OLsH0QjARY6T63S3ck9wJzrBILB7qQTgIggCqDvYDovfbgSDYMlS
+CcAEIakgvs4oC5BPqNVHOsAosikqAab9a7SXKGSgaSgIeNABhphFpA5gEFhgZHdWC1F32Af+izGo
+O9QOeoHtow6AlJ9x7yq2xIbhKJi3OUAXt3ZRB0CA5mDZvU8N4bsQu3VXnAqSy+6mQWQDdAFIR11z
+scQfnQnx/IdecJ8JK0tsvpqAxW813DQKrB9RBUDkT2/Xg1jmP9E6TisPtkP9YR/UftAybYxZPFQB
+SIYLjnmMzJ9TQ4QmU8oSwWspqNqxdnqhuHodoglAKs83PoZlPq+1hOWjjfDMu+tg+Xv8lC5utVMF
+UH5P8j6JZfe4GmLzVwMQnEhBcCIJT+9smtJFWQdVANJTo60Yy+7vtZZw/nPR1ex2/qmLW1+iCkAy
+5z3VjMT/qIbovNIPGyUBusaTUL2z+Q+9yNVTBSAxeVctI/G/ai2x/nwfVGTssGT72t/0AvccVQCS
+Oe9ehSX37zMhfMMxYLJ2cJ0Jw5axAah6x3nDILArqAKQKmRPAyPzU3cieDkCbbmIssRrVxNQtaMJ
+zG+suaETLTVUAUhM3uXFknta7Tj5R+JgOfYqbLqSgCXbG3/Si9zSewb4v4/WO9E9Sb79a4GKjOOX
+BX2cmUqAFsI/Eodn97ZAhxSHyjcbftAlLAyVgGJLhAsZsB4PQFnG9rM+YSunEoA1EOSeIP9bt5zt
+AbzNUVgUfcVIJQBrILoLaWWJjpE4MFvtkwv6bHoqAfg/HKe2XC/5zunc3QDO0oTwfN5DAJ/e1TEq
+VapUKXSv+xuIwacaMjC3VAAAAABJRU5ErkJggg=="}
+		};
+private static readonly string questionmark = @"iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC
+GUlEQVR4nO2ZzUsbQRiHR6FCT568WXBM0OJNRC/Fk/QmHnqtJ69e8gcI0l7Ug4eiu02KSDSHQEqL
+H0QQ9KDYU6vVqJUoStqmbWqjMTvZzdeGt8wWs26qokayMzAP/C5ZsrzP7PvODglCAoFAwCQtAajB
+MhnBkvITywTsifIDy2SY1nJrAfpF+wonpRm+vYCtK09Kn8SvuzwBYClICMg3T19Qg/fhPGwf6/BN
+KcCXuA4LhzlwLaXB6WZYwPGawMRWDr4rhSszf5CDx28YFXAtpS3Ffk0WYCOmQ+TMKvFyLcOmwHIk
+XywyfKJDl181Pu+YSsHnmF689iGaZ1NgI6Yb/U4z9jFruTa+ni0KHCUKbArga+INmbOx+VvnS6Dn
+rQaHCXMGxj9l+RF46ldhL272P52F1skUHwKdPhVCx2bxu3FzsLkQmAmbu9LOn7sXj+0QaPemjLfw
+uUDvnFbW/VClBZ69Uy2rT9/SXAk8mVZhYCVjpH8xXXY7okoL3HdQpQWaPcQ480yGcvB8VuNP4MVa
+pjgD9DBHW4orAenC2YemO8DZLtTpU43T6f6pbsg08tZC+J6DhIBsYyQlyrVAg0SGOBVQyvpp8bob
+R/BYsgmxDL6yH8meQ9IeIdbBl6/8uvOVUod4AP8/SKuNntNaxAvYUrwSrB+Fh4gnsLkH+9s88ADx
+Bv43sG40CNWIRzD9VwSgyu46BAKBADHNXw+6OLRdIRsuAAAAAElFTkSuQmCC";
+		public static Icon GetSmallIcon(string fileName) {
+			IntPtr hImgSmall; //the handle to the system image list
+			SHFILEINFO shinfo = new SHFILEINFO();
 
-			byte[] iconBytes = Convert.FromBase64String(iconBase64);
-			var iconStream = new MemoryStream(iconBytes, 0, iconBytes.Length);
-			iconStream.Write(iconBytes, 0, iconBytes.Length);
-			var iconImage = Image.FromStream(iconStream, true);
-			var iconBitmap = new Bitmap(iconStream);
-			IntPtr hicon = iconBitmap.GetHicon();
-			Icon icon = Icon.FromHandle(hicon);
-			return icon;
-			
+			//Use this to get the small Icon
+			hImgSmall = Win32.SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
 
-        }
+			// The icon is returned in the hIcon member of the shinfo struct
+            
+			// return Icon.FromHandle(shinfo.hIcon);
+			// cannot pass instance property into static methos
+			// Icon folderIcon = new Icon(this._iconPath);
+			// WOW Exception
+			// System.ArgumentException: Argument 'picture' must be a picture that can be used as a Icon.
+			// string _iconPath = Path.Combine(Directory.GetCurrentDirectory(), "slide.png");//
+			// Icon folderIcon = new Icon(_iconPath);
+			// return folderIcon;
+			var check = "(layout|chart|slide|printerSettings)(?:\\d)+";
+			var resultRegex = new Regex(check, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+			Match match = resultRegex.Match(Path.GetFileNameWithoutExtension(fileName));
+			if (match != null) {
+				string key = match.Groups[1].Value.ToLower();
+				if (!String.IsNullOrEmpty(key) ) {
+				Debug.WriteLine(String.Format("Will use icon {0} for {1}", key, fileName));
+				string value = null;
+				string iconBase64 =	dictionary.TryGetValue(key, out value) ? value : questionmark;
+				byte[] iconBytes = Convert.FromBase64String(iconBase64);
+				var iconStream = new MemoryStream(iconBytes, 0, iconBytes.Length);
+				iconStream.Write(iconBytes, 0, iconBytes.Length);
+				var iconImage = Image.FromStream(iconStream, true);
+				var iconBitmap = new Bitmap(iconStream);
+				IntPtr hicon = iconBitmap.GetHicon();
+				return Icon.FromHandle(hicon);
+			} else { 
+				Debug.WriteLine(String.Format("Use Shell icon for {0}", fileName));
+				return Icon.FromHandle(shinfo.hIcon);
+				}
+			} else {
+			Debug.WriteLine(String.Format("Use Shell icon for {0}", fileName));
+				return Icon.FromHandle(shinfo.hIcon);
+			}
 
-		public static Icon GetLargeIcon(string fileName)
-		{
+		}
+
+		public static Icon GetLargeIcon(string fileName) {
 			IntPtr hImgLarge; //the handle to the system image list
 			SHFILEINFO shinfo = new SHFILEINFO();
 
@@ -545,7 +614,7 @@ p67yspwAAAAASUVORK5CYII=";
 			hImgLarge = Win32.SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), Win32.SHGFI_ICON | Win32.SHGFI_LARGEICON);
 
 			//The icon is returned in the hIcon member of the shinfo struct
-			return System.Drawing.Icon.FromHandle(shinfo.hIcon);
+			return Icon.FromHandle(shinfo.hIcon);
 		}
 	}
 

@@ -1,4 +1,4 @@
-#Copyright (c) 2014,2022 Serguei Kouzmine
+#Copyright (c) 2014,2022,2026 Serguei Kouzmine
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -310,6 +310,7 @@ namespace C2C.FileSystem {
             public const uint SHGFI_LARGEICON = 0x0; // 'Large icon
             public const uint SHGFI_SMALLICON = 0x1; // 'Small icon
 
+            // https://www.pinvoke.net/default.aspx/shell32.shgetfileinfo
             [DllImport("shell32.dll")]
             public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbSizeFileInfo, uint uFlags);
         }

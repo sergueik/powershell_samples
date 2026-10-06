@@ -1014,9 +1014,12 @@ In other words: technically useful, educationally valuable, and in retrospect un
 * For Elasticsearch 6.x the TLS is not enforced by default, only when the **Security** X-Pack is installed, and is relaxed if the said X-Pack explicitly disabled
   * C# (.NET) [interface](https://github.com/sergueik/powershell_samples/tree/master/external/csharp/7zip) for __7-Zip__ __Archive__ native dlls.
   * [registry helper](https://github.com/sergueik/powershell_samples/tree/master/external/csharp/registry-helper)
+  * [nissl-lab/POIFSExplorer](https://github.com/nissl-lab/POIFSExplorer) - NPOI based tool helps you explore internal structure of OLE2(ActiveX) documents, including
+    + `.xls` __Excel__ document
+    + `.doc` __Word__ document
+    + `.ppt` __Powerpoint__ document
+  * [nissl-lab/OLE2Storage](https://github.com/nissl-lab/OLE2Storage) -  straight (pure-no COM interop) .NET IStorge interface library to read/write __OLE2__(ActiveX) document
 
 ---
 ### Author
-
-
 [Serguei Kouzmine](mailto:kouzmine_serguei@yahoo.com)

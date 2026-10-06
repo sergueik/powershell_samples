@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GenerativeAI">
-      <HintPath>..\packages\GenerativeAI3.4.1\lib\net462\GenerativeAI.dll</HintPath>
+      <HintPath>..\packages\Google_GenerativeAI.3.4.1\lib\net462\GenerativeAI.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.9.0.3\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>

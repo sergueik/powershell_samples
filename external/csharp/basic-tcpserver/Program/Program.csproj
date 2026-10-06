@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico" />
-    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Form.cs" />
   </ItemGroup>
   <ItemGroup>
