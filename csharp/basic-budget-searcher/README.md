@@ -96,8 +96,13 @@ docProps\thumbnail.jpeg
 
 look into one of slides:
 ```cmd
-"c:\Program Files\7-Zip\7z.exe" e sample-presentation.pptx ppt\slides\slide2.xml
+"c:\Program Files\7-Zip\7z.exe" x sample-presentation.pptx ppt\slides\slide2.xml
 ```
+> NOTE: `x` will recreate folders; `e` will flatten
+
+![Capture PPTX Directory](screenshots/capture-ppt-directory.png)
+
+
 ```text
 Scanning the drive for archives:
 1 file, 41840 bytes (41 KiB)
@@ -235,6 +240,113 @@ xml.exe sel -t -c "//*[.=\"Product A\"]" chart1.xml
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">Product A</c:v>
 
 ```
+
+that the conceptual storage model survived the transition almost intact; what changed dramatically was the container/access mechanism.
+
+The code makes that visible because the old world is not merely “a file containing some binary stuff.” It exposes a storage hierarchy through IStorage / IStream, with enumeration, opening streams, opening nested storages, etc. For example, your code literally does EnumElements() and then OpenStream() on the returned element names.
+
+I would construct the table around conceptual model vs. physical/container technology:
+
+| Aspect                            | Legacy Structured Storage / OLE Compound File                              | OOXML / Open XML                                                      | What actually changed?                        |
+| --------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------- |
+| **Document model**                | Container holding named internal objects                                   | Container holding named internal parts                                | **Very little conceptually**                  |
+| **Mental model**                  | “A file system inside a file”                                              | “A directory tree inside a file”                                      | Essentially the same useful abstraction       |
+| **Internal organization**         | Storages and streams                                                       | Directories and files/parts                                           | **Vocabulary and implementation changed**     |
+| **Hierarchy**                     | `IStorage` can contain streams and other `IStorage` objects                | ZIP entries have hierarchical path names such as `/word/document.xml` | Same tree-like idea                           |
+| **Directory enumeration**         | `IStorage.EnumElements()`                                                  | ZIP central directory / ZIP API enumeration                           | Same operation at a higher level              |
+| **Read an internal object**       | `IStorage.OpenStream(name, ...)`                                           | Open ZIP entry and read its bytes                                     | Same basic operation                          |
+| **Extract an internal object**    | Read `IStream` through COM                                                 | Extract/read ZIP entry                                                | Much simpler modern interface                 |
+| **Create a container**            | `StgCreateDocfile()`                                                       | Create a ZIP package                                                  | Different container technology                |
+| **Nested container**              | `OpenStorage()`                                                            | Path prefix / directory-like ZIP entries                              | Similar hierarchy, different representation   |
+| **Object metadata**               | `STATSTG`: name, type, size, timestamps, etc.                              | ZIP entry metadata + OPC/package metadata                             | Similar infrastructure role                   |
+| **Object types**                  | `STGTY_STORAGE`, `STGTY_STREAM`, `STGTY_ILOCKBYTES`, etc.                  | Files/entries plus XML relationships                                  | OOXML uses much simpler primitives            |
+| **Navigation API**                | COM interfaces, HRESULTs, marshaling, `STATSTG`, explicit resource release | Ordinary ZIP APIs / streams                                           | **Huge simplification**                       |
+| **Access technology**             | Windows COM / Structured Storage                                           | Standard ZIP tooling + XML APIs                                       | **Major modernization**                       |
+| **Typical programmer experience** | “Talk to a storage system”                                                 | “Open a ZIP and read files”                                           | Dramatically more accessible                  |
+| **Portability**                   | Strongly tied to Microsoft/OLE technology                                  | ZIP/XML are broadly standardized technologies                         | Major improvement                             |
+| **Document semantics**            | Mostly opaque application-defined streams                                  | XML parts + explicit relationships                                    | **This is where OOXML really adds structure** |
+| **Application-level structure**   | Embedded binary streams and application-specific formats                   | XML parts, relationships, media, metadata, etc.                       | Much more inspectable/interoperable           |
+
+
+
+### Historical background
+
+During the 1990s and early 2000s, Microsoft had strong incentives to preserve rather than redesign many established document technologies.
+
+The company was simultaneously moving its operating-system base from DOS/Windows 9x toward the NT lineage and Windows 2000/XP, maintaining compatibility across old and new APIs, supporting multiple processor architectures, and dealing with the associated compatibility layers, calling-convention changes, and **thunking** between execution environments. At the same time, Office had an enormous installed base and a very large ecosystem of documents, applications, macros, integrations, and third-party tooling.
+
+In that environment, a complete reinvention of the Office document container was not necessarily the highest-value engineering project. Office still had to ship new releases, while preserving compatibility with an enormous amount of existing content.
+
+This helps explain an interesting continuity between the generations of Office formats.
+
+The older Office formats used Microsoft's **Structured Storage / Compound File** technology: a document was effectively a container holding named internal storages and streams. The programming model exposed that hierarchy through COM interfaces such as `IStorage`, `IStream`, and `IEnumSTATSTG`.
+
+The newer Open XML formats changed the container technology dramatically, but retained the useful high-level idea: **an Office document is a package containing many independently addressable internal parts**.
+
+The important difference was that the new package used an ordinary ZIP container rather than the much more specialized Microsoft Structured Storage machinery.
+
+In other words:
+
+> **Microsoft changed the shipping container without abandoning the idea of shipping a document as a collection of internal parts.**
+
+The old API could enumerate elements, open a named stream, read it through an `IStream`, and expose metadata through `STATSTG`. For example, the legacy code in this project opens a Structured Storage document, enumerates its elements, and then opens individual streams by name.
+
+The modern equivalent is conceptually much less exotic:
+
+```text
+ZIP package
+    |
+    +-- list entries
+    |
+    +-- open entry
+    |
+    +-- read bytes
+    |
+    +-- extract entry
+```
+
+Thus, the most important continuity is not that the old and new Office formats are technically identical. They are not. The continuity is the **package/container view of a document**:
+
+```text
+        DOCUMENT
+           |
+     collection of parts
+           |
+    +------+------+
+    |             |
+  old           new
+    |             |
+Compound File    ZIP
+Structured       Open XML /
+Storage          OPC
+    |             |
+IStorage         ZIP/package APIs
+IStream          ordinary streams
+COM              ordinary files/entries
+```
+
+The newer format therefore looks radically more modern at the API level while preserving a surprisingly familiar underlying document-storage metaphor.
+
+There was also a substantial amount of engineering effort spent carrying the Microsoft software stack across processor architectures. DEC Alpha was an ambitious move onto a fundamentally different 64-bit architecture, but never became a mainstream desktop platform. It was followed by Itanium, another technically ambitious 64-bit architecture that ultimately had little relevance to ordinary Office users. By the time AMD64/x86-64 arrived, the problem looked much more practical: retain the enormous x86 software investment while extending the architecture to 64 bits.
+
+From the perspective of Office, much of this work was infrastructure rather than visible product improvement. The application still had to ship, compatibility still mattered, and the platform underneath it kept changing. There was therefore considerable incentive to keep the established document machinery working rather than spend a release cycle replacing a container technology that, although ugly and proprietary, was already doing its job.
+
+I would actually not say “finally AMD solved 32/64” in the README. The technically interesting distinction is tha
+
+Alpha → Itanium → AMD64 was not merely a sequence of CPU releases; it represented three very different answers to the 64-bit transition. Alpha and Itanium required Microsoft to support architectures substantially foreign to the enormous x86 software ecosystem. AMD64/x86-64 finally offered a much more economical path: extend x86 while preserving the existing programming model and investment. Once that transition was underway, another complete reinvention of Office's document container was hardly the obvious place to spend scarce engineering effort.
+
+
+Microsoft repeatedly preferred evolutionary compatibility when the installed base was enormous.
+
+|OS/platform side       |          Office/document side     |
+|-----------------------|-----------------------------------|
+|DOS → NT → 2000 → XP <br/>compatibility     |         Compound Storage → OOXML<br/>compatibility  |
+| x86 → Alpha → Itanium <br/>↘ <br/>AMD64        |    old Office formats<br/>↘ <br/> ZIP/Open XML |
+|                                big investment in <br/>existing software | preserve the useful<br/>document/package model |
+                
+“thunking” belongs in that story: all those transitions weren't just recompiling code. 
+There were compatibility boundaries, ABI/calling-convention issues, data-model differences, 16/32-bit transitions, and architecture-specific adaptation layers. So your intuition about the era being full of “make the old world continue to work while we move underneath it” is quite apt.
+
 ### Background
 
 The missing input isn't really another search criterion. It is a search budget / termination policy.
