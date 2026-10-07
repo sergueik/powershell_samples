@@ -2,6 +2,309 @@
 
 ![Console run](screenshots/capture-app.png)
 
+The Office document formats are themselves hierarchical object/package systems, and most of the objects are 
+__structural__ rather 
+than __business-data-bearing__.
+
+| Enterprise artifact       | Dominant structure                                                            | Where the interesting data tends to live                                |
+| ------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| SharePoint directory      | Deep hierarchy of folders/files                                               | Individual files                                                        |
+| Enterprise Excel workbook | Workbook → worksheets → rows/columns → cells, plus filters/charts/tables      | **Cells and formulas**, with a lot of presentation/metadata around them |
+| Word document             | Package → document parts → sections → paragraphs → runs → relationships, etc. | **Text/content-bearing runs, tables, images**                           |
+| PowerPoint                | Presentation → slides → shapes → text runs/tables/charts/images, etc.         | **Text inside shapes, tables, chart data, images**                      |
+| Visio                     | Document/package → pages → shapes → masters → relationships/data properties   | **Shape text, properties, connectors, geometry/data**                   |
+
+
+| Enterprise artifact       | Dominant structure                                                            | Where the interesting data tends to live                                |
+| ------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| SharePoint directory      | Deep hierarchy of folders/files                                               | Individual files                                                        |
+| Enterprise Excel workbook | Workbook → worksheets → rows/columns → cells, plus filters/charts/tables      | **Cells and formulas**, with a lot of presentation/metadata around them |
+| Word document             | Package → document parts → sections → paragraphs → runs → relationships, etc. | **Text/content-bearing runs, tables, images**                           |
+| PowerPoint                | Presentation → slides → shapes → text runs/tables/charts/images, etc.         | **Text inside shapes, tables, chart data, images**                      |
+| Visio                     | Document/package → pages → shapes → masters → relationships/data properties   | **Shape text, properties, connectors, geometry/data**                   |
+
+```text
+A       B       C       D       ...       AI
+┌───────┬───────┬───────┬───────┬─────────┐
+│ Dept  │ Owner │ Status│ Date  │ ...     │
+├───────┼───────┼───────┼───────┼─────────┤
+│ ...                                          
+│ ...                                          
+└───────┴───────┴───────┴───────┴─────────┘
+
+             ↓
+
+       filters / views
+             ↓
+       boss's expected view
+```
+
+
+A typical enterprise Excel workbook has the feel of a vintage object: dozens of columns, filters, views, formatting, protection and accumulated conventions wrapped around relatively simple data. Its complexity is not necessarily algorithmic complexity; it is accumulated operational complexity
+
+Office-format version of compilation:
+
+A huge amount of representation machinery can describe a relatively small semantic object
+
+
+Serialized complexity, presentation complexity, and semantic complexity are three different quantities.
+
+OPC/XML complexity ≠ document semantic complexity ≠ business-process complexity.
+
+In some cases, the ratio can indeed feel comically large — 10 MB of Office machinery → a hundred lines of Mermaid that tell you what the thing actually does.
+
+
+
+invisible machinery physically observable.
+
+The experiment is almost comically simple:
+
+* Open a nontrivial Visio diagram
+* Select *anything*  with the mouse
+* Drag it a *tiny distance*
+* Wait for __AutoSave__ do its thing
+* Compare the file before and after
+
+The surprising result is that a microscopic human action can cause a disproportionate amount of document machinery to be rewritten.
+
+What moved on screen?
+
+One shape, perhaps three pixels.
+
+What Visio has to maintain?
+
+> Shape position, page geometry, relationships, layout state, XML serialization, package parts, possibly timestamps/metadata, and whatever dependent structures Visio considers necessary to preserve the document's consistency.
+
+And this is particularly good evidence for your broader point because you didn't ask Visio to do any of that explicitly. You didn't say
+
+Visio has the serialization complexity of a sophisticated execution-oriented system without having the execution semantics that would justify it.
+
+| Artifact                     | Looks like                  | What the underlying system is actually optimized to provide |
+| ---------------------------- | --------------------------- | ----------------------------------------------------------- |
+| Visio diagram                | Flow/process                | **A drawing**                                               |
+| Jenkins pipeline             | Flow/process                | **Reliable execution of automation**                        |
+| Blue Prism / UiPath workflow | Flow/process                | **Reliable execution of automation**                        |
+| GitOps configuration         | Declarative structure/graph | **Reproducible system state and controlled deployment**     |
+| n8n workflow                 | Flow diagram                | **Executable integration**                                  |
+
+
+
+
+Key Reasons for the Switch
+
+• Version Control & Auditability: Traditional XML job configurations lived inside the Jenkins controller's internal database or UI. Moving to a Groovy-based Jenkinsfile allowed teams to store build logic directly in Git alongside their application source code.
+• Resilience and Restart Recovery: Groovy pipelines use a Continuation-Passing Style (CPS) engine. This lets Jenkins save execution state after every step, meaning a long-running job can resume right where it left off if the Jenkins master crashes or restarts.
+• Reusability and Shared Libraries: XML configurations led to massive code and step duplication across hundreds of jobs. Groovy enables custom shared libraries, loops, conditional logic, and functions that can be imported and reused across multiple pipelines.
+• Complex Flow Control: Freestyle and XML jobs struggled with multi-branch logic, dynamic parallel stages, and complex dependency chains. Groovy-based pipelines provide native support for parallel execution, error handling (try/catch/finally or post blocks), and dynamic parameterization.
+• Multi-User Collaboration: Editing jobs via the Jenkins web GUI made it hard to track who changed what or test changes safely. Writing Groovy in a local IDE allows developers to review, branch, and test pipeline changes through pull requests.
+
+concentration" is exactly the interesting metric here, with one historical qualification: Jenkins did not literally replace all XML with Groovy. Jenkins still has XML internally and historically used Jelly for UI/plugin views. The important architectural shift was moving the user-authored definition of automation toward Groovy-based Pipeline/Job DSL and, crucially, into source-controlled code.
+
+That produced a remarkable change in the ratio:
+
+semantic content / total representation
+
+A useful conceptual comparison is:
+__Visio__:
+
+```
+large serialized artifact
+    ↓
+lots of geometry
+styles
+relationships
+IDs
+layout
+metadata
+package machinery
+    ↓
+relatively small process meaning
+
+```
+__Jenkins Pipeline__:
+```
+Jenkinsfile
+    ↓
+stages
+steps
+conditions
+parallelism
+agents
+credentials
+post-actions
+    ↓
+very high semantic density
+```
+
+
+And it also explains why Jenkins' move was perceived as such a large architectural step: the artifact became much closer to the thing it describes.
+
+A Visio diagram says:
+
+* *"Here is a picture representing this process."*
+
+A `Jenkinsfile` says, approximately:
+
+* *"Here is the process." *
+
+That is a huge difference in semantic concentration.
+
+
+"Military intelligence" evokes a large apparatus of collection, classification, reporting, clearance, protocols, and bureaucracy surrounding what may ultimately be a relatively small amount of actionable knowledge.
+
+That maps nicely onto the distinction you've been building:
+
+a large volume of machinery surrounding a small semantic payload.
+
+So you could use it as a deliberately playful analogy:
+
+Jelly-era Jenkins was a little like "military intelligence": a lot of machinery and protocol around a relatively small amount of operational knowledge. The move toward Groovy/Pipeline-as-Code increased the concentration of that knowledge in the artifact itself.
+
+And that is more precise than saying simply "XML was verbose." The issue isn't verbosity by itself. It's:
+
+How much of the artifact is actually expressing the thing you care about?
+
+__Visio__:  large machinery → emembers IDE state, supports extra functionality like live collaboration - relatively small semantic description
+
+__Jenkins 1.x__/__Jelly__: large "SOAP rank" machinery/protocol → relatively small behavioral description
+
+__Jenkins 2.x__  / `Jenkinsfile`: relatively compact "code style" artifact  → comparatively dense behavioral semantics
+
+| Artifact                        | Representation overhead                                                                                                | Semantic concentration                       |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| **Visio**                       | Large machinery → remembers IDE/document state, layout, geometry, relationships, collaboration and other functionality | **Relatively small semantic description**    |
+| **Jenkins 1.x / Jelly**         | Large **enterprise/SOAP-era machinery and protocol** → UI/configuration machinery around the job                       | **Relatively small behavioral description**  |
+| **Jenkins 2.x / `Jenkinsfile`** | Relatively compact, **code-style artifact**                                                                            | **Comparatively dense behavioral semantics** |
+
+
+A sole developer may reasonably think:
+
+"I have a diagram. I want to edit it and save it."
+
+They don't necessarily need the system to maintain a sophisticated collaborative state such as:
+> 
+```code
+sequenceDiagram
+  participant Alice
+  participant Bob
+
+  Alice->>Bob: "😵‍💫 Hey!<br/>Do not touch that node."
+  Bob->>Alice: "😐 I am not touching it."
+  Bob-->>Bob: "😕 I am dragging it."
+  Alice-->>Alice: "🥱 I can see Bob dragging it.<br/>I'll wait."
+  Bob->>Alice: "😌 Hold on - I haven't dropped it yet."
+```
+```mermaid
+sequenceDiagram
+  participant Alice
+  participant Bob
+
+  Alice->>Bob: "😵‍💫 Hey!<br/>Do not touch that node."
+  Bob->>Alice: "😐 I am not touching it."
+  Bob-->>Bob: "😕 I am dragging it."
+  Alice-->>Alice: "🥱 I can see Bob dragging it.<br/>I'll wait."
+  Bob->>Alice: "😌 Hold on - I haven't dropped it yet."
+  ```
+
+> unlike an abstract architectural diagram, this example is immediately recognizable to anyone who has experienced collaborative editing. The absurdity is precisely that "Bob is dragging it but hasn't dropped it" is a transient UI state that nevertheless has to be represented, synchronized, rendered and communicated to Alice.
+
+```text
+A ---> B ---> C
+      business process
+
+       ↑
+       |
+  "That's Bob."
+       |
+   [photo from 5 years ago]
+       |
+   HR / identity / directory
+       |
+   migrations / synchronization /
+   profile provisioning / SSO /
+   collaboration infrastructure
+```
+That is an impressive product capability — but it illustrates your semantic-density point beautifully
+
+> System can spend enormous engineering effort making an interaction reliable without 
+> making the underlying business process any more meaningful, executable, or valuable
+
+The artifact/system may carry substantial machinery for:
+  
+  * live presence
+  * concurrent editing
+  * transient object state
+  * conflict handling
+  * synchronization
+  * permissions
+  * persistence
+  * undo/redo
+  * layout
+  * rendering
+  * relationships
+  * compatibility
+
+Yet the business meaning of the diagram might still be:
+
+```mermaid
+flowchart LR
+
+A --> B --> C
+````
+The Visio collaboration machinery can be enormous; the semantic description of the collaboration scenario is five lines of Mermaid.
+
+That makes your broader argument almost self-demonstrating:
+
+A large artifact can contain an enormous amount of machinery around a surprisingly small amount of meaning.
+
+
+He'd already posted for the 20th; apparently he was saving the next post for when the anniversary became a square.
+
+Wake up. It's the 25th anniversary.
+Hmm. I already used the really good anniversary post on the 20th.
+Nothing particularly new has happened in the intervening five years.
+But I'm still proud of that moment, so why not point back to it?
+
+pattern is:
+
+Make the Office application the center of the universe, then make every surrounding requirement its responsibility.
+
+So Visio becomes responsible for:
+
+drawing;
+document persistence;
+layout;
+collaboration;
+undo/history;
+object identity;
+protection;
+compatibility;
+presentation;
+embedded objects;
+metadata;
+synchronization;
+etc.
+
+And Word/PowerPoint accumulate analogous universes of responsibility.
+
+That produces the combination you are calling:
+
+grand unification + geocentric illusion
+
+hereas the newer tooling ecosystems tend to split the concerns:
+
+Git          → history / identity / collaboration
+CI/CD        → execution
+GitOps       → desired state / deployment
+workflow     → orchestration
+database     → structured data
+diagram      → visualization
+document     → presentation
+
+Him: “Please open the document — click here, go to this sheet, scroll down… so I can see you edit it.”
+
+Me: facepalm - accepts the fortune
+
 ### Catalog of Power Point Inner Directory
 
 |Document Part  | Content Type |
@@ -346,6 +649,79 @@ Microsoft repeatedly preferred evolutionary compatibility when the installed bas
                 
 “thunking” belongs in that story: all those transitions weren't just recompiling code. 
 There were compatibility boundaries, ABI/calling-convention issues, data-model differences, 16/32-bit transitions, and architecture-specific adaptation layers. So your intuition about the era being full of “make the old world continue to work while we move underneath it” is quite apt.
+
+
+Engineering capacity was being consumed by several extraordinarily difficult platform transitions, some of which produced little visible benefit to an Office user.
+
+That is a much more interesting argument.
+
+And then you can make your "feature degradation" point:
+
+Where the engineering effort went
+Where the engineering effort went
+
+It is easy, looking backward from modern software, to underestimate how expensive the platform transitions of the 1990s and early 2000s were.
+
+Supporting a new processor architecture is not ordinary application development. It involves compilers, ABIs, calling conventions, operating-system kernels, drivers, debuggers, runtime libraries, binary compatibility, data models, and compatibility layers. Microsoft pursued several such transitions, including the difficult and ultimately unsuccessful Alpha and Itanium directions, before AMD64/x86-64 provided a much more evolutionary path from the enormous existing x86 software base.
+
+The point here is not that Microsoft lacked talented engineers or money. Quite the opposite: these were areas where Microsoft could afford to employ exceptionally specialized engineering teams. The point is that even a very large engineering organization has finite attention. An engineer working on a CPU architecture transition, kernel compatibility, security infrastructure, or a new application platform is not simultaneously redesigning an Office document container.
+
+The history of Windows Vista/Longhorn provides a useful contemporary illustration. Terry Crowley, writing from his experience in the Windows/Office organizations, describes major Windows engineering resources being consumed by the Windows XP security response and the transition to 64-bit computing, while another large organization was pursuing a new managed-code Windows platform. He also describes the subsequent realization that major Longhorn components were nowhere near ready and that removing them from the release effectively left the project starting over.
+
+The result was not necessarily a shortage of engineering talent. It was a resource-allocation problem at enormous scale.
+
+This provides useful context for seemingly conservative decisions elsewhere in the Microsoft product stack. A feature can remain old, awkward, or technically inelegant not because nobody knows how to improve it, but because the organization has repeatedly decided that other engineering problems have higher priority.
+
+That is one possible explanation for why apparently unrelated parts of the Microsoft software stack could remain technologically conservative for surprisingly long periods.
+
+In this context, the persistence of Structured Storage becomes less mysterious. The technology was proprietary and awkward to program, but it worked, Office depended on it, and replacing it competed for engineering resources with much larger platform transitions.
+
+The eventual OOXML transition therefore looks less like:
+
+“Microsoft finally discovered that documents should be collections of files.”
+
+and more like:
+
+“Microsoft finally had an opportunity to replace an exotic internal container mechanism with a conventional package format while retaining the basic document-as-a-package architecture.”
+
+And the Vista article gives you a second, even stronger argument
+
+The article isn't merely saying “lots of engineers were busy.” It describes competing grand projects:
+
+64-bit Windows
+security overhaul
+managed C# infrastructure
+WinFS
+Avalon/WPF
+WCF
+universal storage / presentation infrastructure
+and the existing Win32/Windows compatibility burden.
+
+Crowley's description is particularly revealing because he says that the new infrastructure was being layered on top of existing OS infrastructure, making its performance costs additive rather than replacing the old system.
+
+That gives you a nice conceptual distinction:
+```text
+                    MICROSOFT ENGINEERING CAPACITY
+                              |
+             +----------------+----------------+
+             |                                 |
+      PLATFORM TRANSITION                PRODUCT EVOLUTION
+             |                                 |
+     CPU architectures                 Office features
+     64-bit Windows                    Office UI
+     security                          Office internals
+     managed code                      document formats
+     WinFS / Avalon                    ...
+     WCF
+     compatibility
+             |
+             v
+      extremely expensive
+      specialized work
+```
+These were unusually specialized, capital-intensive engineering programs with very long feedback cycles.
+
+
 
 ### Background
 
@@ -764,6 +1140,472 @@ this.AutoScaleMode = AutoScaleMode.None;
 
 ### Printing Power Point Slides
 
+* setting data
+```
+curl -skLo https://samplelib.com/ppt/sample-blank.pptx
+```
+
+```curl
+pushd Test
+curl -skLO https://samplelib.com/ppt/sample-presentation.pptx
+```
+```powershell
+Invoke-WebRequest -Uri "https://samplelib.com/ppt/sample-presentation.pptx" -OutFile "sample-presentation.pptx"
+```
+> NOTE: making this done by `Test.csproj` is a work in progress
+
+### Automating Test Setup
+
+Test data download design
+=========================
+
+Goal:
+  Keep sample-presentation.pptx as ordinary test data, but make obtaining
+  it from Samplelib an explicit developer action rather than an implicit
+  build dependency.
+
+OPTION 1 — Manual download, simplest and most transparent
+-----------------------------------------------------------
+
+Developer runs:
+
+  curl -skLO https://samplelib.com/ppt/sample-presentation.pptx
+
+or PowerShell:
+
+  Invoke-WebRequest `
+      -Uri "https://samplelib.com/ppt/sample-presentation.pptx" `
+      -OutFile "sample-presentation.pptx"
+
+Then:
+
+  msbuild Test.csproj
+
+Advantages:
+  - Absolutely no network access during build.
+  - No MSBuild customization.
+  - Enterprise build sees an ordinary local test fixture.
+  - Very easy to understand and audit.
+  - Developer explicitly decides when Samplelib is contacted.
+
+This is probably the most "Big Lebowski" solution:
+  "The build does not download anything. I download the thing when I want it."
+
+
+OPTION 2 — Put the manual download in a separate script
+---------------------------------------------------------
+
+For example:
+
+  download-test-data.ps1
+
+containing:
+
+  $url = "https://samplelib.com/ppt/sample-presentation.pptx"
+  $output = Join-Path $PSScriptRoot "sample-presentation.pptx"
+
+  Invoke-WebRequest -Uri $url -OutFile $output
+
+Developer explicitly runs:
+
+  powershell .\download-test-data.ps1
+
+Then:
+
+  msbuild Test.csproj
+
+Advantages:
+  - Still zero network access during build.
+  - The source URL is documented in the repository.
+  - One command instead of remembering the URL.
+  - Easy to replace Samplelib later.
+  - Enterprise can simply ignore/remove the script.
+  - No special MSBuild machinery.
+
+This is probably my preferred solution for your project.
+
+
+OPTION 3 — MSBuild target, but explicitly invoked
+-------------------------------------------------
+
+The project can contain a target such as:
+
+  <Target Name="DownloadTestData">
+
+      ...
+
+  </Target>
+
+but it should NOT be:
+
+  BeforeTargets="Build"
+
+and should NOT be automatically invoked.
+
+The developer explicitly invokes:
+
+  msbuild Test.csproj /t:DownloadTestData
+
+After that:
+
+  msbuild Test.csproj
+
+Advantages:
+  - The download operation is discoverable from the project.
+  - Still no network activity during an ordinary build.
+  - Explicit action is required.
+  - Enterprise can simply never invoke the target.
+
+Disadvantage:
+  - More MSBuild complexity for something PowerShell does very easily.
+
+
+OPTION 4 — Property-controlled automatic download
+--------------------------------------------------
+
+For example:
+
+  <DownloadTestData Condition="'$(DownloadTestData)' == ''">
+      false
+  </DownloadTestData>
+
+and a target:
+
+  <Target Name="DownloadTestData"
+          BeforeTargets="Build"
+          Condition="'$(DownloadTestData)' == 'true'">
+
+      ...
+
+  </Target>
+
+Normal build:
+
+  msbuild Test.csproj
+
+does NOT download.
+
+Developer explicitly requests:
+
+  msbuild Test.csproj /p:DownloadTestData=true
+
+Advantages:
+  - Convenient.
+  - Default remains safe.
+  - Can be controlled from CI/build infrastructure.
+
+Disadvantage:
+  - The build now contains network behavior.
+  - Somebody eventually has to understand the property/target interaction.
+  - Easier for a future maintainer to accidentally turn it into an eager
+    dependency.
+
+
+OPTION 5 — Checked-in fixture
+----------------------------
+
+Download the PPTX once and commit:
+
+  sample-presentation.pptx
+
+Then the project contains:
+
+  <None Include="sample-presentation.pptx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+
+Build:
+
+  msbuild Test.csproj
+
+requires no network whatsoever.
+
+Advantages:
+  - Most reproducible.
+  - Tests work offline.
+  - Enterprise build has no external dependency.
+  - No download mechanism needed.
+
+Disadvantages:
+  - Repository contains a binary fixture.
+  - Updating the fixture requires an intentional commit.
+  - You need to consider whether the source/license permits redistribution.
+
+
+OPTION 6 — Enterprise-approved internal copy
+---------------------------------------------
+
+Samplelib is treated only as the original public source.
+
+Developer can obtain:
+
+  sample-presentation.pptx
+
+manually, but the enterprise version can come from:
+
+  Nexus / internal artifact store / approved shared location
+
+The .csproj remains:
+```
+  <None Include="sample-presentation.pptx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+```
+No knowledge of Samplelib is required by the build.
+
+This is particularly clean if the enterprise does not want developer/test
+builds contacting arbitrary Internet sites.
+
+
+RECOMMENDATION
+--------------
+
+For this particular NPOI experiment:
+
+  1. Keep sample-presentation.pptx as a normal <None> item.
+  2. Keep CopyToOutputDirectory="PreserveNewest".
+  3. Have a small download-test-data.ps1 script for developer convenience.
+  4. Do NOT make the build invoke the download.
+  5. If the enterprise dislikes Samplelib, they simply do not run the script.
+  6. If the fixture later moves to Nexus, change the script/source procedure,
+     not the test/build semantics.
+
+Result:
+```
+  download-test-data.ps1
+          |
+          | explicit human action
+          v
+  sample-presentation.pptx
+          |
+          | ordinary MSBuild input
+          v
+  bin\Debug\sample-presentation.pptx
+          |
+          v
+  POIXMLDocumentTest
+
+```
+The important architectural distinction is:
+
+ * "The test requires this FILE"
+
+rather than:
+
+ * "The test requires this WEBSITE."
+
+The .csproj should express the first.
+The developer convenience script can optionally provide the second.
+
+
+Exactly. In that environment, a .ps1 convenience script is actually the wrong abstraction. If PowerShell execution is completely prohibited, you've created a developer convenience that the enterprise cannot use.
+
+What you're really after is a manually invoked MSBuild action, because MSBuild is already part of the build toolchain and does not depend on PowerShell script execution.
+
+I would narrow the options to these:
+
+Exactly. In that environment, a .ps1 convenience script is actually the wrong abstraction. If PowerShell execution is completely prohibited, you've created a developer convenience that the enterprise cannot use.
+
+What you're really after is a manually invoked MSBuild action, because MSBuild is already part of the build toolchain and does not depend on PowerShell script execution.
+
+I would narrow the options to these:
+
+
+DESIRED DESIGN
+==============
+
+Normal build:
+    msbuild Test.csproj
+
+        |
+        +--> compile tests
+        +--> copy existing sample-presentation.pptx
+        |
+        +--> NO network access
+        +--> NO download
+        +--> NO PowerShell
+
+
+Explicit developer action:
+    msbuild Test.csproj /t:DownloadTestData
+
+        |
+        +--> explicitly contacts Samplelib
+        +--> downloads sample-presentation.pptx
+        |
+        +--> developer chose to do this
+
+
+OPTION A — MSBuild Exec + curl
+==============================
+
+If curl is available:
+
+<Target Name="DownloadTestData">
+
+  <Exec Command='curl -skL -o "$(MSBuildProjectDirectory)\sample-presentation.pptx" "https://samplelib.com/ppt/sample-presentation.pptx"' />
+
+</Target>
+
+Invocation:
+
+    msbuild Test.csproj /t:DownloadTestData
+
+Advantages:
+    - No PowerShell.
+    - No automatic network access.
+    - Extremely obvious what the target does.
+    - Easy for security/build people to inspect.
+    - curl is already a familiar enterprise command-line tool.
+
+Disadvantage:
+    - Requires curl to exist on the machine.
+
+
+OPTION B — MSBuild Exec + certutil
+==================================
+
+On older Windows environments, certutil may be available:
+
+<Target Name="DownloadTestData">
+
+  <Exec Command='certutil -urlcache -split -f "https://samplelib.com/ppt/sample-presentation.pptx" "$(MSBuildProjectDirectory)\sample-presentation.pptx"' />
+
+</Target>
+
+Invocation:
+
+    msbuild Test.csproj /t:DownloadTestData
+
+No PowerShell is involved.
+
+However, this is more of a Windows-specific trick and I would prefer curl
+if curl is already part of the environment.
+
+
+OPTION C — A tiny custom MSBuild task
+=====================================
+
+The project can invoke a small .NET executable/task which performs the
+download.
+
+This gives maximum control but is probably overengineering for a single PPTX.
+
+
+OPTION D — MSBuild target using an available built-in task
+===========================================================
+
+If the particular MSBuild installation has an appropriate download task
+available, use that.
+
+The important point is still:
+
+    DO NOT attach it to Build.
+
+Use:
+
+    <Target Name="DownloadTestData">
+
+rather than:
+
+    <Target Name="DownloadTestData" BeforeTargets="Build">
+
+
+THE KEY PROPERTY
+================
+
+The project should retain:
+
+    <None Include="sample-presentation.pptx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+That means the actual test has no concept of downloading anything.
+
+The optional target merely populates the file.
+
+
+WHY THIS FITS THE ENTERPRISE MODEL
+==================================
+
+There are now two completely separate operations:
+```
+    Build
+       |
+       +--> deterministic
+       +--> offline
+       +--> no external site
+       +--> no scripting
+       +--> works under restrictive policy
+
+
+    DownloadTestData
+       |
+       +--> explicit
+       +--> visible in build log
+       +--> requires deliberate invocation
+       +--> can be prohibited simply by not invoking it
+
+```
+And importantly:
+```
+    enterprise policy
+          |
+          +--> "No external Internet"
+          |
+          +--> ordinary build still works
+```
+
+There is no hidden:
+```
+    Build
+      -> target
+         -> PowerShell
+            -> Internet
+```
+
+Instead:
+
+>    Developer explicitly says:
+>  ```cmd
+>          msbuild Test.csproj /t:DownloadTestData
+>  ```
+
+That is much closer to your "manual action" requirement.
+
+For your old-style `.csproj`, I would probably choose **Option A if `curl.exe` is reliably available**, because the resulting MSBuild target is almost comically transparent. It also mirrors exactly the command you started with:
+
+    curl -skLO https://samplelib.com/ppt/sample-presentation.pptx
+
+without introducing another scripting runtime or package dependency.
+
+```
+NT 4 / 2000
+    |
+    +-- Resource Kit / Support Tools
+    |
+    +-- lots of useful utilities available separately
+    |
+XP / Server 2003
+    |
+    +-- Support Tools
+    +-- Resource Kit
+    +-- increasingly sophisticated admin/developer utilities
+    |
+Vista / Server 2008
+    |
+    +-- some Resource Kit functionality migrates into the OS
+    |
+later Windows
+    |
+    +-- tooling becomes increasingly segmented
+    +-- SDK / WDK / Visual Studio / Sysinternals / PowerShell etc.
+```
+
+Microsoft repeatedly  observed to spend enormous resources creating and maintaining an entire computing platform
+that isn't particularly relevant to someone writing a WinForms/NPOI/PdfPig enterprise utility.
+
+### Archtecture 
 ```mermaid
 
 flowchart TB
@@ -817,7 +1659,8 @@ PARSER -- "XPath //a:t" --> plaintext
      + `Powerpoint2007SlideshowParserTest.cs`
   * https://github.com/nissl-lab/npoi has some support for PPTX:
      + `TestPOIXMLDocument.cs`
-
+  * https://www.dickinson.edu/downloads/download/520/sample_powerpoint_slides
+  * A demo PPTX file from [samplelib.com](https://samplelib.com/sample-ppt.html)
 ---
 ### TLDR
 [Neuschwanstein Castle](https://en.wikipedia.org/wiki/Neuschwanstein_Castle) in southern Germany is the famous
