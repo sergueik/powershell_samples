@@ -25,30 +25,51 @@ namespace Tests
 		{
 		}
 
-		
 		[Test]
-		public void test1()
-		{
-			var context = new Dictionary<String, POIXMLDocumentPart>();
-			var stringBuilder = new StringBuilder(); 
-			// NOTE: on C#, StringBuilder is a reference type
-			// When passed a StringBuilder arg into a method, a reference to that object is 
-			// passed by value meaning callee can modify its internal contents inside the method without needing 
-			// the ref keyword - explicit is dicouraged
+		public void test1() {
 			var doc = File.OpenRead("sample-simple-2.xls");
 			IWorkbook workbook = WorkbookFactory.Create(doc, false);
-			//
-// Using the common IWorkbook interface or specific workbook class (HSSFWorkbook / XSSFWorkbook)
 			Assert.Greater(workbook.NumberOfSheets, 0, "expect at least one sheet");
-// for (var sheet in workbook.getSheets() ) 
-			// Error CS1002: ; expected ?
-//	var name = sheet.SheetName;
-
-
-//for (int num in workbook.getSheetNumbers() )
-//	var sheet = workbook.GetSheetAt(num);
-			// Error CS1002: ; expected ?
-//				var name = sheet.SheetName;
+			// hey, Embedded statement cannot be a declaration or labeled statement (CS1023) -
+			foreach (var sheet in workbook.getSheets() ) {
+				// System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection.
+				// Parameter name: index 
+				var dataFormatter = new DataFormatter();
+				var name = sheet.SheetName;
+				for (int rowNum = sheet.FirstRowNum; rowNum <= sheet.LastRowNum; rowNum++) {
+					IRow row = sheet.GetRow(rowNum);
+					if (Object.Equals(null, row))
+						continue;
+					for (int cellNum = row.FirstCellNum; cellNum < row.LastCellNum; cellNum++) {
+						if (cellNum < 0)
+							continue;
+						ICell cell = row.GetCell(cellNum);
+						if (Object.Equals(null, cell))
+							continue;
+					
+						CellType cellType = cell.CellType;
+						
+						if (CellType.Blank == cellType)
+							continue;
+						if (CellType.Formula == cellType)
+							continue;
+						string text = null;
+						try {
+							// https://github.com/nissl-lab/npoi/blob/master/main/SS/UserModel/DataFormatter.cs#L1171
+							text = dataFormatter.FormatCellValue(cell, null);
+						// not certain if any exception is thrown						
+						} catch (Exception e) {
+							text = cell.ToString();
+						}
+						Console.Error.WriteLine(String.Format("read sheet: {0} cell: {1} row: {2} col: {3} text: {4}", sheet.SheetName, cell.Address.FormatAsString(), cell.Address.Row + 1, cell.Address.Column + 1, text));
+					}
+				}
+		}
+	}
+		[Test]
+		public void test2() {
+			var doc = File.OpenRead("sample-simple-2.xls");
+			IWorkbook workbook = WorkbookFactory.Create(doc, false);
 			var dataFormatter = new DataFormatter();
 			for (int num = 0; num != workbook.NumberOfSheets; num++) {
 				var sheet = workbook.GetSheetAt(num);
@@ -74,36 +95,23 @@ namespace Tests
 						try {
 							// https://github.com/nissl-lab/npoi/blob/master/main/SS/UserModel/DataFormatter.cs#L1171
 							text = dataFormatter.FormatCellValue(cell, null);
-						} catch (Exception e) {
-							// not cerain if one is thrown
-						
+						// not certain if any exception is thrown						
+						} catch (Exception e) {						
 							text = cell.ToString();
 						}
-						// 	Debug.WriteLine(String.Format("read text: {0}", text));
-						Console.Error.WriteLine(String.Format("read sheet: {0} row: {1} col: {2} text: {3}", sheet.SheetName, rowNum, cellNum, text));
+						Console.Error.WriteLine(String.Format("read sheet: {0} cell: {1} row: {2} col: {3} text: {4}", sheet.SheetName, cell.Address.FormatAsString(), cell.Address.Row + 1, cell.Address.Column + 1, text));
 					}
 				}
 			}
 		}
 	}
 
-	public static class ExcelHelper
-	{
+	public static class ExcelHelper {
 		// Custom iterator methods
-		
-		public static IEnumerable<int> getSheetNumbers(this IWorkbook workbook)
-		{
-			int numberOfSheets = workbook.NumberOfSheets;
-			for (int sheetNumber = 0; sheetNumber <= numberOfSheets; sheetNumber++) {
-				yield return sheetNumber;
-			}
-		}
-
-		
 		public static IEnumerable<ISheet> getSheets(this IWorkbook workbook)
 		{
 			int numberOfSheets = workbook.NumberOfSheets;
-			for (int sheetNumber = 0; sheetNumber <= numberOfSheets; sheetNumber++) {
+			for (int sheetNumber = 0; sheetNumber != numberOfSheets; sheetNumber++) {
 				yield return workbook.GetSheetAt(sheetNumber);
 			}
 		}
