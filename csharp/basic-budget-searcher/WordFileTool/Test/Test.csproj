@@ -92,8 +92,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="POIXMLDocumentTest.cs" />
+    <Compile Include="PowerPointTest.cs" />
+    <Compile Include="ExcelTest.cs" />
     <None Include="sample-presentation.pptx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="sample-simple-2.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

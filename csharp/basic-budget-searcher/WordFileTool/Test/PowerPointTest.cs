@@ -18,11 +18,9 @@ using NUnit.Framework;
 namespace Tests {
 
 	[TestFixture]
-	public class POIXMLDocumentTest
-	{
+	public class PowerPointTest {
 
-		private void traverseDocumentPart(POIXMLDocumentPart part, string region, Dictionary<String, POIXMLDocumentPart> context, StringBuilder stringBuilder)
-		{
+		private void traverseDocumentPart(POIXMLDocumentPart part, string region, Dictionary<String, POIXMLDocumentPart> context, StringBuilder stringBuilder) {
 			// NOTE: deprecated in POI 3.14, scheduled for removal in POI 3.16")]
 			Assert.AreEqual(part.GetPackageRelationship().TargetUri.ToString(), part.GetPackagePart().PartName.Name);
 
