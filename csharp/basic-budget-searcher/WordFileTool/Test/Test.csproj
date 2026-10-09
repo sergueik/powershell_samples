@@ -6,6 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{144AB4E3-58AC-46D2-B6F8-68BADC1E890F}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <TestDataUrl>https://samplelib.com/xls/sample-simple-2.xls</TestDataUrl>
+    <TestDataFile>sample-simple-2.xls</TestDataFile>
+    <DownloadTestData>true</DownloadTestData>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Protractor.Samples</RootNamespace>
     <AssemblyName>Protractor.Samples</AssemblyName>
@@ -112,4 +115,15 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="DownloadTestData"
+        BeforeTargets="Build"
+        Condition="'$(DownloadTestData)' == 'true'">
+
+  <Message Text="Downloading $(TestDataFile) from $(TestDataUrl)"
+           Importance="high" />
+
+  <Exec Command='powershell.exe -noprofile -ExecutionPolicy Bypass -Command "&amp; { Invoke-WebRequest -Uri ''$(TestDataUrl)'' -OutFile ''$(MSBuildProjectDirectory)\$(TestDataFile)'' }"' />
+
+</Target>
 </Project>
+
