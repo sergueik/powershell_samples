@@ -1806,6 +1806,51 @@ or right in the clike as an option
 ```powershell
 Invoke-WebRequest -Uri $Url -OutFile $OutFile -ErrorAction Stop
 ```
+
+this will change the execution to
+
+```powershell
+msbuild.exe .\Test.csproj /t:DownloadTestData /property:DownloadTestData=true
+```
+```
+Microsoft (R) Build Engine version 4.8.9221.0
+[Microsoft .NET Framework, version 4.0.30319.42000]
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 10/9/2026 11:24:15 AM.
+Project "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\
+WordFileTool\Test\Test.csproj" on node 1 (DownloadTestData target(s)).
+DownloadTestData:
+  Downloading sample-simple-2.xls from https://samplelib.com/xls/sample-simple-
+  2.xls
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\developer\serguei  k\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1" -Url "https://samplelib.com/xls/sample-simple-2.xls" -OutputFile   "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\sample-simple-2.xls"
+  Invoke-WebRequest : Object reference not set to an instance of an object.
+  At C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1:8 char:1
+  + Invoke-WebRequest -Uri $Url -OutFile $OutFile
+  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      + CategoryInfo          : NotSpecified: (:) [Invoke-WebRequest], NullReferenceException
+      + FullyQualifiedErrorId : System.NullReferenceException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj(130,3): error MSB3073: The command "powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1" -Url "https:/
+/samplelib.com/xls/sample-simple-2.xls" -OutputFile "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\sample-simple-2.xls"" exited with code 1.
+Done Building Project "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj" (DownloadTestData target(s)) -- FAILED.
+
+
+Build FAILED.
+
+"C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFile
+Tool\Test\Test.csproj" (DownloadTestData target) (1) ->
+(DownloadTestData target) ->
+  C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj(130,3): error MSB3073: The command "powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1" -Url "https://samplelib.com/xls/sample-simple-2.xls" -OutputFile "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\sample-simple-2.xls"" exited with code 1.
+
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:01.27
+
+```
+
+
 ### See Also
 
   * [Sample files library](https://samplelib.com/)

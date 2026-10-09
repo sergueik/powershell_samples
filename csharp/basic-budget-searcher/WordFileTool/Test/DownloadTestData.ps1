@@ -3,4 +3,6 @@ param (
   [string]$Url,
   [string]$OutFile
 )
+$ErrorActionPreference = 'Stop'
+
 Invoke-WebRequest -Uri $Url -OutFile $OutFile
