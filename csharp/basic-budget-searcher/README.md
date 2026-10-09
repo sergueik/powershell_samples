@@ -1727,6 +1727,85 @@ PARSER -- "XPath //a:t" --> plaintext
 ```sh
 curl -skLO https://samplelib.com/xls/sample-simple-2.xls
 ```
+
+`DownloadTestData.ps1`:
+```powershell
+# download script is pure shell around the stock `invoke-webrequest` and created to illustrate bad practices
+param (
+  [string]$Url,
+  [string]$OutFile
+)
+Invoke-WebRequest -Uri $Url -OutFile $OutFile
+
+```
+and invoke Powershell custom user script by invoking Powershell theough Exec task from custom MSbuild Target:
+```xml
+<Target Name="DownloadTestData"
+        BeforeTargets="Build"
+        Condition="'$(DownloadTestData)' == 'true'">
+
+  <PropertyGroup>
+    <TestDataPath>$(MSBuildProjectDirectory)\$(TestDataFile)</TestDataPath>
+    <DownloadScript>$(MSBuildProjectDirectory)\DownloadTestData.ps1</DownloadScript>
+  </PropertyGroup>
+
+  <Message Text="Downloading $(TestDataFile) from $(TestDataUrl)"
+           Importance="high" />
+
+  <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(DownloadScript)&quot; -Url &quot;$(TestDataUrl)&quot; -OutputFile &quot;$(TestDataPath)&quot;" />
+</Target>
+
+```
+```powershell
+$env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
+msbuild.exe  .\Test.csproj /t:DownloadTestData /property:DownloadTestData=true
+```
+
+```text
+Microsoft (R) Build Engine version 4.8.9221.0
+[Microsoft .NET Framework, version 4.0.30319.42000]
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 10/9/2026 9:44:28 AM.
+Project "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj" on node 1 (DownloadTestData target(s)).
+DownloadTestData:
+  Downloading sample-simple-2.xls from https://samplelib.com/xls/sample-simple-2.xls
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1" -Url "https://samplelib.com/xls/sample-simple-2.xls" -OutputFile
+   "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\sample-simple-2.xls"
+  Invoke-WebRequest : Object reference not set to an instance of an object.
+  At C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\Word
+  FileTool\Test\DownloadTestData.ps1:6 char:1
+  + Invoke-WebRequest -Uri $Url -OutFile $OutFile
+  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      + CategoryInfo          : NotSpecified: (:) [Invoke-WebRequest], NullReferenceException
+      + FullyQualifiedErrorId : System.NullReferenceException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+Done Building Project "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj" (DownloadTestData target(s)).
+
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+```
+the undertlying defect is easy to overlook: parameter mismatch (`OutFile` vs. `OutputFile` ) which is highest risk when inroducing multiple inter dependent files .
+
+The stock cmdlet `nvoke-WebRequest` apparentyl receives an invalid output path and apparently dereferences an internal null object 
+instead of handling that input cleanly.
+
+the propagation of the error is yet another, smaller mistake. to fix it one simply adds the
+```powershell
+$ErrorActionPreference = 'Stop'
+```
+anywhere before the line
+```powershell
+Invoke-WebRequest -Uri $Url -OutFile $OutFile
+```
+or right in the clike as an option
+
+```powershell
+Invoke-WebRequest -Uri $Url -OutFile $OutFile -ErrorAction Stop
+```
 ### See Also
 
   * [Sample files library](https://samplelib.com/)
