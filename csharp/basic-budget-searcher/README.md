@@ -1137,6 +1137,98 @@ this.AutoScaleMode = AutoScaleMode.None;
 ![IDE dimension issue](screenshots/capture-sharpdevelop-unscaled.png)
  
 
+### Design Guidelines
+
+“Tell, Don’t Ask” correctly.
+
+It is a design principle closely associated with object-oriented design, and your Excel example is actually a very good illustration.
+
+The basic idea is:
+
+*Tell an object what you want it to do, rather than asking it for its internal data and then making the decision yourself*
+
+The "Ask" version
+
+Suppose your helper gives the caller a giant workbook object:
+```
+var workbook = ExcelHelper.Load(file);
+
+foreach (var sheet in workbook.Sheets)
+{
+    foreach (var row in sheet.Rows)
+    {
+        foreach (var cell in row.Cells)
+        {
+            if (cell.Text.Contains(searchText))
+            {
+                // caller figures everything out
+            }
+        }
+    }
+}
+```
+The caller is asking the domain object for all its internals and then taking responsibility for the domain operation.
+
+That's the smell you were describing.
+
+The "Tell" version
+
+Instead:
+```
+var matches = ExcelHelper.Find(file, searchText);
+```
+and the returned objects already carry the meaningful result:
+```
+ExcelMatch
+    File
+    SheetName
+    CellAddress
+    Text
+```
+You're telling the Excel component:
+
+*Find the matches*
+
+You aren't telling it:
+
+*Give me your entire internal structure and I'll figure out what a match means*
+
+Why this connects directly to your "anemic domain model"
+
+The two ideas overlap, but they're not identical.
+
+An anemic domain model is roughly:
+
+>  * Objects = data containers
+>  * Business behavior = somewhere else
+ 
+the oject has no real behavior just data transfer
+
+Tell Don't Ask says:
+
+> Behavior that belongs to the object/domain
+  should preferably be performed by that object/domain,
+  rather than extracted and performed externally
+
+proposed wrong architecture:
+```
+Excel helper
+    ↓
+"Here is the whole workbook"
+    ↓
+caller
+    ↓
+figures out searching/filtering/location
+```
+suffer from both problems:
+
+__Anemic model__: the object mostly carries data while useful domain behavior lives elsewhere.
+__Tell Don't Ask__ (often abbreviated __TDA__), violation: — the caller extracts the data and makes decisions that could belong to the Excel/search abstraction.
+
+And there's an even more famous OO principle lurking nearby:
+
+> __Law of Demeter__ — "only talk to your immediate friends."
+
 
 ### Printing Power Point Slides
 
@@ -1631,8 +1723,13 @@ XmlDocument -- "DrawingML namespace" -->PARSER
 PARSER -- "XPath //a:t" --> plaintext
 
 ```
+
+```sh
+curl -skLO https://samplelib.com/xls/sample-simple-2.xls
+```
 ### See Also
 
+  * [Sample files library](https://samplelib.com/)
   * https://github.com/hanzhaoxin/ExcelReport - currently on .netstandard, but commit [f3988](https://github.com/hanzhaoxin/ExcelReport/tree/f3988ec14003d2a167552144f458d2a774bcd4bd/ExcelReport) - is .net 4.0 version and see also [project documentation](http://www.cnblogs.com/hanzhaoxin/tag/ExcelReport)
   * [nuget npoi 2.8.1](https://www.nuget.org/packages/npoi/#supportedframeworks-body-tab) supports .Net __4.7.2__. For [Npoi.Extend](https://www.nuget.org/packages/NPOI.Extend/1.0.4) one has to use much older version __1.0.4__ - latest is __1.1.3__ but only list __netstandard 2.0__ which is basically the same but incompatible
 

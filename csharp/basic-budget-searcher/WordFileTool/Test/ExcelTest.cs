@@ -13,27 +13,21 @@ using NPOI.SS.Util;
 
 using NUnit.Framework;
 
-// based on: https://github.com/nissl-lab/npoi/blob/master/testcases/ooxml/TestPOIXMLDocument.cs
-namespace Tests
-{
+namespace Tests {
 
 	[TestFixture]
-	public class ExcelTest
-	{
-
-		private void getText(Stream stream, string region, StringBuilder stringBuilder)
-		{
-		}
+	public class ExcelTest {
+		private readonly static string filename  = "sample-simple-2.xls";
 
 		[Test]
 		public void test1() {
-			var doc = File.OpenRead("sample-simple-2.xls");
+			var doc = File.OpenRead(filename);
 			IWorkbook workbook = WorkbookFactory.Create(doc, false);
 			Assert.Greater(workbook.NumberOfSheets, 0, "expect at least one sheet");
 			// hey, Embedded statement cannot be a declaration or labeled statement (CS1023) -
 			foreach (var sheet in workbook.getSheets() ) {
 				// System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection.
-				// Parameter name: index 
+				// Parameter name: index
 				var dataFormatter = new DataFormatter();
 				var name = sheet.SheetName;
 				for (int rowNum = sheet.FirstRowNum; rowNum <= sheet.LastRowNum; rowNum++) {
@@ -46,9 +40,9 @@ namespace Tests
 						ICell cell = row.GetCell(cellNum);
 						if (Object.Equals(null, cell))
 							continue;
-					
+
 						CellType cellType = cell.CellType;
-						
+
 						if (CellType.Blank == cellType)
 							continue;
 						if (CellType.Formula == cellType)
@@ -57,7 +51,7 @@ namespace Tests
 						try {
 							// https://github.com/nissl-lab/npoi/blob/master/main/SS/UserModel/DataFormatter.cs#L1171
 							text = dataFormatter.FormatCellValue(cell, null);
-						// not certain if any exception is thrown						
+						// not certain if any exception is thrown
 						} catch (Exception e) {
 							text = cell.ToString();
 						}
@@ -67,8 +61,16 @@ namespace Tests
 		}
 	}
 		[Test]
+		public void test3() {
+			var text =  "test1";
+		var	excelSearch = new ExcelSearch(filename, text);
+		var results  = excelSearch.findText();
+			Assert.Greater(results.Count, 0, "expect at least one result");
+		}
+
+		[Test]
 		public void test2() {
-			var doc = File.OpenRead("sample-simple-2.xls");
+			var doc = File.OpenRead(filename);
 			IWorkbook workbook = WorkbookFactory.Create(doc, false);
 			var dataFormatter = new DataFormatter();
 			for (int num = 0; num != workbook.NumberOfSheets; num++) {
@@ -84,7 +86,7 @@ namespace Tests
 						ICell cell = row.GetCell(cellNum);
 						if (Object.Equals(null, cell))
 							continue;
-					
+
 						CellType cellType = cell.CellType;
 
 						if (CellType.Blank == cellType)
@@ -95,8 +97,8 @@ namespace Tests
 						try {
 							// https://github.com/nissl-lab/npoi/blob/master/main/SS/UserModel/DataFormatter.cs#L1171
 							text = dataFormatter.FormatCellValue(cell, null);
-						// not certain if any exception is thrown						
-						} catch (Exception e) {						
+						// not certain if any exception is thrown
+						} catch (Exception e) {
 							text = cell.ToString();
 						}
 						Console.Error.WriteLine(String.Format("read sheet: {0} cell: {1} row: {2} col: {3} text: {4}", sheet.SheetName, cell.Address.FormatAsString(), cell.Address.Row + 1, cell.Address.Column + 1, text));
@@ -104,6 +106,82 @@ namespace Tests
 				}
 			}
 		}
+	}
+	public class ExcelSearch {
+		public ExcelSearch (string filename, string text) {
+			if (String.IsNullOrEmpty(filename)) { throw new ArgumentException("filename cannot be blank");
+			this.filename   = filename;
+			if (String.IsNullOrEmpty(text)) { throw new ArgumentException("text cannot be blank");
+				this.text = text;
+		}
+		private string filename;
+		private string text;
+		public string Filename {
+			get { return filename; }
+			set { filename = value; }
+		}
+		public string Text {
+			get { return text; }
+			set { text = value; }
+		}
+
+		public List<ExcelResult> findText() {
+			var doc = File.OpenRead(filename);
+			var dataFormatter = new DataFormatter();
+			var result = new List<ExcelResult>();
+			IWorkbook workbook = WorkbookFactory.Create(doc, false);
+			foreach (var sheet in workbook.getSheets() ) {
+				// System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection.
+				// Parameter name: index
+				var name = sheet.SheetName;
+				for (int rowNum = sheet.FirstRowNum; rowNum <= sheet.LastRowNum; rowNum++) {
+					IRow row = sheet.GetRow(rowNum);
+					if (Object.Equals(null, row))
+						continue;
+					for (int cellNum = row.FirstCellNum; cellNum < row.LastCellNum; cellNum++) {
+						if (cellNum < 0)
+							continue;
+						ICell cell = row.GetCell(cellNum);
+						if (Object.Equals(null, cell))
+							continue;
+
+						CellType cellType = cell.CellType;
+
+						if (CellType.Blank == cellType)
+							continue;
+						if (CellType.Formula == cellType)
+							continue;
+						string cellText = null;
+						try {
+							// https://github.com/nissl-lab/npoi/blob/master/main/SS/UserModel/DataFormatter.cs#L1171
+							cellText = dataFormatter.FormatCellValue(cell, null);
+							// not certain if any exception is thrown
+						} catch (Exception e) {
+							cellText = cell.ToString();
+						}
+						Console.Error.WriteLine(String.Format("read sheet: {0} cell: {1} row: {2} col: {3} text: {4}", sheet.SheetName, cell.Address.FormatAsString(), cell.Address.Row + 1, cell.Address.Column + 1, cellText));
+						if (cellText.Contains(text)) {
+							result.Add(new ExcelResult { SheetName = sheet.SheetName, CellAddress= cell.Address.FormatAsString(), Text=cellText });
+						}
+			           }
+					}
+				}
+			doc.Close();
+			return result;
+			/*
+			return new List<ExcelResult>{
+				new ExcelResult { SheetName=null, CellAddress=null, Text=null}
+			};
+			*/
+		}
+
+	}
+
+	public struct ExcelResult {
+		public string SheetName;
+		public string CellAddress;
+		public string Text;
+		public string Location { get { return String.Format("{0}!{1}",  SheetName , CellAddress);  }}
 	}
 
 	public static class ExcelHelper {
