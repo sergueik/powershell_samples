@@ -8,6 +8,12 @@ using System.Linq;
 // public class ${caller_class} {
 namespace Utils {
 	public class Renamer {
+		private int count = 0 ;
+		public int Count {
+			get { return count;  }
+			private set { } // cannot supply no body
+		}
+		
 		private string oldNamePattern;
 		public string OldNamePattern {
 			get { return oldNamePattern; }
@@ -98,6 +104,7 @@ namespace Utils {
 					continue;
 				}
 				File.Move(file, newFilePath);
+				count ++;
 			}
 		}
 	}
