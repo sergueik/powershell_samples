@@ -32,8 +32,20 @@ namespace Tests {
 	            StringAssert.Contains(searchText, result.Text, "Every result should contain the search string");
 			var duplicates = results.GroupBy(result => result.Location).Where(group => group.Count() > 1);
 			Assert.IsEmpty(duplicates, "Result locations should be unique");
+			// NOTE: Prefer the set-operation version that expresses the invariant, avoid the nested loop
+			// version tied to the mechanics of checking it
+			/*
+				for (int i = 0; i < results.Count; i++){
+				    for (int j = i + 1; j < results.Count; j++) {
+				        Assert.IsFalse(
+				            results[i].Location == results[j].Location,
+				            "Duplicate result location: " + results[i].Location);
+				    }
+				}
+			 */
 		}
 	}
+
 	public class ExcelSearch {
 		public ExcelSearch(string filename, string text ){
 			if (String.IsNullOrWhiteSpace(filename)) // better than IsNullOrEmpty
