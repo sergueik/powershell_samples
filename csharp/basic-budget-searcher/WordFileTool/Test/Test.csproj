@@ -6,6 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{144AB4E3-58AC-46D2-B6F8-68BADC1E890F}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <TestDataUrl>https://samplelib.com/xls/sample-simple-2.xls</TestDataUrl>
+    <TestDataFile>sample-simple-2.xls</TestDataFile>
+    <DownloadTestData>false</DownloadTestData>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Protractor.Samples</RootNamespace>
     <AssemblyName>Protractor.Samples</AssemblyName>
@@ -92,8 +95,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="POIXMLDocumentTest.cs" />
+    <Compile Include="PowerPointTest.cs" />
+    <Compile Include="ExcelTest.cs" />
     <None Include="sample-presentation.pptx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="sample-simple-2.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -108,4 +115,19 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+<Target Name="DownloadTestData"
+        BeforeTargets="Build"
+        Condition="'$(DownloadTestData)' == 'true'">
+
+  <PropertyGroup>
+    <TestDataPath>$(MSBuildProjectDirectory)\$(TestDataFile)</TestDataPath>
+    <DownloadScript>$(MSBuildProjectDirectory)\DownloadTestData.ps1</DownloadScript>
+  </PropertyGroup>
+
+  <Message Text="Downloading $(TestDataFile) from $(TestDataUrl)"
+           Importance="high" />
+
+  <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(DownloadScript)&quot; -Url &quot;$(TestDataUrl)&quot; -OutFile &quot;$(TestDataPath)&quot;" />
+</Target>
 </Project>
+

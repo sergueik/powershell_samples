@@ -1321,6 +1321,98 @@ this.AutoScaleMode = AutoScaleMode.None;
 ![IDE dimension issue](screenshots/capture-sharpdevelop-unscaled.png)
  
 
+### Design Guidelines
+
+“Tell, Don’t Ask” correctly.
+
+It is a design principle closely associated with object-oriented design, and your Excel example is actually a very good illustration.
+
+The basic idea is:
+
+*Tell an object what you want it to do, rather than asking it for its internal data and then making the decision yourself*
+
+The "Ask" version
+
+Suppose your helper gives the caller a giant workbook object:
+```
+var workbook = ExcelHelper.Load(file);
+
+foreach (var sheet in workbook.Sheets)
+{
+    foreach (var row in sheet.Rows)
+    {
+        foreach (var cell in row.Cells)
+        {
+            if (cell.Text.Contains(searchText))
+            {
+                // caller figures everything out
+            }
+        }
+    }
+}
+```
+The caller is asking the domain object for all its internals and then taking responsibility for the domain operation.
+
+That's the smell you were describing.
+
+The "Tell" version
+
+Instead:
+```
+var matches = ExcelHelper.Find(file, searchText);
+```
+and the returned objects already carry the meaningful result:
+```
+ExcelMatch
+    File
+    SheetName
+    CellAddress
+    Text
+```
+You're telling the Excel component:
+
+*Find the matches*
+
+You aren't telling it:
+
+*Give me your entire internal structure and I'll figure out what a match means*
+
+Why this connects directly to your "anemic domain model"
+
+The two ideas overlap, but they're not identical.
+
+An anemic domain model is roughly:
+
+>  * Objects = data containers
+>  * Business behavior = somewhere else
+ 
+the oject has no real behavior just data transfer
+
+Tell Don't Ask says:
+
+> Behavior that belongs to the object/domain
+  should preferably be performed by that object/domain,
+  rather than extracted and performed externally
+
+proposed wrong architecture:
+```
+Excel helper
+    ↓
+"Here is the whole workbook"
+    ↓
+caller
+    ↓
+figures out searching/filtering/location
+```
+suffer from both problems:
+
+__Anemic model__: the object mostly carries data while useful domain behavior lives elsewhere.
+__Tell Don't Ask__ (often abbreviated __TDA__), violation: — the caller extracts the data and makes decisions that could belong to the Excel/search abstraction.
+
+And there's an even more famous OO principle lurking nearby:
+
+> __Law of Demeter__ — "only talk to your immediate friends."
+
 
 ### Printing Power Point Slides
 
@@ -1815,8 +1907,137 @@ XmlDocument -- "DrawingML namespace" -->PARSER
 PARSER -- "XPath //a:t" --> plaintext
 
 ```
+
+```sh
+curl -skLO https://samplelib.com/xls/sample-simple-2.xls
+```
+
+`DownloadTestData.ps1`:
+```powershell
+# download script is pure shell around the stock `invoke-webrequest` and created to illustrate bad practices
+param (
+  [string]$Url,
+  [string]$OutFile
+)
+Invoke-WebRequest -Uri $Url -OutFile $OutFile
+
+```
+and invoke Powershell custom user script by invoking Powershell theough Exec task from custom MSbuild Target:
+```xml
+<Target Name="DownloadTestData"
+        BeforeTargets="Build"
+        Condition="'$(DownloadTestData)' == 'true'">
+
+  <PropertyGroup>
+    <TestDataPath>$(MSBuildProjectDirectory)\$(TestDataFile)</TestDataPath>
+    <DownloadScript>$(MSBuildProjectDirectory)\DownloadTestData.ps1</DownloadScript>
+  </PropertyGroup>
+
+  <Message Text="Downloading $(TestDataFile) from $(TestDataUrl)"
+           Importance="high" />
+
+  <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(DownloadScript)&quot; -Url &quot;$(TestDataUrl)&quot; -OutputFile &quot;$(TestDataPath)&quot;" />
+</Target>
+
+```
+```powershell
+$env:PATH="${env:PATH};C:\Windows\Microsoft.NET\Framework\v4.0.30319"
+msbuild.exe  .\Test.csproj /t:DownloadTestData /property:DownloadTestData=true
+```
+
+```text
+Microsoft (R) Build Engine version 4.8.9221.0
+[Microsoft .NET Framework, version 4.0.30319.42000]
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 10/9/2026 9:44:28 AM.
+Project "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj" on node 1 (DownloadTestData target(s)).
+DownloadTestData:
+  Downloading sample-simple-2.xls from https://samplelib.com/xls/sample-simple-2.xls
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1" -Url "https://samplelib.com/xls/sample-simple-2.xls" -OutputFile
+   "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\sample-simple-2.xls"
+  Invoke-WebRequest : Object reference not set to an instance of an object.
+  At C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\Word
+  FileTool\Test\DownloadTestData.ps1:6 char:1
+  + Invoke-WebRequest -Uri $Url -OutFile $OutFile
+  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      + CategoryInfo          : NotSpecified: (:) [Invoke-WebRequest], NullReferenceException
+      + FullyQualifiedErrorId : System.NullReferenceException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+Done Building Project "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj" (DownloadTestData target(s)).
+
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+```
+the undertlying defect is easy to overlook: parameter mismatch (`OutFile` vs. `OutputFile` ) which is highest risk when inroducing multiple inter dependent files .
+
+The stock cmdlet `nvoke-WebRequest` apparentyl receives an invalid output path and apparently dereferences an internal null object 
+instead of handling that input cleanly.
+
+the propagation of the error is yet another, smaller mistake. to fix it one simply adds the
+```powershell
+$ErrorActionPreference = 'Stop'
+```
+anywhere before the line
+```powershell
+Invoke-WebRequest -Uri $Url -OutFile $OutFile
+```
+or right in the clike as an option
+
+```powershell
+Invoke-WebRequest -Uri $Url -OutFile $OutFile -ErrorAction Stop
+```
+
+this will change the execution to
+
+```powershell
+msbuild.exe .\Test.csproj /t:DownloadTestData /property:DownloadTestData=true
+```
+```
+Microsoft (R) Build Engine version 4.8.9221.0
+[Microsoft .NET Framework, version 4.0.30319.42000]
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 10/9/2026 11:24:15 AM.
+Project "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\
+WordFileTool\Test\Test.csproj" on node 1 (DownloadTestData target(s)).
+DownloadTestData:
+  Downloading sample-simple-2.xls from https://samplelib.com/xls/sample-simple-
+  2.xls
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\developer\serguei  k\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1" -Url "https://samplelib.com/xls/sample-simple-2.xls" -OutputFile   "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\sample-simple-2.xls"
+  Invoke-WebRequest : Object reference not set to an instance of an object.
+  At C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1:8 char:1
+  + Invoke-WebRequest -Uri $Url -OutFile $OutFile
+  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      + CategoryInfo          : NotSpecified: (:) [Invoke-WebRequest], NullReferenceException
+      + FullyQualifiedErrorId : System.NullReferenceException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+
+C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj(130,3): error MSB3073: The command "powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1" -Url "https:/
+/samplelib.com/xls/sample-simple-2.xls" -OutputFile "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\sample-simple-2.xls"" exited with code 1.
+Done Building Project "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj" (DownloadTestData target(s)) -- FAILED.
+
+
+Build FAILED.
+
+"C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFile
+Tool\Test\Test.csproj" (DownloadTestData target) (1) ->
+(DownloadTestData target) ->
+  C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\Test.csproj(130,3): error MSB3073: The command "powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\DownloadTestData.ps1" -Url "https://samplelib.com/xls/sample-simple-2.xls" -OutputFile "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test\sample-simple-2.xls"" exited with code 1.
+
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:01.27
+
+```
+
+
 ### See Also
 
+  * [Sample files library](https://samplelib.com/)
   * https://github.com/hanzhaoxin/ExcelReport - currently on .netstandard, but commit [f3988](https://github.com/hanzhaoxin/ExcelReport/tree/f3988ec14003d2a167552144f458d2a774bcd4bd/ExcelReport) - is .net 4.0 version and see also [project documentation](http://www.cnblogs.com/hanzhaoxin/tag/ExcelReport)
   * [nuget npoi 2.8.1](https://www.nuget.org/packages/npoi/#supportedframeworks-body-tab) supports .Net __4.7.2__. For [Npoi.Extend](https://www.nuget.org/packages/NPOI.Extend/1.0.4) one has to use much older version __1.0.4__ - latest is __1.1.3__ but only list __netstandard 2.0__ which is basically the same but incompatible
 
