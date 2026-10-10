@@ -20,100 +20,24 @@ namespace Tests {
 		private readonly static string filename  = "sample-simple-2.xls";
 
 		[Test]
-		public void test1() {
-			var doc = File.OpenRead(filename);
-			IWorkbook workbook = WorkbookFactory.Create(doc, false);
-			Assert.Greater(workbook.NumberOfSheets, 0, "expect at least one sheet");
-			// hey, Embedded statement cannot be a declaration or labeled statement (CS1023) -
-			foreach (var sheet in workbook.getSheets() ) {
-				// System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection.
-				// Parameter name: index
-				var dataFormatter = new DataFormatter();
-				var name = sheet.SheetName;
-				for (int rowNum = sheet.FirstRowNum; rowNum <= sheet.LastRowNum; rowNum++) {
-					IRow row = sheet.GetRow(rowNum);
-					if (Object.Equals(null, row))
-						continue;
-					for (int cellNum = row.FirstCellNum; cellNum < row.LastCellNum; cellNum++) {
-						if (cellNum < 0)
-							continue;
-						ICell cell = row.GetCell(cellNum);
-						if (Object.Equals(null, cell))
-							continue;
-
-						CellType cellType = cell.CellType;
-
-						if (CellType.Blank == cellType)
-							continue;
-						if (CellType.Formula == cellType)
-							continue;
-						string text = null;
-						try {
-							// https://github.com/nissl-lab/npoi/blob/master/main/SS/UserModel/DataFormatter.cs#L1171
-							text = dataFormatter.FormatCellValue(cell, null);
-						// not certain if any exception is thrown
-						} catch (Exception e) {
-							text = cell.ToString();
-						}
-						Console.Error.WriteLine(String.Format("read sheet: {0} cell: {1} row: {2} col: {3} text: {4}", sheet.SheetName, cell.Address.FormatAsString(), cell.Address.Row + 1, cell.Address.Column + 1, text));
-					}
-				}
-		}
-	}
-		[Test]
-		public void test3() {
-			var text =  "test1";
-		var	excelSearch = new ExcelSearch(filename, text);
-		var results = excelSearch.findText();
+		public void test() {
+			var searchText =  "test1";
+			var	excelSearch = new ExcelSearch(filename, searchText);
+			var results = excelSearch.findText();
 			Assert.Greater(results.Count, 0, "expect at least one result");
-		}
-
-		[Test]
-		public void test2() {
-			var doc = File.OpenRead(filename);
-			IWorkbook workbook = WorkbookFactory.Create(doc, false);
-			var dataFormatter = new DataFormatter();
-			for (int num = 0; num != workbook.NumberOfSheets; num++) {
-				var sheet = workbook.GetSheetAt(num);
-				var name = sheet.SheetName;
-				for (int rowNum = sheet.FirstRowNum; rowNum <= sheet.LastRowNum; rowNum++) {
-					IRow row = sheet.GetRow(rowNum);
-					if (Object.Equals(null, row))
-						continue;
-					for (int cellNum = row.FirstCellNum; cellNum < row.LastCellNum; cellNum++) {
-						if (cellNum < 0)
-							continue;
-						ICell cell = row.GetCell(cellNum);
-						if (Object.Equals(null, cell))
-							continue;
-
-						CellType cellType = cell.CellType;
-
-						if (CellType.Blank == cellType)
-							continue;
-						if (CellType.Formula == cellType)
-							continue;
-						string text = null;
-						try {
-							// https://github.com/nissl-lab/npoi/blob/master/main/SS/UserModel/DataFormatter.cs#L1171
-							text = dataFormatter.FormatCellValue(cell, null);
-						// not certain if any exception is thrown
-						} catch (Exception e) {
-							text = cell.ToString();
-						}
-						Console.Error.WriteLine(String.Format("read sheet: {0} cell: {1} row: {2} col: {3} text: {4}", sheet.SheetName, cell.Address.FormatAsString(), cell.Address.Row + 1, cell.Address.Column + 1, text));
-					}
-				}
-			}
+			Predicate<ExcelResult> match  = ( ExcelResult result) => result.Text.Contains(searchText);
+			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain search string");
+			// old style:
+			foreach (ExcelResult result in results)
+	            StringAssert.Contains(searchText, result.Text, "Every result should contain the search string");
+			var duplicates = results.GroupBy(result => result.Location).Where(group => group.Count() > 1);
+			Assert.IsEmpty(duplicates, "Result locations should be unique");
 		}
 	}
-	public class ExcelSearch
-	{
-		public ExcelSearch(string filename, string text)
-		{
+	public class ExcelSearch {
+		public ExcelSearch(string filename, string text ){
 			if (String.IsNullOrWhiteSpace(filename)) // better than IsNullOrEmpty
-        throw new ArgumentException(
-					"Filename cannot be blank.", "filename");
+        		throw new ArgumentException( "Filename cannot be blank.", "filename");
 			this.filename = filename;
 			if (String.IsNullOrWhiteSpace(text))
 				throw new ArgumentException("text cannot be blank", "text");
@@ -131,8 +55,7 @@ namespace Tests {
 			set { text = value; }
 		}
 
-		public List<ExcelResult> findText()
-		{
+		public List<ExcelResult> findText() {
 			var dataFormatter = new DataFormatter();
 			var result = new List<ExcelResult>();
 			using (var doc = File.OpenRead(filename)) {
@@ -179,24 +102,19 @@ namespace Tests {
 				}
 			}
 			return result;
-			/*
-			return new List<ExcelResult>{
-				new ExcelResult { SheetName=null, CellAddress=null, Text=null}
-			};
-			*/
 		}
-
 	}
+
 	public struct ExcelResult {
 		public string SheetName;
 		public string CellAddress;
 		public string Text;
 		public string Location { get { return String.Format("{0}!{1}",  SheetName , CellAddress);  }}
 	}
+
 	public static class ExcelHelper {
 		// Custom iterator methods
-		public static IEnumerable<ISheet> getSheets(this IWorkbook workbook)
-		{
+		public static IEnumerable<ISheet> getSheets(this IWorkbook workbook) {
 			int numberOfSheets = workbook.NumberOfSheets;
 			for (int sheetNumber = 0; sheetNumber != numberOfSheets; sheetNumber++) {
 				yield return workbook.GetSheetAt(sheetNumber);

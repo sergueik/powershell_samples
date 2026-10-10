@@ -127,7 +127,7 @@
   <Message Text="Downloading $(TestDataFile) from $(TestDataUrl)"
            Importance="high" />
 
-  <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(DownloadScript)&quot; -Url &quot;$(TestDataUrl)&quot; -OutputFile &quot;$(TestDataPath)&quot;" />
+  <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(DownloadScript)&quot; -Url &quot;$(TestDataUrl)&quot; -OutFile &quot;$(TestDataPath)&quot;" />
 </Target>
 </Project>
 
