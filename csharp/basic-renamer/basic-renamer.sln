@@ -4,8 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # SharpDevelop 5.1
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "Program\Program.csproj", "{33242A55-DC4A-4DE5-B77F-85B724E2F8E5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{0A243A71-7518-442D-B63A-1888982DDEE6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{5CFDE072-A714-43D2-9AAA-8E1DC0F611C7}"

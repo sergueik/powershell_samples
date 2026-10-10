@@ -130,17 +130,18 @@ namespace Utils {
 			return dictionary;
 		}
 		public void Rename() {
-			Debug.WriteLine(String.Format("GetFiles: {0} {1}", this.directoryName, String.Format("*.{0}", this.extension)));
+			Console.Error.WriteLine(String.Format("GetFiles: {0} {1}", this.directoryName, String.Format("*.{0}", this.extension)));
 			string[] files = { };
 			try {
 				files = Directory.GetFiles(this.directoryName, String.Format("*.{0}", this.extension));
 			} catch (ArgumentException e) {
-				Debug.WriteLine(String.Format("Exception: {0}", e.ToString()));
+				Console.Error.WriteLine(String.Format("Exception: {0}", e.ToString()));
 			}
 			foreach (var file in files) {
 				var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
 				var extension = Path.GetExtension(file);
 				var fileDirectoryName = Path.GetDirectoryName(file);
+        fileNameWithoutExtension = fileNameWithoutExtension.Replace("_", " " );
 				var newName = GetNewName(fileNameWithoutExtension, this.oldNamePattern , this.newNamePattern);
 				if (String.IsNullOrEmpty(newName)) {
 					Debug.WriteLine(String.Format("Not renaming {0}", file));
@@ -148,7 +149,7 @@ namespace Utils {
 				}
 				var newFilePath = Path.Combine(directoryName, newName + extension);
 
-				Debug.WriteLine(String.Format("filename: \"{0}\" extension: \"{1}\" directory: \"{2}\" new name: \"{3}\" new file path: \"{4}\"", fileNameWithoutExtension, extension, fileDirectoryName, newName, newFilePath));
+				Console.Error.WriteLine(String.Format("filename: \"{0}\" extension: \"{1}\" directory: \"{2}\" new name: \"{3}\" new file path: \"{4}\"", fileNameWithoutExtension, extension, fileDirectoryName, newName, newFilePath));
 
 				if (!File.Exists(file)) {
 					Debug.WriteLine(String.Format("Source file missing"));
@@ -174,7 +175,7 @@ if ($probe_flag) {
   $run_flag = $false
   $masks = @(  
     '^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$' , 
-    '^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$'
+    '^\((?<id>[0-9]+)\) \[(?<artist>[^]]+)\] (?<title>.+)$'
   )
   $hits = @{}
   get-childitem -path $source_dir -file | 
