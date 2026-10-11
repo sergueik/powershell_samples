@@ -20,8 +20,8 @@
 
 param (
 	[string] $old = '^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$',
-	# '(01) [Count Basie] Seventh Avenue Express' 
-	# "^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$" 
+	# '(01) [Count Basie] Seventh Avenue Express'
+	# "^\((?<id>[0-9]+)\) \[(?<artist>[^-]+)\] (?<title>.+)$"
 	[string] $new = '<id> - <title> - <artist>',
 	[string] $extension = 'flac',
   [switch] $probe,
@@ -55,11 +55,12 @@ if ($args.Count -gt 1 ) {
   }
   $output_dir = if ($args.Count -gt 3) { $args[2] } else { '.' }
 } else {
-  # warn	
+  # warn
   write-error ('invalid arguments: need at least 2' )
   exit 1
 }
 #>
+
 $caller_class = 'Renamer'
 Add-Type -TypeDefinition @"
 
@@ -101,7 +102,7 @@ namespace Utils {
 				Debug.WriteLine("no match \"{0}\" for \"{1}\"", oldName, oldNamePattern);
 				return null;
 			}
-			
+
 			var result = resultRegex.Replace(newNamePattern, (Match match) => {
 				string key = match.Groups[1].Value;
 				string value;
@@ -141,8 +142,8 @@ namespace Utils {
 				var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
 				var extension = Path.GetExtension(file);
 				var fileDirectoryName = Path.GetDirectoryName(file);
-        fileNameWithoutExtension = fileNameWithoutExtension.Replace("_", " " );
-				var newName = GetNewName(fileNameWithoutExtension, this.oldNamePattern , this.newNamePattern);
+        var fileNameWithoutExtensionUnderscoresReplaced = fileNameWithoutExtension.Replace("_", " " );
+				var newName = GetNewName(fileNameWithoutExtensionUnderscoresReplaced, this.oldNamePattern , this.newNamePattern);
 				if (String.IsNullOrEmpty(newName)) {
 					Debug.WriteLine(String.Format("Not renaming {0}", file));
 					continue;
@@ -165,32 +166,33 @@ namespace Utils {
 		}
 	}
 }
-"@ -ReferencedAssemblies 'System.Windows.Forms.dll'
+"@
 
 if ($source_dir -eq $null ) {
   $source_dir = (resolve-path -path '.').path
 }
-write-host ('Examine {0}' -f $source_dir ) 
+write-host ('Examine directory "{0}"' -f $source_dir )
 if ($probe_flag) {
   $run_flag = $false
-  $masks = @(  
-    '^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$' , 
+  $masks = @(
+    '^(?<id>[0-9]+)\. (?<artist>[^-]+) - (?<title>.+)$' ,
     '^\((?<id>[0-9]+)\) \[(?<artist>[^]]+)\] (?<title>.+)$'
   )
   $hits = @{}
-  get-childitem -path $source_dir -file | 
+  get-childitem -path $source_dir -file |
     foreach-object {
-    $filename = $_.basename 
-    # TODO: write-verbose if -vebose flag gets through 
-    write-verbose ('testing file: {0}' -f $filename) 
+    $filename = $_.basename
+    # TODO: write-verbose if -vebose flag gets through
+    write-verbose ('examine file: {0}' -f $filename)
     @(0..($masks.Count -1) ) |
-    foreach-object { 
+    foreach-object {
       $id = $_
       $mask = $masks[$id]
       write-verbose ('testing mask: {0}' -f $mask)
-      if ($filename -match $mask) {
+      $filename_underscores_replaced = $filename -replace '_' , ' '
+      if ($filename_underscores_replaced -match $mask) {
         write-verbose ("Matched mask # {0}: {1}" -f $id, $filename)
-        
+
         $custom_object = [PSCustomObject]@{
           File    = $fileName
           Mask    = $mask
@@ -205,20 +207,20 @@ if ($probe_flag) {
         $hits[$id] +=  $custom_object
       }
       #        break
-    } 
+    }
   }
   switch ($hits.count) {
     0 {
-      write-host 'No matching patterns'      
+      write-host 'No matching patterns'
     }
     1 {
-      # overwrite the command line argument 
+      # overwrite the command line argument
       $old = $masks[$hits.Keys[0]]
       write-host ('Matching pattern: "{0}"' -f $old )
       $run_flag = $true
-      # proceed with replace   
-    } 
-    default { 
+      # proceed with replace
+    }
+    default {
       write-host ('Ambiguous: {0} matching patterns' -f $hits.Count)
 
         $hits.Keys |foreach-object {
@@ -226,12 +228,26 @@ if ($probe_flag) {
          write-host ('{0}: "{1}"' -f $id, $masks[$id])
       }
     }
-  }   
-} 
+  }
+}
+<#
+add-Type -TypeDefinition @'
+using System;
 
+namespace Utils {
+	public class dummy {
+		public void Rename() {
+			Console.Error.WriteLine("test");
+    }
+  }
+}
+'@
+$o = new-object Utils.Dummy
+$o.Rename()
+#>
 if ($run_flag ){
   $o = new-object Utils.Renamer
-  
+
   $o.Extension = $extension
   $o.DirectoryName = $source_dir
   $o.NewNamePattern = $new

@@ -37,11 +37,30 @@ Name
 (09)_[Jack_McDuff]_Basie_Instinct_(Take_Two).flac
 ```
 ```powershell
+@(
+  '(01)_[Jack_McDuff]_V601_1-2_North_Poplar_St..flac',
+  '(02)_[Jack_McDuff]_Put_On_A_Happy_Face.flac',
+  '(03)_[Jack_McDuff]_Sundown.flac',
+  '(04)_[Jack_McDuff]_Mr._T.flac',
+  "(05)_[Jack_McDuff]_The_Heatin'_System.flac"
+  '(06)_[Jack_McDuff]_In_A_Sentimental_Mood.flac',
+  '(07)_[Jack_McDuff]_Fly_Away.flac',
+  "(08)_[Jack_McDuff]_Theme_From_'The_Pink_Panther'.flac",
+  '(09)_[Jack_McDuff]_The_Play_Of.flac'
+) | foreach-object { new-item -path $_ -itemtype file }
+```
+```powershell
 renamer.ps1 -probe
 ```
 ```text
 Examine C:\Users\kouzm\Desktop\Music\Jack McDuff\Jack McDuff - The Heatin' System - flac
 No matching patterns
+```
+> NOTE: no console output from c# code
+```c#
+		public void Rename() {
+			Console.Error.WriteLine(String.Format("GetFiles: {0} {1}", this.directoryName, String.Format("*.{0}", this.extension)));
+
 ```
 
 ### Usage
@@ -259,6 +278,15 @@ grep -lr \.\.\\\\Resources ./Program | xargs -IX sed -i 's|\.\.\\Resources|Resou
 "\\((?<index>[AB0-9][0-9]+)\\)\\s+(?<artist>)\\s+(?<title>)","<index> - <title> - <artist>"
 
 ```
+### Troubleshooting
+
+
+> NOTE: CI/CD: pruning a DLL must be paired with removal of the corresponding .nupkg to defeat NuGet's faulty package-existence check. 
+
+> __NuGet__ [checks](https://stackoverflow.com/questions/29684996/nuget-restore-failing-to-see-that-packages-are-not-installed) that packages directory contains the .nupkg and manifest file for the NuGet package and if so it believes the NuGet package is already installed locally. 
+> The *misleading success condition* is an easy mistake to make in massige dependency managemenr system and is direct consequence of attempt to cheap cache against enormousity of the contract
+> the *Misleading success conditions* are an easy mistake in large-scale dependency management: a cheap cache check stands in for verifying a much larger correctness contract. 
+
 
 ### See Also 
 

@@ -83,8 +83,8 @@ namespace Utils {
 				var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
 				var fileExtension = Path.GetExtension(file);
 				var fileDirectoryName = Path.GetDirectoryName(file);
-				fileNameWithoutExtension = fileNameWithoutExtension.Replace("_", " " );
-				var newFileName = GetNewName(fileNameWithoutExtension, this.oldNamePattern , this.newNamePattern);
+        			var fileNameWithoutExtensionUnderscoresReplaced = fileNameWithoutExtension.Replace("_", " " );
+				var newFileName = GetNewName(fileNameWithoutExtensionUnderscoresReplaced, this.oldNamePattern , this.newNamePattern);
 
 				if (String.IsNullOrEmpty(newFileName)) {
 					Debug.WriteLine(String.Format("Not renaming {0}", file));

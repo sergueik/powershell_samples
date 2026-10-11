@@ -40,7 +40,7 @@ namespace Test {
 		[Test]
 		public void test2() {
 			oldNamePattern = "^\\((?<id>[0-9]+)\\)  *\\[(?<artist>[^]]+)\\]  *(?<title>.+)$";
-			directoryName = @"C:\Users\kouzm\Desktop\Music\George Michael\George Michael - Greatest Hits - (1995)";
+			directoryName = @"C:\Users\kouzm\rrr";
 
 			// https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.exists?view=netframework-4.5
 			if (Directory.Exists(directoryName)) {
@@ -51,7 +51,10 @@ namespace Test {
 				renamer.NewNamePattern = newNamePattern;
 				renamer.OldNamePattern = oldNamePattern;
 				renamer.Rename();
-				Assert.Greater(0, renamer.Count, "expect to rename at least one file" );
+				// NOTE: 
+				// arg1: The first value, expected to be greater
+				// arg2: The second value, expected to be less
+				Assert.Greater(renamer.Count, 0, "expect to rename at least one file" );
 			} else {
 				Console.WriteLine(String.Format("skipped test - non existing directory {0}", directoryName));
 			}
