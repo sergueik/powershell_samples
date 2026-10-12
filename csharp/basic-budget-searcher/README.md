@@ -1001,6 +1001,50 @@ Program\bin\Debug\WordFile.exe
 
 ### Troubleshooting
 
+* Nuget failure (launched from ShareDevelop):
+```cmd
+C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool> "C:\Program Files (x86)\SharpDevelop\5.1\AddIns\Misc\PackageManagement\NuGet.exe" restore C:\developer\sergueik\powershell_samples\csharp\basic-budget-
+```
+```text
+Unable to find version '2.5.1' of package 'NPOI'.
+Unable to find version '1.2.0' of package 'SharpZipLib'.
+Unable to find version '0.1.7' of package 'PdfPig'.
+```
+
+repeat the `PdfPig` `curl`  workaround for all dependencies:
+```sh
+export P=NPOI
+export V=2.5.1
+curl -skLo ~/Downloads/$P.$V.zip  https://www.nuget.org/api/v2/package/$P/$V
+unzip -ql ~/Downloads/$P.$V.zip lib/net45/*
+mkdir -p packages/$P.$V/lib/net45
+pushd packages/$P.$V
+unzip -qx ~/Downloads/$P.$V.zip lib/net45/*
+popd
+```
+```sh
+export V=0.1.7
+export P=PdfPig
+curl -skLo ~/Downloads/$P.$V.zip  https://www.nuget.org/api/v2/package/$P/$V
+unzip -ql ~/Downloads/$P.$V.zip lib/net45/*
+mkdir -p packages/$P.$V/lib/net45
+pushd packages/$P.$V
+unzip -qx ~/Downloads/$P.$V.zip lib/net45/*
+popd
+```
+
+```sh
+export V=1.2.0
+export P=SharpZipLib
+curl -skLo ~/Downloads/$P.$V.zip  https://www.nuget.org/api/v2/package/$P/$V
+unzip -ql ~/Downloads/$P.$V.zip lib/net45/*
+mkdir -p packages/$P.$V/lib/net45
+pushd packages/$P.$V
+unzip -qx ~/Downloads/$P.$V.zip lib/net45/*
+popd
+
+```
+
 ![capture event log error](screenshots/capture-eventlog.png)
 
 The error 
@@ -2066,7 +2110,13 @@ Time Elapsed 00:00:01.27
      + `TestPOIXMLDocument.cs`
   * https://www.dickinson.edu/downloads/download/520/sample_powerpoint_slides
   * A demo PPTX file from [samplelib.com](https://samplelib.com/sample-ppt.html)
+  * [What are Downgrade Rights?](https://softtrader.eu/microsoft-software/microsoft-licensing/downgrade-rights/)
+  >  this new version may work very differently or not meet expectations. Therefore, Microsoft provides the option to revert to an older version
+
+  * https://www.youtube.com/watch?v=jEcSo-H8yG8
+  * https://www.youtube.com/watch?v=psf-p6zQ6o8
 ---
+ 
 ### TLDR
 [Neuschwanstein Castle](https://en.wikipedia.org/wiki/Neuschwanstein_Castle) in southern Germany is the famous
 fairytale palace that inspired Disney's [Cinderella](https://en.wikipedia.org/wiki/Cinderella_Castle) and [Sleeping Beauty](https://en.wikipedia.org/wiki/Sleeping_Beauty_Castle) Magic
