@@ -89,24 +89,31 @@ namespace Tests {
 	}
 
 	public class PowerPointSearch {
+
 		private List<PowerPointResult> results;
-		public PowerPointSearch(string filename, string region, string text ){
+		public PowerPointSearch(string filename, string text)
+			: this(filename, null, new[] { text }) {
+			// NOTE: cannot call a constructor inside the body of another constructor
+		}
+
+		public PowerPointSearch(string filename, string region, string text)
+			: this(filename, region, new[] { text }) {	}
+
+		public PowerPointSearch(
+			string filename, string region, IEnumerable<string> texts) {
 			if (String.IsNullOrWhiteSpace(filename)) // better than IsNullOrEmpty
-				throw new ArgumentException( "Filename cannot be blank.", "filename");
+				throw new ArgumentException("Filename cannot be blank.", "filename");
 			this.filename = filename;
 			if (String.IsNullOrWhiteSpace(region)) {
 				// fallback to initial value "slides"
 			} else {
-				if ( !nestedDict.ContainsKey(region))
-					throw new ArgumentException( String.Format("Unsupported region: {0}", region), "region");
+				if (!nestedDict.ContainsKey(region))
+					throw new ArgumentException(String.Format("Unsupported region: {0}", region), "region");
 				this.region = region;
 			}
-			if (String.IsNullOrWhiteSpace(text))
+			if (!texts.All(o => !String.IsNullOrWhiteSpace(o)))
 				throw new ArgumentException("text cannot be blank", "text");
-			this.text = text;
-		}
-		public PowerPointSearch(string filename, string text ): this(filename,null, text){
-			// NOTE: cannot call a constructor inside the body of another constructor
+			this.texts = texts.ToHashSet();
 		}
 
 		private string filename;
@@ -114,10 +121,10 @@ namespace Tests {
 			get { return filename; }
 			set { filename = value; }
 		}
-		private string text;
-		public string Text {
-			get { return text; }
-			set { text = value; }
+		private HashSet<string> texts;
+		public IEnumerable<string> Texts {
+			get { return texts; }
+			set { texts = value.ToHashSet(); }
 		}
 		private string region = "slide";
 		public string Region {
@@ -151,16 +158,14 @@ namespace Tests {
 
 		Dictionary<string, Dictionary<string, string>> nestedDict = new Dictionary<string, Dictionary<string, string>> { {  "slide", new Dictionary<string, string> { {
 						"contenttype",
-						"application/vnd.openxmlformats-officedocument.presentationml.slide+xml"
-					},
+						"application/vnd.openxmlformats-officedocument.presentationml.slide+xml" },
 					{ "selector", "//a:t" },
 					{ "prefix", "a" },
 					{ "namespace", "http://schemas.openxmlformats.org/drawingml/2006/main" }
 				}
 			}, {"chart", new Dictionary<string, string> { {
 						"contenttype",
-						"application/vnd.openxmlformats-officedocument.drawingml.chart+xml"
-					},
+						"application/vnd.openxmlformats-officedocument.drawingml.chart+xml" },
 					{ "selector", "//c:v" },
 					{ "prefix", "c" },
 					{ "namespace", "http://schemas.openxmlformats.org/drawingml/2006/chart" }
@@ -177,13 +182,13 @@ namespace Tests {
 			// the ref keyword - explicit is dicouraged
 			var doc = new OPCParser(PackageHelper.Open(File.OpenRead(filename)));
 			doc.Parse(new TestFactory());
-			traverseDocumentPart(doc,context);
+			traverseDocumentPart(doc, context);
 			return results;
 		}
 
 		private void getText(string part, Stream stream) {
 			int index = 0;
-			Console.Error.WriteLine(String.Format("getText Part: {0}" , part));
+			Console.Error.WriteLine(String.Format("getText Part: {0}", part));
 			var xml = new XmlDocument();
 			xml.Load(stream);
 
@@ -194,22 +199,22 @@ namespace Tests {
 			XmlNodeList textNodes = xml.SelectNodes(nestedDict[region]["selector"], namespaceManager);
 
 			foreach (XmlNode node in textNodes) {
-				index ++;
-				var cellText =  node.InnerText;
-
-				if (cellText.Contains(text)) {
-					var location =  String.Format("{0}:{1}:{2}",  region, part, index );  
-					if (!results.Exists(o => o.Location == location)) {
-						results.Add(new PowerPointResult {
-				           	Region = region,
-				           	Part = part,
-				           	Index = index,
-				           	Text = cellText
-		           		});
+				index++;
+				var cellText = node.InnerText;
+				texts.ToList().ForEach((string text) => {
+					if (cellText.Contains(text)) {
+						var location = String.Format("{0}:{1}:{2}", region, part, index);
+						if (!results.Exists(o => o.Location == location)) {
+							results.Add(new PowerPointResult {
+								Region = region,
+								Part = part,
+								Index = index,
+								Text = cellText
+							});
+						}
 					}
-				}
+				});
 			}
 		}
-
 	}
 }
