@@ -53,18 +53,15 @@ namespace Utils {
 			if (texts == null)
 				throw new ArgumentNullException("texts");
 
+			var textsList = texts.ToList();
 
-			if (texts.Count() == 0)
-				throw new ArgumentException(
-					"At least one search term is required.", "texts");
+			if (textsList.Count == 0)
+				throw new ArgumentException( "At least one search term is required.", "texts");
 
-			if (texts.ToList().Any(o => String.IsNullOrWhiteSpace(o)))
-				throw new ArgumentException(
-					"Search terms cannot be blank.", "texts");
+			if (textsList.Any(string.IsNullOrWhiteSpace))
+				throw new ArgumentException( "Search terms cannot be blank.", "texts");
 
-			this.texts = new HashSet<string>(
-				texts, StringComparer.Ordinal);
-
+			this.texts = new HashSet<string>( textsList, StringComparer.Ordinal);
 		}
 
 		private string filename;
@@ -75,7 +72,7 @@ namespace Utils {
 		private HashSet<string> texts;
 		public IEnumerable<string> Texts {
 			get { return texts; }
-			set { texts = value.ToHashSet(); }
+			set { texts = new HashSet<string>( value, StringComparer.Ordinal); }
 		}
 		private string region = "slide";
 		public string Region {
@@ -87,10 +84,8 @@ namespace Utils {
 			context[part.GetPackagePart().PartName.Name] = part;
 			foreach (POIXMLDocumentPart documentPart in part.GetRelations()) {
 				Console.Error.WriteLine("Document Part: " + documentPart.ToString());
-				// Console.WriteLine("Document Content Type: " + documentPart.GetPackagePart().ContentType.ToString());
 				if (nestedDict[region]["contenttype"].Equals(documentPart.GetPackagePart().ContentType.ToString())) {
 					getText(documentPart.GetPackagePart().PartName.Name.ToString(), documentPart.GetPackagePart().GetStream(FileMode.Open));
-					// Console.Error.WriteLine(new StreamReader(documentPart.GetPackagePart().GetStream(FileMode.Open)).ReadToEnd());
 				}
 				String uri = documentPart.GetPackagePart().PartName.URI.ToString();
 				if (!context.ContainsKey(uri)) {
