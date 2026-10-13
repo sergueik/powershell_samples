@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Threading;
 using System.Windows.Forms;
-using NPOI.XWPF.UserModel;
 
+using NPOI.XWPF.UserModel;
 using NPOI;
 using NPOI.Util;
 
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
-using System.Collections.Generic;
-using System.Threading;
-using System.Diagnostics;
+
 
 namespace Program {
 	// NOTE: Missing partial modifier on declaration of type 'Program.MainForm';
