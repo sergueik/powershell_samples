@@ -23,7 +23,7 @@ namespace Tests {
 			private string region = null;
 			private string searchText = "Sample Presentation";
 
-			[Test]
+		[Test]
 		public void test1() {
 			searchText = "Sample Presentation";
 			var	powerPointSearch = new PowerPointSearch(filename, searchText);
@@ -47,7 +47,32 @@ namespace Tests {
 			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain search string");
 			StringAssert.DoesNotContain( "Sample Presentation", results.First().Text,"slide title is not in chart legend");
 		}
-		
+
+		[Test]
+		public void test3() {
+			var texts = new List<string> {
+				"Sample Presentation",
+				"Agenda",
+				"Roadmap",
+				"Project Goals",
+				"Reduce churn",
+				"Quarterly Revenue",
+				"Sales by Quarter",
+				"Embedded Image",
+				"Trade-offs"
+			};
+			var	powerPointSearch = new PowerPointSearch(filename, region, texts);
+			var results = powerPointSearch.findText();
+			Assert.Greater(results.Count, 0, "expect at least one result");
+			Predicate<PowerPointResult> match = ( PowerPointResult result) => texts.Exists((string text) => result.Text.Contains(text));
+			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain at least one search term");
+			var duplicates = results.GroupBy(result => result.Location).Where(group => group.Count() > 1);
+			Assert.IsEmpty(duplicates, "Result locations should be unique");
+			StringAssert.DoesNotContain("Product A", results.First().Text, "legend is not in slides");
+			Assert.IsFalse(
+				results.Any(result => result.Text.Contains("Product A")),
+				"Chart legend text should not appear in slide results");
+		}
 	}
 	// some method not implemented
 	public class OPCParser : POIXMLDocument {
@@ -75,7 +100,7 @@ namespace Tests {
 			return null;
 		}
 	}
-	
+
 	public struct PowerPointResult {
 		public string Region;
 		public string Part;
@@ -111,9 +136,22 @@ namespace Tests {
 					throw new ArgumentException(String.Format("Unsupported region: {0}", region), "region");
 				this.region = region;
 			}
-			if (!texts.All(o => !String.IsNullOrWhiteSpace(o)))
-				throw new ArgumentException("text cannot be blank", "text");
-			this.texts = texts.ToHashSet();
+
+			if (texts == null)
+				throw new ArgumentNullException("texts");
+
+
+			if (texts.Count() == 0)
+				throw new ArgumentException(
+					"At least one search term is required.", "texts");
+
+			if (texts.ToList().Any(o => String.IsNullOrWhiteSpace(o)))
+				throw new ArgumentException(
+					"Search terms cannot be blank.", "texts");
+
+			this.texts = new HashSet<string>(
+				texts, StringComparer.Ordinal);
+
 		}
 
 		private string filename;
