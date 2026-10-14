@@ -9,17 +9,18 @@ namespace Tests {
 
 	[TestFixture]
 	public class PowerPointTest {
-			private const string filename = "sample-presentation.pptx";
+		private string filename = null;
 			private string region = null;
-			private string searchText = "Sample Presentation";
+			private string text = null;
 
 		[Test]
 		public void test1() {
-			searchText = "Sample Presentation";
-			var	powerPointSearch = new PowerPointSearch(filename, searchText);
+			filename = "sample-presentation.pptx";
+			text = "Sample Presentation";
+			var	powerPointSearch = new PowerPointSearch(filename, text);
 			var results = powerPointSearch.findText();
 			Assert.Greater(results.Count, 0, "expect at least one result");
-			Predicate<PowerPointResult> match  = ( PowerPointResult result) => result.Text.Contains(searchText);
+			Predicate<PowerPointResult> match  = ( PowerPointResult result) => result.Text.Contains(text);
 			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain search string");
 			var duplicates = results.GroupBy(result => result.Location).Where(group => group.Count() > 1);
 			Assert.IsEmpty(duplicates, "Result locations should be unique");
@@ -28,12 +29,13 @@ namespace Tests {
 
 		[Test]
 		public void test2() {
-			searchText = "Product A";
+			filename = "sample-presentation.pptx";
+			text = "Product A";
 			region = "chart";
-			var	powerPointSearch = new PowerPointSearch(filename, region, searchText);
+			var	powerPointSearch = new PowerPointSearch(filename, region, text);
 			var results = powerPointSearch.findText();
 			Assert.Greater(results.Count, 0, "expect at least one result");
-			Predicate<PowerPointResult> match  = ( PowerPointResult result) => result.Text.Contains(searchText);
+			Predicate<PowerPointResult> match = ( PowerPointResult result) => result.Text.Contains(text);
 			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain search string");
 			StringAssert.DoesNotContain( "Sales by Quarter", results.First().Text,"chart title is not in chart legend");
 		}
@@ -53,6 +55,7 @@ namespace Tests {
 			};
 			// NOTE: reset region - or else 
 			// debug success when run alone, failure when run all tests
+			filename = "sample-presentation.pptx";
 			region = "slide";
 			var	powerPointSearch = new PowerPointSearch(filename, region, texts);
 			var results = powerPointSearch.findText();
@@ -66,5 +69,21 @@ namespace Tests {
 				results.Any(result => result.Text.Contains("Product A")),
 				"Chart legend text should not appear in slide results");
 		}
+
+		[Test]
+		public void test4() {
+			filename = "sample_powerpoint_slides.pptx";
+			text = "Cover slide";
+			region = "note";
+			var	powerPointSearch = new PowerPointSearch(filename, region , text);
+			var results = powerPointSearch.findText();
+			Assert.Greater(results.Count, 0, "expect at least one result");
+			Predicate<PowerPointResult> match  = ( PowerPointResult result) => result.Text.Contains(text);
+			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain search string");
+			var duplicates = results.GroupBy(result => result.Location).Where(group => group.Count() > 1);
+			Assert.IsEmpty(duplicates, "Result locations should be unique");
+			StringAssert.DoesNotContain( "Slide Title", results.First().Text,"Slide text is not in slide notes");
+		}
+
 	}
 }

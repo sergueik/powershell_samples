@@ -98,7 +98,6 @@
     <Compile Include="PdfTest.cs" />
     <Compile Include="PowerPointTest.cs" />
     <Compile Include="ExcelTest.cs" />
-    <Compile Include="PowerPointTest2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sample-presentation.pptx">

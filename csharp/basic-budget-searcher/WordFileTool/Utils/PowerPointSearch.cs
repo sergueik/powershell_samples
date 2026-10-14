@@ -135,7 +135,7 @@ namespace Utils {
 
 		private void getText(string part, Stream stream) {
 			int index = 0;
-			Console.Error.WriteLine(String.Format("getText Part: {0}", part));
+			Debug.WriteLine(String.Format("getText Part: {0}", part));
 			var xml = new XmlDocument();
 			xml.Load(stream);
 
