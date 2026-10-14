@@ -21,7 +21,7 @@ document.docx
 └── word/
     ├── document.xml               # main document body
     │
-    ├── _rels/
+    ├── rels/
     │   └── document.xml.rels      # relationships from document.xml
     │
     ├── styles.xml
@@ -1044,7 +1044,13 @@ unzip -qx ~/Downloads/$P.$V.zip lib/net45/*
 popd
 
 ```
-
+subtle
+```
+The primary reference "C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Utils\bin\Debug\Utils.dll"
+could not be resolved because it has an indirect dependency on the .NET Framework assembly
+"System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51"
+which has a higher version "4.0.3.0" than the version "4.0.2.0" in the current target framework. (MSB3258)
+```
 ![capture event log error](screenshots/capture-eventlog.png)
 
 The error 
@@ -1549,27 +1555,27 @@ OPTION 3 — MSBuild target, but explicitly invoked
 -------------------------------------------------
 
 The project can contain a target such as:
-
+```xml
   <Target Name="DownloadTestData">
 
       ...
 
   </Target>
-
+```
 but it should NOT be:
-
+```xml
   BeforeTargets="Build"
-
+```
 and should NOT be automatically invoked.
 
 The developer explicitly invokes:
-
-  msbuild Test.csproj /t:DownloadTestData
-
+```powershell
+  msbuild.exe Test.csproj /t:DownloadTestData
+```powershell
 After that:
-
-  msbuild Test.csproj
-
+```
+  msbuild.exe Test.csproj
+```
 Advantages:
   - The download operation is discoverable from the project.
   - Still no network activity during an ordinary build.
@@ -1584,13 +1590,13 @@ OPTION 4 — Property-controlled automatic download
 --------------------------------------------------
 
 For example:
-
+```xml
   <DownloadTestData Condition="'$(DownloadTestData)' == ''">
       false
   </DownloadTestData>
-
+```
 and a target:
-
+```xml
   <Target Name="DownloadTestData"
           BeforeTargets="Build"
           Condition="'$(DownloadTestData)' == 'true'">
@@ -1598,17 +1604,17 @@ and a target:
       ...
 
   </Target>
-
+```
 Normal build:
-
-  msbuild Test.csproj
-
+```powershell
+  msbuild.exe Test.csproj
+```
 does NOT download.
 
 Developer explicitly requests:
-
-  msbuild Test.csproj /p:DownloadTestData=true
-
+```powershell
+  msbuild.exe Test.csproj /p:DownloadTestData=true
+```
 Advantages:
   - Convenient.
   - Default remains safe.
@@ -1629,15 +1635,15 @@ Download the PPTX once and commit:
   sample-presentation.pptx
 
 Then the project contains:
-
+```xml
   <None Include="sample-presentation.pptx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </None>
-
+```
 Build:
-
-  msbuild Test.csproj
-
+```powershell
+  msbuild.exe Test.csproj
+```
 requires no network whatsoever.
 
 Advantages:
@@ -1665,8 +1671,8 @@ manually, but the enterprise version can come from:
 
   Nexus / internal artifact store / approved shared location
 
-The .csproj remains:
-```
+The `.csproj` remains:
+```xml
   <None Include="sample-presentation.pptx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </None>
@@ -1760,17 +1766,17 @@ OPTION A — MSBuild Exec + curl
 ==============================
 
 If curl is available:
-
+```xml
 <Target Name="DownloadTestData">
 
   <Exec Command='curl -skL -o "$(MSBuildProjectDirectory)\sample-presentation.pptx" "https://samplelib.com/ppt/sample-presentation.pptx"' />
 
 </Target>
-
+```
 Invocation:
-
-    msbuild Test.csproj /t:DownloadTestData
-
+```powershell
+    msbuild.exe Test.csproj /t:DownloadTestData
+```
 Advantages:
     - No PowerShell.
     - No automatic network access.
@@ -1786,17 +1792,18 @@ OPTION B — MSBuild Exec + certutil
 ==================================
 
 On older Windows environments, certutil may be available:
-
+```xml
 <Target Name="DownloadTestData">
 
   <Exec Command='certutil -urlcache -split -f "https://samplelib.com/ppt/sample-presentation.pptx" "$(MSBuildProjectDirectory)\sample-presentation.pptx"' />
 
 </Target>
-
+```
 Invocation:
 
+```powershell
     msbuild Test.csproj /t:DownloadTestData
-
+```
 No PowerShell is involved.
 
 However, this is more of a Windows-specific trick and I would prefer curl
@@ -1823,23 +1830,23 @@ The important point is still:
     DO NOT attach it to Build.
 
 Use:
-
+```xml
     <Target Name="DownloadTestData">
-
+```
 rather than:
-
+```xml
     <Target Name="DownloadTestData" BeforeTargets="Build">
-
+```
 
 THE KEY PROPERTY
 ================
 
 The project should retain:
-
+```xml
     <None Include="sample-presentation.pptx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-
+```
 That means the actual test has no concept of downloading anything.
 
 The optional target merely populates the file.
@@ -1888,15 +1895,15 @@ Instead:
 
 >    Developer explicitly says:
 >  ```cmd
->          msbuild Test.csproj /t:DownloadTestData
+>          msbuild.exe Test.csproj /t:DownloadTestData
 >  ```
 
 That is much closer to your "manual action" requirement.
 
 For your old-style `.csproj`, I would probably choose **Option A if `curl.exe` is reliably available**, because the resulting MSBuild target is almost comically transparent. It also mirrors exactly the command you started with:
-
+```sh
     curl -skLO https://samplelib.com/ppt/sample-presentation.pptx
-
+```
 without introducing another scripting runtime or package dependency.
 
 ```
@@ -2078,10 +2085,110 @@ Time Elapsed 00:00:01.27
 
 ```
 
+### More Examples
+```sh
+curl -skLO https://www.dickinson.edu/download/downloads/id/1076/sample_powerpoint_slides.pptx
+```
+```sh
+unzip -ql sample_powerpoint_slides.pptx 2>&1| awk.exe '{print $NF}'
+```
+> NOTE: in bash the above will not work if double quotes are used instead of single by accident
+```text
+Name
+[Content_Types].xml
+_rels/.rels
+docProps/app.xml
+docProps/core.xml
+files
+ppt/_rels/presentation.xml.rels
+ppt/charts/_rels/chart1.xml.rels
+ppt/charts/chart1.xml
+ppt/drawings/drawing1.xml
+ppt/embeddings/Microsoft_Office_Excel_Worksheet1.xlsx
+ppt/media/image1.png
+ppt/media/image2.emf
+ppt/media/image3.emf
+ppt/media/image4.jpeg
+ppt/notesMasters/_rels/notesMaster1.xml.rels
+ppt/notesMasters/notesMaster1.xml
+ppt/notesSlides/_rels/notesSlide1.xml.rels
+ppt/notesSlides/_rels/notesSlide2.xml.rels
+ppt/notesSlides/_rels/notesSlide3.xml.rels
+ppt/notesSlides/notesSlide1.xml
+ppt/notesSlides/notesSlide2.xml
+ppt/notesSlides/notesSlide3.xml
+ppt/presProps.xml
+ppt/presentation.xml
+ppt/slideLayouts/_rels/slideLayout1.xml.rels
+ppt/slideLayouts/_rels/slideLayout10.xml.rels
+ppt/slideLayouts/_rels/slideLayout2.xml.rels
+ppt/slideLayouts/_rels/slideLayout3.xml.rels
+ppt/slideLayouts/_rels/slideLayout4.xml.rels
+ppt/slideLayouts/_rels/slideLayout5.xml.rels
+ppt/slideLayouts/_rels/slideLayout6.xml.rels
+ppt/slideLayouts/_rels/slideLayout7.xml.rels
+ppt/slideLayouts/_rels/slideLayout8.xml.rels
+ppt/slideLayouts/_rels/slideLayout9.xml.rels
+ppt/slideLayouts/slideLayout1.xml
+ppt/slideLayouts/slideLayout10.xml
+ppt/slideLayouts/slideLayout2.xml
+ppt/slideLayouts/slideLayout3.xml
+ppt/slideLayouts/slideLayout4.xml
+ppt/slideLayouts/slideLayout5.xml
+ppt/slideLayouts/slideLayout6.xml
+ppt/slideLayouts/slideLayout7.xml
+ppt/slideLayouts/slideLayout8.xml
+ppt/slideLayouts/slideLayout9.xml
+ppt/slideMasters/_rels/slideMaster1.xml.rels
+ppt/slideMasters/slideMaster1.xml
+ppt/slides/_rels/slide1.xml.rels
+ppt/slides/_rels/slide2.xml.rels
+ppt/slides/_rels/slide3.xml.rels
+ppt/slides/_rels/slide4.xml.rels
+ppt/slides/_rels/slide5.xml.rels
+ppt/slides/_rels/slide6.xml.rels
+ppt/slides/_rels/slide7.xml.rels
+ppt/slides/_rels/slide8.xml.rels
+ppt/slides/_rels/slide9.xml.rels
+ppt/slides/slide1.xml
+ppt/slides/slide2.xml
+ppt/slides/slide3.xml
+ppt/slides/slide4.xml
+ppt/slides/slide5.xml
+ppt/slides/slide6.xml
+ppt/slides/slide7.xml
+ppt/slides/slide8.xml
+ppt/slides/slide9.xml
+ppt/tableStyles.xml
+ppt/theme/theme1.xml
+ppt/theme/theme2.xml
+ppt/viewProps.xml
+```
+```sh
+unzip -x sample_powerpoint_slides.pptx
+```
+```sh
+grep -ilr 'Cover slide option' ppt/
+```
+```text
+ppt/notesSlides/notesSlide1.xml
+ppt/notesSlides/notesSlide2.xml
+```
 
+```
+curl -skLO https://samplelib.com/docx/sample-simple.docx
+curl -skLO https://samplelib.com/pdf/sample10.pdf
+curl -skLO https://samplelib.com/pdf/sample5.pdf
+curl -skLO https://samplelib.com/docx/sample-simple.docx
+curl -skLO https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf
+curl -skLO https://file-examples.com/wp-content/storage/2017/02/file-sample_100kB.docx
+curl -skLO https://file-examples.com/storage/fe2435f1176aceaffa143a4/2017/10/file-sample_150kB.pdf
+```
 ### See Also
 
   * [Sample files library](https://samplelib.com/)
+> NOTE: sample pdf documents content-poor
+  * https://www.learningcontainer.com/sample-docx-file-for-testing
   * https://github.com/hanzhaoxin/ExcelReport - currently on .netstandard, but commit [f3988](https://github.com/hanzhaoxin/ExcelReport/tree/f3988ec14003d2a167552144f458d2a774bcd4bd/ExcelReport) - is .net 4.0 version and see also [project documentation](http://www.cnblogs.com/hanzhaoxin/tag/ExcelReport)
   * [nuget npoi 2.8.1](https://www.nuget.org/packages/npoi/#supportedframeworks-body-tab) supports .Net __4.7.2__. For [Npoi.Extend](https://www.nuget.org/packages/NPOI.Extend/1.0.4) one has to use much older version __1.0.4__ - latest is __1.1.3__ but only list __netstandard 2.0__ which is basically the same but incompatible
 

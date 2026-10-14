@@ -95,12 +95,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PdfTest.cs" />
     <Compile Include="PowerPointTest.cs" />
     <Compile Include="ExcelTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="sample-presentation.pptx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="sample-simple-2.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="file-sample_150kB.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

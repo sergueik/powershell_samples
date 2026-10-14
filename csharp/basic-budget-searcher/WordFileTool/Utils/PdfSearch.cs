@@ -5,21 +5,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using NPOI.XWPF.UserModel;
-using NPOI;
-using NPOI.Util;
 
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 
-// based on: https://github.com/UglyToad/PdfPig/blob/master/examples/ExtractTextWithNewlines.cs
 namespace Utils {
 		public struct PdfResult {
 		public int Index;
 		public string Text;
 		public string Location { get { return String.Format("{0}",  Index );  }}
 	}
-
 	
 	public class PdfSearch {
 
@@ -70,7 +65,7 @@ namespace Utils {
 					index++;
 					var pageText = ContentOrderTextExtractor.GetText(page, true);
 					if (texts.Any((string text) => pageText.Contains(text))) {
-						// Debug.WriteLine(String.Format("Found text: {0}", text));
+						Debug.WriteLine(String.Format("Found one of texts: {0} on page {1}", String.Join(",",texts), index));
 						results.Add(new PdfResult {
 							Index = index,
 							Text = pageText
