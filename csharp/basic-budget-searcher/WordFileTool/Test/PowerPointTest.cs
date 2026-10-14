@@ -35,7 +35,7 @@ namespace Tests {
 			Assert.Greater(results.Count, 0, "expect at least one result");
 			Predicate<PowerPointResult> match  = ( PowerPointResult result) => result.Text.Contains(searchText);
 			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain search string");
-			StringAssert.DoesNotContain( "Sample Presentation", results.First().Text,"slide title is not in chart legend");
+			StringAssert.DoesNotContain( "Sales by Quarter", results.First().Text,"chart title is not in chart legend");
 		}
 
 		[Test]

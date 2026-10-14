@@ -83,7 +83,7 @@ namespace Utils {
 		private void traverseDocumentPart(POIXMLDocumentPart part, Dictionary<String, POIXMLDocumentPart> context) {
 			context[part.GetPackagePart().PartName.Name] = part;
 			foreach (POIXMLDocumentPart documentPart in part.GetRelations()) {
-				Console.Error.WriteLine("Document Part: " + documentPart.ToString());
+				Debug.WriteLine("Document Part: " + documentPart.ToString());
 				if (nestedDict[region]["contenttype"].Equals(documentPart.GetPackagePart().ContentType.ToString())) {
 					getText(documentPart.GetPackagePart().PartName.Name.ToString(), documentPart.GetPackagePart().GetStream(FileMode.Open));
 				}
@@ -99,6 +99,13 @@ namespace Utils {
 		Dictionary<string, Dictionary<string, string>> nestedDict = new Dictionary<string, Dictionary<string, string>> { {  "slide", new Dictionary<string, string> { {
 						"contenttype",
 						"application/vnd.openxmlformats-officedocument.presentationml.slide+xml" },
+					{ "selector", "//a:t" },
+					{ "prefix", "a" },
+					{ "namespace", "http://schemas.openxmlformats.org/drawingml/2006/main" }
+				}
+			}, {"note", new Dictionary<string, string> { {
+						"contenttype",
+						"application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml" },
 					{ "selector", "//a:t" },
 					{ "prefix", "a" },
 					{ "namespace", "http://schemas.openxmlformats.org/drawingml/2006/main" }
