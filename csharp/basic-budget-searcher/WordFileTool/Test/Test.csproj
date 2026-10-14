@@ -98,6 +98,7 @@
     <Compile Include="PdfTest.cs" />
     <Compile Include="PowerPointTest.cs" />
     <Compile Include="ExcelTest.cs" />
+    <Compile Include="WordTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sample-presentation.pptx">
@@ -111,6 +112,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="file-sample_150kB.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sample-simple.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
