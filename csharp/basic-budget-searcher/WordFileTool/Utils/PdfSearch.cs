@@ -64,7 +64,7 @@ namespace Utils {
 				foreach (var page in document.GetPages()) {
 					index++;
 					var pageText = ContentOrderTextExtractor.GetText(page, true);
-					if (texts.Any((string text) => pageText.Contains(text))) {
+					if (texts.Any(pageText.Contains)) {
 						Debug.WriteLine(String.Format("Found one of texts: {0} on page {1}", String.Join(",",texts), index));
 						results.Add(new PdfResult {
 							Index = index,

@@ -4,15 +4,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Utils;
 
-using NPOI.XWPF.UserModel;
-using NPOI;
-using NPOI.Util;
-
-using UglyToad.PdfPig;
-using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 
 
 namespace Program {
@@ -20,7 +16,7 @@ namespace Program {
 	// when
 	// partial declaration of this type exists (CS0260)
 	public class Program : Form {
-		
+
 		// NOTE: unnecessary "internal static class Program {...}"
 		[STAThread]
 		public static void Main() {
@@ -79,9 +75,9 @@ namespace Program {
 			tabPage2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(dataGridView)).BeginInit();
 			this.SuspendLayout();
-			// 
+			//
 			// btnSelectFile
-			// 
+			//
 			btnSelectFile.Location = new Point(112, 89);
 			btnSelectFile.Margin = new Padding(5, 6, 5, 6);
 			btnSelectFile.Name = "btnSelectFile";
@@ -90,9 +86,9 @@ namespace Program {
 			btnSelectFile.Text = "Choose Folder";
 			btnSelectFile.UseVisualStyleBackColor = true;
 			btnSelectFile.Click += new System.EventHandler(btnSelectFile_Click);
-			// 
+			//
 			// label1
-			// 
+			//
 			label1.AutoSize = true;
 			label1.Location = new Point(341, 101);
 			label1.Margin = new Padding(5, 0, 5, 0);
@@ -100,9 +96,9 @@ namespace Program {
 			label1.Size = new Size(120, 25);
 			label1.TabIndex = 1;
 			label1.Text = "Base folder：";
-			// 
+			//
 			// txtDocDirectory
-			// 
+			//
 			txtDocDirectory.Font = font1;
 			txtDocDirectory.Location = new Point(486, 89);
 			txtDocDirectory.Margin = new Padding(5, 6, 5, 6);
@@ -110,9 +106,9 @@ namespace Program {
 			txtDocDirectory.Size = new Size(256, 50);
 			txtDocDirectory.TabIndex = 2;
 			txtDocDirectory.TextAlign = HorizontalAlignment.Right;
-			// 
+			//
 			// label2
-			// 
+			//
 			label2.AutoSize = true;
 			label2.Location = new Point(154, 161);
 			label2.Margin = new Padding(5, 0, 5, 0);
@@ -120,9 +116,9 @@ namespace Program {
 			label2.Size = new Size(124, 25);
 			label2.TabIndex = 3;
 			label2.Text = "1.Text to find";
-			// 
+			//
 			// label3
-			// 
+			//
 			label3.AutoSize = true;
 			label3.BackColor = Color.Tan;
 			label3.Location = new Point(154, 215);
@@ -131,18 +127,18 @@ namespace Program {
 			label3.Size = new Size(179, 25);
 			label3.TabIndex = 3;
 			label3.Text = "Text to be replaced";
-			// 
+			//
 			// txtSearchKey1
-			// 
+			//
 			txtSearchKey1.Font = font1;
 			txtSearchKey1.Location = new Point(341, 156);
 			txtSearchKey1.Margin = new Padding(5, 6, 5, 6);
 			txtSearchKey1.Name = "txtSearchKey1";
 			txtSearchKey1.Size = new Size(401, 50);
 			txtSearchKey1.TabIndex = 4;
-			// 
+			//
 			// txtReplace1
-			// 
+			//
 			txtReplace1.BackColor = SystemColors.Window;
 			txtReplace1.Enabled = false;
 			txtReplace1.Font = font1;
@@ -151,9 +147,9 @@ namespace Program {
 			txtReplace1.Name = "txtReplace1";
 			txtReplace1.Size = new Size(401, 50);
 			txtReplace1.TabIndex = 4;
-			// 
+			//
 			// btnReplace
-			// 
+			//
 			btnReplace.Location = new Point(112, 770);
 			btnReplace.Margin = new Padding(5, 6, 5, 6);
 			btnReplace.Name = "btnReplace";
@@ -162,9 +158,9 @@ namespace Program {
 			btnReplace.Text = "Start";
 			btnReplace.UseVisualStyleBackColor = true;
 			btnReplace.Click += new System.EventHandler(this.scan);
-			// 
+			//
 			// btnClose
-			// 
+			//
 			btnClose.Location = new Point(605, 770);
 			btnClose.Margin = new Padding(5, 6, 5, 6);
 			btnClose.Name = "btnClose";
@@ -173,9 +169,9 @@ namespace Program {
 			btnClose.Text = "Close";
 			btnClose.UseVisualStyleBackColor = true;
 			btnClose.Click += new System.EventHandler(btnClose_Click);
-			// 
+			//
 			// label6
-			// 
+			//
 			label6.AutoSize = true;
 			label6.Location = new Point(154, 261);
 			label6.Margin = new Padding(5, 0, 5, 0);
@@ -183,18 +179,18 @@ namespace Program {
 			label6.Size = new Size(124, 25);
 			label6.TabIndex = 3;
 			label6.Text = "3.Text to find";
-			// 
+			//
 			// txtSearchKey3
-			// 
+			//
 			txtSearchKey3.Font = font1;
 			txtSearchKey3.Location = new Point(343, 258);
 			txtSearchKey3.Margin = new Padding(5, 6, 5, 6);
 			txtSearchKey3.Name = "txtSearchKey3";
 			txtSearchKey3.Size = new Size(399, 50);
 			txtSearchKey3.TabIndex = 4;
-			// 
+			//
 			// txtSearchKey4
-			// 
+			//
 			txtSearchKey4.Font = font1;
 			txtSearchKey4.Location = new Point(343, 308);
 			txtSearchKey4.Margin = new Padding(5, 6, 5, 6);
@@ -202,9 +198,9 @@ namespace Program {
 			txtSearchKey4.Size = new Size(399, 50);
 			txtSearchKey4.TabIndex = 4;
 			txtSearchKey4.TextChanged += new System.EventHandler(this.TxtSearchKey4TextChanged);
-			// 
+			//
 			// label8
-			// 
+			//
 			label8.AutoSize = true;
 			label8.Location = new Point(154, 308);
 			label8.Margin = new Padding(5, 0, 5, 0);
@@ -212,9 +208,9 @@ namespace Program {
 			label8.Size = new Size(124, 25);
 			label8.TabIndex = 3;
 			label8.Text = "4.Text to find";
-			// 
+			//
 			// btn1
-			// 
+			//
 			btn1.Location = new Point(112, 702);
 			btn1.Margin = new Padding(5, 6, 5, 6);
 			btn1.Name = "btn1";
@@ -223,9 +219,9 @@ namespace Program {
 			btn1.Text = "Choose File";
 			btn1.UseVisualStyleBackColor = true;
 			btn1.Click += new System.EventHandler(this.chooseFile);
-			// 
+			//
 			// label12
-			// 
+			//
 			label12.AutoSize = true;
 			label12.Location = new Point(343, 710);
 			label12.Margin = new Padding(5, 0, 5, 0);
@@ -233,9 +229,9 @@ namespace Program {
 			label12.Size = new Size(133, 25);
 			label12.TabIndex = 8;
 			label12.Text = "Heuristics File";
-			// 
+			//
 			// txtBox1
-			// 
+			//
 			txtBox1.Font = font1;
 			txtBox1.Location = new Point(486, 710);
 			txtBox1.Margin = new Padding(5, 6, 5, 6);
@@ -243,9 +239,9 @@ namespace Program {
 			txtBox1.Size = new Size(256, 50);
 			txtBox1.TabIndex = 9;
 			txtBox1.TextAlign = HorizontalAlignment.Right;
-			// 
+			//
 			// tabControl
-			// 
+			//
 			tabControl.Controls.Add(tabPage1);
 			tabControl.Controls.Add(tabPage2);
 			tabControl.Font = font1;
@@ -255,9 +251,9 @@ namespace Program {
 			tabControl.SelectedIndex = 0;
 			tabControl.Size = new Size(720, 320);
 			tabControl.TabIndex = 12;
-			// 
+			//
 			// tabPage1
-			// 
+			//
 			tabPage1.Controls.Add(txtResult1);
 			tabPage1.Font = font1;
 			tabPage1.Location = new Point(4, 51);
@@ -268,9 +264,9 @@ namespace Program {
 			tabPage1.TabIndex = 0;
 			tabPage1.Text = "Log";
 			tabPage1.UseVisualStyleBackColor = true;
-			// 
+			//
 			// txtResult1
-			// 
+			//
 			txtResult1.Dock = DockStyle.Fill;
 			txtResult1.Font = font1;
 			txtResult1.Location = new Point(5, 0);
@@ -280,9 +276,9 @@ namespace Program {
 			txtResult1.ScrollBars = ScrollBars.Vertical;
 			txtResult1.Size = new Size(702, 265);
 			txtResult1.TabIndex = 9;
-			// 
+			//
 			// tabPage2
-			// 
+			//
 			tabPage2.Controls.Add(dataGridView);
 			tabPage2.Font = font1;
 			tabPage2.Location = new Point(4, 51);
@@ -293,9 +289,9 @@ namespace Program {
 			tabPage2.TabIndex = 1;
 			tabPage2.Text = "Results";
 			tabPage2.UseVisualStyleBackColor = true;
-			// 
+			//
 			// dataGridView
-			// 
+			//
 			dataGridView.AllowUserToAddRows = false;
 			dataGridView.AllowUserToDeleteRows = false;
 			dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -316,30 +312,30 @@ namespace Program {
 			dataGridView.RowTemplate.Height = 32;
 			dataGridView.Size = new Size(702, 265);
 			dataGridView.TabIndex = 0;
-			// 
+			//
 			// dataGridViewTextBoxColumn1
-			// 
+			//
 			dataGridViewTextBoxColumn1.FillWeight = 60F;
 			dataGridViewTextBoxColumn1.HeaderText = "Type";
 			dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
 			dataGridViewTextBoxColumn1.ReadOnly = true;
-			// 
+			//
 			// dataGridViewTextBoxColumn2
-			// 
+			//
 			dataGridViewTextBoxColumn2.FillWeight = 160F;
 			dataGridViewTextBoxColumn2.HeaderText = "Name";
 			dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
 			dataGridViewTextBoxColumn2.ReadOnly = true;
-			// 
+			//
 			// dataGridViewTextBoxColumn3
-			// 
+			//
 			dataGridViewTextBoxColumn3.FillWeight = 260F;
 			dataGridViewTextBoxColumn3.HeaderText = "Match";
 			dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
 			dataGridViewTextBoxColumn3.ReadOnly = true;
-			// 
+			//
 			// dataGridViewTextBoxColumn4
-			// 
+			//
 			dataGridViewTextBoxColumn4.FillWeight = 140F;
 			dataGridViewTextBoxColumn4.HeaderText = "Path";
 			dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
@@ -350,22 +346,22 @@ namespace Program {
 				"report.pdf",
 				"invoice",
 				@"C:\Documents\report.pdf");
-		
+
 			dataGridView.Rows.Add(
 				"File",
 				"presentation.pptx",
 				"architecture",
 				@"C:\Documents\presentation.pptx");
-		
+
 			dataGridView.Rows.Add(
 				"Directory",
 				"2026",
 				"2026",
 				@"C:\Documents\2026");
 
-			// 
+			//
 			// Program
-			// 
+			//
 			this.AutoScaleMode = AutoScaleMode.None;
 			this.ClientSize = new Size(834, 931);
 			Controls.Add(txtBox1);
@@ -455,12 +451,15 @@ namespace Program {
 			}
 		}
 
+		private string [] texts = {"Text Formatting", "Runs can be bold, italic, underlined or coloured", "Marker"};
+
 		private void scan(object sender, EventArgs eventArgs) {
 			string docDirectory = txtDocDirectory.Text;
 			Log(String.Format("Starting scan {0}", docDirectory));
 			FileInfo[] files = { };
+
 			DirectoryInfo directoryInfo = null;
-			string filePath = null;
+			string filename = null;
 			ThreadPool.QueueUserWorkItem(
 				// Error CS1593: Delegate 'System.Threading.WaitCallback' does not take 0 arguments
 				(object state) => {
@@ -469,71 +468,59 @@ namespace Program {
 					Log(String.Format("Scanning {0}", directoryInfo.FullName));
 
 					files = directoryInfo.GetFiles("*.pdf");
-					
-					foreach (FileInfo fileInfo in files) {
-						// origin: https://github.com/UglyToad/PdfPig/blob/master/examples/ExtractTextWithNewlines.cs
-						filePath = fileInfo.FullName;
-						using (var document = PdfDocument.Open(filePath)) {
-							// Debug.WriteLine(String.Format("Reading {0}", filePath));
-							Log(String.Format("Reading {0}", filePath));
-							foreach (var page in document.GetPages()) {
-								
-								var text = ContentOrderTextExtractor.GetText(page, true);
 
-								Log(String.Format("text: {0}", text));
-								// Debug.WriteLine(String.Format("text: {0}", text));
-							}
+					foreach (FileInfo fileInfo in files) {
+						filename = fileInfo.FullName;
+						var	pdfSearch = new PdfSearch(filename, texts);
+						var results = pdfSearch.findText();
+						if (results.Count > 0) {
+							var locations = String.Join(",", results.Select((PdfResult result)  => result.Location).ToList());
+							// C# does not have a built-in .ForEach() extension method on general IEnumerable<T> sequences in LINQ
+							// method is only available on List<T>
+							Log(String.Format("File: {0} matches: {1} {2}", filename, results.Count, locations));
 						}
+
 					}
-					
-					files = directoryInfo.GetFiles("*.pdf");
+
+					files = directoryInfo.GetFiles("*.pptx");
 
 					foreach (FileInfo fileInfo in files) {
-						filePath = fileInfo.FullName;
-						var dic = new Dictionary<string, string> { };
-
-						using (var stream = File.OpenRead(filePath)) {
-							var document = new XWPFDocument(stream);
-
-								if (txtSearchKey1.Text != "") {
-									dic.Add(txtSearchKey1.Text, txtReplace1.Text);
-								}
-
+						filename = fileInfo.FullName;
+						var	powerPointSearch = new PowerPointSearch(filename, "slide", texts);
+						var results = powerPointSearch.findText();
+						if (results.Count > 0) {
+							var locations = String.Join(",", results.Select((PowerPointResult result)  => result.Location).ToList());
+							// C# does not have a built-in .ForEach() extension method on general IEnumerable<T> sequences in LINQ
+							// method is only available on List<T>
+							Log(String.Format("File: {0} matches: {1} {2}", filename, results.Count, locations));
 						}
+
+					}
+					files = directoryInfo.GetFiles("*.xlsx");
+
+					foreach (FileInfo fileInfo in files) {
+						filename = fileInfo.FullName;
+						var	excelSearch = new ExcelSearch(filename, texts[0]);
+						var results = excelSearch.findText();
+						if (results.Count > 0) {
+							var locations = String.Join(",", results.Select((ExcelResult result)  => result.Location).ToList());
+							// C# does not have a built-in .ForEach() extension method on general IEnumerable<T> sequences in LINQ
+							// method is only available on List<T>
+							Log(String.Format("File: {0} matches: {1} {2}", filename, results.Count, locations));
+						}
+
 					}
 					files = directoryInfo.GetFiles("*.docx");
 
 					foreach (FileInfo fileInfo in files) {
-						filePath = fileInfo.FullName;
-						var dic = new Dictionary<string, string> { };
-
-						using (var stream = File.OpenRead(filePath)) {
-							var document = new XWPFDocument(stream);
-
-								if (txtSearchKey1.Text != "") {
-									dic.Add(txtSearchKey1.Text, txtReplace1.Text);
-								}
-
-								if (txtSearchKey4.Text != "") {
-									dic.Add(txtSearchKey4.Text, null);
-								}
-
-								if (txtSearchKey3.Text != "") {
-									dic.Add(txtSearchKey3.Text, null);
-								}
-
-								foreach (var paragraph in document.Paragraphs) {
-									ReplaceKey(paragraph, dic);
-									//ReplaceKeyword(paragraph, dic);
-								}
-								// replace - not used
-								/*
-								using (var newstream = File.Create(fileInfo.Directory + "/" + fileInfo.Name)) { // "/poutput.docx"
-									doc.Write(newstream);
-									newstream.Flush();
-								}
-								
-								*/
+						filename = fileInfo.FullName;
+						var	wordSearch = new WordSearch(filename, texts);
+						var results = wordSearch.findText();
+						if (results.Count > 0) {
+							var locations = String.Join(",", results.Select((WordResult result)  => result.Location).ToList());
+							// C# does not have a built-in .ForEach() extension method on general IEnumerable<T> sequences in LINQ
+							// method is only available on List<T>
+							Log(String.Format("File: {0} matches: {1} {2}", filename, results.Count, locations));
 						}
 					}
 					MessageBox.Show("Done.");
@@ -542,34 +529,6 @@ namespace Program {
 
 		private void btnClose_Click(object sender, EventArgs e) {
 			this.Close();
-		}
-
-		private void ReplaceKey(XWPFParagraph paragraph, IDictionary<string, string> redic)
-		{
-			string text = paragraph.ParagraphText;
-			foreach (var kv in redic) {
-				if (text.Contains(kv.Key)) {
-					if (!String.IsNullOrEmpty(kv.Value))
-						paragraph.ReplaceText(kv.Key, kv.Value);
-				}
-			}
-		}
-		// currently unused - keep for possible later use
-		private void ReplaceKeyword(XWPFParagraph paragraph, IDictionary<string, string> redic) {
-			string text = string.Empty;
-			string styleid = paragraph.Style;
-			var runs = paragraph.Runs;
-			for (int i = 0; i < runs.Count; i++) {
-				var run = runs[i];
-				text = run.ToString();
-				foreach (var kv in redic) {
-					if (text.Contains(kv.Key)) {
-						text = text.Replace(kv.Key, kv.Value);
-					}
-				}
-
-				runs[i].SetText(text, 0);
-			}
 		}
 
 		void chooseFile(object sender, EventArgs e) {
@@ -585,18 +544,18 @@ namespace Program {
 
 		}
 		void TxtDocDirectoryTextChanged(object sender, EventArgs e) {
-	
+
 		}
 		void TabPageClick(object sender, EventArgs e) {
-	
+
 		}
 		void TxtSearchKey4TextChanged(object sender, EventArgs e)
 		{
-	
+
 		}
 		void ProgramLoad(object sender, EventArgs e)
 		{
-	
+
 		}
 	}
 }

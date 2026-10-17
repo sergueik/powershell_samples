@@ -68,7 +68,8 @@ namespace Utils {
 					// Alternatively try SearchText()
 					// https://github.com/nissl-lab/npoi/blob/master/ooxml/XWPF/Usermodel/XWPFParagraph.cs#L1420C28-L1420C38
 					var paragraphText = paragraph.ParagraphText;
-					if (texts.Any((string text) => paragraphText.Contains(text))) {
+					// NOTE: accepted "lambda expression can be simplified to a method group"
+					if (texts.Any(paragraphText.Contains)) {
 						Debug.WriteLine(String.Format("Found one of texts: {0} on paragraph {1}", String.Join(",", texts), index));
 						results.Add(new WordResult {
 							Index = index,

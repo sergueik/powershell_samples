@@ -12,10 +12,12 @@ namespace Tests {
 
 		[Test]
 		public void test() {
-			var searchText =  "test1";
+			const string searchText =  "test1";
 			var	excelSearch = new ExcelSearch(filename, searchText);
 			var results = excelSearch.findText();
 			Assert.Greater(results.Count, 0, "expect at least one result");
+			Console.Error.WriteLine("Found in {0}", String.Join(",", results.Select((ExcelResult result)  => result.Location).ToList()));
+
 			Predicate<ExcelResult> match  = ( ExcelResult result) => result.Text.Contains(searchText);
 			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain search string");
 			// old style:
