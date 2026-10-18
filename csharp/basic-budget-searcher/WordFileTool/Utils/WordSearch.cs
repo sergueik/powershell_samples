@@ -11,11 +11,6 @@ using NPOI;
 using NPOI.Util;
 
 namespace Utils {
-	public struct WordResult {
-		public int Index;
-		public string Text;
-		public string Location { get { return String.Format("{0}", Index); } }
-	}
 	public class WordSearch {
 
 		private List<WordResult> results;
@@ -69,11 +64,13 @@ namespace Utils {
 					// https://github.com/nissl-lab/npoi/blob/master/ooxml/XWPF/Usermodel/XWPFParagraph.cs#L1420C28-L1420C38
 					var paragraphText = paragraph.ParagraphText;
 					// NOTE: accepted "lambda expression can be simplified to a method group"
-					if (texts.Any(paragraphText.Contains)) {
+					String matchedText;
+					if ((matchedText = texts.FirstOrDefault(paragraphText.Contains)) != null) {
 						Debug.WriteLine(String.Format("Found one of texts: {0} on paragraph {1}", String.Join(",", texts), index));
 						// TODO: collect match capture into result						
 						results.Add(new WordResult {
 							Index = index,
+							MatchedText = matchedText,
 							Text = paragraphText
 						});
 					}
@@ -81,5 +78,12 @@ namespace Utils {
 			}
 			return results;
 		}
+	}
+	public struct WordResult {
+		public int Index;
+		// NOTE: Semicolon after method or accessor block is not valid (CS1597)
+		public string Location { get { return String.Format("{0}", Index); } }
+		public string MatchedText;
+		public string Text;
 	}
 }

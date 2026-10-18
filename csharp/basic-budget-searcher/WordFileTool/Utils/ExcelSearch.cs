@@ -72,6 +72,7 @@ namespace Utils {
 								result.Add(new ExcelResult {
 									SheetName = sheet.SheetName,
 									CellAddress = cell.Address.FormatAsString(),
+									MatchedText = text,
 									Text = cellText
 								});
 							}
@@ -86,8 +87,9 @@ namespace Utils {
 	public struct ExcelResult {
 		public string SheetName;
 		public string CellAddress;
-		public string Text;
 		public string Location { get { return String.Format("{0}!{1}",  SheetName , CellAddress);  }}
+		public string MatchedText;
+		public string Text;
 	}
 
 	public static class ExcelHelper {

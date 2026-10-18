@@ -10,12 +10,6 @@ using UglyToad.PdfPig;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 
 namespace Utils {
-		public struct PdfResult {
-		public int Index;
-		public string Text;
-		public string Location { get { return String.Format("{0}",  Index );  }}
-	}
-	
 	public class PdfSearch {
 
 		private List<PdfResult> results;
@@ -64,11 +58,13 @@ namespace Utils {
 				foreach (var page in document.GetPages()) {
 					index++;
 					var pageText = ContentOrderTextExtractor.GetText(page, true);
-					if (texts.Any(pageText.Contains)) {
+					String matchedText;
+					if ((matchedText = texts.FirstOrDefault(pageText.Contains)) != null) {
 						Debug.WriteLine(String.Format("Found one of texts: {0} on page {1}", String.Join(",",texts), index));
 						// TODO: collect match capture into result
 						results.Add(new PdfResult {
 							Index = index,
+							MatchedText = matchedText,
 							Text = pageText
 						});
 					}
@@ -77,4 +73,10 @@ namespace Utils {
 			return results;
 		}
 	}
+	public struct PdfResult {
+		public int Index;
+		public string Location { get { return String.Format("{0}",  Index );  }}
+		public string MatchedText;
+		public string Text;
+	}	
 }

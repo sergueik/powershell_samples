@@ -491,7 +491,7 @@ namespace Program {
 				// System.InvalidOperationException: Cross-thread operation not valid: Control 'dataGridView' accessed from a thread other than the thread it was created on.
 				// Cannot convert lambda expression to type 'System.Delegate' because it is not a delegate type (CS1660)
 
-				dataGridView.Invoke((Action)(() => 
+				dataGridView.Invoke( new Action(() => 
 				dataGridView.Rows.Add(
 					"File",
 					filename.Replace("^.*\\", ""),
@@ -567,5 +567,6 @@ namespace Program {
 	class FileResult {
 	    public string Location { get; set; }
     	public string Text { get; set; }
+		public string MatchedText { get; set; }
 	}
 }

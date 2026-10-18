@@ -15,15 +15,15 @@ using NPOI.Util;
 // based on: https://github.com/nissl-lab/npoi/blob/master/testcases/ooxml/TestPOIXMLDocument.cs
 namespace Utils {
 		public struct PowerPointResult {
-		public string Region;
-		public string Part;
 		public int Index;
-		public string Text;
-		// NOTE: To use later for deduplication
 		public string Location { get { return String.Format("{0}:{1}:{2}",  Region, Part, Index );  }}
 		// NOTE: the StackOverflowException will not be detected by the compiler
 		// a static-analysis tool or IDE inspection may flag self-recursion
 		// public string Location { get { return String.Format("{0}:{1}:{2}",  Location, Part, Index );  }}
+		public string MatchedText;
+		public string Part;
+		public string Region;
+		public string Text;
 	}
 
 	public class PowerPointSearch {
@@ -158,6 +158,7 @@ namespace Utils {
 								Region = region,
 								Part = part,
 								Index = index,
+								MatchedText = text,
 								Text = cellText
 							});
 						}
