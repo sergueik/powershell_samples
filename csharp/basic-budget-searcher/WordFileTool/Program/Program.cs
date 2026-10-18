@@ -35,7 +35,7 @@ namespace Program {
 		private IContainer components = null;
 		private Font font1 = null;
 		private Font font2 = null;
- 
+
 		protected override void Dispose(bool disposing) {
 			if (disposing && (components != null)) {
 				components.Dispose();
@@ -393,7 +393,7 @@ namespace Program {
 
 			this.Margin = new Padding(5, 6, 5, 6);
 			this.Name = "Program";
-			this.Text = "word pdf search";
+			this.Text = "word powerspoint pdf excel search";
 			this.Load += new System.EventHandler(this.ProgramLoad);
 			tabControl.ResumeLayout(false);
 			tabPage1.ResumeLayout(false);
@@ -448,62 +448,62 @@ namespace Program {
 			}
 		}
 
-		private string [] texts = {"Text Formatting", "Runs can be bold, italic, underlined or coloured", "Marker"};
-		private Dictionary<string, Action<string>> scanners;
+		private List<string>  texts = (new String[] {"Text Formatting", "Runs can be bold, italic, underlined or coloured", "Marker"}).ToList();
+		private Dictionary<string, Action<FileInfo,IEnumerable<string>>> scanners;
 
-		// NOTE: System.InvalidOperationException: inconsistent return types for explicitly-typed lambda		
+		// NOTE: System.InvalidOperationException: inconsistent return types for explicitly-typed lambda
 		private void InitializeScanners() {
-			scanners = new Dictionary<string, Action<string>>(StringComparer.OrdinalIgnoreCase) { { ".pdf", 
-					(string filename) => {
-						var search = new PdfSearch(filename, texts);
+			scanners = new Dictionary<string, Action<FileInfo,IEnumerable<string>>>(StringComparer.OrdinalIgnoreCase) { { ".pdf",
+					(FileInfo fileInfo,IEnumerable<string> texts) => {
+						var search = new PdfSearch(fileInfo.FullName, texts);
 						var results = search.findText();
-						LogResults(filename, results.Count, results.Select(result => result.Location));
+						LogResults(fileInfo, results.Count, results.Select(result => result.MatchedText));
 					}
-				}, {".xlsx", 
-					(string filename) => {
+				}, {".xlsx",
+					(FileInfo fileInfo,IEnumerable<string> texts) => {
 						var results = new List<ExcelResult>();
 						texts.ToList().ForEach((string text) => {
-							var search = new ExcelSearch(filename, text);
+							var search = new ExcelSearch(fileInfo.FullName, text);
 							results.AddRange(search.findText());
 						});
-		                LogResults(filename, results.Count, results.Select(result => result.Location));
+						LogResults(fileInfo, results.Count, results.Select(result => result.MatchedText));
 					}
-				}, {".docx", 
-					(string filename) => {
-		                var search = new WordSearch( filename, texts);
+				}, {".docx",
+					(FileInfo fileInfo,IEnumerable<string> texts) => {
+		                var search = new WordSearch(fileInfo.FullName, texts);
 		                var results = search.findText();
-		                LogResults(filename, results.Count,  results.Select(result => result.Location));
+						LogResults(fileInfo, results.Count, results.Select(result => result.MatchedText));
 					}
-				}, {".pptx", 
-					(string filename) => {
-		                var search = new PowerPointSearch(
-		                    filename, "slide", texts);
+				}, {".pptx",
+					(FileInfo fileInfo,IEnumerable<string> texts) => {
+		                var search = new PowerPointSearch( fileInfo.FullName, "slide", texts);
 		                var results = search.findText();
-		                LogResults(filename, results.Count, results.Select(result => result.Location));
+		                LogResults(fileInfo, results.Count, results.Select(result => result.MatchedText));
 					}
 		        }
 		    };
 		}
 		// TODO: change method signature to receive FileInfo and type of file
-		private void LogResults(string filename, int count, IEnumerable<string>locations) {
+		private void LogResults(FileInfo fileInfo, int count, IEnumerable<string>matchedTexts) {
 			if (count > 0) {
-				Log(String.Format("File: {0} matches: {1} {2}", filename, count, String.Join(",", locations)));
+				Log(String.Format("File: {0} matches: {1} {2}", fileInfo.FullName, count, String.Join(",", matchedTexts)));
 				// System.InvalidOperationException: Cross-thread operation not valid: Control 'dataGridView' accessed from a thread other than the thread it was created on.
 				// Cannot convert lambda expression to type 'System.Delegate' because it is not a delegate type (CS1660)
 
-				dataGridView.Invoke( new Action(() => 
+				dataGridView.Invoke( new Action(() =>
 				dataGridView.Rows.Add(
 					"File",
-					filename.Replace("^.*\\", ""),
-					String.Join(",", locations),
-					filename)));
+					fileInfo.Name,
+					String.Join(",", matchedTexts),
+					fileInfo.Directory
+				)));
 			}
 		}
 
-		private void ScanFile(FileInfo file) {
-		    Action<string> scanner;
-		    if (scanners.TryGetValue(file.Extension, out scanner)) {
-		        scanner(file.FullName);
+		private void ScanFile(FileInfo fileInfo) {
+		    Action<FileInfo,IEnumerable<string>> scanner;
+		    if (scanners.TryGetValue(fileInfo.Extension, out scanner)) {
+		        scanner(fileInfo,  this.texts);
 		    }
 		}
 
@@ -547,7 +547,16 @@ namespace Program {
 				txtBox1.Text = "…" + o.FileName.Substring(o.FileName.Length - size, size);
 			}
 
+			texts.Clear();
+
+			foreach (string line in File.ReadAllLines(txtBox1.Text)) {
+				string text = line.Trim();
+				if (text.Length > 0)
+					texts.Add(text);
+			}
+
 		}
+
 		void TxtDocDirectoryTextChanged(object sender, EventArgs e) {
 
 		}
