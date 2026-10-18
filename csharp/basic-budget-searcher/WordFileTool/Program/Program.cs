@@ -31,6 +31,7 @@ namespace Program {
 		}
 
 		public Program() { InitializeComponent(); }
+
 		private IContainer components = null;
 		private Font font1 = null;
 		private Font font2 = null;
@@ -385,12 +386,7 @@ namespace Program {
 			byte[] iconBytes = Convert.FromBase64String(iconBase64);
 			var iconStream = new MemoryStream(iconBytes, 0, iconBytes.Length);
 			iconStream.Write(iconBytes, 0, iconBytes.Length);
-			var iconImage = Image.FromStream(iconStream, true);
-			var iconBitmap = new Bitmap(iconStream);
-			IntPtr hicon = iconBitmap.GetHicon();
-			Icon icon = Icon.FromHandle(hicon);
-
-			this.Icon = icon;
+			this.Icon = Icon.FromHandle(new Bitmap(iconStream).GetHicon());
 
 			this.Margin = new Padding(5, 6, 5, 6);
 			this.Name = "Program";
@@ -432,13 +428,11 @@ namespace Program {
 		private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
 		private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
 
-		private void Log(string message){
+		private void Log(string message) {
 			Debug.WriteLine(message);
-			// MessageBox.Show(message);
-
-			if (txtResult1.InvokeRequired){
+			if (txtResult1.InvokeRequired) {
 				txtResult1.Invoke(new Action<string>(Log), message);
-              return;
+				return;
 			}
 			txtResult1.AppendText(message + Environment.NewLine);
 		}
@@ -452,6 +446,56 @@ namespace Program {
 		}
 
 		private string [] texts = {"Text Formatting", "Runs can be bold, italic, underlined or coloured", "Marker"};
+		private Dictionary<string, Action<string>> scanners;
+
+		// NOTE: System.InvalidOperationException: inconsistent return types for explicitly-typed lambda		
+		private void InitializeScanners() {
+			scanners = new Dictionary<string, Action<string>>(StringComparer.OrdinalIgnoreCase) { { ".pdf", 
+					(string filename) => {
+						var search = new PdfSearch(filename, texts);
+						var results = search.findText();
+						LogResults(filename, results.Count, results.Select(result => result.Location));
+					}
+				}, {".xlsx", 
+					(string filename) => {
+						var results = new List<ExcelResult>();
+						texts.ToList().ForEach((string text) => {
+							var search = new ExcelSearch(filename, text);
+							results.AddRange(search.findText());
+						});
+		                LogResults(filename, results.Count, results.Select(result => result.Location));
+					}
+				}, {".docx", 
+					(string filename) => {
+		                var search = new WordSearch( filename, texts);
+		                var results = search.findText();
+		                LogResults(filename, results.Count,  results.Select(result => result.Location));
+					}
+				}, {".pptx", 
+					(string filename) => {
+		                var search = new PowerPointSearch(
+		                    filename, "slide", texts);
+		                var results = search.findText();
+		                LogResults(filename, results.Count, results.Select(result => result.Location));
+					}
+		        }
+		    };
+		}
+
+		private void LogResults(string filename, int count, IEnumerable<string>locations){
+			if (count > 0){
+				Log(String.Format("File: {0} matches: {1} {2}", filename, count, String.Join(",", locations)));
+			}
+		}
+
+		private void ScanFile(FileInfo file) {
+		    Action<string> scanner;
+		    if (scanners.TryGetValue(file.Extension, out scanner)) {
+		        scanner(file.FullName);
+		    }
+		}
+
+		private readonly string[] extensions = { "*.pdf", "*.pptx", "*.xlsx", "*.docx" };
 
 		private void scan(object sender, EventArgs eventArgs) {
 			string docDirectory = txtDocDirectory.Text;
@@ -459,68 +503,16 @@ namespace Program {
 			FileInfo[] files = { };
 
 			DirectoryInfo directoryInfo = null;
-			string filename = null;
+
 			ThreadPool.QueueUserWorkItem(
 				// Error CS1593: Delegate 'System.Threading.WaitCallback' does not take 0 arguments
 				(object state) => {
 					directoryInfo = new DirectoryInfo(docDirectory);
-					// Debug.WriteLine(String.Format("Scanning {0}", directoryInfo.FullName));
+
 					Log(String.Format("Scanning {0}", directoryInfo.FullName));
-
-					files = directoryInfo.GetFiles("*.pdf");
-
-					foreach (FileInfo fileInfo in files) {
-						filename = fileInfo.FullName;
-						var	pdfSearch = new PdfSearch(filename, texts);
-						var results = pdfSearch.findText();
-						if (results.Count > 0) {
-							var locations = String.Join(",", results.Select((PdfResult result)  => result.Location).ToList());
-							// C# does not have a built-in .ForEach() extension method on general IEnumerable<T> sequences in LINQ
-							// method is only available on List<T>
-							Log(String.Format("File: {0} matches: {1} {2}", filename, results.Count, locations));
-						}
-
-					}
-
-					files = directoryInfo.GetFiles("*.pptx");
-
-					foreach (FileInfo fileInfo in files) {
-						filename = fileInfo.FullName;
-						var	powerPointSearch = new PowerPointSearch(filename, "slide", texts);
-						var results = powerPointSearch.findText();
-						if (results.Count > 0) {
-							var locations = String.Join(",", results.Select((PowerPointResult result)  => result.Location).ToList());
-							// C# does not have a built-in .ForEach() extension method on general IEnumerable<T> sequences in LINQ
-							// method is only available on List<T>
-							Log(String.Format("File: {0} matches: {1} {2}", filename, results.Count, locations));
-						}
-
-					}
-					files = directoryInfo.GetFiles("*.xlsx");
-
-					foreach (FileInfo fileInfo in files) {
-						filename = fileInfo.FullName;
-						var	excelSearch = new ExcelSearch(filename, texts[0]);
-						var results = excelSearch.findText();
-						if (results.Count > 0) {
-							var locations = String.Join(",", results.Select((ExcelResult result)  => result.Location).ToList());
-							// C# does not have a built-in .ForEach() extension method on general IEnumerable<T> sequences in LINQ
-							// method is only available on List<T>
-							Log(String.Format("File: {0} matches: {1} {2}", filename, results.Count, locations));
-						}
-
-					}
-					files = directoryInfo.GetFiles("*.docx");
-
-					foreach (FileInfo fileInfo in files) {
-						filename = fileInfo.FullName;
-						var	wordSearch = new WordSearch(filename, texts);
-						var results = wordSearch.findText();
-						if (results.Count > 0) {
-							var locations = String.Join(",", results.Select((WordResult result)  => result.Location).ToList());
-							// C# does not have a built-in .ForEach() extension method on general IEnumerable<T> sequences in LINQ
-							// method is only available on List<T>
-							Log(String.Format("File: {0} matches: {1} {2}", filename, results.Count, locations));
+					foreach (string pattern in extensions) {
+						foreach (FileInfo fileInfo in directoryInfo.GetFiles(pattern)) {
+							ScanFile(fileInfo);
 						}
 					}
 					MessageBox.Show("Done.");
@@ -553,9 +545,14 @@ namespace Program {
 		{
 
 		}
-		void ProgramLoad(object sender, EventArgs e)
-		{
-
+		void ProgramLoad(object sender, EventArgs e) {
+			InitializeScanners();
 		}
+	}
+	// NOTE: Elements defined in a namespace cannot
+	// be explicitly declared as private, protected, or protected internal (CS1527)
+	class FileResult {
+	    public string Location { get; set; }
+    	public string Text { get; set; }
 	}
 }
