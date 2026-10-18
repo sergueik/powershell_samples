@@ -68,6 +68,7 @@ namespace Utils {
 							}
 							Console.Error.WriteLine(String.Format("read sheet: {0} cell: {1} row: {2} col: {3} text: {4}", sheet.SheetName, cell.Address.FormatAsString(), cell.Address.Row + 1, cell.Address.Column + 1, cellText));
 							if (cellText.Contains(text)) {
+								// TODO: collect match capture into result
 								result.Add(new ExcelResult {
 									SheetName = sheet.SheetName,
 									CellAddress = cell.Address.FormatAsString(),

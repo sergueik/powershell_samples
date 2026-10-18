@@ -71,6 +71,7 @@ namespace Utils {
 					// NOTE: accepted "lambda expression can be simplified to a method group"
 					if (texts.Any(paragraphText.Contains)) {
 						Debug.WriteLine(String.Format("Found one of texts: {0} on paragraph {1}", String.Join(",", texts), index));
+						// TODO: collect match capture into result						
 						results.Add(new WordResult {
 							Index = index,
 							Text = paragraphText

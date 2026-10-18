@@ -66,6 +66,7 @@ namespace Utils {
 					var pageText = ContentOrderTextExtractor.GetText(page, true);
 					if (texts.Any(pageText.Contains)) {
 						Debug.WriteLine(String.Format("Found one of texts: {0} on page {1}", String.Join(",",texts), index));
+						// TODO: collect match capture into result
 						results.Add(new PdfResult {
 							Index = index,
 							Text = pageText

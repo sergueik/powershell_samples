@@ -46,6 +46,9 @@ namespace Program {
 		// https://pbdd.org/wp-content/uploads/2015/06/WordPractice2007.docx
 		private void InitializeComponent() {
 			// ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Program));
+			font2 = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			font1 = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+
 			btnSelectFile = new Button();
 			label1 = new Label();
 			txtDocDirectory = new TextBox();
@@ -481,10 +484,19 @@ namespace Program {
 		        }
 		    };
 		}
-
-		private void LogResults(string filename, int count, IEnumerable<string>locations){
-			if (count > 0){
+		// TODO: change method signature to receive FileInfo and type of file
+		private void LogResults(string filename, int count, IEnumerable<string>locations) {
+			if (count > 0) {
 				Log(String.Format("File: {0} matches: {1} {2}", filename, count, String.Join(",", locations)));
+				// System.InvalidOperationException: Cross-thread operation not valid: Control 'dataGridView' accessed from a thread other than the thread it was created on.
+				// Cannot convert lambda expression to type 'System.Delegate' because it is not a delegate type (CS1660)
+
+				dataGridView.Invoke((Action)(() => 
+				dataGridView.Rows.Add(
+					"File",
+					filename.Replace("^.*\\", ""),
+					String.Join(",", locations),
+					filename)));
 			}
 		}
 
@@ -498,6 +510,7 @@ namespace Program {
 		private readonly string[] extensions = { "*.pdf", "*.pptx", "*.xlsx", "*.docx" };
 
 		private void scan(object sender, EventArgs eventArgs) {
+			dataGridView.Rows.Clear();
 			string docDirectory = txtDocDirectory.Text;
 			Log(String.Format("Starting scan {0}", docDirectory));
 			FileInfo[] files = { };

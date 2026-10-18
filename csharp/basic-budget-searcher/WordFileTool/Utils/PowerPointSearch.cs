@@ -153,6 +153,7 @@ namespace Utils {
 						var location = String.Format("{0}:{1}:{2}", region, part, index);
 						if (!results.Exists(o => o.Location == location)) {
 							Debug.WriteLine(String.Format("found {0} in {1} ({2})", text,cellText, location));
+							// TODO: collect match capture into result
 							results.Add(new PowerPointResult {
 								Region = region,
 								Part = part,
