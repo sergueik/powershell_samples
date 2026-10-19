@@ -8,11 +8,11 @@ namespace Tests {
 
 	[TestFixture]
 	public class ExcelTest {
-		private readonly static string filename  = "sample-simple-2.xls";
+		private readonly static string filename  = "sample-simple.xlsx";
 
 		[Test]
 		public void test() {
-			const string searchText =  "test1";
+			const string searchText =  "Lorem ipsum";
 			var	excelSearch = new ExcelSearch(filename, searchText);
 			var results = excelSearch.findText();
 			Assert.Greater(results.Count, 0, "expect at least one result");
@@ -25,8 +25,8 @@ namespace Tests {
 	            StringAssert.Contains(searchText, result.Text, "Every result should contain the search string");
 			var duplicates = results.GroupBy(result => result.Location).Where(group => group.Count() > 1);
 			Assert.IsEmpty(duplicates, "Result locations should be unique");
-			// NOTE: Prefer the set-operation version that expresses the invariant, avoid the nested loop
-			// version tied to the mechanics of checking it
+			// NOTE: Prefer the set-operation version that expresses the invariant
+			// avoid the nested loop version tied to the mechanics of checking it
 			/*
 				for (int i = 0; i < results.Count; i++){
 				    for (int j = i + 1; j < results.Count; j++) {

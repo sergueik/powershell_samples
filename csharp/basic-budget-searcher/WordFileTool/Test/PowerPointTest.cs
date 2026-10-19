@@ -16,7 +16,7 @@ namespace Tests {
 		[Test]
 		public void test1() {
 			filename = "sample-presentation.pptx";
-			text = "Sample Presentation";
+			text = "Lorem ipsum";
 			var	powerPointSearch = new PowerPointSearch(filename, text);
 			var results = powerPointSearch.findText();
 			Assert.Greater(results.Count, 0, "expect at least one result");
@@ -51,15 +51,9 @@ namespace Tests {
 			// A const field of a reference type other than string can only be initialized with null. (CS0134)
 			// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/
 			var texts = new List<string> {
-				"Sample Presentation",
-				"Agenda",
-				"Roadmap",
-				"Project Goals",
-				"Reduce churn",
-				"Quarterly Revenue",
-				"Sales by Quarter",
-				"Embedded Image",
-				"Trade-offs"
+				"Lorem ipsum",
+				"vitae libero",
+				"Embedded Image"
 			};
 			// NOTE: reset region - or else
 			// debug success when run alone, failure when run all tests
@@ -82,8 +76,8 @@ namespace Tests {
 
 		[Test]
 		public void test4() {
-			filename = "sample_powerpoint_slides.pptx";
-			text = "Cover slide";
+			filename = "sample-presentation.pptx";
+			text = "fermentum nisl vitae";
 			region = "note";
 			var	powerPointSearch = new PowerPointSearch(filename, region , text);
 			var results = powerPointSearch.findText();

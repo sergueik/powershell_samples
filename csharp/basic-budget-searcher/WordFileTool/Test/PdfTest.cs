@@ -10,7 +10,7 @@ namespace Tests {
 	[TestFixture]
 	public class PdfTest {
 			private const string filename = "file-sample_150kB.pdf";
-			private string [] texts = {"Maecenas tincidunt", "Fusce vitae vestibulum"};
+			private string [] texts = {"Lorem ipsum dolor sit amet", "vitae libero"};
 
 		[Test]
 		public void test() {

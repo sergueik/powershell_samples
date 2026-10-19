@@ -10,7 +10,7 @@ namespace Tests {
 	[TestFixture]
 	public class WordTest {
 			private const string filename = "sample-simple.docx";
-			private string [] texts = {"Text Formatting", "Runs can be bold, italic, underlined or coloured", "Marker"};
+			private string [] texts = {"Lorem ipsum", "vitae libero", "First"};
 
 		[Test]
 		public void test() {
