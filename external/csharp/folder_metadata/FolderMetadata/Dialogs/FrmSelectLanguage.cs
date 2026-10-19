@@ -35,10 +35,10 @@ namespace HKS.FolderMetadata.Dialogs
 
 		private void TranslateForm()
 		{
-			this.Text = Strings.FrmSelectLanguage_Text;
-			this.btnOK.Text = Strings.FrmSelectLanguage_btnOK_Text;
-			this.colLanguage.Text = Strings.FrmSelectLanguage_colLanguage_Text;
-			this.colName.Text = Strings.FrmSelectLanguage_colName_Text;
+			this.Text = ""; // Strings.FrmSelectLanguage_Text;
+			this.btnOK.Text =  ""; // Strings.FrmSelectLanguage_btnOK_Text;
+			this.colLanguage.Text =  ""; // Strings.FrmSelectLanguage_colLanguage_Text;
+			this.colName.Text =  ""; // Strings.FrmSelectLanguage_colName_Text;
 		}
 
 		private void AddLanguages(string currentLanguage, string languageFamily)

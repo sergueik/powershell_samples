@@ -37,10 +37,10 @@ namespace HKS.FolderMetadata.Configuration.Internationalization
 			}
 
 			//See if we need to force mnemonics (e.g. for Chinese or Japanese). This is specified in the related resource file for that language.
-			if (!bool.TryParse(Strings.ForceMnemonics, out forceShowMnemonics))
-			{
-				forceShowMnemonics = true; //Show mnemonics if parsing fails.
-			}
+		//	if (!bool.TryParse(Strings.ForceMnemonics, out forceShowMnemonics))
+		//	{
+		//		forceShowMnemonics = true; //Show mnemonics if parsing fails.
+		//	}
 		}
 
 		/// <summary>

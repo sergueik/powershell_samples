@@ -31,6 +31,7 @@ namespace HKS.FolderMetadata.Dialogs
 		}
 		private void TranslateForm()
 		{
+			/*
 			btnCancel.Text = Strings.FrmManage_btnCancel_Text;
 			btnSave.Text = Strings.FrmManage_btnSave_Text;
 
@@ -42,6 +43,7 @@ namespace HKS.FolderMetadata.Dialogs
 			btnUp.Text = Strings.FrmManage_btnUp_Text;
 
 			chkSort.Text = Strings.FrmManage_chkSort_Text;
+			*/
 		}
 
 		public string[] GetEntries()
@@ -126,7 +128,7 @@ namespace HKS.FolderMetadata.Dialogs
 		{
 			if (HasTextInList(txtAdd.Text))
 			{
-				MessageBox.Show(string.Format(Strings.FrmManage_EntryAlreadyExists, txtAdd.Text), Strings.FrmManage_DuplicateText, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				// MessageBox.Show(string.Format(Strings.FrmManage_EntryAlreadyExists, txtAdd.Text), Strings.FrmManage_DuplicateText, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}
 

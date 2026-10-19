@@ -16,13 +16,13 @@ namespace HKS.FolderMetadata.Dialogs
 			InitializeComponent();
 			TranslateForm();
 			this.Icon = SystemIcons.Question;
-			this.webBrowser1.DocumentText = GetHelpPage();
+			this.webBrowser1.DocumentText = "";//  GetHelpPage();
 		}
 
 		private void TranslateForm()
 		{
-			this.Text = Strings.FrmHelp_Title;
-			this.btnClose.Text = Strings.FrmHelp_btnClose_Text;
+			this.Text =  "";//= Strings.FrmHelp_Title;
+			this.btnClose.Text = "";// Strings.FrmHelp_btnClose_Text;
 		}
 
 		/// <summary>
@@ -33,8 +33,8 @@ namespace HKS.FolderMetadata.Dialogs
 		{
 			string exe = System.IO.Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 			string nameNoExe = System.IO.Path.GetFileNameWithoutExtension(exe);
-			string html = Properties.Resources.Help;
-			
+			// string html = Properties.Resources.Help;
+			string html = null;
 			html = LocalizeHelpPage(html);
 			html = html.Replace("%%NAME_EXE%%", exe);
 			html = html.Replace("%%NAME_NOEXE%%", nameNoExe);
@@ -49,6 +49,7 @@ namespace HKS.FolderMetadata.Dialogs
 		/// <returns>Returns the localized Help page.</returns>
 		private string LocalizeHelpPage(string html)
 		{
+			/*
 			html = html.Replace("%%TITLE%%", Strings.FrmHelp_Title);
 			html = html.Replace("%%OPTION%%", Strings.FrmHelp_Option);
 			html = html.Replace("%%EXAMPLE%%", Strings.FrmHelp_Example);
@@ -62,6 +63,7 @@ namespace HKS.FolderMetadata.Dialogs
 			AddHelp(ref html, "dir", "%%NAME_EXE%% /dir &quot;C:\\Documents\\My Games&quot;", Strings.FrmHelp_Dir_Description);
 			AddHelp(ref html, "configure", "%%NAME_EXE%% /configure authors<br>%%NAME_EXE%% /configure tags", Strings.FrmHelp_Configure_Description);
 			AddHelp(ref html, "lang", "%%NAME_EXE%% /lang DE /register", Strings.FrmHelp_Lang_Description);
+*/    
 
 			return html;
 		}

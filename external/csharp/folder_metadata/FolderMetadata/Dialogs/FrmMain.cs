@@ -97,6 +97,7 @@ namespace HKS.FolderMetadata.Dialogs
 
 		private void SetText(string folderPath)
 		{
+			/*
 			string format = Strings.FrmMain_Text;
 			if (string.IsNullOrEmpty(folderPath))
 			{
@@ -108,10 +109,12 @@ namespace HKS.FolderMetadata.Dialogs
 			}
 
 			this.Text = string.Format(format, folderPath);
+			*/
 		}
 
 		private void TranslateForm()
 		{
+			/*
 			btnManageAuthors.Text = Strings.FrmMain_Manage;
 			btnManageTags.Text = Strings.FrmMain_Manage;
 
@@ -124,6 +127,7 @@ namespace HKS.FolderMetadata.Dialogs
 			lblSubject.Text = Strings.FrmMain_lblSubject_Text;
 			lblTags.Text = Strings.FrmMain_lblTags_Text;
 			lblTitle.Text = Strings.FrmMain_lblTitle_Text;
+			*/
 		}
 
 		private string NoNull(string s)
@@ -147,6 +151,7 @@ namespace HKS.FolderMetadata.Dialogs
 		/// <param name="reloadValues">If true, reloads the list values.</param>
 		private void ManageAuthors(bool reloadValues)
 		{
+			/*
 			bool sort = Properties.Settings.Default.SortAuthors;
 			System.Collections.Specialized.StringCollection entries = Properties.Settings.Default.Authors;
 			if (Manage(ref entries, ref sort, Strings.FrmMain_ManageAuthors))
@@ -165,7 +170,7 @@ namespace HKS.FolderMetadata.Dialogs
 				}
 
 				lstAuthors.ReloadValues(Properties.Settings.Default.Authors, this.METADATA.Authors);
-			}
+			}*/
 		}
 
 		/// <summary>
@@ -174,6 +179,7 @@ namespace HKS.FolderMetadata.Dialogs
 		/// <param name="reloadValues">If true, reloads the list values.</param>
 		private void ManageTags(bool reloadValues)
 		{
+			/*
 			bool sort = Properties.Settings.Default.SortTags;
 			System.Collections.Specialized.StringCollection entries = Properties.Settings.Default.Tags;
 			if (Manage(ref entries, ref sort, Strings.FrmMain_ManageTags))
@@ -191,7 +197,7 @@ namespace HKS.FolderMetadata.Dialogs
 					lstTags.Sorted = sort;
 				}
 				lstTags.ReloadValues(Properties.Settings.Default.Tags, this.METADATA.Tags);
-			}
+			}*/
 		}
 
 		/// <summary>

@@ -27,7 +27,7 @@ namespace HKS.FolderMetadata.Configuration
 			}
 			catch
 			{
-				MessageBox.Show(Strings.Registrator_Error_UnableToOpenRegistryForWriting, Strings.Registrator_RegistryAccessError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+	//			MessageBox.Show(Strings.Registrator_Error_UnableToOpenRegistryForWriting, Strings.Registrator_RegistryAccessError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				this.CanRegister = false;
 			}
 		}
@@ -50,7 +50,7 @@ namespace HKS.FolderMetadata.Configuration
 			Unregister();
 
 			RegistryKey keyShell = KEY_FOLDER.OpenSubKey("shell", true);
-			RegistryKey keyContextMenu = OpenOrCreateKey(keyShell,Strings.Registrator_ContextMenu);
+			RegistryKey keyContextMenu = null; // OpenOrCreateKey(keyShell,Strings.Registrator_ContextMenu);
 			RegistryKey keyCommand = OpenOrCreateKey(keyContextMenu, "command");
 			string path = MY_PATH;
 			if (path.Contains(" "))
@@ -119,8 +119,8 @@ namespace HKS.FolderMetadata.Configuration
 			if (notDeletedSubKeys.Count > 0)
 			{
 				string ndsk = string.Join("\r\n", notDeletedSubKeys.ToArray());
-				string message = string.Format(Strings.Registrator_CouldNotDelete, "HKEY_CLASSES_ROOT\\Folder", ndsk);
-				MessageBox.Show(message, Strings.Registrator_UnregisterError, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				// string message = string.Format(Strings.Registrator_CouldNotDelete, "HKEY_CLASSES_ROOT\\Folder", ndsk);
+				// MessageBox.Show(message, Strings.Registrator_UnregisterError, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
 
