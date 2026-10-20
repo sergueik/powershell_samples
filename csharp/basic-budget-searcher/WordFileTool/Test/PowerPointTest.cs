@@ -92,16 +92,22 @@ namespace Tests {
 		}
 
 		[Test]
-		// NOTE: package dereferencing does not work here, need
+		// NOTE: package dereferencing does not work in Nunit annotations, need full class
+
 		[ExpectedException( typeof(ICSharpCode.SharpZipLib.Zip.ZipException), ExpectedMessage = "Wrong Local header signature", MatchType = MessageMatch.StartsWith)]
 		public void test5() {
+			// Apache POI is fully capable of processing legacy PowerPoint 2003 (.ppt) files
+			// through dedicated HSLF (Horrible Slide Show Format) subcomponent
+			// the .NET NPOI library is fundamentally incapable: it has focused almost entirely on Excel (.xls, .xlsx) and Word (.docx) file processing
+			// and weak or completely absent across both old and modern OpenXML presentation formats
+			// as a workaroung one may run LibreOffice CLI: in a headless process to dynamically convert the legacy .ppt files into modern .pptx
 			filename = "file_example_PPT_500kB.ppt";
 			text = "Lorem ipsum";
 			var	powerPointSearch = new PowerPointSearch(filename, text);
 			var results = powerPointSearch.findText();
 			/*
 			Assert.Greater(results.Count, 0, "expect at least oneyy result");
-			Console.Error.WriteLine("Found in {0}", String.Join(",", results.Select((PowerPointResult result)  => result.Location).ToList()));
+			Console.Erro.WriteLine("Found in {0}", String.Join(",", results.Select((PowerPointResult result)  => result.Location).ToList()));
 
 			Predicate<PowerPointResult> match  = ( PowerPointResult result) => result.Text.Contains(text);
 			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain search string");
