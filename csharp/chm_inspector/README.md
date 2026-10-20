@@ -185,16 +185,57 @@ Information about the topics covered in individual files is stored in the table 
   <param name="Name" value="Starting a new VM for the first time">
   <param name="Local" value="ch01s09.html#idp8051664">
 </OBJECT>
-
-The table of content index (named by default `toc.hhc`) is a plain HTML file inside the CHM (MS ITSS) archive. For a selection helper grid, the relevant attributes to extract are `Name` and `Local`.
+```
+The table of content index (named by default `toc.hhc`) is a plain HTML file inside the 
+CHM (__MS__ `ITSS`) archive. 
+For a selection helper grid, the relevant attributes to extract are `Name` and `Local`.
 
 ### Processing `toc.hhc`
+
 #### Using `7-Zip`
 
 ```cmd
 7z.exe e ${chm_file} toc.hhc -o${output_folder}
 ```
 
+there are several methods using 7-zip in c# code:
+```c#
+		public static List<string> urls_7zip(string filePath) {
+			var urls = new List<string>();
+
+			var processStartInfo = new ProcessStartInfo {
+				FileName = @"c:\Program Files\7-zip\7z.exe",
+				Arguments = String.Format("l -slt \"{0}\"", filePath),
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				UseShellExecute = false,
+				CreateNoWindow = true
+			};
+      
+```
+```c#
+
+		public static String tocfilename_7zip(string filePath) {
+			string result = null;
+			string resourceFilename = "#URLSTR";
+			string tempDir = Path.Combine(Path.GetTempPath(), "chm_" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDir);
+
+			try {
+				// NOTE: whitespace sensitive
+				string arguments = string.Format("x \"{0}\" {1} -o\"{2}\"", filePath, resourceFilename, tempDir);
+
+				var processStartInfo = new ProcessStartInfo {
+					FileName = @"c:\Program Files\7-zip\7z.exe",
+					UseShellExecute = false,
+					Arguments = arguments,
+					WorkingDirectory = tempDir,
+					CreateNoWindow = true,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true
+				};
+
+```
 #### Via MSITFS COM Server COM API
 
 Using the **COM** **API** allows accessing the file directly from within the `CHM` archive without extracting:
