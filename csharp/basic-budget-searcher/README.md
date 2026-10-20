@@ -2187,7 +2187,7 @@ curl -skLO https://file-examples.com/storage/fe2435f1176aceaffa143a4/2017/10/fil
 ### See Also
 
   * [Sample files library](https://samplelib.com/)
-> NOTE: sample pdf documents content-poor
+  * [PowerPoint 2003 (ppt) Sample File](https://www.slideserve.com/dale-compton/powerpoint-2003-ppt-sample-file)
   * https://www.learningcontainer.com/sample-docx-file-for-testing
   * https://github.com/hanzhaoxin/ExcelReport - currently on .netstandard, but commit [f3988](https://github.com/hanzhaoxin/ExcelReport/tree/f3988ec14003d2a167552144f458d2a774bcd4bd/ExcelReport) - is .net 4.0 version and see also [project documentation](http://www.cnblogs.com/hanzhaoxin/tag/ExcelReport)
   * [nuget npoi 2.8.1](https://www.nuget.org/packages/npoi/#supportedframeworks-body-tab) supports .Net __4.7.2__. For [Npoi.Extend](https://www.nuget.org/packages/NPOI.Extend/1.0.4) one has to use much older version __1.0.4__ - latest is __1.1.3__ but only list __netstandard 2.0__ which is basically the same but incompatible
@@ -2200,7 +2200,7 @@ curl -skLO https://file-examples.com/storage/fe2435f1176aceaffa143a4/2017/10/fil
     + `.xls` __Excel__ document
     + `.doc` __Word__ document
     + `.ppt` __Powerpoint__ document
-  * [nissl-lab/OLE2Storage](https://github.com/nissl-lab/OLE2Storage) -  straight (pure-no COM interop) .NET IStorge interface library to read/write __OLE2__(ActiveX) document
+  * [nissl-lab/OLE2Storage](https://github.com/nissl-lab/OLE2Storage) - direct (no COM interop) .NET `IStorge` interface library to read/write __OLE2__(ActiveX) document
 
   * https://hackernoon.com/comparing-apache-npoi-and-ironxl-in-c-a-complete-guide
   * For Text Extraction & Parsing - best option is [PdfPig](https://www.nuget.org/packages/PdfPig/0.1.7#supportedframeworks-body-tab)

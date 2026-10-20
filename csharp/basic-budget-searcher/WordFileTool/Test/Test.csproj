@@ -73,24 +73,19 @@
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="NPOI">
-      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.OOXML">
-      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OOXML.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.OpenXml4Net">
-      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Collections.Concurrent" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
+
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
@@ -102,6 +97,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="sample-presentation.pptx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="file_example_PPT_500kB.ppt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

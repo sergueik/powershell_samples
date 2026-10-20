@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using ICSharpCode.SharpZipLib.Zip;
 using NUnit.Framework;
 using Utils;
 // based on: https://github.com/nissl-lab/npoi/blob/master/testcases/ooxml/TestPOIXMLDocument.cs
@@ -89,6 +89,26 @@ namespace Tests {
 			var duplicates = results.GroupBy(result => result.Location).Where(group => group.Count() > 1);
 			Assert.IsEmpty(duplicates, "Result locations should be unique");
 			StringAssert.DoesNotContain( "Slide Title", results.First().Text,"Slide text is not in slide notes");
+		}
+
+		[Test]
+		// NOTE: package dereferencing does not work here, need
+		[ExpectedException( typeof(ICSharpCode.SharpZipLib.Zip.ZipException), ExpectedMessage = "Wrong Local header signature", MatchType = MessageMatch.StartsWith)]
+		public void test5() {
+			filename = "file_example_PPT_500kB.ppt";
+			text = "Lorem ipsum";
+			var	powerPointSearch = new PowerPointSearch(filename, text);
+			var results = powerPointSearch.findText();
+			/*
+			Assert.Greater(results.Count, 0, "expect at least oneyy result");
+			Console.Error.WriteLine("Found in {0}", String.Join(",", results.Select((PowerPointResult result)  => result.Location).ToList()));
+
+			Predicate<PowerPointResult> match  = ( PowerPointResult result) => result.Text.Contains(text);
+			Assert.AreEqual(results.Count, results.FindAll(match).Count, "expect all results to contain search string");
+			var duplicates = results.GroupBy(result => result.Location).Where(group => group.Count() > 1);
+			Assert.IsEmpty(duplicates, "Result locations should be unique");
+			StringAssert.DoesNotContain( "Product A", results.First().Text,"legend is not in slides");
+			*/
 		}
 
 	}
