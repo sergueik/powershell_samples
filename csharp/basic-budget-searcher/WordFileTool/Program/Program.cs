@@ -561,6 +561,70 @@ namespace Program {
 
 		}
 
+		private string loadedHeuristicsPath = String.Empty;
+
+		private void txtHeuristicsFileSafe_Leave(object sender, EventArgs e) {
+			var textBox = sender as TextBox;
+
+			if (textBox == null)
+				return;
+
+			string path = textBox.Text.Trim();
+
+			if (path.Length == 0)
+				return;
+
+			if (String.Equals(path, loadedHeuristicsPath,
+				     StringComparison.OrdinalIgnoreCase))
+				return;
+
+			string[] lines;
+
+			try {
+				lines = File.ReadAllLines(path);
+			} catch (UnauthorizedAccessException) {
+				Log(String.Format(
+					"File cannot be accessed: \"{0}\"", path));
+				return;
+			} catch (IOException) {
+				Log(String.Format(
+					"File could not be read: \"{0}\"", path));
+				return;
+			} catch (ArgumentException) {
+				Log(String.Format(
+					"Invalid file path: \"{0}\"", path));
+				return;
+			} catch (NotSupportedException) {
+				Log(String.Format(
+					"Unsupported file path: \"{0}\"", path));
+				return;
+			} catch (System.Security.SecurityException) {
+				Log(String.Format(
+					"Access denied to file: \"{0}\"", path));
+				return;
+			}
+
+			var newTexts = new List<string>();
+
+			foreach (string line in lines) {
+				string text = line.Trim();
+
+				if (text.Length > 0)
+					newTexts.Add(text);
+			}
+
+			texts.Clear();
+
+			foreach (string text in newTexts)
+				texts.Add(text);
+
+			loadedHeuristicsPath = path;
+
+			Log(String.Format(
+				"Loaded {0} heuristics from \"{1}\"",
+				texts.Count, path));
+		}
+
 		private void txtHeuristicsFile_Leave(object sender, EventArgs e) {
 			var textBox = sender as TextBox;
 
