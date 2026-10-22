@@ -2193,23 +2193,22 @@ curl -skLO https://file-examples.com/storage/fe2435f1176aceaffa143a4/2017/10/fil
 "c:\Program Files\7-Zip\7z.exe" l file_example_PPT_500kB.ppt
 ```
 ```text
-
-   Date      Time    Attr         Size   Compressed  Name
+Date      Time    Attr         Size   Compressed  Name
 ------------------- ----- ------------ ------------  ------------------------
-                    .....           57           64  [1]CompObj
-                    .....           20           64  [1]Ole
-                    .....           44           64  Current User
-                    .....       403047       403456  Pictures
-                    .....        57093        57344  PowerPoint Document
-                    .....        57976        58368  [5]SummaryInformation
-                    .....          284          320  [5]DocumentSummaryInformation
+                .....           57           64  [1]CompObj
+                .....           20           64  [1]Ole
+                .....           44           64  Current User
+                .....       403047       403456  Pictures
+                .....        57093        57344  PowerPoint Document
+                .....        57976        58368  [5]SummaryInformation
+                .....          284          320  [5]DocumentSummaryInformation
 ```
 
 ```cmd
 "c:\Program Files\7-Zip\7z.exe" l %temp%\converted\file_example_PPT_500kB.pptx
 ```
 ```text
-   Date      Time    Attr         Size   Compressed  Name
+Date      Time    Attr         Size   Compressed  Name
 ------------------- ----- ------------ ------------  ------------------------
 2026-10-21 15:04:40 .....          576          219  _rels\.rels
 2026-10-21 15:04:40 .....          648          337  docProps\core.xml
