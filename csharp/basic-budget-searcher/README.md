@@ -1310,7 +1310,7 @@ No reason to consider a heavyweight PDF creation/manipulation framework merely b
 ### Running From Powershell ISE
 
 ```sh
-cp WordFileTool/packages/NPOI.2.5.0/lib/net45/*dll .
+cp WordFileTool/packages/NPOI.2.5.1/lib/net45/*dll .
 cp WordFileTool/packages/SharpZipLib.1.2.0/lib/net45/*dll .
 cp WordFileTool/packages/PdfPig.0.1.7/lib/net45/*dll .
 ```
@@ -2183,6 +2183,57 @@ curl -skLO https://samplelib.com/docx/sample-simple.docx
 curl -skLO https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf
 curl -skLO https://file-examples.com/wp-content/storage/2017/02/file-sample_100kB.docx
 curl -skLO https://file-examples.com/storage/fe2435f1176aceaffa143a4/2017/10/file-sample_150kB.pdf
+```
+
+### Converting Older Power Point to recent
+```cmd
+"C:\Program Files\LibreOffice\program\soffice.exe" --headless --convert-to "pptx:Impress MS PowerPoint 2007 XML" --outdir "TEMP%\converted" "%cd%\file_example_PPT_500kB.ppt"
+```
+
+```cmd
+dir file_example_PPT_500kB.ppt
+```
+```text
+ Volume in drive C is Windows-SSD
+ Volume Serial Number is 3C37-0A74
+
+ Directory of C:\developer\sergueik\powershell_samples\csharp\basic-budget-searcher\WordFileTool\Test
+
+10/20/2026  12:47 PM           526,848 file_example_PPT_500kB.ppt
+               1 File(s)        526,848 bytes
+               0 Dir(s)  24,292,540,416 bytes free
+```
+
+```cmd
+"c:\Program Files\7-Zip\7z.exe" l file_example_PPT_500kB.ppt
+```
+```text
+7-Zip 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+
+Scanning the drive for archives:
+1 file, 526848 bytes (515 KiB)
+
+Listing archive: file_example_PPT_500kB.ppt
+
+--
+Path = file_example_PPT_500kB.ppt
+Type = Compound
+Physical Size = 526848
+Extension = ppt
+Cluster Size = 512
+Sector Size = 64
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+                    .....           57           64  [1]CompObj
+                    .....           20           64  [1]Ole
+                    .....           44           64  Current User
+                    .....       403047       403456  Pictures
+                    .....        57093        57344  PowerPoint Document
+                    .....        57976        58368  [5]SummaryInformation
+                    .....          284          320  [5]DocumentSummaryInformation
+------------------- ----- ------------ ------------  ------------------------
+                                518521       519680  7 files
 ```
 ### See Also
 
