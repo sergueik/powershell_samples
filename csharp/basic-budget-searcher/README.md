@@ -1310,7 +1310,7 @@ No reason to consider a heavyweight PDF creation/manipulation framework merely b
 ### Running From Powershell ISE
 
 ```sh
-cp WordFileTool/packages/NPOI.2.5.0/lib/net45/*dll .
+cp WordFileTool/packages/NPOI.2.5.1/lib/net45/*dll .
 cp WordFileTool/packages/SharpZipLib.1.2.0/lib/net45/*dll .
 cp WordFileTool/packages/PdfPig.0.1.7/lib/net45/*dll .
 ```
@@ -2184,6 +2184,175 @@ curl -skLO https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf
 curl -skLO https://file-examples.com/wp-content/storage/2017/02/file-sample_100kB.docx
 curl -skLO https://file-examples.com/storage/fe2435f1176aceaffa143a4/2017/10/file-sample_150kB.pdf
 ```
+### Converting Older Power Point to recent
+```cmd
+"C:\Program Files\LibreOffice\program\soffice.exe" --headless --convert-to "pptx:Impress MS PowerPoint 2007 XML" --outdir "TEMP%\converted" "%cd%\file_example_PPT_500kB.ppt"
+```
+
+```cmd
+"c:\Program Files\7-Zip\7z.exe" l file_example_PPT_500kB.ppt
+```
+```text
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+                    .....           57           64  [1]CompObj
+                    .....           20           64  [1]Ole
+                    .....           44           64  Current User
+                    .....       403047       403456  Pictures
+                    .....        57093        57344  PowerPoint Document
+                    .....        57976        58368  [5]SummaryInformation
+                    .....          284          320  [5]DocumentSummaryInformation
+```
+
+```cmd
+"c:\Program Files\7-Zip\7z.exe" l %temp%\converted\file_example_PPT_500kB.pptx
+```
+```text
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2026-10-21 15:04:40 .....          576          219  _rels\.rels
+2026-10-21 15:04:40 .....          648          337  docProps\core.xml
+2026-10-21 15:04:40 .....          443          274  docProps\app.xml
+2026-10-21 15:04:40 .....          859          335  ppt\presentation.xml
+2026-10-21 15:04:40 .....         6985         1244  ppt\charts\chart1.xml
+2026-10-21 15:04:40 .....        20754         1619  ppt\slideMasters\slideMaster1.xml
+2026-10-21 15:04:40 .....          718          222  ppt\slideMasters\_rels\slideMaster2.xml.rels
+2026-10-21 15:04:40 .....         2257          542  ppt\theme\theme1.xml
+2026-10-21 15:04:40 .....         4522         1037  ppt\slideLayouts\slideLayout1.xml
+2026-10-21 15:04:40 .....          294          172  ppt\slideLayouts\_rels\slideLayout1.xml.rels
+2026-10-21 15:04:40 .....        11591         1950  ppt\slides\slide1.xml
+2026-10-21 15:04:40 .....          294          172  ppt\slides\_rels\slide1.xml.rels
+2026-10-21 15:04:40 .....          343          186  ppt\presProps.xml
+2026-10-21 15:04:40 .....         1239          246  ppt\_rels\presentation.xml.rels
+2026-10-21 15:04:40 .....         3788          486  [Content_Types].xml
+2026-10-21 15:04:40 .....       272856       268200  ppt\media\image2.jpeg
+2026-10-21 15:04:40 .....       128740       122691  ppt\media\image1.png
+
+```
+####  KMAI Evaluation Related
+
+Even an "empty" Office document is a compound object: a nested package of diverse resources, relationships, and metadata, only a small fraction of which carries direct semantic value.
+
+> NOTE: Note on format coverage: KMAI can extract structural information from digitally authored PDFs and supported CAD files, but does not natively process Microsoft Visio (.vsdx) diagrams.
+> Extracting structural information from a digitally authored PDF is not necessarily equivalent to reconstructing its original editable objects or business semantics. Similarly, lack of native Visio support does not establish that Visio content cannot be ingested through conversion or another integration path
+
+For modern Office formats such as DOCX, XLSX, and PPTX, this is quite literal: they are ZIP packages containing
+
+```text
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2026-10-21 15:04:40 .....          576          219  _rels\.rels
+2026-10-21 15:04:40 .....          648          337  docProps\core.xml
+2026-10-21 15:04:40 .....          443          274  docProps\app.xml
+2026-10-21 15:04:40 .....          859          335  ppt\presentation.xml
+2026-10-21 15:04:40 .....         6985         1244  ppt\charts\chart1.xml
+2026-10-21 15:04:40 .....        20754         1619  ppt\slideMasters\slideMaster1.xml
+2026-10-21 15:04:40 .....          718          222  ppt\slideMasters\_rels\slideMaster2.xml.rels
+2026-10-21 15:04:40 .....         2257          542  ppt\theme\theme1.xml
+2026-10-21 15:04:40 .....         4522         1037  ppt\slideLayouts\slideLayout1.xml
+2026-10-21 15:04:40 .....          294          172  ppt\slideLayouts\_rels\slideLayout1.xml.rels
+2026-10-21 15:04:40 .....        11591         1950  ppt\slides\slide1.xml
+2026-10-21 15:04:40 .....          294          172  ppt\slides\_rels\slide1.xml.rels
+2026-10-21 15:04:40 .....          343          186  ppt\presProps.xml
+2026-10-21 15:04:40 .....         1239          246  ppt\_rels\presentation.xml.rels
+2026-10-21 15:04:40 .....         3788          486  [Content_Types].xml
+2026-10-21 15:04:40 .....       272856       268200  ppt\media\image2.jpeg
+2026-10-21 15:04:40 .....       128740       122691  ppt\media\image1.png
+
+```
+multiple parts connected through relationships. Older Office formats 
+can use proprietary OLE Compound File Binary Format, which exposes 
+```text
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+                    .....           57           64  [1]CompObj
+                    .....           20           64  [1]Ole
+                    .....           44           64  Current User
+                    .....       403047       403456  Pictures
+                    .....        57093        57344  PowerPoint Document
+                    .....        57976        58368  [5]SummaryInformation
+                    .....          284          320  [5]DocumentSummaryInformation
+```
+
+```cmd
+od.exe -h ~/PowerPoint\ Document  |head -1
+```
+
+```text
+0000000 000f 03e8 07aa 0000 0001 03e9 0028 0000
+```
+```cmd
+od.exe -h ~/Pictures  |head -1
+```
+
+```text
+0000000 6e00 f01e f6f5 0001 64e7 e678 0000 0000
+```
+```cmd
+od.exe -h ~/\[5]SummaryInformation  |head -1
+```
+
+```text
+0000000 fffe 0000 0001 0002 0000 0000 0000 0000
+```
+a structured storage hierarchy of storages and streams, but it is far less evident what parts represent 
+
+a structured storage hierarchy of storages and streams, but it is far less evident what those parts represent, how they relate to one another, and which contain meaningful business content. The stream names are only weak clues; interpreting the contents may require format-specific knowledge, proprietary specifications, or the original application's APIs.
+
+In both cases, enumerating the package is merely the first step. A file listing exposes physical components, not their semantic importance, dependency structure, or contribution to the logical document. Modern OOXML makes these relationships more inspectable through named XML parts and explicit relationship files, whereas legacy OLE formats can require substantially more specialized analysis.
+
+This is precisely why legacy-document conversion deserves its own ingestion stage: the objective is not simply to enumerate old storage streams, but to recover their meaningful content and relationships and migrate them into a representation that modern processing tools can handle consistently.
+
+
+a hex dump can establish that the streams contain *different* binary data,
+but by itself it cannot establish which business semantics that data encodes.
+the names `PowerPoint Document`, `Pictures`, and `SummaryInformation` are not entirely opaque.
+
+| term | explanation|
+|------|------------|
+|Logical business document|A contract, report, presentation, procedure, or spreadsheet<br/>Stored as a compound package|
+|Semantic content|Paragraphs, tables, formulas, slide text, comments, notes, metadata|
+|Supporting resources|Images, themes, tyles, fonts, relationships, layout definitions|
+|Rendering and configuration|Page setup, print settings, color schemes, view state|
+|References and relationships|Links between parts, embedded objects, external references|
+
+| Resource category | Semantic inventory value | Retrieval cost | Notes |
+|---|---|---|---|
+| Body text, tables, spreadsheet cell values | 🪙🪙🪙🪙 | 🪙 | Standard parsers |
+| Comments, tracked changes, speaker notes | 🪙🪙🪙<br/>Potentially high | 🪙🪙 | Format-specific extraction |
+| Embedded charts and business diagrams | 🪙🪙🪙🪙 | 🪙🪙🪙 | Specialized extraction; underlying data may require separate processing |
+| Headers, footers, footnotes, hyperlinks | 🪙🪙<br/>Context-dependent | 🪙🪙<br/>Varies | Usually accessible through document parsers |
+| Images and scanned pages | 🪙🪙🪙<br/>Potentially high | 🪙🪙🪙 | OCR or vision may be needed |
+| Styles, themes, fonts, layout definitions, editor state | 🪙 | 🪙🪙 | Higher if rendering fidelity is required |
+| Printer settings, view state, rendering metadata | 🪙 | 🪙 | Often unnecessary to extract |
+| Relationship files and package manifests | 🪙<br/>Low direct value;<br/>potentially high structural value | 🪙🪙 | Essential for resolving package structure and embedded resources |
+| Revision, author, and custom metadata | 🪙🪙 | 🪙 | Potentially sensitive; governance may add effort |
+| Embedded Office documents and OLE objects | 🪙🪙🪙 | 🪙🪙🪙 | Recursive extraction, format detection, and nested parsing |
+| Externally linked documents and resources | 🪙🪙🪙 | 🪙🪙🪙 | Link resolution, access permissions, availability, and version reconciliation |
+
+
+
+You are distinguishing __modernizing the content estate__ through a __dedicated conversion pass__ 
+from __extending a modern ingestion engine indefinitely__ to accommodate __legacy formats__.
+
+The distinction is not merely about performance.
+Why a separate legacy-conversion pass makes sense:
+
+1. A naked out-of-memory failure is a __warning sign__. If a vendor's ingestion engine runs out of memory on an ordinary legacy OLE/CHM artifact, without any deliberate stress test or specially constructed input, that raises questions about how thoroughly that format's handling has been tested. It does not prove the entire implementation is defective, but it is a legitimate qualification concern.
+
+2. Legacy formats have a __disproportionate compatibility cost__. Supporting __OLE Compound File Binary Format__, older CHM content, embedded objects, and their historical APIs can introduce separate parsing paths, dependencies, security concerns, and failure modes into an otherwise modern pipeline.
+
+
+
+Given the availability of proven extraction and conversion tools, supplemented as a last resort by slower but relatively straightforward integration with the relevant Office APIs, it is often more practical to scan and convert vintage documents into modern, normalized representations than to flag them as unsupported and defer their processing indefinitely.
+
+A dedicated legacy-conversion pass establishes a bounded compatibility boundary: legacy formats are handled during migration, while the modern ingestion pipeline operates primarily on a consistent content model. Conversion should preserve the original artifacts, record provenance and extraction failures, and validate the completeness of the resulting representations.
+
+The objective is not merely to make legacy files readable by a modern AI platform. It is to eliminate legacy-format dependencies from the normal ingestion path wherever practical, while ensuring that potentially valuable enterprise knowledge is not silently excluded from discovery.
+
+
 ### See Also
 
   * [Sample files library](https://samplelib.com/sample-ppt.html)
@@ -2222,6 +2391,8 @@ curl -skLO https://file-examples.com/storage/fe2435f1176aceaffa143a4/2017/10/fil
   * https://www.youtube.com/watch?v=jEcSo-H8yG8
   * https://www.youtube.com/watch?v=psf-p6zQ6o8
   * https://cdapress.com/news/2025/sep/26/npoi-a-deep-dive-into-its-capabilities-and-limitations/
+  * [Sertis KMAI, an enterprise-grade AI knowledge management assistant](https://www.sertiscorp.com/th/solutions-kmai)
+
 ---
  
 ### TLDR
