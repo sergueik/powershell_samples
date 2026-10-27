@@ -2351,7 +2351,105 @@ A dedicated legacy-conversion pass establishes a bounded compatibility boundary:
 
 The objective is not merely to make legacy files readable by a modern AI platform. It is to eliminate legacy-format dependencies from the normal ingestion path wherever practical, while ensuring that potentially valuable enterprise knowledge is not silently excluded from discovery.
 
+legacy-document modernization is a recursive inventory and transformation process, not a one-time file conversion.
+```mermaid
+flowchart LR
+H1[[SharePoint]]
+Downloads[("Document Directory")]
+W1(["Word<br/>File"])
+W2(["Word<br/>File"])
+W3(["Word 97<br/>File"])
+W4(["Word<br/>File"])
+P1(["Powerpoint<br/>File"])
+P2(["Powerpoint<br/>File"])
+E1(["Excel<br/>File"])
+E2(["Excel<br/>File"])
+E3(["Excel 97<br/>File"])
+E4(["Excel<br/>File"])
 
+V1(["Visio<br/>File"])
+V2(["Visio<br/>File"])
+V3(["Visio 2003<br/>File"])
+
+U{"Unzip<br/>File"}
+D1[discard]
+D2[discard]
+D3[discard]
+D4[discard]
+
+OA1[["Office 365<br/>Autimation"]]
+OA2[["Office 365<br/>Autimation"]]
+OA3[["Office 365<br/>Autimation"]]
+OD1[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
+OD2[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
+OD3[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
+OD4[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
+OD5[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
+
+OV1[["Visio XML<br/>schema Processinf<br/>Semantic Extraction"]]
+OV2[["Visio XML<br/>schema Processinf<br/>Semantic Extraction"]]
+Y1[["..."]]
+Y2[["..."]]
+
+subgraph I[Bot Inventory]
+M1[/Mermaid/]
+M2[/Mermaid/]
+T1{{Makdown}}
+T2{{Makdown}}
+T3{{Makdown}}
+T4{{Makdown}}
+T5{{Makdown}}
+T6{{Makdown}}
+
+end
+X1[\XML\]
+X2[\XML\]
+X3[\XML\]
+X4[\XML\]
+I1[Image]
+F1{Unzip<br/>File}
+H1 --> Downloads 
+TT1[plain text]
+Downloads -- pick -->P2 --> Y2
+Downloads -- pick -->W1
+
+W1-- unip -->U
+U -- "visio drawing" --> V1 --> OV1 --> M1
+U -- "OLE object" --> V3 --> OA2 --> V2 --> OV2 --> M2
+U -- "word document" --> W1
+U -- "word document" --> W2 --> OD1 --> T1
+U -- "word document" --> W3 --> OA1 --> W4 --> OD2 --> T2
+U -- "media" --> I1 --> D1 
+U -- "rels" --> X1 --> D2
+U -- "props" --> X2 --> D3
+U --"document.xml" --> X4 --> OD5 --> T3
+U -- "excel" --> E1 --> OD3 --> T4
+U -- "excel" --> E3 --> OA3 --> E2 --> OD4 --> T5
+U -- "powerpoint" --> P1 --> F1 --"slide"--> X3 --> TT1 --> T6
+X3 -- etc --> D4
+Downloads -- pick --> E4 --> Y1
+
+
+```
+
+work queue that collects independent processing tasks from two sources: the original document directory and the contents discovered while processing documents
+
+
+![recursve diagram](screenshots/diagram2.png)
+```mermaid
+flowchart LR
+    H1[[SharePoint]] --> Downloads[("Document<br/>Directory")]
+
+    Downloads -->|"enqueue<br/> discovered files"| Q[["Work<br/> Queue"]]
+
+    Q -->|"dequeue<br/>next item"| U{"Inspect <br/> Unzip"}
+
+    U -->|"discover<br/>embedded object"| Q
+    U -->|"discover<br/>nested document"| Q
+
+    Q -->|"queue empty"| DONE(["Inventory complete"])
+```
+![recursve diagram](screenshots/diagram3.png)
 ### See Also
 
   * [Sample files library](https://samplelib.com/sample-ppt.html)

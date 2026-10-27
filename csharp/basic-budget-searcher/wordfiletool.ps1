@@ -573,37 +573,8 @@ dataGridView.Rows.Add(
 				});
 		}
 
-
 		private void btnClose_Click(object sender, EventArgs e) {
 			this.Close();
-		}
-
-		private void ReplaceKey(XWPFParagraph paragraph, IDictionary<string, string> redic)
-		{
-			string text = paragraph.ParagraphText;
-			foreach (var kv in redic) {
-				if (text.Contains(kv.Key)) {
-					if (!String.IsNullOrEmpty(kv.Value))
-						paragraph.ReplaceText(kv.Key, kv.Value);
-				}
-			}
-		}
-		// currently unused - keep for possible later use
-		private void ReplaceKeyword(XWPFParagraph paragraph, IDictionary<string, string> redic) {
-			string text = string.Empty;
-			string styleid = paragraph.Style;
-			var runs = paragraph.Runs;
-			for (int i = 0; i < runs.Count; i++) {
-				var run = runs[i];
-				text = run.ToString();
-				foreach (var kv in redic) {
-					if (text.Contains(kv.Key)) {
-						text = text.Replace(kv.Key, kv.Value);
-					}
-				}
-
-				runs[i].SetText(text, 0);
-			}
 		}
 
 		void chooseFile(object sender, EventArgs e) {
