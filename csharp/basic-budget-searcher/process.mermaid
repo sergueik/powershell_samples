@@ -1,50 +1,50 @@
 flowchart LR
 H1[[SharePoint]]
-Downloads[("Document Directory")]
-W1(["Word<br/>File"])
-W2(["Word<br/>File"])
-W3(["Word 97<br/>File"])
-W4(["Word<br/>File"])
-P1(["Powerpoint<br/>File"])
-P2(["Powerpoint<br/>File"])
-E1(["Excel<br/>File"])
-E2(["Excel<br/>File"])
-E3(["Excel 97<br/>File"])
-E4(["Excel<br/>File"])
+Downloads[("Document 📂")]
+W1(["Word<br/>💾"])
+W2(["Word<br/>💾"])
+W3(["Word 97<br/>💾"])
+W4(["Word<br/>💾"])
+P1(["Powerpoint<br/>💾"])
+P2(["Powerpoint<br/>💾"])
+E1(["Excel<br/>💾"])
+E2(["Excel<br/>💾"])
+E3(["Excel 97<br/>💾"])
+E4(["Excel<br/>💾"])
 
-V1(["Visio<br/>File"])
-V2(["Visio<br/>File"])
-V3(["Visio 2003<br/>File"])
+V1(["Visio<br/>💾"])
+V2(["Visio<br/>💾"])
+V3(["Visio 2003<br/>💾"])
 
 U{"Unzip<br/>File"}
-D1[discard]
-D2[discard]
-D3[discard]
-D4[discard]
+D1["🗑 Discard"]
+D2["🗑 Discard"]
+D3["🗑 Discard"]
+D4["🗑 Discard"]
 
 OA1[["Office 365<br/>Autimation"]]
 OA2[["Office 365<br/>Autimation"]]
 OA3[["Office 365<br/>Autimation"]]
-OD1[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
-OD2[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
-OD3[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
-OD4[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
-OD5[["OpenDoc XML<br/>schema Processinf<br/>Semantic Extraction"]]
+OD1[["OpenDoc XML<br/>Semantic Extraction"]]
+OD2[["OpenDoc XML<br/>Semantic Extraction"]]
+OD3[["OpenDoc XML<br/>Semantic Extraction"]]
+OD4[["OpenDoc XML<br/>Semantic Extraction"]]
+OD5[["OpenDoc XML<br/>Semantic Extraction"]]
 
-OV1[["Visio XML<br/>schema Processinf<br/>Semantic Extraction"]]
-OV2[["Visio XML<br/>schema Processinf<br/>Semantic Extraction"]]
-Y1[["..."]]
-Y2[["..."]]
+OV1[["Visio XML<br/>Semantic Extraction"]]
+OV2[["Visio XML<br/>Semantic Extraction"]]
+Y1[["🛠"]]
+Y2[["🛠"]]
 
 subgraph I[Bot Inventory]
-M1[/Mermaid/]
-M2[/Mermaid/]
-T1{{Makdown}}
-T2{{Makdown}}
-T3{{Makdown}}
-T4{{Makdown}}
-T5{{Makdown}}
-T6{{Makdown}}
+M1[/"🧜 Mermaid"/]
+M2[/"🧜 Mermaid"/]
+T1{{"📖 Markdown"}}
+T2{{"📖 Markdown"}}
+T3{{"📖 Markdown"}}
+T4{{"📖 Markdown"}}
+T5{{"📖 Markdown"}}
+T6{{"📖 Markdown"}}
 
 end
 X1[\XML\]
@@ -71,6 +71,6 @@ U --"document.xml" --> X4 --> OD5 --> T3
 U -- "excel" --> E1 --> OD3 --> T4
 U -- "excel" --> E3 --> OA3 --> E2 --> OD4 --> T5
 U -- "powerpoint" --> P1 --> F1 --"slide"--> X3 --> TT1 --> T6
-X3 -- etc --> D4
+F1 -- etc --> D4
 Downloads -- pick --> E4 --> Y1
 
