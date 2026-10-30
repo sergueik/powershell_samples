@@ -1,0 +1,7 @@
+﻿# Local only
+CLAUDE.md
+CLAUDE.md.tmp*
+
+# Build output (the exe goes into the release zip)
+dist/
+*.exe
