@@ -14,14 +14,12 @@ using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
-class AssetStat
-{
+class AssetStat {
     public string Name;
     public long Downloads, Size;
 }
 
-class ReleaseStat
-{
+class ReleaseStat {
     public string Tag;
     public DateTime Published;
     public bool Prerelease;
@@ -29,20 +27,17 @@ class ReleaseStat
     public List<AssetStat> Assets = new List<AssetStat>();
 }
 
-class Referrer
-{
+class Referrer {
     public string Name;
     public int Count, Uniques;
 }
 
-class DayCount
-{
+class DayCount {
     public DateTime Day;
     public int Count, Uniques;
 }
 
-class RepoStat
-{
+class RepoStat {
     public string Name, Url, Description, Language;
     public DateTime Created, Pushed;
     public int Stars, Forks, Issues;
@@ -59,17 +54,14 @@ class RepoStat
     public override string ToString() { return Name; }
 }
 
-class AccountStat
-{
+class AccountStat {
     public string User;
     public int Followers;
     public bool HasToken, TrafficDenied;
     public List<RepoStat> Repos = new List<RepoStat>();
 }
 
-// Снимок счётчиков после проверки — по ним считаются прирост, графики и история
-class Snapshot
-{
+class Snapshot {
     public string Time;
     public long Total;
     public long Stars = -1, Forks = -1, Followers = -1; // -1 — в старых файлах истории этих полей нет
@@ -80,23 +72,20 @@ class Snapshot
     public bool HasStars() { return Stars >= 0; }
 }
 
-class ShareRow
-{
+class ShareRow {
     public string Name;
     public long Downloads;
     public int Files;
 }
 
-class Series
-{
+class Series {
     public string Name;
     public Color Color;
     public bool Right, Fill;
     public List<KeyValuePair<DateTime, double>> Points = new List<KeyValuePair<DateTime, double>>();
 }
 
-static class Theme
-{
+static class Theme {
     public static readonly float S;
     static Theme() { using (var g = Graphics.FromHwnd(IntPtr.Zero)) S = g.DpiX / 96f; }
     public static int D(double v) { return (int)Math.Round(v * S); }
@@ -135,17 +124,14 @@ static class Theme
     public static readonly Font SideName = new Font("Segoe UI Semibold", 11f);
 }
 
-class Hit
-{
+class Hit {
     public Rectangle R;
     public Action Click;
     public string Tip;
 }
 
-// Панель, которую целиком рисует функция Render; запоминает кликабельные места и подсказки
-class Canvas : Panel
-{
-    public Func<Painter, int> Render; // возвращает высоту содержимого
+class Canvas : Panel {
+    public Func<Painter, int> Render;
     public ToolTip Tips;
     readonly List<Hit> hits = new List<Hit>();
     Hit hover;
@@ -1790,8 +1776,7 @@ class MainForm : Form
         return acc;
     }
 
-    static void LoadTraffic(RepoStat r, string api, string token)
-    {
+    static void LoadTraffic(RepoStat r, string api, string token) {
         var v = GetObject(api + "/traffic/views", token);
         var c = GetObject(api + "/traffic/clones", token);
         r.Views = Convert.ToInt32(v["count"]);
@@ -1805,9 +1790,7 @@ class MainForm : Form
         r.HasTraffic = true;
     }
 
-    // Посуточные счётчики из ответа traffic/views или traffic/clones; дата — по UTC, как у GitHub
-    static List<DayCount> Days(Dictionary<string, object> o, string key)
-    {
+    static List<DayCount> Days(Dictionary<string, object> o, string key) {
         var list = new List<DayCount>();
         object arr;
         if (!o.TryGetValue(key, out arr) || !(arr is object[])) return list;
@@ -1820,8 +1803,7 @@ class MainForm : Form
         return list;
     }
 
-    static DateTime Date(object o)
-    {
+    static DateTime Date(object o) {
         var s = o as string;
         DateTime d;
         return s != null && DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out d)
@@ -1830,13 +1812,11 @@ class MainForm : Form
 
     static JavaScriptSerializer Json() { return new JavaScriptSerializer { MaxJsonLength = int.MaxValue }; }
 
-    static Dictionary<string, object> GetObject(string url, string token)
-    {
+    static Dictionary<string, object> GetObject(string url, string token) {
         return (Dictionary<string, object>)Json().DeserializeObject(Get(url, token));
     }
 
-    static IEnumerable<Dictionary<string, object>> GetAll(string url, string token)
-    {
+    static IEnumerable<Dictionary<string, object>> GetAll(string url, string token) {
         for (int page = 1; ; page++)
         {
             var items = (object[])Json().DeserializeObject(Get(url + "&page=" + page, token));
@@ -1845,8 +1825,7 @@ class MainForm : Form
         }
     }
 
-    static string Get(string url, string token)
-    {
+    static string Get(string url, string token) {
         using (var wc = new WebClient())
         {
             wc.Encoding = Encoding.UTF8;
@@ -1861,9 +1840,7 @@ class MainForm : Form
         }
     }
 
-    // Текст ошибки сразу на обоих языках: ответ GitHub после потока недоступен, а язык можно переключить в любой момент
-    static string[] Describe(Exception ex)
-    {
+    static string[] Describe(Exception ex) {
         var we = ex as WebException;
         if (we != null)
         {
@@ -1891,18 +1868,13 @@ class MainForm : Form
         }
         return new[] { "Ошибка: " + ex.Message, "Error: " + ex.Message };
     }
-
-    // ——— Хранение ———
-
-    static string HistoryPath(string user)
-    {
+    static string HistoryPath(string user) {
         string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GitHubDownloads");
         Directory.CreateDirectory(dir);
         return Path.Combine(dir, "history-" + user.ToLowerInvariant() + ".json");
     }
 
-    static List<Snapshot> LoadHistory(string user)
-    {
+    static List<Snapshot> LoadHistory(string user) {
         try
         {
             string p = HistoryPath(user);
@@ -1921,13 +1893,11 @@ class MainForm : Form
         return new List<Snapshot>();
     }
 
-    static void SaveHistory(string user, List<Snapshot> hist)
-    {
+    static void SaveHistory(string user, List<Snapshot> hist) {
         try { File.WriteAllText(HistoryPath(user), Json().Serialize(hist), Encoding.UTF8); } catch { }
     }
 
-    static string Reg(string name)
-    {
+    static string Reg(string name) {
         try
         {
             using (var k = Registry.CurrentUser.OpenSubKey(RegKey))
@@ -1939,8 +1909,7 @@ class MainForm : Form
         catch { return null; }
     }
 
-    static void SetReg(string name, string value)
-    {
+    static void SetReg(string name, string value) {
         try
         {
             using (var k = Registry.CurrentUser.CreateSubKey(RegKey))
@@ -1952,29 +1921,24 @@ class MainForm : Form
         catch { }
     }
 
-    static string LoadStoredToken()
-    {
+    static string LoadStoredToken() {
         string s = Reg("Token");
         if (s == null) return null;
         try { return Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(s), null, DataProtectionScope.CurrentUser)); }
         catch { return null; }
     }
 
-    // Сохранённый токен важнее переменной GITHUB_TOKEN
-    static string LoadToken()
-    {
+    static string LoadToken() {
         return LoadStoredToken() ?? Environment.GetEnvironmentVariable("GITHUB_TOKEN");
     }
 
-    static void SaveToken(string token)
-    {
+    static void SaveToken(string token) {
         if (token.Length == 0) { SetReg("Token", null); return; }
         SetReg("Token", Convert.ToBase64String(ProtectedData.Protect(Encoding.UTF8.GetBytes(token), null, DataProtectionScope.CurrentUser)));
     }
 
     [STAThread]
-    static void Main()
-    {
+    static void Main() {
         ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072; // TLS 1.2
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
