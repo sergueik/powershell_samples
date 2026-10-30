@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Build">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -16,7 +16,7 @@
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile/>
     <NoWin32Manifest>False</NoWin32Manifest>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
@@ -77,23 +77,21 @@
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
-
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Collections.Concurrent" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Reference Include="System"/>
+    <Reference Include="System.Collections.Concurrent"/>
+    <Reference Include="System.Data"/>
+    <Reference Include="System.Xml"/>
+    <Reference Include="System.Xml.Linq"/>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PdfTest.cs" />
-    <Compile Include="PowerPointTest.cs" />
-    <Compile Include="ExcelTest.cs" />
-    <Compile Include="WordTest.cs" />
+    <None Include="packages.config"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PdfTest.cs"/>
+    <Compile Include="PowerPointTest.cs"/>
+    <Compile Include="ExcelTest.cs"/>
+    <Compile Include="WordTest.cs"/>
   </ItemGroup>
   <ItemGroup>
     <None Include="sample-presentation.pptx">
@@ -116,6 +114,56 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Agile.Release.Process.Flowchart.Visio.diagram.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Basic Flowchart Diagram - Student Enrollment Process.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="E-Commerce.Shopping.Process.Flow.Diagram.Visio.1.1.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="E-Commerce.Shopping.Process.Flow.v20190805.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Flowchart.diagram - Releace.Cycle.Diagram.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Salesforce.Release.Deployment.Process.in.Agile.diagram.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Simple.Rectangular.Room.Visio.Floor.Plan.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Visio.Org.Chart.Diagram.Sample.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sample.visio.swimlane.diagram.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tf16403429.vsdx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="sample-simple.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -131,8 +179,8 @@
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')"/>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 
 	  
@@ -147,7 +195,7 @@
       <TestDataPath>$(MSBuildProjectDirectory)\$(TestDataFile)</TestDataPath>
       <DownloadScript>$(MSBuildProjectDirectory)\DownloadTestData.ps1</DownloadScript>
     </PropertyGroup>
-    <Message Text="Downloading $(TestDataFile) from $(TestDataUrl)" Importance="high" />
-    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(DownloadScript)&quot; -Url &quot;$(TestDataUrl)&quot; -OutFile &quot;$(TestDataPath)&quot;" />
+    <Message Text="Downloading $(TestDataFile) from $(TestDataUrl)" Importance="high"/>
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(DownloadScript)&quot; -Url &quot;$(TestDataUrl)&quot; -OutFile &quot;$(TestDataPath)&quot;"/>
   </Target>
 </Project>

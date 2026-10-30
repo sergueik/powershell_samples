@@ -2768,10 +2768,29 @@ The developer's time is not the only scarce resource. Attention, curiosity, and 
   * https://www.youtube.com/watch?v=jEcSo-H8yG8
   * https://www.youtube.com/watch?v=psf-p6zQ6o8
   * https://cdapress.com/news/2025/sep/26/npoi-a-deep-dive-into-its-capabilities-and-limitations/
-  * [Sertis KMAI, an enterprise-grade AI knowledge management assistant](https://www.sertiscorp.com/th/solutions-kmai)
+  * [sertis KMAI, an enterprise-grade AI knowledge management assistant](https://www.sertiscorp.com/th/solutions-kmai)
+  * [microsoft Visio VSDX Files Download](https://www.howtoanalyzedata.net/microsoft-visio-vsdx-files-download)
+
+  * __Visio__ __Semantic Rendering__
+    + [Python vsdx library](https://vsdx.readthedocs.io/en/latest/quickstart.html)
+    + [vsdxkit](https://firmfooting.github.io/vsdxkit/index.html)
+    + [Microsoft VSDX format documentation](https://learn.microsoft.com/en-us/office/client-developer/visio/introduction-to-the-visio-file-formatvsdx)
 
 ---
- 
+```mermaid 
+
+
+flowchart TD
+    A["VSDX ZIP package"] --> B["XML extraction"]
+    B --> C["Raw shape inventory"]
+    C --> D["Connector reconstruction"]
+    D --> E["Semantic classification"]
+    E --> F["Intermediate graph model"]
+    F --> G["Mermaid generator"]
+    F --> H["Diagnostic report"]
+
+
+```
 ### TLDR
 [Neuschwanstein Castle](https://en.wikipedia.org/wiki/Neuschwanstein_Castle) in southern Germany is the famous
 fairytale palace that inspired Disney's [Cinderella](https://en.wikipedia.org/wiki/Cinderella_Castle) and [Sleeping Beauty](https://en.wikipedia.org/wiki/Sleeping_Beauty_Castle) Magic
