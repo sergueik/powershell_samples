@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MasterContents xmlns="http://schemas.microsoft.com/office/visio/2012/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xml:space="preserve">
+  <Shapes>
+    <Shape ID="4" Type="Shape" LineStyle="7" FillStyle="7" TextStyle="7" UniqueID="{52A11EA5-F639-4EC9-BFFD-8D528CEA5BAC}">
+      <Cell N="PinX" V="2" U="IN"/>
+      <Cell N="PinY" V="2" U="IN"/>
+      <Cell N="Width" V="1" U="IN" F="User.DefaultWidth"/>
+      <Cell N="Height" V="0.75" U="IN" F="User.ResizeTxtHeight"/>
+      <Cell N="LocPinX" V="0.5" U="IN" F="Width*0.5"/>
+      <Cell N="LocPinY" V="0.375" U="IN" F="Height*0.5"/>
+      <Cell N="Angle" V="0"/>
+      <Cell N="FlipX" V="0"/>
+      <Cell N="FlipY" V="0"/>
+      <Cell N="ResizeMode" V="0"/>
+      <Cell N="TxtPinX" V="0.5" U="IN" F="Width*0.5"/>
+      <Cell N="TxtPinY" V="0.375" U="IN" F="Height*0.5"/>
+      <Cell N="TxtWidth" V="0.83333333333333" U="IN" F="Width*0.83333333333333"/>
+      <Cell N="TxtHeight" V="0.5625" U="IN" F="Height*0.75"/>
+      <Cell N="TxtLocPinX" V="0.416666666666665" U="IN" F="TxtWidth*0.5"/>
+      <Cell N="TxtLocPinY" V="0.28125" U="IN" F="TxtHeight*0.5"/>
+      <Cell N="TxtAngle" V="0"/>
+      <Cell N="EventDblClick" V="0" F="OPENTEXTWIN()"/>
+      <Cell N="HelpTopic" V="Vis_PRXY.chm!#59001"/>
+      <Cell N="Copyright" V="Copyright (c) 2012 Microsoft Corporation.  All rights reserved."/>
+      <Cell N="LockCalcWH" V="1"/>
+      <Cell N="LayerMember" V="0"/>
+      <Cell N="ObjType" V="1"/>
+      <Cell N="ShapeSplit" V="1"/>
+      <Cell N="QuickStyleLineColor" V="102"/>
+      <Cell N="QuickStyleFillColor" V="102"/>
+      <Cell N="QuickStyleShadowColor" V="102"/>
+      <Cell N="QuickStyleFontColor" V="102"/>
+      <Cell N="QuickStyleLineMatrix" V="102"/>
+      <Cell N="QuickStyleFillMatrix" V="102"/>
+      <Cell N="QuickStyleEffectsMatrix" V="102"/>
+      <Cell N="QuickStyleFontMatrix" V="102"/>
+      <Section N="Connection">
+        <Row T="Connection" IX="0">
+          <Cell N="X" V="0"/>
+          <Cell N="Y" V="0.375" U="IN" F="Height*0.5"/>
+          <Cell N="DirX" V="0" F="No Formula"/>
+          <Cell N="DirY" V="0" F="No Formula"/>
+          <Cell N="Type" V="0" F="No Formula"/>
+          <Cell N="AutoGen" V="0" F="No Formula"/>
+          <Cell N="Prompt" V="" F="No Formula"/>
+        </Row>
+        <Row T="Connection" IX="1">
+          <Cell N="X" V="1" U="IN" F="Width"/>
+          <Cell N="Y" V="0.375" U="IN" F="0.5*Height"/>
+          <Cell N="DirX" V="0" F="No Formula"/>
+          <Cell N="DirY" V="0" F="No Formula"/>
+          <Cell N="Type" V="0" F="No Formula"/>
+          <Cell N="AutoGen" V="0" F="No Formula"/>
+          <Cell N="Prompt" V="" F="No Formula"/>
+        </Row>
+        <Row T="Connection" IX="2">
+          <Cell N="X" V="0.5" U="IN" F="0.5*Width"/>
+          <Cell N="Y" V="0.75" U="IN" F="Height"/>
+          <Cell N="DirX" V="0" F="No Formula"/>
+          <Cell N="DirY" V="0" F="No Formula"/>
+          <Cell N="Type" V="0" F="No Formula"/>
+          <Cell N="AutoGen" V="0" F="No Formula"/>
+          <Cell N="Prompt" V="" F="No Formula"/>
+        </Row>
+        <Row T="Connection" IX="3">
+          <Cell N="X" V="0.5" U="IN" F="0.5*Width"/>
+          <Cell N="Y" V="0"/>
+          <Cell N="DirX" V="0" F="No Formula"/>
+          <Cell N="DirY" V="0" F="No Formula"/>
+          <Cell N="Type" V="0" F="No Formula"/>
+          <Cell N="AutoGen" V="0" F="No Formula"/>
+          <Cell N="Prompt" V="" F="No Formula"/>
+        </Row>
+      </Section>
+      <Section N="Property">
+        <Row N="Cost">
+          <Cell N="Value" V="0" F="No Formula"/>
+          <Cell N="Prompt" V=""/>
+          <Cell N="Label" V="Cost"/>
+          <Cell N="Format" V="@"/>
+          <Cell N="SortKey" V=""/>
+          <Cell N="Type" V="7"/>
+          <Cell N="Invisible" V="0"/>
+          <Cell N="Verify" V="0"/>
+          <Cell N="DataLinked" V="0" F="No Formula"/>
+          <Cell N="LangID" V="en-US"/>
+          <Cell N="Calendar" V="0"/>
+        </Row>
+        <Row N="ProcessNumber">
+          <Cell N="Value" V="0" F="No Formula"/>
+          <Cell N="Prompt" V=""/>
+          <Cell N="Label" V="Process Number"/>
+          <Cell N="Format" V=""/>
+          <Cell N="SortKey" V=""/>
+          <Cell N="Type" V="2"/>
+          <Cell N="Invisible" V="0"/>
+          <Cell N="Verify" V="0"/>
+          <Cell N="DataLinked" V="0" F="No Formula"/>
+          <Cell N="LangID" V="en-US"/>
+          <Cell N="Calendar" V="0"/>
+        </Row>
+        <Row N="Owner">
+          <Cell N="Value" V="0" F="No Formula"/>
+          <Cell N="Prompt" V=""/>
+          <Cell N="Label" V="Owner"/>
+          <Cell N="Format" V=""/>
+          <Cell N="SortKey" V=""/>
+          <Cell N="Type" V="0"/>
+          <Cell N="Invisible" V="0"/>
+          <Cell N="Verify" V="0"/>
+          <Cell N="DataLinked" V="0" F="No Formula"/>
+          <Cell N="LangID" V="en-US"/>
+          <Cell N="Calendar" V="0"/>
+        </Row>
+        <Row N="Function">
+          <Cell N="Value" V="" U="STR" F="IFERROR(CONTAINERSHEETREF(1,&quot;Swimlane&quot;)!User.VISHEADINGTEXT,&quot;&quot;)"/>
+          <Cell N="Prompt" V=""/>
+          <Cell N="Label" V="Function"/>
+          <Cell N="Format" V=""/>
+          <Cell N="SortKey" V=""/>
+          <Cell N="Type" V="0"/>
+          <Cell N="Invisible" V="0"/>
+          <Cell N="Verify" V="0"/>
+          <Cell N="DataLinked" V="0" F="No Formula"/>
+          <Cell N="LangID" V="en-US"/>
+          <Cell N="Calendar" V="0"/>
+        </Row>
+        <Row N="StartDate">
+          <Cell N="Value" V="0" F="No Formula"/>
+          <Cell N="Prompt" V=""/>
+          <Cell N="Label" V="Start Date"/>
+          <Cell N="Format" V=""/>
+          <Cell N="SortKey" V=""/>
+          <Cell N="Type" V="5"/>
+          <Cell N="Invisible" V="0"/>
+          <Cell N="Verify" V="0"/>
+          <Cell N="DataLinked" V="0" F="No Formula"/>
+          <Cell N="LangID" V="en-US"/>
+          <Cell N="Calendar" V="0"/>
+        </Row>
+        <Row N="EndDate">
+          <Cell N="Value" V="0" F="No Formula"/>
+          <Cell N="Prompt" V=""/>
+          <Cell N="Label" V="End Date"/>
+          <Cell N="Format" V=""/>
+          <Cell N="SortKey" V=""/>
+          <Cell N="Type" V="5"/>
+          <Cell N="Invisible" V="0"/>
+          <Cell N="Verify" V="0"/>
+          <Cell N="DataLinked" V="0" F="No Formula"/>
+          <Cell N="LangID" V="en-US"/>
+          <Cell N="Calendar" V="0"/>
+        </Row>
+        <Row N="Status">
+          <Cell N="Value" V="" U="STR" F="INDEX(0,Prop.Status.Format)"/>
+          <Cell N="Prompt" V=""/>
+          <Cell N="Label" V="Status"/>
+          <Cell N="Format" V=";Not Started;In Progress;Completed;Deferred;Waiting on Input"/>
+          <Cell N="SortKey" V=""/>
+          <Cell N="Type" V="4"/>
+          <Cell N="Invisible" V="0"/>
+          <Cell N="Verify" V="0"/>
+          <Cell N="DataLinked" V="0" F="No Formula"/>
+          <Cell N="LangID" V="en-US"/>
+          <Cell N="Calendar" V="0"/>
+        </Row>
+      </Section>
+      <Section N="Actions">
+        <Row N="Row_1">
+          <Cell N="Menu" V="%P&amp;roperties"/>
+          <Cell N="Action" V="0" F="RUNADDON(&quot;NETWORK SHAPE PROPERTIES&quot;)"/>
+          <Cell N="Checked" V="0" F="No Formula"/>
+          <Cell N="Disabled" V="0" F="No Formula"/>
+          <Cell N="ReadOnly" V="0" F="No Formula"/>
+          <Cell N="Invisible" V="0" F="No Formula"/>
+          <Cell N="BeginGroup" V="0" F="No Formula"/>
+          <Cell N="FlyoutChild" V="0" F="No Formula"/>
+          <Cell N="TagName" V="" F="No Formula"/>
+          <Cell N="ButtonFace" V="" F="No Formula"/>
+          <Cell N="SortKey" V="" F="No Formula"/>
+        </Row>
+        <Row N="SetDefaultSize">
+          <Cell N="Menu" V="Set to Default Si&amp;ze"/>
+          <Cell N="Action" V="0" F="SETF(GetRef(Width),User.DefaultWidth)+SETF(GetRef(Height),User.DefaultHeight)"/>
+          <Cell N="Checked" V="0"/>
+          <Cell N="Disabled" V="0"/>
+          <Cell N="ReadOnly" V="0"/>
+          <Cell N="Invisible" V="1" F="AND(Height=User.DefaultHeight,Width=User.DefaultWidth)"/>
+          <Cell N="BeginGroup" V="0"/>
+          <Cell N="FlyoutChild" V="0"/>
+          <Cell N="TagName" V=""/>
+          <Cell N="ButtonFace" V=""/>
+          <Cell N="SortKey" V=""/>
+        </Row>
+        <Row N="ResizeWithText">
+          <Cell N="Menu" V="Resize with Te&amp;xt"/>
+          <Cell N="Action" V="0" F="SETF(GetRef(Height),&quot;User.ResizeTxtHeight&quot;)"/>
+          <Cell N="Checked" V="0"/>
+          <Cell N="Disabled" V="0"/>
+          <Cell N="ReadOnly" V="0"/>
+          <Cell N="Invisible" V="1" F="IF(Height=User.ResizeTxtHeight,TRUE,FALSE)"/>
+          <Cell N="BeginGroup" V="0"/>
+          <Cell N="FlyoutChild" V="0"/>
+          <Cell N="TagName" V=""/>
+          <Cell N="ButtonFace" V=""/>
+          <Cell N="SortKey" V=""/>
+        </Row>
+      </Section>
+      <Section N="User">
+        <Row N="visVersion">
+          <Cell N="Value" V="15"/>
+          <Cell N="Prompt" V=""/>
+        </Row>
+        <Row N="DefaultWidth">
+          <Cell N="Value" V="1" U="IN" F="1IN*DropOnPageScale"/>
+          <Cell N="Prompt" V=""/>
+        </Row>
+        <Row N="DefaultHeight">
+          <Cell N="Value" V="0.75" U="IN" F="0.75IN*DropOnPageScale"/>
+          <Cell N="Prompt" V=""/>
+        </Row>
+        <Row N="ResizeTxtHeight">
+          <Cell N="Value" V="0.75" U="IN" F="MAX(User.DefaultHeight,CEILING(TEXTHEIGHT(TheText,TxtWidth)/0.75,0.25))"/>
+          <Cell N="Prompt" V=""/>
+        </Row>
+      </Section>
+      <Section N="Geometry" IX="0">
+        <Cell N="NoFill" V="0"/>
+        <Cell N="NoLine" V="0" F="No Formula"/>
+        <Cell N="NoShow" V="0" F="No Formula"/>
+        <Cell N="NoSnap" V="0" F="No Formula"/>
+        <Cell N="NoQuickDrag" V="0" F="No Formula"/>
+        <Row T="MoveTo" IX="1">
+          <Cell N="X" V="0" U="IN" F="Width*0"/>
+          <Cell N="Y" V="0.375" U="IN" F="Height*0.5"/>
+        </Row>
+        <Row T="LineTo" IX="2">
+          <Cell N="X" V="0.5" U="IN" F="Width*0.5"/>
+          <Cell N="Y" V="0.75" U="IN" F="Height*1"/>
+        </Row>
+        <Row T="LineTo" IX="3">
+          <Cell N="X" V="1" U="IN" F="Width*1"/>
+          <Cell N="Y" V="0.375" U="IN" F="Height*0.5"/>
+        </Row>
+        <Row T="LineTo" IX="4">
+          <Cell N="X" V="0.5" U="IN" F="Width*0.5"/>
+          <Cell N="Y" V="0" U="IN" F="Height*0"/>
+        </Row>
+        <Row T="LineTo" IX="5">
+          <Cell N="X" V="0" U="IN" F="Geometry1.X1"/>
+          <Cell N="Y" V="0.375" U="IN" F="Geometry1.Y1"/>
+        </Row>
+      </Section>
+      <Text>
+        <cp IX="0"/>
+      </Text>
+    </Shape>
+  </Shapes>
+</MasterContents>

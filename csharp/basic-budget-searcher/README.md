@@ -2791,6 +2791,88 @@ flowchart TD
 
 
 ```
+
+#### Visio File Processing
+
+```sh
+/c/Program\ Files/7-Zip/7z.exe l 'Basic Flowchart Diagram - Student Enrollment Process.vsdx'  |awk '{print $NF}'| tr '\\', '/'
+```
+```txt
+[Content_Types].xml
+_rels/.rels
+visio/document.xml
+visio/masters/masters.xml
+visio/pages/pages.xml
+visio/_rels/document.xml.rels
+visio/masters/_rels/masters.xml.rels
+visio/pages/_rels/pages.xml.rels
+visio/masters/master1.xml
+visio/masters/master2.xml
+visio/masters/master3.xml
+visio/masters/master4.xml
+visio/masters/master5.xml
+visio/masters/master6.xml
+visio/masters/master7.xml
+visio/pages/page1.xml
+visio/pages/_rels/page1.xml.rels
+visio/windows.xml
+visio/theme/theme1.xml
+docProps/thumbnail.emf
+visio/validation.xml
+docProps/core.xml
+docProps/app.xml
+docProps/custom.xml
+```
+```sh
+find contents/ -iname '*xml'|xargs -IX sh -c "xml fo X > /tmp/F ;cp /tmp/F X"
+find contents/ -iname '*.rels'|xargs -IX sh -c "xml fo X > /tmp/F ;cp /tmp/F X"
+```
+
+![Capture Visio Original](screenshots/visio-original.png)
+
+```mermaid
+flowchart TB
+
+START1((("Start")))
+END1(("End"))
+SUBMIT1["Submit the<br/>registration<br/>form"]
+FORM1{"Form<br/>Complete?"}
+VERIFY1["Verify Details<br/>of Submission"]
+ACCEPT1{"Accept<br/>Submission?"}
+WRITE1["Write<br/>Acceptance<br/>Letter"]
+ACCEPTANCE1>"Acceptance<br/>Letter"]
+NOTIFY1["Notify Student<br/>on the <br/>Rejection"]
+
+START1-->SUBMIT1-->FORM1--"No"--> SUBMIT1
+FORM1 --"Yes"-->VERIFY1-->ACCEPT1 --"Yes"-->WRITE1-->ACCEPTANCE1-->END1
+ACCEPT1 --"No"-->NOTIFY1-->END1
+```
+
+![Capture Manual Mermaid Version](screenshots/mermaid-4-11.png)
+
+|File|Usefulness|Semantic Content|
+|----|----------|----------------|
+|`visio\pages\page1.xml`|Essential|Shapes, text, connectors, connections and geometry for the page|
+|`visio\pages\pages.xml`|Essential|Page IDs, names and relationships to page files|
+|`visio\pages\_rels\page1.xml.rels`|Essential|References from this page to masters and other resources|
+|`visio\masters\masters.xml`|Important|Master definitions and their IDs|
+|`visio\masters\master*.xml`|Important|Actual master shape definitions, including shape types and inherited properties|
+|`visio\masters\_rels\masters.xml.rels`|Important|Relationships connecting master definitions to their XML files|
+|`visio\document.xml`|Useful|Document-level settings and references|
+|`visio\_rels\document.xml.rels`|Useful|Document relationships, including pages and masters|
+
+|File               |                       	Potential use       |
+|-------------------|---------------------------------------------|
+|`[Content_Types].xml`|Identifies the content types of package parts|
+|`_rels\.rels`|Package-level relationships and entry points|
+|`visio\windows.xml`|Window and viewing configuration|
+|`visio\theme\theme1.xml`|Theme, fonts and colors|
+|`visio\validation.xml`|Diagram validation information|
+|`docProps\core.xml`|Author, title, dates and other metadata|
+|`docProps\app.xml`|Application and document properties|
+|`docProps\custom.xml`|Custom document properties|
+|`docProps\thumbnail.emf`|Preview image of the document|
+
 ### TLDR
 [Neuschwanstein Castle](https://en.wikipedia.org/wiki/Neuschwanstein_Castle) in southern Germany is the famous
 fairytale palace that inspired Disney's [Cinderella](https://en.wikipedia.org/wiki/Cinderella_Castle) and [Sleeping Beauty](https://en.wikipedia.org/wiki/Sleeping_Beauty_Castle) Magic

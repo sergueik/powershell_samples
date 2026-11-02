@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Validation xmlns="http://schemas.microsoft.com/office/visio/2012/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xml:space="preserve">
+  <ValidationProperties ShowIgnored="0"/>
+  <RuleSets>
+    <RuleSet ID="1" NameU="Flowchart" Description="Verify that Flowchart shapes are connected properly.">
+      <RuleSetFlags/>
+      <Rule ID="1" NameU="UngluedConnector" Category="Connectivity" Description="Connector is not glued at both ends.">
+        <RuleFilter>ROLE()=1</RuleFilter>
+        <RuleTest>AND(AGGCOUNT(GLUEDSHAPES(4)) = 1, AGGCOUNT(GLUEDSHAPES(5)) = 1)</RuleTest>
+      </Rule>
+      <Rule ID="2" NameU="StartWithoutTerminator" Category="Start / End" Description="Flowchart shape has no incoming connectors and is not a Start/End shape.">
+        <RuleFilter>AND(OR(HASCATEGORY("Flowchart"),ONLAYER("Flowchart")),NOT(OR(HASCATEGORY("Start/End"),STRSAME(LEFT(MASTERNAME(750),9),"Start/End"),STRSAME(LEFT(MASTERNAME(750),10),"Terminator"))))</RuleFilter>
+        <RuleTest>AGGCOUNT(GLUEDSHAPES(1)) &gt; 0</RuleTest>
+      </Rule>
+      <Rule ID="3" NameU="EndWithoutTerminator" Category="Start / End" Description="Flowchart shape has no outgoing connectors and is not a Start/End shape.">
+        <RuleFilter>AND(OR(HASCATEGORY("Flowchart"),ONLAYER("Flowchart")),NOT(OR(HASCATEGORY("Start/End"),STRSAME(LEFT(MASTERNAME(750),9),"Start/End"),STRSAME(LEFT(MASTERNAME(750),10),"Terminator"))))</RuleFilter>
+        <RuleTest>AGGCOUNT(GLUEDSHAPES(2)) &gt; 0</RuleTest>
+      </Rule>
+      <Rule ID="4" NameU="NoStartTerminator" Category="Start / End" Description="Flowchart does not start with a Start/End shape." RuleTarget="1">
+        <RuleFilter>AGGCOUNT(FILTERSET(SHAPESONPAGE(), "OR(HASCATEGORY(""Flowchart""),ONLAYER(""Flowchart""))")) &gt; 0</RuleFilter>
+        <RuleTest>AGGCOUNT(FILTERSET(SHAPESONPAGE(), "AND(OR(HASCATEGORY(""Start/End""),STRSAME(LEFT(MASTERNAME(750),9),""Start/End""),STRSAME(LEFT(MASTERNAME(750),10),""Terminator"")),AGGCOUNT(CONNECTEDSHAPES(2))&gt;0)")) &gt; 0</RuleTest>
+      </Rule>
+      <Rule ID="5" NameU="NoEndTerminator" Category="Start / End" Description="Flowchart does not end with a Start/End shape." RuleTarget="1">
+        <RuleFilter>AGGCOUNT(FILTERSET(SHAPESONPAGE(), "OR(HASCATEGORY(""Flowchart""),ONLAYER(""Flowchart""))")) &gt; 0</RuleFilter>
+        <RuleTest>AGGCOUNT(FILTERSET(SHAPESONPAGE(), "AND(OR(HASCATEGORY(""Start/End""),STRSAME(LEFT(MASTERNAME(750),9),""Start/End""),STRSAME(LEFT(MASTERNAME(750),10),""Terminator"")),AGGCOUNT(CONNECTEDSHAPES(1))&gt;0)")) &gt; 0</RuleTest>
+      </Rule>
+      <Rule ID="6" NameU="UnconnectedShape" Category="Connectivity" Description="Flowchart shape is not connected to any other shape.">
+        <RuleFilter>OR(HASCATEGORY("Flowchart"),ONLAYER("Flowchart"))</RuleFilter>
+        <RuleTest>AGGCOUNT(CONNECTEDSHAPES(0)) &gt; 0</RuleTest>
+      </Rule>
+      <Rule ID="7" NameU="TerminatorInMiddle" Category="Connectivity" Description="Start/End shape has both incoming and outgoing connectors.">
+        <RuleFilter>OR(HASCATEGORY("Start/End"),STRSAME(LEFT(MASTERNAME(750),9),"Start/End"),STRSAME(LEFT(MASTERNAME(750),10),"Terminator"))</RuleFilter>
+        <RuleTest>NOT(AND(AGGCOUNT(CONNECTEDSHAPES(1))&gt;0,AGGCOUNT(CONNECTEDSHAPES(2))&gt;0))</RuleTest>
+      </Rule>
+      <Rule ID="8" NameU="TooFewOutConns" Category="Connectivity" Description="Decision shape should have more than one outgoing connector.">
+        <RuleFilter>OR(HASCATEGORY("Decision"),STRSAME(LEFT(MASTERNAME(750),8),"Decision"))</RuleFilter>
+        <RuleTest>AGGCOUNT(GLUEDSHAPES(2)) &gt; 1</RuleTest>
+      </Rule>
+      <Rule ID="9" NameU="NonFlowchartShape" Category="Connectivity" Description="Connected shape is not recognized as a Flowchart shape.">
+        <RuleFilter>NOT(OR(HASCATEGORY("Flowchart"),ONLAYER("Flowchart")))</RuleFilter>
+        <RuleTest>AGGCOUNT(GLUEDSHAPES(0)) = 0</RuleTest>
+      </Rule>
+      <Rule ID="10" NameU="NoShapeText" Category="Text" Description="Flowchart shape has no text label.">
+        <RuleFilter>OR(HASCATEGORY("Flowchart"),ONLAYER("Flowchart"))</RuleFilter>
+        <RuleTest>NOT(STRSAME(SHAPETEXT(TheText), ""))</RuleTest>
+      </Rule>
+      <Rule ID="11" NameU="OutsideCFF" Category="Cross - Functional" Description="Flowchart shapes should belong to a Swimlane." RuleTarget="1">
+        <RuleFilter>AGGCOUNT(FILTERSET(SHAPESONPAGE(),"HASCATEGORY(""Swimlane"")"))&gt;0</RuleFilter>
+        <RuleTest>AGGCOUNT(FILTERSET(SHAPESONPAGE(),"AND(OR(HASCATEGORY(""Flowchart""),ONLAYER(""Flowchart"")),AGGCOUNT(FILTERSET(PARENTCONTAINERS(),""HASCATEGORY(""""Swimlane"""")""))=0)"))=0</RuleTest>
+      </Rule>
+    </RuleSet>
+  </RuleSets>
+  <Issues/>
+</Validation>
