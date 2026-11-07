@@ -4,6 +4,20 @@
 
 ### Background
 
+|Characteristic|Word (DOCX)|PowerPoint (PPTX)|Visio (VSDX)|
+|--------------|-----------|-----------------|------------|
+|Container|ZIP / OOXML|ZIP / OOXML|ZIP / OOXML|
+|Main content|word/document.xml|ppt/slides/slideN.xml|visio/pages/pageN.xml|
+|Content organization|Sections, paragraphs, runs, tables|Presentation, slides, shapes|Pages, shapes, connectors|
+|Supporting XML|Styles, numbering, settings, relationships|Masters, layouts, notes, relationships|Masters, document, pages, relationships|
+|Relationship model|.rels files|.rels files|.rels files|
+|Content extraction target|Structured text, paragraphs, tables, revisions|Raw slide text|Shape and connector semantics|
+|Geometry preservation|Generally unnecessary for Markdown|Generally unnecessary for initial extraction|Important|
+|Semantic output|Markdown|Markdown|Mermaid|
+|Extraction ambition|Preserve document structure and relevant annotations|Recover available textual content|Recover process logic and diagram structure|
+|Special extraction issue|Runs, tracked changes, comments, fields|Text distributed across slide shapes|Connector labels and shape text may require additional resolution or heuristics|
+
+
 Document is a massive directory of everything and a kitchen sink, which includes the Visuo drawing Word itself can not handle directly
 ```
 document.docx
