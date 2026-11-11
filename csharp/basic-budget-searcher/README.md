@@ -2887,6 +2887,78 @@ ACCEPT1 --"No"-->NOTIFY1-->END1
 |`docProps\custom.xml`|Custom document properties|
 |`docProps\thumbnail.emf`|Preview image of the document|
 
+
+### MarkitDown Review
+
+people selling an end-to-end document intelligence capability while
+having surprisingly little knowledge of the document-processing landscape underneath it.
+
+The embarrassing part isn't Python. 
+It's that they apparently haven't investigated the alternatives, even when those alternatives directly address
+the problem they're claiming to solve or tested the boundaries of their claimed capability.
+
+The missing engineering investigation
+Consider the sequence:
+  1. We extract document content.
+  2. We convert it to Markdown.
+  3. We chunk it.
+  4. We generate embeddings.
+  5. We put the results into a vector database.
+  6. We retrieve relevant chunks.
+
+That sounds like a complete RAG ingestion pipeline.
+
+But it leaves a fundamental question unanswered:
+
+What exactly happens between receiving a document and obtaining a faithful representation of its contents?
+
+HTML and PDF are only two document formats. What about:
+  - DOC and DOCX
+  - XLS and XLSX
+  - PPT and PPTX
+  - Legacy Office formats
+  - Visio diagrams
+  - Embedded objects
+  - Tables, headers, footers and footnotes
+  - Documents with complicated layouts
+  - Scanned documents and OCR
+
+And, importantly, what information is kept lost during conversion?
+
+Converting a document to Markdown is not the same as understanding the document.
+
+The Microsoft [MarkItDown](https://github.com/microsoft/markitdown) supports considerably more than HTML and PDF.
+
+Its documented formats include:
+
+|Format|Status|
+|--|--|
+|PDF|✅|
+|DOCX|✅|
+|PPTX|✅|
+|XLSX|✅|
+|XLS|☑<br/>Optional dependency|
+|HTML|✅|
+|CSV, JSON, XML|✅|
+|ZIP|☑<br/>Iterates through supported contents|
+|EPUB|✅|
+|Audio|☑<br/> with optional transcription dependencies|
+|Visio (VSDX)|⭕<br/>Not listed|
+
+__MarkItDown__ also offers [Azure Document Intelligence](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/?view=doc-intel-4.0.0) and 
+[Content Understanding](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/) integrations
+
+But not listed support for legacy DOC, and support for XLS does not establish support for every Excel feature.
+
+What __MarkItDown__ achieved:
+- A common conversion interface.
+- Format-specific converters.
+- A Markdown representation preserving useful structure.
+- Optional dependencies rather than forcing every dependency on every installation.
+- Third-party plugin architecture.
+- Integration with Azure Document Intelligence and Azure Content Understanding.
+- An MCP server for exposing conversion capabilities to AI clients.
+
 ### TLDR
 [Neuschwanstein Castle](https://en.wikipedia.org/wiki/Neuschwanstein_Castle) in southern Germany is the famous
 fairytale palace that inspired Disney's [Cinderella](https://en.wikipedia.org/wiki/Cinderella_Castle) and [Sleeping Beauty](https://en.wikipedia.org/wiki/Sleeping_Beauty_Castle) Magic
