@@ -2991,6 +2991,178 @@ docker image prune -f
 docker image rm pandoc/minimal:3.14-alpine
 ```
 
+### Macro Enabled Office Documents
+
+  * https://learn.microsoft.com/en-us/answers/questions/5834185/enable-macro-in-excel
+  * https://support.microsoft.com/en-us/office/vba/enable-or-disable-macros-in-microsoft-365-files
+  * [Parikshit-Hooda/VBA-excel-examples](https://github.com/Parikshit-Hooda/VBA-excel-examples) - code examples written in VBA to interact with Excel - includes Macro Enabled Workbooks
+ 
+```sh
+/c/Program\ Files/7-Zip/7z.exe  x WordFileTool/Test/macro-enabled_workbook1.xlsm
+```
+```
+├───docProps
+├───xl
+│   ├───theme
+│   ├───worksheets
+│   └───_rels
+└───_rels
+```
+```sh
+/c/Program\ Files/7-Zip/7z.exe  t xl/vbaProject.bin
+```
+```
+7-Zip 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+
+Scanning the drive for archives:
+1 file, 16896 bytes (17 KiB)
+
+Testing archive: xl\vbaProject.bin
+--
+Path = xl\vbaProject.bin
+Type = Compound
+Physical Size = 16896
+Extension = compound
+Cluster Size = 512
+Sector Size = 64
+
+Everything is Ok
+
+Folders: 1
+Files: 12
+Size:       12354
+Compressed: 16896
+
+
+```
+
+```sh
+find .
+```
+```txt
+./PROJECT
+./PROJECTwm
+./VBA
+./VBA/dir
+./VBA/Sheet1
+./VBA/ThisWorkbook
+./VBA/_VBA_PROJECT
+./VBA/__SRP_0
+./VBA/__SRP_1
+./VBA/__SRP_2
+./VBA/__SRP_3
+./VBA/__SRP_4
+./VBA/__SRP_5
+```
+![Capture Excel 2003 Macro Editor](screenshots/capture-excel-2003-macros.png)
+```
+Rem Attribute VBA_ModuleType=VBADocumentModule
+Option VBASupport 1
+Sub NameSheetsFromAList()
+
+    'iterate from 2 to last row count, name them. then name sheet 1
+    'then delete content of sheet 1
+
+    'list of sheet names headings should start from cells(1,1) of first sheet in the active workbook
+    'should not contain blank cells within the list.
+    'macro renames the first sheet with the value of first sheet's first cell from top left
+    
+    Sheets(1).Select
+    
+    Dim sname1 As String
+    Dim numberOfSheets As Integer
+    Dim numiterations As Integer
+    Dim sheetnamearay() As String
+    numberOfSheets = Cells(Rows.Count, 1).End(xlUp).Row
+    
+
+
+    sname1 = Cells(1, 1).Value
+    numiterations = 1
+    ReDim sheetnamearray(numberOfSheets)
+    
+    
+    For numiterations = 1 To numberOfSheets
+        sheetnamearray(numiterations - 1) = Cells(numiterations, 1).Value
+    Next numiterations
+    
+    For numiterations = 2 To numberOfSheets
+        'add number of elements in array - 1 sheets. name them.
+        ActiveWorkbook.Sheets.Add(After:=ActiveWorkbook.Sheets(ActiveWorkbook.Sheets.Count)).Name = sheetnamearray(numiterations - 1)
+    Next numiterations
+    
+    Sheets(1).Name = sheetnamearray(0)
+    Sheets(1).Select
+    
+    For numiterations = 1 To numberOfSheets
+        Cells(numiterations, 1).Value = ""
+    Next numiterations
+    
+   ' Debug.Print numberOfSheets
+    'check if capturing right number of sheets
+   ' Sheets.Add
+  '  Sheets(1).Select
+   ' ActiveSheet.Move After:=Worksheets(Worksheets.Count)
+  '  Sheets(2).Name = "Number of sheets"
+  '  Cells(1, 1).Value = numberOfSheets
+
+End Sub
+
+```
+![Capture LibreOffice Macro Editor](screenshots/capture-libreoffice-calc-macros.png)
+```vba
+Sub NameSheetsFromAList()
+
+    'iterate from 2 to last row count, name them. then name sheet 1
+    'then delete content of sheet 1
+
+    'list of sheet names headings should start from cells(1,1) of first sheet in the active workbook
+    'should not contain blank cells within the list.
+    'macro renames the first sheet with the value of first sheet's first cell from top left
+    
+    Sheets(1).Select
+    
+    Dim sname1 As String
+    Dim numberOfSheets As Integer
+    Dim numiterations As Integer
+    Dim sheetnamearay() As String
+    numberOfSheets = Cells(Rows.Count, 1).End(xlUp).Row
+    
+
+
+    sname1 = Cells(1, 1).Value
+    numiterations = 1
+    ReDim sheetnamearray(numberOfSheets)
+    
+    
+    For numiterations = 1 To numberOfSheets
+        sheetnamearray(numiterations - 1) = Cells(numiterations, 1).Value
+    Next numiterations
+    
+    For numiterations = 2 To numberOfSheets
+        'add number of elements in array - 1 sheets. name them.
+        ActiveWorkbook.Sheets.Add(After:=ActiveWorkbook.Sheets(ActiveWorkbook.Sheets.Count)).Name = sheetnamearray(numiterations - 1)
+    Next numiterations
+    
+    Sheets(1).Name = sheetnamearray(0)
+    Sheets(1).Select
+    
+    For numiterations = 1 To numberOfSheets
+        Cells(numiterations, 1).Value = ""
+    Next numiterations
+    
+   ' Debug.Print numberOfSheets
+    'check if capturing right number of sheets
+   ' Sheets.Add
+  '  Sheets(1).Select
+   ' ActiveSheet.Move After:=Worksheets(Worksheets.Count)
+  '  Sheets(2).Name = "Number of sheets"
+  '  Cells(1, 1).Value = numberOfSheets
+
+End Sub
+
+
+```
 ### See Also
 
   * Pandoc [source](https://github.com/jgm/pandoc)
