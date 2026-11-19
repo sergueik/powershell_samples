@@ -200,8 +200,8 @@ visDoc.Close: visApp.Quit: Set visShape = Nothing: Set visPage = Nothing: Set vi
 ```
 
 
-The Office document formats are themselves hierarchical object/package systems, and most of the objects are 
-__structural__ rather 
+The Office document formats are themselves hierarchical object/package systems, and most of the objects are
+__structural__ rather
 than __business-data-bearing__.
 
 | Enterprise artifact       | Dominant structure                                                            | Where the interesting data tends to live                                |
@@ -226,8 +226,8 @@ A       B       C       D       ...       AI
 ┌───────┬───────┬───────┬───────┬─────────┐
 │ Dept  │ Owner │ Status│ Date  │ ...     │
 ├───────┼───────┼───────┼───────┼─────────┤
-│ ...                                          
-│ ...                                          
+│ ...
+│ ...
 └───────┴───────┴───────┴───────┴─────────┘
 
              ↓
@@ -380,7 +380,7 @@ A sole developer may reasonably think:
 "I have a diagram. I want to edit it and save it."
 
 They don't necessarily need the system to maintain a sophisticated collaborative state such as:
-> 
+>
 ```code
 sequenceDiagram
   participant Alice
@@ -424,11 +424,11 @@ A ---> B ---> C
 ```
 That is an impressive product capability — but it illustrates your semantic-density point beautifully
 
-> System can spend enormous engineering effort making an interaction reliable without 
+> System can spend enormous engineering effort making an interaction reliable without
 > making the underlying business process any more meaningful, executable, or valuable
 
 The artifact/system may carry substantial machinery for:
-  
+
   * live presence
   * concurrent editing
   * transient object state
@@ -626,8 +626,8 @@ xml fo ppt\slides\slide2.xml
 ```
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" 
-       xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" 
+<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+       xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
        xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <p:cSld>
     <p:spTree>
@@ -720,24 +720,24 @@ Product A
 xml.exe sel -t -c "//*[.=\"Product A\"]" chart1.xml
 ```
 ```xml
-<c:strCache 
-  xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" 
-  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" 
+<c:strCache
+  xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart"
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
     <c:ptCount val="1"/>
       <c:pt idx="0">
         <c:v>Product A</c:v>
       </c:pt>
     </c:strCache>
-<c:pt 
-  xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" 
-  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" 
+<c:pt
+  xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart"
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" idx="0">
     <c:v>Product A</c:v>
   </c:pt>
-<c:v 
-  xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" 
-  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" 
+<c:v
+  xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart"
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">Product A</c:v>
 
 ```
@@ -844,8 +844,8 @@ Microsoft repeatedly preferred evolutionary compatibility when the installed bas
 |DOS → NT → 2000 → XP <br/>compatibility     |         Compound Storage → OOXML<br/>compatibility  |
 | x86 → Alpha → Itanium <br/>↘ <br/>AMD64        |    old Office formats<br/>↘ <br/> ZIP/Open XML |
 |                                big investment in <br/>existing software | preserve the useful<br/>document/package model |
-                
-“thunking” belongs in that story: all those transitions weren't just recompiling code. 
+
+“thunking” belongs in that story: all those transitions weren't just recompiling code.
 There were compatibility boundaries, ABI/calling-convention issues, data-model differences, 16/32-bit transitions, and architecture-specific adaptation layers. So your intuition about the era being full of “make the old world continue to work while we move underneath it” is quite apt.
 
 
@@ -1067,7 +1067,7 @@ which has a higher version "4.0.3.0" than the version "4.0.2.0" in the current t
 ```
 ![capture event log error](screenshots/capture-eventlog.png)
 
-The error 
+The error
 ```xml
 Log Name:      Application
 Source:        Windows Error Reporting
@@ -1075,7 +1075,7 @@ Date:          10/4/2026 10:27:09 AM
 Event ID:      1001
 Task Category: None
 Level:         Information
-Keywords:      
+Keywords:
 User:          SERGUEIK59\kouzm
 Computer:      sergueik59
 Description:
@@ -1092,9 +1092,9 @@ P4: System.IO.FileNotFoundException
 P5: unknown
 P6: gram+<>c__DisplayClass1.<btnReplaceText_Click>b__0
 P7: unknown
-P8: 
-P9: 
-P10: 
+P8:
+P9:
+P10:
 
 Attached files:
 \\?\C:\ProgramData\Microsoft\Windows\WER\Temp\WER.5ce829e5-df4e-4f5b-a57a-ad938245fe28.tmp.WERInternalMetadata.xml
@@ -1105,7 +1105,7 @@ Attached files:
 These files may be available here:
 \\?\C:\ProgramData\Microsoft\Windows\WER\ReportArchive\Critical_powershell.exe_1ec53acccea1864ea40be61c4bb92aeebea84e0_00000000_09707fbf-9632-4ad8-8aaf-fa8ff4b8fc78
 
-Analysis symbol: 
+Analysis symbol:
 Rechecking for solution: 0
 Report Id: 09707fbf-9632-4ad8-8aaf-fa8ff4b8fc78
 Report Status: 268435456
@@ -1164,7 +1164,7 @@ Event Xml:
   </EventData>
 </Event>
 ```
-the referenced WER files are not always present: 
+the referenced WER files are not always present:
 ```text
 Directory of C:\ProgramData\Microsoft\Windows\WER\ReportArchive
 
@@ -1210,7 +1210,7 @@ finally the exception was made visible after extensively adding try-catch in the
 ![capture exception](screenshots/capture-exception.png)
 
 ```text
-See the end of this message for details on invoking 
+See the end of this message for details on invoking
 just-in-time (JIT) debugging instead of this dialog box.
 
 ************** Exception Text **************
@@ -1283,7 +1283,7 @@ will be sent to the JIT debugger registered on the computer
 rather than be handled by this dialog box.
 
 ```
-The real fix was in replacing 
+The real fix was in replacing
 ```powershell
 add-type $shared_assembly
 ```
@@ -1372,18 +1372,18 @@ dataGridView.DefaultCellStyle.Font = font2;
 dataGridView.RowTemplate.Height = 32;
 dataGridView.Font = font2;
 ```
- and setting  
+ and setting
 ```c#
 this.AutoScaleMode = AutoScaleMode.None;
 
 ``` is work in progress:
- 
- 
+
+
 ![Fixed Powershell ISE run](screenshots/capture-powershell-ise-fixed.png)
 
 
 ![IDE dimension issue](screenshots/capture-sharpdevelop-unscaled.png)
- 
+
 
 ### Design Guidelines
 
@@ -1449,7 +1449,7 @@ An anemic domain model is roughly:
 
 >  * Objects = data containers
 >  * Business behavior = somewhere else
- 
+
 the oject has no real behavior just data transfer
 
 Tell Don't Ask says:
@@ -1946,7 +1946,7 @@ later Windows
 Microsoft repeatedly  observed to spend enormous resources creating and maintaining an entire computing platform
 that isn't particularly relevant to someone writing a WinForms/NPOI/PdfPig enterprise utility.
 
-### Archtecture 
+### Archtecture
 ```mermaid
 
 flowchart TB
@@ -1963,7 +1963,7 @@ plaintext[/"📄<br/>plain text"/]
 
 subgraph SUBGRAPH2["Power Point Document"]
 PPTX --> PACKAGE
-PACKAGE -- "/ppt/slides/slide.xml"--> PackagePart 
+PACKAGE -- "/ppt/slides/slide.xml"--> PackagePart
 end
 PackagePart --> XmlDocument
 
@@ -2039,7 +2039,7 @@ Build succeeded.
 ```
 the undertlying defect is easy to overlook: parameter mismatch (`OutFile` vs. `OutputFile` ) which is highest risk when inroducing multiple inter dependent files .
 
-The stock cmdlet `nvoke-WebRequest` apparentyl receives an invalid output path and apparently dereferences an internal null object 
+The stock cmdlet `nvoke-WebRequest` apparentyl receives an invalid output path and apparently dereferences an internal null object
 instead of handling that input cleanly.
 
 the propagation of the error is yet another, smaller mistake. to fix it one simply adds the
@@ -2274,8 +2274,8 @@ For modern Office formats such as DOCX, XLSX, and PPTX, this is quite literal: t
 2026-10-21 15:04:40 .....       128740       122691  ppt\media\image1.png
 
 ```
-multiple parts connected through relationships. Older Office formats 
-can use proprietary OLE Compound File Binary Format, which exposes 
+multiple parts connected through relationships. Older Office formats
+can use proprietary OLE Compound File Binary Format, which exposes
 ```text
 
    Date      Time    Attr         Size   Compressed  Name
@@ -2310,7 +2310,7 @@ od.exe -h ~/\[5]SummaryInformation  |head -1
 ```text
 0000000 fffe 0000 0001 0002 0000 0000 0000 0000
 ```
-a structured storage hierarchy of storages and streams, but it is far less evident what parts represent 
+a structured storage hierarchy of storages and streams, but it is far less evident what parts represent
 
 a structured storage hierarchy of storages and streams, but it is far less evident what those parts represent, how they relate to one another, and which contain meaningful business content. The stream names are only weak clues; interpreting the contents may require format-specific knowledge, proprietary specifications, or the original application's APIs.
 
@@ -2347,7 +2347,7 @@ the names `PowerPoint Document`, `Pictures`, and `SummaryInformation` are not en
 
 
 
-You are distinguishing __modernizing the content estate__ through a __dedicated conversion pass__ 
+You are distinguishing __modernizing the content estate__ through a __dedicated conversion pass__
 from __extending a modern ingestion engine indefinitely__ to accommodate __legacy formats__.
 
 The distinction is not merely about performance.
@@ -2422,7 +2422,7 @@ X3[\XML\]
 X4[\XML\]
 I1[Image]
 F1{Unzip<br/>File}
-H1 --> Downloads 
+H1 --> Downloads
 TT1[plain text]
 Downloads -- pick -->P2 --> Y2
 Downloads -- pick -->W1
@@ -2433,7 +2433,7 @@ U -- "OLE object" --> V3 --> OA2 --> V2 --> OV2 --> M2
 U -- "word document" --> W1
 U -- "word document" --> W2 --> OD1 --> T1
 U -- "word document" --> W3 --> OA1 --> W4 --> OD2 --> T2
-U -- "media" --> I1 --> D1 
+U -- "media" --> I1 --> D1
 U -- "rels" --> X1 --> D2
 U -- "props" --> X2 --> D3
 U --"document.xml" --> X4 --> OD5 --> T3
@@ -2616,13 +2616,13 @@ This also suggests a practical decision rule for legacy integration. If a reliab
 Even the suspicion that a suitable abstraction may already exist can change the decision: investigating and adopting it may be cheaper than building and maintaining a replacement.
 
 The objective is not to make every underlying mechanism transparent. It is to make the intended operation transparent to the person performing the work.
- 
+
 trying to recreate the user-facing abstraction of an archive browser over a different storage mechanism.
 
 The original task was conceptually simple: present CHM contents as a browsable collection of named files and directories, even though the metadata describing those files and the actual content they reference are represented through the CHM storage system rather than as ordinary files in an ordinary directory tree.
 
 And the important consequence is the one you describe: the implementation cost consumed the attention that was supposed to go toward the value-added functionality.
- 
+
 ### When Implementation Complexity Consumes the Product
 
 The original objective was to provide a user-friendly browser for manipulating CHM contents, exposing an interface conceptually similar to a ZIP archive browser.
@@ -2639,7 +2639,7 @@ This is a particularly insidious form of technical debt: not simply code that wi
 
 A mature abstraction such as a ZIP library allows the application developer to concentrate on the user experience and domain-specific operations. Reconstructing the abstraction from a lower-level interface reverses that relationship.
 
-**When the cost of reaching the content consumes the effort intended to add value to it, the architecture deserves reconsideration before another feature is written.** 
+**When the cost of reaching the content consumes the effort intended to add value to it, the architecture deserves reconsideration before another feature is written.**
 ## From the Sweet Dream of Visual Programming to Workflow Commoditization
 
 The history of visual process modeling is not a simple progression from primitive drawings to sophisticated automation. It is a progression through different relationships between a visual representation and the system that gives it operational meaning.
@@ -2791,7 +2791,7 @@ The developer's time is not the only scarce resource. Attention, curiosity, and 
     + [Microsoft VSDX format documentation](https://learn.microsoft.com/en-us/office/client-developer/visio/introduction-to-the-visio-file-formatvsdx)
 
 ---
-```mermaid 
+```mermaid
 
 
 flowchart TD
@@ -2893,7 +2893,7 @@ ACCEPT1 --"No"-->NOTIFY1-->END1
 people selling an end-to-end document intelligence capability while
 having surprisingly little knowledge of the document-processing landscape underneath it.
 
-The embarrassing part isn't Python. 
+The embarrassing part isn't Python.
 It's that they apparently haven't investigated the alternatives, even when those alternatives directly address
 the problem they're claiming to solve or tested the boundaries of their claimed capability.
 
@@ -2945,7 +2945,7 @@ Its documented formats include:
 |Audio|☑<br/> with optional transcription dependencies|
 |Visio (VSDX)|⭕<br/>Not listed|
 
-__MarkItDown__ also offers [Azure Document Intelligence](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/?view=doc-intel-4.0.0) and 
+__MarkItDown__ also offers [Azure Document Intelligence](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/?view=doc-intel-4.0.0) and
 [Content Understanding](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/) integrations
 
 But not listed support for legacy DOC, and support for XLS does not establish support for every Excel feature.
@@ -2958,6 +2958,44 @@ What __MarkItDown__ achieved:
 - Third-party plugin architecture.
 - Integration with Azure Document Intelligence and Azure Content Understanding.
 - An MCP server for exposing conversion capabilities to AI clients.
+
+#### Testing Pandoc
+
+[Pandoc](https://pandoc.org/) - an universal document converter - supports among others:
+    - Microsoft PowerPoint
+    - Microsoft Excel spreadsheets
+    - Microsoft Word docx
+    - Rich Text Format RTF
+    - OpenOffice/LibreOffice ODT
+
+but only as only output to [PowerPoint](https://en.wikipedia.org/wiki/Microsoft_PowerPoint) (as with `-t pptx`),
+not convert from: it does *not* natively support reading `.pptx`
+files as an input format.
+Likewise, __Pandoc__ does *not* natively support __OpenOffice__/__LibreOffice__ __Draw__ (`.odg`) files as an input format.
+__Pandoc__ only supports certain  __OpenDocument__ text formats.
+The `.odt` __Excel__ source is supported natively since version __3.8.3__
+
+```sh
+docker pull pandoc/alpine:2.15
+```
+```sh
+docker pull pandoc/minimal:3.14-alpine
+```
+```sh
+docker run -it --rm pandoc/minimal:3.14-alpine --help
+```
+
+```sh
+docker container prune -f
+docker image prune -f
+docker image rm pandoc/minimal:3.14-alpine
+```
+
+### See Also
+
+  * Pandoc [source](https://github.com/jgm/pandoc)
+  * Pandoc official Docker images image [directory](https://hub.docker.com/u/pandoc)
+  * Dockerfiles for various pandoc images: https://github.com/pandoc/dockerfiles
 
 ### TLDR
 [Neuschwanstein Castle](https://en.wikipedia.org/wiki/Neuschwanstein_Castle) in southern Germany is the famous
