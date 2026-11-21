@@ -3163,8 +3163,32 @@ End Sub
 
 
 ```
-### See Also
 
+Not attempting to modernize the legacy application; you are establishing an inexpensive, repeatable early-cycle inspection mechanism
+
+You open what looks like an ordinary Excel document. It has an unfamiliar extension. Suddenly, instead of a spreadsheet, you discover an entire application environment: VBA modules, forms, dialogs, menus, event handlers, editor panels, and a programming model you did not expect to encounter.
+
+The immediate reaction is not necessarily enthusiasm. It is: How much of this new environment am I going to have to learn before I can even understand what I have opened?
+
+And that leads to a sensible engineering response: find a smaller entry point
+
+
+### A lightweight entry point into legacy Office applications
+
+The initial objective is not necessarily to build an inexpensive tool in absolute terms. LibreOffice itself is a substantial application environment, and its automation infrastructure should not be underestimated.
+
+The more relevant objective is to establish a repeatable, unattended inspection mechanism.
+
+Microsoft Office offers extensive automation capabilities, but its COM-based automation model introduces a considerable execution and operational surface, particularly when attempting to scale unattended processing.
+
+LibreOffice provides an alternative worth evaluating: whether its headless execution and UNO interfaces can expose enough of the embedded Office application structure to perform an initial inventory without launching an interactive development environment.
+
+The experiment is deliberately narrow: determine whether a macro-enabled workbook can be inspected, its embedded project enumerated, and its source material exported in a repeatable headless workflow.
+
+The desired economy is therefore not necessarily smaller software. It is less human intervention, less interactive exploration, and a shorter path to useful technical evidence.
+
+### See Also
+  * __Open XML SDK for Office__ [documentation](https://learn.microsoft.com/en-us/office/open-xml/open-xml-sdk) - to work with Microsoft Office files in .NET without Microsoft Office installed
   * Pandoc [source](https://github.com/jgm/pandoc)
   * Pandoc official Docker images image [directory](https://hub.docker.com/u/pandoc)
   * Dockerfiles for various pandoc images: https://github.com/pandoc/dockerfiles
